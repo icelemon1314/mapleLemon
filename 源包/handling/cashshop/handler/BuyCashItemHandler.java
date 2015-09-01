@@ -101,8 +101,8 @@ public class BuyCashItemHandler {
                         chr.modifyCSPoints(toCharge, -cItem.getPrice(), false);
                         if (ii.isCash(item.getItemId())) {
                             // 先直接放到背包了
-                            chr.getInventory(ItemConstants.getInventoryType(item.getItemId())).addItem(item);
-                            //cs.addToInventory(item);
+                            //chr.getInventory(ItemConstants.getInventoryType(item.getItemId())).addItem(item);
+                            cs.addToInventory(item);
                             c.getSession().write(MTSCSPacket.购买商城道具(item, cItem.getSN(), c.getAccID()));
                         } else {
                             System.out.println(new StringBuilder().append("[作弊] ").append(chr.getName()).append(" 商城非法购买道具.道具: ").append(item.getItemId()).append(" - ").append(ii.getName(item.getItemId())).toString());
@@ -218,16 +218,14 @@ public class BuyCashItemHandler {
                 cs.removeFromInventory(item1);
                 c.getSession().write(MTSCSPacket.商城删除道具(uniqueId));
                 break;
-            case 0x0F:
+            case 0x0A: // 商城到背包 06 00 00 00 00 00 00 00 02 02 00
                 item1 = cs.findByCashId((int) slea.readLong());
-                if (chr.isShowPacket()) {
-                    System.out.println(new StringBuilder().append("商城 => 背包 - 道具是否为空 ").append(item1 == null).toString());
-                }
+                byte itemType = slea.readByte();
                 if (item1 == null) {
                     c.getSession().write(MTSCSPacket.刷新点券信息(chr));
                     return;
                 }
-                if (chr.getInventory(ItemConstants.getInventoryType(item1.getItemId())).addItem(item1) == -1) {
+                if (chr.getInventory(MapleInventoryType.getByType(itemType)).addItem(item1) == -1) {
                     break;
                 }
                 cs.removeFromInventory(item1);
@@ -238,8 +236,8 @@ public class BuyCashItemHandler {
                 break;
             case 0xB: // 背包到商城
                 int cashId = (int) slea.readLong();
-                byte type1 = slea.readByte();
-                MapleInventory mi = chr.getInventory(MapleInventoryType.getByType(type1));
+                itemType = slea.readByte();
+                MapleInventory mi = chr.getInventory(MapleInventoryType.getByType(itemType));
                 item1 = mi.findByUniqueId(cashId);
                 if (chr.isShowPacket()) {
                     System.out.println(new StringBuilder().append("背包 => 商城 - 道具是否为空 ").append(item1 == null).toString());

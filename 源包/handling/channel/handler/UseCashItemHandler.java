@@ -66,7 +66,7 @@ public class UseCashItemHandler {
         byte slot = (byte) slea.readShort();
         int itemId = slea.readInt();
         int itemType = itemId / 10000;
-        Item toUse = chr.getInventory(MapleInventoryType.CASH).getItem((short) slot);
+        Item toUse = chr.getInventory(MapleInventoryType.USE).getItem((short) slot);
         if ((toUse == null) || (toUse.getItemId() != itemId) || (toUse.getQuantity() < 1) || (chr.hasBlockedInventory())) {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
@@ -80,7 +80,7 @@ public class UseCashItemHandler {
             case 217: // 缩地石
                     used = InventoryHandler.UseTeleRock(slea, c, itemId);
                 break;
-        case 218: // 洗点卷
+            case 218: // 洗点卷
                 if (itemId == 2180000) { // 洗能力点
                         Map statupdate = new EnumMap(MapleStat.class);
                         int apto = (int) slea.readLong();
@@ -354,11 +354,7 @@ public class UseCashItemHandler {
                 if (chr.isAdmin()) {
                     chr.dropMessage(0, new StringBuilder().append("使用商场喇叭 道具类型: ").append(itemId / 1000 % 10).toString());
                 }
-                if (chr.getLevel() < 10) {
-                    chr.dropMessage(0, "需要等级10级才能使用这个道具。");
-                } else if (chr.getMapId() == 180000001) {
-                    chr.dropMessage(0, "在这个地方无法使用这个道具。");
-                } else if (!c.getChannelServer().getMegaphoneMuteState()) {
+                if (!c.getChannelServer().getMegaphoneMuteState()) {
                     int msgType = itemId / 1000 % 10;
                     used = true;
                     switch (msgType) {
@@ -648,7 +644,7 @@ public class UseCashItemHandler {
         }
 
         if ((itemType != 506) || (used)) {
-            MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.CASH, (short) slot, (short) 1, false, true);
+            MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, (short) slot, (short) 1, false, true);
         }
         c.getSession().write(MaplePacketCreator.enableActions());
         if (cc) {
