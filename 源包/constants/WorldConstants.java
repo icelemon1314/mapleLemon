@@ -191,7 +191,7 @@ public class WorldConstants {
         @Override
         public void setShow(boolean info) {
             if (info == show) {
-                ServerProperties.removeProperty("expWorld" + world);
+                ServerProperties.removeProperty("showWorld" + world);
                 return;
             }
             ServerProperties.setProperty("showWorld" + world, info);
@@ -349,7 +349,7 @@ public class WorldConstants {
         @Override
         public void setShow(boolean info) {
             if (info == show) {
-                ServerProperties.removeProperty("expWorld" + worldName);
+                ServerProperties.removeProperty("showWorld" + worldName);
                 return;
             }
             ServerProperties.setProperty("showWorld" + worldName, info);
