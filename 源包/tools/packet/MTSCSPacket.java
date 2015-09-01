@@ -75,53 +75,6 @@ public class MTSCSPacket {
         }
 
 
-//        mplew.writeShort(2);
-//
-//        mplew.writeInt(10000091); // sn
-//        mplew.writeInt(2082000); // itemID
-//        mplew.writeInt(1); // 多少个
-//        mplew.writeInt(88);
-//        mplew.writeInt(20); // 打折后价格
-//        mplew.writeInt(0); // 可用天数
-//        mplew.writeInt(2);
-//        mplew.writeInt(8);
-//        mplew.write(0);
-//        mplew.writeInt(getTime());
-//        mplew.write(1); // 0则不能购买
-//        mplew.writeInt(getTime()+86400);
-//        mplew.write(0);
-//        mplew.writeInt(0);
-////        if (上面值大于0) {
-////            4*上面值
-////        }
-//        mplew.writeInt(0);
-////        if (上面值大于0) {
-////            4*上面值
-////        }
-//
-//        mplew.writeInt(20600009); // sn
-//        mplew.writeInt(1071000); // itemID
-//        mplew.writeInt(1); // 多少个
-//        mplew.writeInt(380);
-//        mplew.writeInt(200); // 打折后价格
-//        mplew.writeInt(0); // 可用天数
-//        mplew.writeInt(3);
-//        mplew.writeInt(4);
-//        mplew.write(1);
-//        mplew.writeInt(getTime());
-//        mplew.write(1); // 0则不能购买
-//        mplew.writeInt(getTime()+86400);
-//        mplew.write(0);
-//        mplew.writeInt(0);
-////        if (上面值大于0) {
-////            4*上面值
-////        }
-//        mplew.writeInt(0);
-////        if (上面值大于0) {
-////            4*上面值
-////        }
-
-
         // 下面是960个字节 囧 30个道具？
         //int[] itemz = new int[]{10000281, 10000282, 10000283, 10000284, 10000285};
 //        CashItemFactory cashinfo = CashItemFactory.getInstance();
@@ -418,17 +371,31 @@ public class MTSCSPacket {
 
         mplew.write(SendPacketOpcode.CS_OPERATION.getValue());
         //mplew.write(CashShopOpcode.加载道具栏.getValue());
-        mplew.write(0x30);
+        mplew.write(0x1D);
         CashShop mci = c.getPlayer().getCashInventory();
 //        int size = 0;
-        mplew.writeShort(mci.getItemsSize()); // 这里是位置？
+        System.out.println("商城保管箱道具个数："+mci.getItemsSize());
+        mplew.writeShort(mci.getItemsSize());
         for (Item itemz : mci.getInventory()) {
-            PacketHelper.addItemInfo(mplew,itemz);
+            mplew.writeLong(itemz.getUniqueId() > 0 ? itemz.getUniqueId() : 0L);
+            mplew.writeInt(c.getAccID());
+            mplew.write(HexTool.getByteArrayFromHexString("01 01 01 01"));
+            mplew.writeInt(itemz.getItemId());
+            mplew.write(HexTool.getByteArrayFromHexString("01 01 01 01"));
+            mplew.writeShort(itemz.getQuantity());
+            mplew.writeAsciiString(itemz.getGiftFrom(), 13);
+            PacketHelper.addExpirationTime(mplew, itemz.getExpiration());
+            mplew.write(HexTool.getByteArrayFromHexString("01 01 01 01"));
+            mplew.writeShort(0);
+
+
 //            addCashItemInfo(mplew, itemz, c.getAccID(), 0);
 //            if (ItemConstants.isPet(itemz.getItemId())) {
 //                size++;
 //            }
         }
+        mplew.writeShort(0); // 104 * size 应该是宠物的结构体
+        mplew.writeShort(0);
 //        mplew.writeInt(size);
 //        if (mci.getInventory().size() > 0) {
 //            for (Item itemz : mci.getInventory()) {
@@ -477,7 +444,7 @@ public class MTSCSPacket {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(update ? CashShopOpcode.更新购物车.getValue() : CashShopOpcode.加载购物车.getValue());
+        mplew.write(update ? CashShopOpcode.更新购物车.getValue() : 0x4C);
         int[] list = chr.getWishlist();
         for (int i = 0; i < 10; i++) {
             mplew.writeInt(list[i] != -1 ? list[i] : 0);
@@ -492,13 +459,22 @@ public class MTSCSPacket {
      * @param accid
      * @return
      */
-    public static byte[] 购买商城道具(Item item, int sn, int accid) {
+    public static byte[] 购买商城道具(Item item, int sn, int accid) { //
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CS_OPERATION.getValue());
         mplew.write(0x23);
-        addCashItemInfo(mplew, item, accid, sn);
-
+        // 53个字节
+        mplew.writeLong(item.getUniqueId() > 0 ? item.getUniqueId() : 0L);
+        mplew.writeInt(accid);
+        mplew.write(HexTool.getByteArrayFromHexString("01 01 01 01"));
+        mplew.writeInt(item.getItemId());
+        mplew.write(HexTool.getByteArrayFromHexString("01 01 01 01"));
+        mplew.writeShort(item.getQuantity()); // 26
+        mplew.writeAsciiString(item.getGiftFrom(), 13); // 39
+        PacketHelper.addExpirationTime(mplew, item.getExpiration()); // 47
+        mplew.write(HexTool.getByteArrayFromHexString("01 01 01 01")); // 51
+        mplew.writeShort(0); // 53
         return mplew.getPacket();
     }
 
@@ -557,21 +533,37 @@ public class MTSCSPacket {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(CashShopOpcode.商城到背包.getValue());
-        mplew.write(item.getQuantity());
-        mplew.writeShort(item.getPosition());
+        mplew.write(0x30);
+        mplew.writeShort(item.getType());
         PacketHelper.addItemInfo(mplew, item);
-        mplew.writeInt(0);
 
         return mplew.getPacket();
     }
 
+    /**
+     * CCashShop::OnCashItemResMoveStoLDone
+     * @param item
+     * @param accId
+     * @param sn
+     * @return
+     */
     public static byte[] 背包到商城(Item item, int accId, int sn) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(CashShopOpcode.背包到商城.getValue());
-        addCashItemInfo(mplew, item, accId, sn);
+        mplew.write(0x32);
+//        addCashItemInfo(mplew, item, accId, sn);
+        // @TODO 还是继续用addCashItemInfo
+        mplew.writeLong(item.getUniqueId() > 0 ? item.getUniqueId() : 0L);
+        mplew.writeInt(accId);
+        mplew.write(HexTool.getByteArrayFromHexString("01 01 01 01"));
+        mplew.writeInt(item.getItemId());
+        mplew.write(HexTool.getByteArrayFromHexString("01 01 01 01"));
+        mplew.writeShort(item.getQuantity());
+        mplew.writeAsciiString(item.getGiftFrom(), 13);
+        PacketHelper.addExpirationTime(mplew, item.getExpiration());
+        mplew.write(HexTool.getByteArrayFromHexString("01 01 01 01"));
+        mplew.writeShort(0);
 
         return mplew.getPacket();
     }
@@ -678,6 +670,7 @@ public class MTSCSPacket {
         mplew.writeAsciiString(item.getGiftFrom(), 13);
         PacketHelper.addExpirationTime(mplew, item.getExpiration());
         mplew.write(HexTool.getByteArrayFromHexString("01 01 01 01"));
+        mplew.writeShort(0);
         */
     }
 

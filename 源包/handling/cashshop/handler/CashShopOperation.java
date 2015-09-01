@@ -80,7 +80,7 @@ public class CashShopOperation {
         CashShopServer.getPlayerStorage().registerPlayer(chr);
         c.getSession().write(MTSCSPacket.warpchartoCS(c));
 
-//        c.getSession().write(MTSCSPacket.商城道具栏信息(c));
+        c.getSession().write(MTSCSPacket.商城道具栏信息(c));
         List gifts = chr.getCashInventory().loadGifts();
 //        c.getSession().write(MTSCSPacket.商城礼物信息(c, gifts));
 //        c.getSession().write(MTSCSPacket.商城购物车(c.getPlayer(), false));

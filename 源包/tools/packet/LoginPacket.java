@@ -340,7 +340,6 @@ public class LoginPacket {
         for (MapleCharacter chr : chars) {
             addCharEntry(mplew, chr);
         }
-//        mplew.writeLong(0);
         return mplew.getPacket();
     }
 
@@ -356,8 +355,6 @@ public class LoginPacket {
         mplew.write(SendPacketOpcode.ADD_NEW_CHAR_ENTRY.getValue());
         mplew.write(worked ? 0 : 1);
         addCharEntry(mplew, chr);
-        mplew.writeLong(0);
-        mplew.writeLong(0);
 
         return mplew.getPacket();
     }
