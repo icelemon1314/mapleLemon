@@ -8,7 +8,7 @@ public enum MapleStatInfo {
     PVPdamage(0),
     PVPdamageX(0),
     abnormalDamR(0),
-    acc(0), // ÃüÖĞ
+    acc(0), // å‘½ä¸­
     acc2dam(0),
     acc2mp(0),
     accR(0),
@@ -47,7 +47,7 @@ public enum MapleStatInfo {
     epad(0),
     epdd(0),
     er(0),
-    eva(0), // »Ø±Ü
+    eva(0), // å›é¿
     eva2hp(0),
     evaR(0),
     evaX(0),
@@ -120,7 +120,7 @@ public enum MapleStatInfo {
     lv2mdX(0),
     lv2pad(0),
     lv2pdX(0),
-    mad(0), // Ä§·¨Á¦
+    mad(0), // é­”æ³•åŠ›
     madX(0),
     mastery(0),
     mdR(0),
@@ -150,10 +150,10 @@ public enum MapleStatInfo {
     onActive(0),
     onHitHpRecoveryR(0),
     onHitMpRecoveryR(0),
-    pad(0), // ÎïÀí¹¥»÷Á¦
+    pad(0), // ç‰©ç†æ”»å‡»åŠ›
     padX(0),
     passivePlus(0),
-    pdd(0), // ÎïÀí·ÀÓùÁ¦
+    pdd(0), // ç‰©ç†é˜²å¾¡åŠ›
     pdd2dam(0),
     pdd2mdd(0),
     pdd2mdx(0),
@@ -170,7 +170,7 @@ public enum MapleStatInfo {
     range(0),
     reqGuildLevel(0),
     selfDestruction(0),
-    speed(0), // ÒÆ¶¯ËÙ¶È
+    speed(0), // ç§»åŠ¨é€Ÿåº¦
     speedMax(0),
     str(0),
     str2dex(0),
