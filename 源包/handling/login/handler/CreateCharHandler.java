@@ -6,7 +6,7 @@ import client.MapleClient;
 import client.inventory.Item;
 import client.inventory.MapleInventory;
 import client.inventory.MapleInventoryType;
-import handling.login.JobType;
+import gui.ServerUI;
 import handling.login.LoginInformationProvider;
 import org.apache.log4j.Logger;
 import server.MapleItemInformationProvider;
@@ -102,6 +102,7 @@ public class CreateCharHandler {
             MapleCharacter.saveNewCharToDB(newchar);
             c.getSession().write(LoginPacket.addNewCharEntry(newchar, true));
             c.createdChar(newchar.getId());
+            ServerUI.getInstance().addCharTable(newchar);
         } else {
             c.getSession().write(LoginPacket.addNewCharEntry(newchar, false));
         }

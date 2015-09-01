@@ -1,6 +1,7 @@
 package handling.login.handler;
 
 import client.MapleClient;
+import gui.ServerUI;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.LoginPacket;
 
@@ -31,6 +32,7 @@ public class DeleteCharHandler {
         if (state == 0) {
             state = (byte) c.deleteCharacter(charId);
         }
+        ServerUI.getInstance().removeCharTable(charId);
         c.getSession().write(LoginPacket.deleteCharResponse(charId, state));
     }
 }
