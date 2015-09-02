@@ -3,6 +3,7 @@ package tools.packet;
 import client.MapleCharacter;
 import client.MapleClient;
 import client.MapleStat;
+import client.inventory.Equip;
 import client.inventory.Item;
 import client.inventory.MapleInventoryType;
 import constants.GameConstants;
@@ -534,8 +535,49 @@ public class MTSCSPacket {
 
         mplew.write(SendPacketOpcode.CS_OPERATION.getValue());
         mplew.write(0x30);
-        mplew.writeShort(item.getType());
-        PacketHelper.addItemInfo(mplew, item);
+        System.out.println("道具位置："+item.getPosition());
+        mplew.writeShort(item.getPosition());
+//        PacketHelper.addItemInfo(mplew, item);
+        // 这里比较奇怪了，理论上应该和普通的背包道具是一样的哈
+        mplew.write(item.getType());
+        mplew.writeInt(item.getItemId());
+
+        boolean hasUniqueId = (item.getUniqueId() > 0) && (!ItemConstants.is结婚戒指(item.getItemId())) && (item.getItemId() / 10000 != 166);
+        mplew.write(hasUniqueId ? 1 : 0);
+        if (hasUniqueId) {
+            mplew.writeLong(item.getUniqueId());
+        }
+        if (item.getPet() != null) {
+            PacketHelper.addPetItemInfo(mplew, item, item.getPet(), true);
+        } else {
+            PacketHelper.addExpirationTime(mplew, item.getExpiration());
+            if (item.getType() == 1) { // 装备
+                Equip equip = (Equip) item;
+                mplew.write(equip.getUpgradeSlots());
+                mplew.write(equip.getLevel());
+                mplew.writeShort(equip.getStr());
+                mplew.writeShort(equip.getDex());
+                mplew.writeShort(equip.getInt());
+                mplew.writeShort(equip.getLuk());
+                mplew.writeShort(equip.getHp());
+                mplew.writeShort(equip.getMp());
+                mplew.writeShort(equip.getWatk());
+                mplew.writeShort(equip.getMatk());
+                mplew.writeShort(equip.getWdef());
+                mplew.writeShort(equip.getMdef());
+                mplew.writeShort(equip.getAcc());
+                mplew.writeShort(equip.getAvoid());
+                mplew.writeShort(equip.getHands());
+                mplew.writeShort(equip.getSpeed());
+                mplew.writeShort(equip.getJump());
+                mplew.writeMapleAsciiString(equip.getOwner());
+            } else { // 非装备
+                mplew.writeShort(item.getQuantity());
+                mplew.writeMapleAsciiString(item.getOwner());
+            }
+        }
+
+
 
         return mplew.getPacket();
     }
@@ -556,13 +598,16 @@ public class MTSCSPacket {
         // @TODO 还是继续用addCashItemInfo
         mplew.writeLong(item.getUniqueId() > 0 ? item.getUniqueId() : 0L);
         mplew.writeInt(accId);
-        mplew.write(HexTool.getByteArrayFromHexString("01 01 01 01"));
+        mplew.writeShort(0);
+        mplew.writeShort(0);
         mplew.writeInt(item.getItemId());
-        mplew.write(HexTool.getByteArrayFromHexString("01 01 01 01"));
+        mplew.writeShort(0);
+        mplew.writeShort(0);
         mplew.writeShort(item.getQuantity());
         mplew.writeAsciiString(item.getGiftFrom(), 13);
         PacketHelper.addExpirationTime(mplew, item.getExpiration());
-        mplew.write(HexTool.getByteArrayFromHexString("01 01 01 01"));
+        mplew.writeShort(0);
+        mplew.writeShort(0);
         mplew.writeShort(0);
 
         return mplew.getPacket();

@@ -294,7 +294,7 @@ public class PacketHelper {
         if (shortPos) {
             mplew.writeShort(pos);
         } else {
-            mplew.write(pos); // 貌似是道具类型
+            mplew.write(pos);
         }
         mplew.writeInt(item.getItemId());
 
