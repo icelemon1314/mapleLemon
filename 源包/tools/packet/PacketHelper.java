@@ -160,6 +160,7 @@ public class PacketHelper {
         }
         System.out.println("添加背包信息发包5");
         mplew.write(0);
+
         iv = chr.getInventory(MapleInventoryType.USE);
         mplew.write(chr.getInventory(MapleInventoryType.USE).getSlotLimit());
         for (Item item : iv.list()) {
@@ -271,14 +272,21 @@ public class PacketHelper {
 
     /**
      * 添加道具信息
+     * GW_ItemSlotBase::Decode
      * @param mplew
      * @param item
      */
-    public static void addItemInfo(MaplePacketLittleEndianWriter mplew, Item item) {
-        addItemInfo(mplew, item, false);
+    public static void addItemInfo(MaplePacketLittleEndianWriter mplew, Item item){
+        addItemInfo(mplew,item,false);
     }
 
-    public static void addItemInfo(MaplePacketLittleEndianWriter mplew, Item item,boolean shortPos) {
+    /**
+     * 添加道具信息
+     * @param mplew
+     * @param item
+     * @param isCreateItem 是否从外部获取道具，也就是道具操作为0时要使用
+     */
+    public static void addItemInfo(MaplePacketLittleEndianWriter mplew, Item item,boolean isCreateItem) {
         if (item == null) {
             mplew.write(0);
             return;
@@ -290,48 +298,57 @@ public class PacketHelper {
                 pos = (byte)(pos - 100);
             }
         }
-
-        if (shortPos) {
-            mplew.writeShort(pos);
-        } else {
+        if (isCreateItem == false)
             mplew.write(pos);
-        }
-        mplew.writeInt(item.getItemId());
-
-        boolean hasUniqueId = (item.getUniqueId() > 0) && (!ItemConstants.is结婚戒指(item.getItemId())) && (item.getItemId() / 10000 != 166);
-        mplew.write(hasUniqueId ? 1 : 0);
-        if (hasUniqueId) {
-            mplew.writeLong(item.getUniqueId());
-        }
         if (item.getPet() != null) {
-            addPetItemInfo(mplew, item, item.getPet(), true);
+            addPetItemInfo(mplew, item, item.getPet());
         } else {
-            addExpirationTime(mplew, item.getExpiration());
             if (item.getType() == 1) { // 装备
-                Equip equip = (Equip) item;
-                mplew.write(equip.getUpgradeSlots());
-                mplew.write(equip.getLevel());
-                mplew.writeShort(equip.getStr());
-                mplew.writeShort(equip.getDex());
-                mplew.writeShort(equip.getInt());
-                mplew.writeShort(equip.getLuk());
-                mplew.writeShort(equip.getHp());
-                mplew.writeShort(equip.getMp());
-                mplew.writeShort(equip.getWatk());
-                mplew.writeShort(equip.getMatk());
-                mplew.writeShort(equip.getWdef());
-                mplew.writeShort(equip.getMdef());
-                mplew.writeShort(equip.getAcc());
-                mplew.writeShort(equip.getAvoid());
-                mplew.writeShort(equip.getHands());
-                mplew.writeShort(equip.getSpeed());
-                mplew.writeShort(equip.getJump());
-                mplew.writeMapleAsciiString(equip.getOwner());
+                addEquipItemInfo(mplew, item);
             } else { // 非装备
-                mplew.writeShort(item.getQuantity());
-                mplew.writeMapleAsciiString(item.getOwner());
+                addOtherItemInfo(mplew, item); // 其它道具
+
             }
         }
+    }
+
+    /**
+     * 非装备
+     * @param mplew
+     * @param item
+     */
+    private static void addOtherItemInfo(MaplePacketLittleEndianWriter mplew, Item item) {
+        PacketHelper.addBaseItemHeader(mplew,item);
+        mplew.writeShort(item.getQuantity());
+        mplew.writeMapleAsciiString(item.getOwner());
+    }
+
+    /**
+     * 添加准备信息
+     * @param mplew
+     * @param item
+     */
+    private static void addEquipItemInfo(MaplePacketLittleEndianWriter mplew, Item item) {
+        PacketHelper.addBaseItemHeader(mplew,item);
+        Equip equip = (Equip) item;
+        mplew.write(equip.getUpgradeSlots());
+        mplew.write(equip.getLevel());
+        mplew.writeShort(equip.getStr());
+        mplew.writeShort(equip.getDex());
+        mplew.writeShort(equip.getInt());
+        mplew.writeShort(equip.getLuk());
+        mplew.writeShort(equip.getHp());
+        mplew.writeShort(equip.getMp());
+        mplew.writeShort(equip.getWatk());
+        mplew.writeShort(equip.getMatk());
+        mplew.writeShort(equip.getWdef());
+        mplew.writeShort(equip.getMdef());
+        mplew.writeShort(equip.getAcc());
+        mplew.writeShort(equip.getAvoid());
+        mplew.writeShort(equip.getHands());
+        mplew.writeShort(equip.getSpeed());
+        mplew.writeShort(equip.getJump());
+        mplew.writeMapleAsciiString(equip.getOwner());
     }
 
     public static void serializeMovementList(MaplePacketLittleEndianWriter lew, List<LifeMovementFragment> moves) {
@@ -403,16 +420,10 @@ public class PacketHelper {
      * @param mplew
      * @param item
      * @param pet
-     * @param active
      */
-    public static void addPetItemInfo(MaplePacketLittleEndianWriter mplew, Item item, MaplePet pet, boolean active) {
-        mplew.writeLong(pet.getPetItemId());
-        if (item == null) {
-            mplew.writeLong(getKoreanTimestamp((long) (System.currentTimeMillis() * 1.5D)));
-        } else {
-            addExpirationTime(mplew, item.getExpiration() <= System.currentTimeMillis() ? -1L : item.getExpiration());
-        }
-        mplew.writeAsciiString(pet.getName(), 13);
+    public static void addPetItemInfo(MaplePacketLittleEndianWriter mplew, Item item, MaplePet pet) {
+        PacketHelper.addBaseItemHeader(mplew,item);
+        mplew.writeAsciiString(pet.getName(), 0x13);
         mplew.write(pet.getLevel());
         mplew.writeShort(pet.getCloseness());
         mplew.write(pet.getFullness());
@@ -523,4 +534,20 @@ public class PacketHelper {
         }
     }
 
+    /**
+     * 通用道具头部信息
+     * CBaseItem::DecodeHeader
+     * @param mplew
+     * @param item
+     */
+    public static void addBaseItemHeader(MaplePacketLittleEndianWriter mplew,Item item) {
+        mplew.writeInt(item.getItemId());
+        if (item.getUniqueId() > 0) {
+            mplew.write(1);
+            mplew.writeLong(item.getUniqueId());
+        } else {
+            mplew.write(0);
+        }
+        PacketHelper.addExpirationTime(mplew, item.getExpiration());
+    }
 }

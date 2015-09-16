@@ -548,7 +548,7 @@ public class MTSCSPacket {
             mplew.writeLong(item.getUniqueId());
         }
         if (item.getPet() != null) {
-            PacketHelper.addPetItemInfo(mplew, item, item.getPet(), true);
+            PacketHelper.addPetItemInfo(mplew, item, item.getPet());
         } else {
             PacketHelper.addExpirationTime(mplew, item.getExpiration());
             if (item.getType() == 1) { // 装备

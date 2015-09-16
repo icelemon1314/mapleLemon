@@ -133,7 +133,6 @@ public enum RecvPacketOpcode implements WritableIntValueHolder {
     GIVE_FAME,
     CHAR_INFO_REQUEST,
     SPAWN_PET,
-    PET_AUTO_BUFF,
     CANCEL_DEBUFF,
     CHANGE_MAP_SPECIAL,
     UNK0A3,

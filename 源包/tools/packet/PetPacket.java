@@ -12,24 +12,26 @@ import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class PetPacket {
 
+    /**
+     * 召唤宠物更新道具栏道具状态
+     * @param pet
+     * @param item
+     * @param active
+     * @return
+     */
     public static byte[] updatePet(MaplePet pet, Item item, boolean active) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MODIFY_INVENTORY_ITEM.getValue());
         mplew.write(0);
-        mplew.write(2);
-        mplew.write(0);
+        mplew.write(1); // 道具数量+1？
+
         mplew.write(3);
-        mplew.write(5);
+        mplew.write(pet.getType()); // 1-5之间
+        mplew.writeShort(pet.getInventoryPosition()); // 位置
+
         mplew.writeShort(pet.getInventoryPosition());
-        mplew.write(0);
-        mplew.write(5);
-        mplew.writeShort(pet.getInventoryPosition());
-        mplew.write(3);
-        mplew.writeInt(pet.getPetItemId());
-        mplew.write(1);
-        mplew.writeLong(pet.getUniqueId());
-        PacketHelper.addPetItemInfo(mplew, item, pet, active);
+        PacketHelper.addItemInfo(mplew, item);
 
         return mplew.getPacket();
     }
@@ -86,15 +88,19 @@ public class PetPacket {
         mplew.writeInt(100);
     }
 
+    /**
+     * 宠物移动
+     * @param chrId
+     * @param slot
+     * @param startPos
+     * @param moves
+     * @return
+     */
     public static byte[] movePet(int chrId, int slot, Point startPos, List<LifeMovementFragment> moves) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MOVE_PET.getValue());
         mplew.writeInt(chrId);
-        mplew.writeInt(slot);
-        mplew.writeInt(0);
-        mplew.writePos(startPos);
-        mplew.writeInt(0);
         PacketHelper.serializeMovementList(mplew, moves);
 
         return mplew.getPacket();

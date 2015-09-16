@@ -1541,10 +1541,6 @@ public class InventoryHandler {
                 }
             } else if ((mapitem.getItemId() / 10000 != 291) && (MapleInventoryManipulator.checkSpace(c, (int) mapitem.getItemId(), mapitem.getItem().getQuantity(), mapitem.getItem().getOwner()))) {
                 System.out.println("拾取道具7");
-                if ((mapitem.getItem().getQuantity() >= 50) && (mapitem.getItemId() == 2340000)) {
-                    chr.dropMessage(5, "被监控道具了！");
-                    c.setMonitored(true);
-                }
                 MapleInventoryManipulator.addFromDrop(c, mapitem.getItem(), true/*, mapitem.getDropper() instanceof MapleMonster*/);
                 removeItem(chr, mapitem, ob);
             } else {

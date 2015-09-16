@@ -5444,6 +5444,12 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         spawnPet(slot, lead, true);
     }
 
+    /**
+     * 召唤宠物
+     * @param slot
+     * @param lead
+     * @param broadcast
+     */
     public void spawnPet(byte slot, boolean lead, boolean broadcast) {
         Item item = getInventory(MapleInventoryType.CASH).getItem((short) slot);
         if ((item == null) || (!ItemConstants.isPet(item.getItemId()))) {
@@ -5451,53 +5457,40 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             client.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
-        switch (item.getItemId()) {
-            case 5000028:
-            case 5000047:
-                MaplePet pet = MaplePet.createPet(item.getItemId() + 1, MapleInventoryIdentifier.getInstance());
-                if (pet == null) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(client, item.getItemId() + 1, (short) 1, item.getOwner(), pet, 90L, new StringBuilder().append("双击宠物获得: ").append(item.getItemId()).append(" 时间: ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                MapleInventoryManipulator.removeFromSlot(client, MapleInventoryType.CASH, (short) slot, (short) 1, false);
-                break;
-            default:
-                pet = item.getPet();
-                if ((pet == null) || ((item.getItemId() == 5000054) && (pet.getSecondsLeft() <= 0)) || ((item.getExpiration() != -1L) && (item.getExpiration() <= System.currentTimeMillis()))) {
-                    break;
-                }
-                if (getPetIndex(pet) != -1) {
-                    unequipSpawnPet(pet, true, false);
-                } else {
-                    int leadid = 8;
-                    if (((getSkillLevel(SkillFactory.getSkill(leadid)) == 0) || (getNoPets() == 3)) && (getSpawnPet(0) != null)) {
-                        unequipSpawnPet(getSpawnPet(0), false, false);
-                    } else if (lead && getSkillLevel(SkillFactory.getSkill(leadid)) > 0) {
-                    }
-                    Point pos = getPosition();
-                    pet.setPos(pos);
-                    try {
-                        pet.setFh(getMap().getFootholds().findBelow(pos).getId());
-                    } catch (NullPointerException e) {
-                        pet.setFh(0);
-                    }
-                    pet.setStance(0);
-                    pet.setSummoned(1); //let summoned be true..
-                    if (getSkillLevel(pet.getBuffSkill()) == 0) {
-                        pet.setBuffSkill(0);
-                    }
+        MaplePet pet = item.getPet();
+        if ((pet == null) || ((item.getExpiration() != -1L) && (item.getExpiration() <= System.currentTimeMillis()))) {
+            client.getSession().write(MaplePacketCreator.enableActions());
+            return;
+        }
+        if (getPetIndex(pet) != -1) {
+            unequipSpawnPet(pet, true, false);
+        } else {
+            int leadid = 8;
+            if (((getSkillLevel(SkillFactory.getSkill(leadid)) == 0) || (getNoPets() == 3)) && (getSpawnPet(0) != null)) {
+                unequipSpawnPet(getSpawnPet(0), false, false);
+            } else if (lead && getSkillLevel(SkillFactory.getSkill(leadid)) > 0) {
+            }
+            Point pos = getPosition();
+            pet.setPos(pos);
+            try {
+                pet.setFh(getMap().getFootholds().findBelow(pos).getId());
+            } catch (NullPointerException e) {
+                pet.setFh(0);
+            }
+            pet.setStance(0);
+            pet.setSummoned(1); //let summoned be true..
+            if (getSkillLevel(pet.getBuffSkill()) == 0) {
+                pet.setBuffSkill(0);
+            }
 //                    pet.setCanPickup(getIntRecord(122902) > 0);
-                    pet.setCanPickup(true);
-                    addSpawnPet(pet);
-                    if (getMap() != null) {
-                        client.getSession().write(PetPacket.updatePet(pet, getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
-                        getMap().broadcastMessage(this, PetPacket.showPet(this, pet, false, false), true);
-                        client.getSession().write(PetPacket.loadExceptionList(this, pet));
-                        client.getSession().write(PetPacket.petStatUpdate(this));
-                        checkPetSkill();
-                    }
-                }
-                break;
+            pet.setCanPickup(true);
+            addSpawnPet(pet);
+            if (getMap() != null) {
+                client.getSession().write(PetPacket.updatePet(pet, getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
+                getMap().broadcastMessage(this, PetPacket.showPet(this, pet, false, false), true);
+//                client.getSession().write(PetPacket.loadExceptionList(this, pet));
+//                client.getSession().write(PetPacket.petStatUpdate(this));
+            }
         }
         client.getSession().write(MaplePacketCreator.enableActions());
     }
@@ -5512,64 +5505,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             this.map.broadcastMessage(this, PetPacket.showPet(this, pet, true, hunger), true);
         }
         removeSpawnPet(pet, shiftLeft);
-        checkPetSkill();
 
         this.client.getSession().write(MaplePacketCreator.enableActions());
     }
 
-    public void checkPetSkill() {
-        Map setHandling = new HashMap();
-        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        for (int i = 0; i < 3; i++) {
-            if (this.spawnPets[i] != null) {
-                int set = ii.getPetSetItemID(this.spawnPets[i].getPetItemId());
-                if (set > 0) {
-                    int value = 1;
-                    if (setHandling.containsKey(set)) {
-                        value += ((Integer) setHandling.get(set));
-                    }
-                    setHandling.put(set, value);
-                }
-            }
-        }
-        if (setHandling.isEmpty()) {
-            Map<String, Integer> chrSkill = new HashMap(getSkills());
-            Map petSkill = new HashMap();
-            for (Map.Entry skill : chrSkill.entrySet()) {
-                if (((Skill) skill.getKey()).isPetPassive()) {
-                    petSkill.put(skill.getKey(), new SkillEntry(0, (byte) 0, -1L));
-                }
-            }
-            if (!petSkill.isEmpty()) {
-                changePetSkillLevel(petSkill);
-            }
-            return;
-        }
-        Map petSkillData = new HashMap();
-        Iterator iter = setHandling.entrySet().iterator();
-        Map.Entry entry;
-        while (iter.hasNext()) {
-            entry = (Map.Entry) iter.next();
-            StructSetItem setItem = ii.getSetItem(((Integer) entry.getKey()).intValue());
-            if (setItem != null) {
-                Map<Integer, StructSetItemStat> setItemStats = setItem.getSetItemStats();
-                for (Entry<Integer, StructSetItemStat> ent : setItemStats.entrySet()) {
-                    StructSetItemStat setItemStat = (StructSetItemStat) ent.getValue();
-                    if ((ent.getKey()) <= ((Integer) entry.getValue())) {
-                        if ((setItemStat.skillId > 0) && (setItemStat.skillLevel > 0) && (getSkillLevel(setItemStat.skillId) <= 0)) {
-                            petSkillData.put(SkillFactory.getSkill(setItemStat.skillId), new SkillEntry((byte) setItemStat.skillLevel, (byte) 0, -1L));
-                        }
-                    } else if ((setItemStat.skillId > 0) && (setItemStat.skillLevel > 0) && (getSkillLevel(setItemStat.skillId) > 0)) {
-                        petSkillData.put(SkillFactory.getSkill(setItemStat.skillId), new SkillEntry(0, (byte) 0, -1L));
-                    }
-                }
-            }
-        }
 
-        if (!petSkillData.isEmpty()) {
-            changePetSkillLevel(petSkillData);
-        }
-    }
 
     public long getLastFameTime() {
         return this.lastfametime;

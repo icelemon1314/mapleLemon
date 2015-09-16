@@ -714,9 +714,6 @@ public class MapleServerHandler extends IoHandlerAdapter {
             case SPAWN_PET:
                 PetHandler.SpawnPet(slea, c, c.getPlayer());
                 break;
-            case PET_AUTO_BUFF:
-                PetHandler.Pet_AutoBuff(slea, c, c.getPlayer());
-                break;
             case MOVE_PET:
                 PetHandler.MovePet(slea, c.getPlayer());
                 break;

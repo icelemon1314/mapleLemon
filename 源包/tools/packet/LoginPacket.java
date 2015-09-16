@@ -404,7 +404,6 @@ public class LoginPacket {
 
             byte pos = (byte) (item.getPosition() * -1);
             if ((pos < 100) && (myEquip.get(pos) == null)) {
-                Equip skin = (Equip) item;
                 myEquip.put(pos, item.getItemId());
             } else if (((pos > 100) || (pos == -128)) && (pos != 111)) {
                 pos = (byte) (pos == -128 ? 28 : pos - 100);

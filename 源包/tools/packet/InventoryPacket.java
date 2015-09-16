@@ -56,9 +56,11 @@ public class InventoryPacket {
             mplew.write(0);
         }
         mplew.write(1); // update
+
         mplew.write(1);
         mplew.write(type.getType()); // iv type
         mplew.writeShort(item.getPosition()); // slot id
+
         mplew.writeShort(item.getQuantity());
         return mplew.getPacket();
     }
@@ -68,6 +70,7 @@ public class InventoryPacket {
         mplew.write(SendPacketOpcode.MODIFY_INVENTORY_ITEM.getValue());
         mplew.write(fromDrop ? 1 : 0);
         mplew.write(1);
+
         mplew.write(3);
         mplew.write(type.getType());
         mplew.writeShort(slot);
@@ -95,11 +98,14 @@ public class InventoryPacket {
         } else {
             mplew.write(0); // 0
         }
-        mplew.write(1);
+        mplew.write(1); // 道具个数？
+
         mplew.write(0);
         mplew.write(type.getType()); // iv type
+        mplew.writeShort(item.getPosition());
+
         PacketHelper.addItemInfo(mplew, item,true);
-        mplew.writeLong(0);
+
         return mplew.getPacket();
     }
 
@@ -107,20 +113,52 @@ public class InventoryPacket {
         return moveInventoryItem(type, src, dst, (byte) -1);
     }
 
+    /**
+     * 移动道具
+     * @param type
+     * @param src
+     * @param dst
+     * @param equipIndicator
+     * @return
+     */
     public static byte[] moveInventoryItem(MapleInventoryType type, byte src, byte dst, byte equipIndicator) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.MODIFY_INVENTORY_ITEM.getValue());
         mplew.write(1);
         mplew.write(1);
+
         mplew.write(2);
         mplew.write(type.getType());
         mplew.writeShort(src);
+
         mplew.writeShort(dst);
         if (equipIndicator != -1) {
             mplew.write(equipIndicator);
         }
         return mplew.getPacket();
     }
+
+    /**
+     * 添加道具到背包中
+     * @param item
+     * @return
+     */
+    public static byte[] addItemToInventory(Item item){
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        // 17 01 01 03 01 00 06 01 00
+        mplew.write(SendPacketOpcode.MODIFY_INVENTORY_ITEM.getValue());
+        mplew.write(1);
+        mplew.write(1);
+
+        mplew.write(0); // 添加道具
+        mplew.write(item.getType());
+        mplew.writeShort(item.getQuantity());
+
+        PacketHelper.addItemInfo(mplew, item,true);
+        return mplew.getPacket();
+    }
+
+
     /**
      * 道具栏信息变更
      * @param updateTick
@@ -135,16 +173,22 @@ public class InventoryPacket {
         for (ModifyInventory mod : mods) {
             mplew.write(1);
             mplew.write(1);
+
             mplew.write(mod.getMode());
             mplew.write(mod.getInventoryType());
             System.out.println("道具模式："+mod.getMode());
             switch (mod.getMode()) { // @TODO 这个地方真恶心
-                case 0: // 拾取道具
-                    PacketHelper.addItemInfo(mplew, mod.getItem(),true);
+                case 1: // 拾取道具
+                    mplew.writeShort(mod.getPosition());
+                    mplew.writeShort(mod.getItem().getQuantity());
+                    PacketHelper.addItemInfo(mplew, mod.getItem());
                     break;
-                case 2: // 穿脱装备
+                case 2: // 移动道具
                     mplew.writeShort(mod.getOldPosition());
                     mplew.writeShort(mod.getPosition());
+                    if (mod.getInventoryType() == 1) {
+                        mplew.write(1);
+                    }
                     break;
                 case 3:// 丢道具
                     mplew.writeShort(mod.getOldPosition());
@@ -152,22 +196,8 @@ public class InventoryPacket {
                         mplew.write(1);
                     }
                     break;
-                case 5:
-                    mplew.writeShort(!mod.switchSrcDst() ? mod.getPosition() : mod.getOldPosition());
-                    if (mod.getIndicator() == -1) {
-                        break;
-                    }
-                    mplew.writeShort(mod.getIndicator());
-                    break;
-                case 8:
-                    mplew.writeShort(mod.getPosition());
-                    break;
-                case 9:
-                    PacketHelper.addItemInfo(mplew, mod.getItem());
                 default:
-                    mplew.write(0); // ?
-                    mplew.write(mod.getPosition());
-                    mplew.writeShort(mod.getQuantity());
+                    System.out.println("未知的模式："+mod.getMode());
             }
             mod.clear();
         }
@@ -240,10 +270,6 @@ public class InventoryPacket {
      * 砸卷结果
      * @param chrId
      * @param scrollSuccess
-     * @param legendarySpirit
-     * @param whiteScroll
-     * @param scroll
-     * @param toScroll
      * @return
      */
     public static byte[] getScrollEffect(int chrId, Equip.ScrollResult scrollSuccess) {

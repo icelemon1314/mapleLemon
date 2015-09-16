@@ -27,7 +27,6 @@ import tools.packet.PetPacket;
 public class PetHandler {
 
     public static void SpawnPet(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        chr.updateTick(slea.readInt());
         chr.spawnPet(slea.readByte(), slea.readByte() > 0);
     }
 
@@ -208,6 +207,11 @@ public class PetHandler {
         c.getSession().write(MaplePacketCreator.enableActions());
     }
 
+    /**
+     * 宠物移动
+     * @param slea
+     * @param chr
+     */
     public static void MovePet(SeekableLittleEndianAccessor slea, MapleCharacter chr) {
         int petSlot = slea.readInt();
         slea.skip(1);
