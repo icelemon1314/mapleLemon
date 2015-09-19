@@ -885,12 +885,21 @@ public class MTSCSPacket {
         return mplew.getPacket();
     }
 
+    /**
+     * 使用金币包失败
+     * @return
+     */
     public static byte[] sendMesobagFailed() {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.MESOBAG_FAILURE.getValue());
         return mplew.getPacket();
     }
 
+    /**
+     * 使用金币包成功
+     * @param mesos
+     * @return
+     */
     public static byte[] sendMesobagSuccess(int mesos) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.MESOBAG_SUCCESS.getValue());

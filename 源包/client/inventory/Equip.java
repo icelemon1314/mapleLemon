@@ -512,6 +512,6 @@ public class Equip extends Item implements Serializable {
 
     public static enum ScrollResult {
 
-        失败, 成功, 消失;
+        失败, 成功;
     }
 }

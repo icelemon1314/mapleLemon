@@ -125,9 +125,6 @@ public class ItemScrollHandler {
         System.out.println("砸卷4444");
         Equip scrolled = (Equip) ii.scrollEquipWithId(toScroll, scroll, false, chr, vegas);
         Equip.ScrollResult scrollSuccess;
-        if (scrolled == null) {
-            scrollSuccess = Equip.ScrollResult.消失;
-        } else {
             //  Equip.ScrollResult scrollSuccess;
             if ((scrolled.getUpgradeSlots() > oldSlots)) {
                 scrollSuccess = Equip.ScrollResult.成功;
@@ -148,7 +145,6 @@ public class ItemScrollHandler {
 //                scrolled.addFlag((short) ItemFlag.CRAFTED.getValue());
 //                scrolled.setOwner(chr.getName());
 //            }
-        }
         System.out.println("砸卷5555");
         chr.getInventory(ItemConstants.getInventoryType(scroll.getItemId())).removeItem(scroll.getPosition(), (short) 1, false);
        if ((scrollSuccess == Equip.ScrollResult.失败) && (scrolled.getUpgradeSlots() < oldSlots) && (chr.getInventory(MapleInventoryType.CASH).findById(5640000) != null)) {
@@ -157,18 +153,10 @@ public class ItemScrollHandler {
                 c.getSession().write(MaplePacketCreator.pamSongUI());
             }
         }
-        System.out.println("砸卷666");
-        if (scrollSuccess == Equip.ScrollResult.消失) {
-            if (dst < 0) {
-                chr.getInventory(MapleInventoryType.EQUIPPED).removeItem(toScroll.getPosition());
-            } else {
-                chr.getInventory(MapleInventoryType.EQUIP).removeItem(toScroll.getPosition());
-            }
-        }
         System.out.println("砸卷7777"+vegas);
         c.getSession().write(InventoryPacket.updateInventorySlot(ItemConstants.getInventoryType(scroll.getItemId()), scroll, true));
         chr.getMap().broadcastMessage(chr, InventoryPacket.getScrollEffect(chr.getId(), scrollSuccess), vegas == 0);
-        if ((dst < 0) && ((scrollSuccess == Equip.ScrollResult.成功) || (scrollSuccess == Equip.ScrollResult.消失)) && (vegas == 0)) {
+        if ((dst < 0) && ((scrollSuccess == Equip.ScrollResult.成功)) && (vegas == 0)) {
             chr.equipChanged();
         }
         return scrollSuccess == Equip.ScrollResult.成功;

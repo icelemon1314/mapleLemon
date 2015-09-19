@@ -214,6 +214,14 @@ public class NPCPacket {
         return sendNPCSay(npc,talk,false,false);
     }
 
+    /**
+     * NPC说话
+     * @param npc
+     * @param talk
+     * @param pre
+     * @param next
+     * @return
+     */
     public static byte[] sendNPCSay(int npc,String talk,boolean pre,boolean next) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         baseScriptMan(mplew,npc,(byte)0);
@@ -230,6 +238,12 @@ public class NPCPacket {
         return mplew.getPacket();
     }
 
+    /**
+     * NPC询问玩家做选择
+     * @param npc
+     * @param talk
+     * @return
+     */
     public static byte[] sendNPCAskYesNo(int npc,String talk) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         baseScriptMan(mplew,npc,(byte)1);
@@ -239,18 +253,33 @@ public class NPCPacket {
         return mplew.getPacket();
     }
 
+    /**
+     * NPC显示询问文本
+     * @param npc
+     * @param talk
+     * @return
+     */
     public static byte[] sendNPCAskText(int npc,String talk) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         baseScriptMan(mplew,npc,(byte)2);
 
         mplew.writeMapleAsciiString(talk);
-        mplew.writeMapleAsciiString("what?"); // def
+        mplew.writeMapleAsciiString("什么？"); // def
         mplew.writeShort(0); // min
         mplew.writeShort(0); // max
 
         return mplew.getPacket();
     }
 
+    /**
+     * NPC显示数字
+     * @param npc
+     * @param talk
+     * @param def
+     * @param min
+     * @param max
+     * @return
+     */
     public static byte[] sendNPCAskNumber(int npc,String talk,int def,int min,int max) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         baseScriptMan(mplew,npc,(byte)3);
@@ -263,6 +292,12 @@ public class NPCPacket {
         return mplew.getPacket();
     }
 
+    /**
+     * NPC显示菜单
+     * @param npc
+     * @param talk
+     * @return
+     */
     public static byte[] sendNPCAskMenu(int npc,String talk) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         baseScriptMan(mplew,npc,(byte)4);
@@ -272,6 +307,12 @@ public class NPCPacket {
         return mplew.getPacket();
     }
 
+    /**
+     * NPC显示宠物信息
+     * @param npc
+     * @param talk
+     * @return
+     */
     public static byte[] sendNPCAskPet(int npc,String talk) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         baseScriptMan(mplew,npc,(byte)5);
@@ -283,13 +324,19 @@ public class NPCPacket {
         return mplew.getPacket();
     }
 
+    /**
+     * NPC显示所有宠物
+     * @param npc
+     * @param talk
+     * @return
+     */
     public static byte[] sendNPCAskPetAll(int npc,String talk) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         baseScriptMan(mplew,npc,(byte)6);
 
         mplew.writeMapleAsciiString(talk);
         mplew.write(0); // 宠物个数
-//        mplew.writeLong(5000000); // sn ?
+//        mplew.writeLong(5000000); // sn
 //        mplew.write(0);
 
         return mplew.getPacket();

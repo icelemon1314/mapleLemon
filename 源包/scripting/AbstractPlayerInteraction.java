@@ -548,7 +548,6 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void gainFame(int famechange, boolean show) {
-        this.c.getPlayer().gainFame(famechange, show);
     }
 
     public int getNX(int type) {
@@ -1068,10 +1067,10 @@ public abstract class AbstractPlayerInteraction {
         SkillFactory.getSkill(skillId).getEffect(skillLevel).applyTo(this.c.getPlayer());
     }
 
-    public void useItem(int itemId) {
-        MapleItemInformationProvider.getInstance().getItemEffect(itemId).applyTo(this.c.getPlayer());
-        this.c.getSession().write(UIPacket.getStatusMsg(itemId));
-    }
+//    public void useItem(int itemId) {
+//        MapleItemInformationProvider.getInstance().getItemEffect(itemId).applyTo(this.c.getPlayer());
+//        this.c.getSession().write(UIPacket.getStatusMsg(itemId));
+//    }
 
     public void cancelItem(int itemId) {
         this.c.getPlayer().cancelEffect(MapleItemInformationProvider.getInstance().getItemEffect(itemId), false, -1L);

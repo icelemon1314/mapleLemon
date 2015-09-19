@@ -227,16 +227,6 @@ public class MapleQuestAction implements Serializable {
                 }
                 chr.changeSkillsLevel(list);
                 break;
-            case pop:
-                status = chr.getQuest(this.quest);
-                if (status.getForfeited() > 0) {
-                    break;
-                }
-                int fameGain = this.intStore;
-                chr.addFame(fameGain);
-                chr.updateSingleStat(MapleStat.人气, chr.getFame());
-                chr.getClient().getSession().write(MaplePacketCreator.getShowFameGain(fameGain));
-                break;
             case buffItemID:
                 status = chr.getQuest(this.quest);
                 if (status.getForfeited() > 0) {
@@ -469,12 +459,6 @@ public class MapleQuestAction implements Serializable {
                     }
                 }
                 chr.changeSkillsLevel(list);
-                break;
-            case pop:
-                int fameGain = this.intStore;
-                chr.addFame(fameGain);
-                chr.updateSingleStat(MapleStat.人气, chr.getFame());
-                chr.getClient().getSession().write(MaplePacketCreator.getShowFameGain(fameGain));
                 break;
             case buffItemID:
                 int tobuff = this.intStore;

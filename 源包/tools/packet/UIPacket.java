@@ -22,59 +22,6 @@ public class UIPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] getSPMsg(byte sp, short job) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
-        mplew.write(4);
-        mplew.writeShort(job);
-        mplew.write(sp);
-        mplew.writeZero(3);//120++
-        return mplew.getPacket();
-    }
-
-    public static byte[] getGPMsg(int itemid) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
-        mplew.write(7);
-        mplew.writeInt(itemid);
-        mplew.writeZero(3);//120++
-        return mplew.getPacket();
-    }
-
-    public static byte[] getBPMsg(int amount) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
-        mplew.write(0x17);
-        mplew.writeInt(amount);
-        mplew.writeZero(3);//120++
-        return mplew.getPacket();
-    }
-
-    public static byte[] getGPContribution(int itemid) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
-        mplew.write(8);
-        mplew.writeInt(itemid);
-        mplew.writeZero(3);//120++
-        return mplew.getPacket();
-    }
-
     public static byte[] getTopMsg(String msg) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -100,19 +47,6 @@ public class UIPacket {
 
         mplew.write(SendPacketOpcode.CLEAR_MID_MSG.getValue());
 
-        return mplew.getPacket();
-    }
-
-    public static byte[] getStatusMsg(int itemid) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
-        mplew.write(9);
-        mplew.writeInt(itemid);
-        mplew.writeZero(3);//120++
         return mplew.getPacket();
     }
 

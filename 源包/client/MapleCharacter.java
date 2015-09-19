@@ -2955,14 +2955,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         updateSingleStat(MapleStat.人气, this.fame);
     }
 
-    public void gainFame(int famechange, boolean show) {
-        this.fame += famechange;
-        updateSingleStat(MapleStat.人气, this.fame);
-        if ((show) && (famechange != 0)) {
-            this.client.getSession().write(MaplePacketCreator.getShowFameGain(famechange));
-        }
-    }
-
     public void updateHair(int hair) {
         setHair(hair);
         updateSingleStat(MapleStat.发型, hair);
@@ -3556,13 +3548,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void gainSP(int sp) {
         this.remainingSp += sp;
         updateSingleStat(MapleStat.AVAILABLESP, 0L);
-        this.client.getSession().write(UIPacket.getSPMsg((byte) sp, this.job));
     }
 
     public void gainSP(int sp, int skillbook) {
         this.remainingSp += sp;
         updateSingleStat(MapleStat.AVAILABLESP, 0L);
-        this.client.getSession().write(UIPacket.getSPMsg((byte) sp, (short) 0));
     }
 
     public void resetSP(int sp) {
@@ -4286,7 +4276,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
         if (!this.pendingSkills.isEmpty()) {
             this.client.getSession().write(MaplePacketCreator.updateSkills(this.pendingSkills));
-            this.client.getSession().write(MaplePacketCreator.showSkillExpired(this.pendingSkills));
+//            this.client.getSession().write(MaplePacketCreator.showSkillExpired(this.pendingSkills));
         }
         this.pendingSkills = null;
         this.lastExpirationTime = System.currentTimeMillis();
@@ -6117,19 +6107,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void deleteNote(int id, int fame) {
         try {
             Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT gift FROM notes WHERE `id`=?");
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if ((rs.next())
-                    && (rs.getInt("gift") == fame) && (fame > 0)) {
-                addFame(fame);
-                updateSingleStat(MapleStat.人气, getFame());
-                this.client.getSession().write(MaplePacketCreator.getShowFameGain(fame));
-            }
-
-            rs.close();
-            ps.close();
-            ps = con.prepareStatement("DELETE FROM notes WHERE `id`=?");
+            PreparedStatement ps = con.prepareStatement("DELETE FROM notes WHERE `id`=?");
             ps.setInt(1, id);
             ps.execute();
             ps.close();
@@ -6809,7 +6787,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
         if (getGuildId() > 0) {
             WorldGuildService.getInstance().gainGP(getGuildId(), 20, this.id);
-            this.client.getSession().write(UIPacket.getGPContribution(20));
         }
         startFairySchedule(false, true);
     }

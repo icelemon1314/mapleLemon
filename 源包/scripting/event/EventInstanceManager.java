@@ -893,7 +893,6 @@ public class EventInstanceManager {
 
     public void applyBuff(MapleCharacter chr, int id) {
         MapleItemInformationProvider.getInstance().getItemEffect(id).applyTo(chr);
-        chr.getClient().getSession().write(UIPacket.getStatusMsg(id));
     }
 
     public void applySkill(MapleCharacter chr, int id) {

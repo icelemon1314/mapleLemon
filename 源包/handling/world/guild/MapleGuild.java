@@ -906,9 +906,6 @@ public class MapleGuild
         this.gp += amount;
         this.level = calculateLevel();
         broadcast(GuildPacket.updateGP(this.id, this.gp, this.level));
-        if (broadcast) {
-            broadcast(UIPacket.getGPMsg(amount));
-        }
     }
 
     public int getLevel() {
