@@ -217,7 +217,6 @@ public enum RecvPacketOpcode implements WritableIntValueHolder {
     USE_JIANRENZHIBI,
     DISTRIBUTE_HYPER_SP,
     RESET_HYPER_SP,
-    CHAR_INFO,
     MOVE_PET,
     PET_CHAT,
     PET_COMMAND,

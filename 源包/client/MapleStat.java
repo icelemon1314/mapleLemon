@@ -6,7 +6,7 @@ package client;
  */
 public enum MapleStat {
 
-    皮肤(0x1,1),
+    皮肤(0x1,1), // 人物属性基址，每个基址的长度
     脸型(0x2,4),
     发型(0x4,4),
     宠物(0x8,8),

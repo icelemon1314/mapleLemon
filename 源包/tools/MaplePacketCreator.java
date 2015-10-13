@@ -226,18 +226,23 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
+    /**
+     * 召唤传送口
+     * @param townId
+     * @param targetId
+     * @param skillId
+     * @param pos
+     * @return
+     */
     public static byte[] spawnPortal(int townId, int targetId, int skillId, Point pos) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SPAWN_PORTAL.getValue());
         mplew.writeInt(townId);
         mplew.writeInt(targetId);
         if ((townId != 999999999) && (targetId != 999999999)) {
-            mplew.writeInt(skillId);
-            mplew.writePos(pos);
+            mplew.writeShort(pos.x);
+            mplew.writeShort(pos.y);
         }
 
         return mplew.getPacket();
@@ -1136,6 +1141,12 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
+    /**
+     * 观察人物信息
+     * @param chr
+     * @param isSelf
+     * @return
+     */
     public static byte[] charInfo(MapleCharacter chr, boolean isSelf) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1159,7 +1170,7 @@ public class MaplePacketCreator {
             mplew.writeAsciiString(mRing.getPartnerName(), 13);
         }
         */
-        MaplePet pet = chr.getSpawnPet(0);
+        MaplePet pet = chr.getSpawnPet();
         mplew.write(pet != null ? 1 : 0);
         if (pet != null) {
             mplew.writeInt(pet.getPetItemId());
@@ -1170,8 +1181,8 @@ public class MaplePacketCreator {
             mplew.writeInt(0);
         }
 
-        mplew.write(0); // wishlist
-        mplew.writeLong(0); // ring
+        mplew.write(0); // wishlist 4*size
+//        mplew.writeLong(0); // ring
         return mplew.getPacket();
     }
 
@@ -1497,18 +1508,30 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
+    /**
+     * 给玩家增加人气
+     * @param mode
+     * @param charname
+     * @param newfame
+     * @return
+     */
     public static byte[] giveFameResponse(int mode, String charname, int newfame) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.FAME_RESPONSE.getValue());
         mplew.write(0);
         mplew.writeMapleAsciiString(charname);
-        mplew.write(mode);
+        mplew.write(mode); // 1-增加 0-降低
         mplew.writeInt(newfame);
 
         return mplew.getPacket();
     }
 
+    /**
+     * 人气操作失败
+     * @param status
+     * @return
+     */
     public static byte[] giveFameErrorResponse(int status) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1518,13 +1541,19 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
+    /**
+     * 收到人气数据
+     * @param mode
+     * @param charnameFrom
+     * @return
+     */
     public static byte[] receiveFame(int mode, String charnameFrom) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.FAME_RESPONSE.getValue());
         mplew.write(5);
         mplew.writeMapleAsciiString(charnameFrom);
-        mplew.write(mode);
+        mplew.write(mode); // 0-降低 1-增加
 
         return mplew.getPacket();
     }

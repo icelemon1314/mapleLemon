@@ -1085,7 +1085,7 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void gainCloseness(int closeness, int index) {
-        MaplePet pet = getPlayer().getSpawnPet(index);
+        MaplePet pet = getPlayer().getSpawnPet();
         if (pet != null) {
             pet.setCloseness(pet.getCloseness() + closeness * getChannelServer().getTraitRate());
             getClient().getSession().write(PetPacket.updatePet(pet, getPlayer().getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
@@ -1093,12 +1093,10 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void gainClosenessAll(int closeness) {
-        MaplePet[] pets = getPlayer().getSpawnPets();
-        for (int i = 0; i < 3; i++) {
-            if ((pets[i] != null) && (pets[i].getSummoned())) {
-                pets[i].setCloseness(pets[i].getCloseness() + closeness);
-                getClient().getSession().write(PetPacket.updatePet(pets[i], getPlayer().getInventory(MapleInventoryType.CASH).getItem((short) (byte) pets[i].getInventoryPosition()), false));
-            }
+        MaplePet pets = getPlayer().getSpawnPets();
+        if ((pets != null) && (pets.getSummoned())) {
+            pets.setCloseness(pets.getCloseness() + closeness);
+            getClient().getSession().write(PetPacket.updatePet(pets, getPlayer().getInventory(MapleInventoryType.CASH).getItem((short) (byte) pets.getInventoryPosition()), false));
         }
     }
 

@@ -210,7 +210,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private List<Integer> lastmonthfameids;
     private List<MapleDoor> doors;
     private List<MechDoor> mechDoors;
-    private final MaplePet[] spawnPets;
+    private MaplePet spawnPets;
     private MapleImp[] imps;
     private transient Set<MapleMonster> controlled;
     private transient Set<MapleMapObject> visibleMapObjects;
@@ -243,7 +243,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private MapleMount mount;
     private List<Integer> finishedAchievements;
     private MapleMessenger messenger;
-    private byte[] petStore;
+    private byte petStore;
     private transient IMaplePlayerShop playerShop;
     private boolean invincible;
     private boolean canTalk;
@@ -377,7 +377,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.skills = new LinkedHashMap();
         this.stats = new PlayerStats();
         this.remainingSp = 0;
-        this.spawnPets = new MaplePet[3];
+        this.spawnPets = new MaplePet();
         if (ChannelServer) {
             isSaveing = false;
             changed_achievements = false;
@@ -432,10 +432,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             finishedAchievements = new ArrayList();
             teleportname = "";
             smega = true;
-            petStore = new byte[3];
-            for (int i = 0; i < petStore.length; i++) {
-                petStore[i] = -1;
-            }
+            petStore = -1;
             wishlist = new int[12];
             rocks = new int[10];
             regrocks = new int[5];
@@ -781,10 +778,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                         ret.party = party;
                     }
                 }
-                String[] pets = rs.getString("pets").split(",");
-                for (int i = 0; i < ret.petStore.length; i++) {
-                    ret.petStore[i] = Byte.parseByte(pets[i]);
-                }
+                String pets = rs.getString("pets");
+                ret.petStore = Byte.parseByte(pets);
                 psd = con.prepareStatement("SELECT * FROM achievements WHERE accountid = ?");
                 psd.setInt(1, ret.accountid);
                 rsd = psd.executeQuery();
@@ -1329,17 +1324,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ps.setInt(24, this.party == null ? -1 : this.party.getId());
             ps.setShort(25, (short) this.buddylist.getCapacity());
             StringBuilder petz = new StringBuilder();
-            for (int i = 0; i < 3; i++) {
-                if ((this.spawnPets[i] != null) && (this.spawnPets[i].getSummoned())) {
-                    this.spawnPets[i].saveToDb();
-                    petz.append(this.spawnPets[i].getInventoryPosition());
-                    petz.append(",");
-                } else {
-                    petz.append("-1,");
-                }
+            if ((this.spawnPets != null) && (this.spawnPets.getSummoned())) {
+                this.spawnPets.saveToDb();
+                petz.append(this.spawnPets.getInventoryPosition());
+            } else {
+                petz.append("-1");
             }
-            String petstring = petz.toString();
-            ps.setString(26, petstring.substring(0, petstring.length() - 1));
+            ps.setString(26, petz.toString());
             ps.setByte(27, this.subcategory);
             ps.setInt(28, this.marriageId);
             ps.setInt(29, this.currentrep);
@@ -5327,108 +5318,44 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return ret;
     }
 
-    public MaplePet[] getSpawnPets() {
+    public MaplePet getSpawnPets() {
         return this.spawnPets;
     }
 
-    public MaplePet getSpawnPet(int index) {
-        return this.spawnPets[index];
+    public MaplePet getSpawnPet() {
+        return this.spawnPets;
     }
 
-    public byte getPetIndex(int petId) {
-        for (byte i = 0; i < 3; i = (byte) (i + 1)) {
-            if ((this.spawnPets[i] != null)
-                    && (this.spawnPets[i].getUniqueId() == petId)) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    public byte getPetIndex(MaplePet pet) {
-        for (byte i = 0; i < 3; i = (byte) (i + 1)) {
-            if ((this.spawnPets[i] != null)
-                    && (this.spawnPets[i].getUniqueId() == pet.getUniqueId())) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    public byte getPetByItemId(int petItemId) {
-        for (byte i = 0; i < 3; i = (byte) (i + 1)) {
-            if ((this.spawnPets[i] != null)
-                    && (this.spawnPets[i].getPetItemId() == petItemId)) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    public int getNextEmptyPetIndex() {
-        for (int i = 0; i < 3; i++) {
-            if (this.spawnPets[i] == null) {
-                return i;
-            }
-        }
-        return 3;
-    }
-
-    public int getNoPets() {
-        int ret = 0;
-        for (int i = 0; i < 3; i++) {
-            if (this.spawnPets[i] != null) {
-                ret++;
-            }
-        }
-        return ret;
-    }
 
     public List<MaplePet> getSummonedPets() {
         List ret = new ArrayList();
-        for (byte i = 0; i < 3; i = (byte) (i + 1)) {
-            if ((this.spawnPets[i] != null) && (this.spawnPets[i].getSummoned())) {
-                ret.add(this.spawnPets[i]);
-            }
+        if ((this.spawnPets != null) && (this.spawnPets.getSummoned())) {
+            ret.add(this.spawnPets);
         }
         return ret;
     }
 
     public void addSpawnPet(MaplePet pet) {
-        for (int i = 0; i < 3; i++) {
-            if (this.spawnPets[i] == null) {
-                this.spawnPets[i] = pet;
-                pet.setSummoned((byte) (i + 1));
-                return;
-            }
+        if (this.spawnPets == null) {
+            this.spawnPets = pet;
+            pet.setSummoned(1);
+            return;
         }
     }
 
     public void removeSpawnPet(MaplePet pet, boolean shiftLeft) {
-        for (int i = 0; i < 3; i++) {
-            if ((this.spawnPets[i] == null)
-                    || (this.spawnPets[i].getUniqueId() != pet.getUniqueId())) {
-                continue;
-            }
-            this.spawnPets[i] = null;
-            break;
+        if ((this.spawnPets == null) || (this.spawnPets.getUniqueId() != pet.getUniqueId())) {
+            return ;
         }
+        this.spawnPets = null;
     }
 
     public void unequipAllSpawnPets() {
-        for (int i = 0; i < 3; i++) {
-            if (this.spawnPets[i] != null) {
-                unequipSpawnPet(this.spawnPets[i], true, false);
-            }
+        if (this.spawnPets != null) {
+            unequipSpawnPet(this.spawnPets, true, false);
         }
     }
 
-    public void spawnPet(byte slot) {
-        spawnPet(slot, false, true);
-    }
 
     public void spawnPet(byte slot, boolean lead) {
         spawnPet(slot, lead, true);
@@ -5449,15 +5376,16 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
         MaplePet pet = item.getPet();
         if ((pet == null) || ((item.getExpiration() != -1L) && (item.getExpiration() <= System.currentTimeMillis()))) {
+            dropMessage(1, "召唤失败，找不到宠物");
             client.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
-        if (getPetIndex(pet) != -1) {
-            unequipSpawnPet(pet, true, false);
-        } else {
+        //if ( pet != null) {
+        //    unequipSpawnPet(pet, true, false);
+        //} else {
             int leadid = 8;
-            if (((getSkillLevel(SkillFactory.getSkill(leadid)) == 0) || (getNoPets() == 3)) && (getSpawnPet(0) != null)) {
-                unequipSpawnPet(getSpawnPet(0), false, false);
+            if (((getSkillLevel(SkillFactory.getSkill(leadid)) == 0)) && (getSpawnPet() != null)) {
+                unequipSpawnPet(pet,false, false);
             } else if (lead && getSkillLevel(SkillFactory.getSkill(leadid)) > 0) {
             }
             Point pos = getPosition();
@@ -5476,19 +5404,19 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             pet.setCanPickup(true);
             addSpawnPet(pet);
             if (getMap() != null) {
-                client.getSession().write(PetPacket.updatePet(pet, getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
+//                client.getSession().write(PetPacket.updatePet(pet, getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
                 getMap().broadcastMessage(this, PetPacket.showPet(this, pet, false, false), true);
 //                client.getSession().write(PetPacket.loadExceptionList(this, pet));
 //                client.getSession().write(PetPacket.petStatUpdate(this));
             }
-        }
+        //}
         client.getSession().write(MaplePacketCreator.enableActions());
     }
 
     public void unequipSpawnPet(MaplePet pet, boolean shiftLeft, boolean hunger) {
-        if (getSpawnPet(getPetIndex(pet)) != null) {
-            getSpawnPet(getPetIndex(pet)).setSummoned(0);
-            getSpawnPet(getPetIndex(pet)).saveToDb();
+        if (getSpawnPet() != null) {
+            getSpawnPet().setSummoned(0);
+            getSpawnPet().saveToDb();
         }
         this.client.getSession().write(PetPacket.updatePet(pet, getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), true));
         if (this.map != null) {
@@ -6836,15 +6764,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void spawnSavedPets() {
-        for (int i = 0; i < this.petStore.length; i++) {
-            if (this.petStore[i] > -1) {
-                spawnPet(this.petStore[i], false, false);
-            }
+        if (this.petStore > -1) {
+            spawnPet(this.petStore, false, false);
         }
-        this.petStore = new byte[]{-1, -1, -1};
+        this.petStore = -1;
     }
 
-    public byte[] getPetStores() {
+    public byte getPetStores() {
         return this.petStore;
     }
 
@@ -8657,7 +8583,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public static enum FameStatus {
 
-        OK, NOT_TODAY, NOT_THIS_MONTH;
+        OK, WRONG_CHARNAME,LOW_LEVEL,NOT_TODAY, NOT_THIS_MONTH,UNKNOW_REASON;
     }
 
     public int getPQLog(String pqName) {

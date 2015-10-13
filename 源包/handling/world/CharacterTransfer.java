@@ -104,7 +104,7 @@ public class CharacterTransfer implements Externalizable {
     public int remainingSp;
     public int[] regrocks;
     public int[] hyperrocks;
-    public byte[] petStore;
+    public byte petStore;
     public MapleImp[] imps;
     public Map<Integer, Integer> mbook;
     public Map<Byte, Integer> reports = new LinkedHashMap();
@@ -236,16 +236,14 @@ public class CharacterTransfer implements Externalizable {
         this.runningLightSlot = chr.getLightTotal();
 
         boolean uneq = false;
-        for (int i = 0; i < this.petStore.length; i++) {
-            MaplePet pet = chr.getSpawnPet(i);
-            if (this.petStore[i] == 0) {
-                this.petStore[i] = -1;
+            MaplePet pet = chr.getSpawnPet();
+            if (this.petStore == 0) {
+                this.petStore = -1;
             }
             if (pet != null) {
                 uneq = true;
-                this.petStore[i] = (byte) Math.max(this.petStore[i], pet.getInventoryPosition());
+                this.petStore = (byte) Math.max(this.petStore, pet.getInventoryPosition());
             }
-        }
         if (uneq) {
             chr.unequipAllSpawnPets();
         }
@@ -489,10 +487,7 @@ public class CharacterTransfer implements Externalizable {
         for (int i = 0; i < fsize; i++) {
             this.familiars.put(in.readInt(), new MonsterFamiliar(this.characterid, in.readInt(), in.readInt(), in.readLong(), in.readUTF(), in.readInt(), in.readByte()));
         }
-        this.petStore = new byte[in.readByte()];
-        for (int i = 0; i < this.petStore.length; i++) {
-            this.petStore[i] = in.readByte();
-        }
+        this.petStore = in.readByte();
         int boxedsize = in.readShort();
         for (int i = 0; i < boxedsize; i++) {
             this.boxed.add(in.readObject());
@@ -741,10 +736,7 @@ public class CharacterTransfer implements Externalizable {
             out.writeByte(f.getVitality());
         }
 
-        out.writeByte(this.petStore.length);
-        for (int i = 0; i < this.petStore.length; i++) {
-            out.writeByte(this.petStore[i]);
-        }
+        out.writeByte(this.petStore);
 
         out.writeShort(this.boxed.size());
         for (Object boxed1 : this.boxed) {

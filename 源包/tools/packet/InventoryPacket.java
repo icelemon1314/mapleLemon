@@ -23,10 +23,13 @@ public class InventoryPacket {
 
     private static final Logger log = Logger.getLogger(InventoryPacket.class);
 
+    /**
+     * 增加道具栏格子数
+     * @param invType
+     * @param newSlots
+     * @return
+     */
     public static byte[] updateInventorySlotLimit(byte invType, byte newSlots) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.UPDATE_INVENTORY_SLOT.getValue());

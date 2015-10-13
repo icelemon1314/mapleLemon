@@ -37,6 +37,11 @@ public class MaplePet implements Serializable {
     private boolean changed = false;
     private boolean canPickup = true;
 
+    public MaplePet(){
+        this.petitemid = 0;
+        this.uniqueid = 0;
+    }
+
     private MaplePet(int petitemid, int uniqueid) {
         this.petitemid = petitemid;
         this.uniqueid = uniqueid;

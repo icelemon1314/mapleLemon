@@ -30,21 +30,6 @@ public class PetHandler {
         chr.spawnPet(slea.readByte(), slea.readByte() > 0);
     }
 
-    public static void Pet_AutoBuff(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        int petid = slea.readInt();
-        MaplePet pet = chr.getSpawnPet(petid);
-        if ((chr.getMap() == null) || (pet == null)) {
-            return;
-        }
-        int skillId = slea.readInt();
-        Skill buffId = SkillFactory.getSkill(skillId);
-        if ((chr.getSkillLevel(buffId) > 0) || (skillId == 0)) {
-            pet.setBuffSkill(skillId);
-            c.getSession().write(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
-        }
-        c.getSession().write(MaplePacketCreator.enableActions());
-    }
-
     public static void Pet_AutoPotion(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         slea.skip(1);
         chr.updateTick(slea.readInt());
@@ -78,7 +63,7 @@ public class PetHandler {
 
     public static void PetExcludeItems(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         int petSlot = slea.readInt();
-        MaplePet pet = chr.getSpawnPet(petSlot);
+        MaplePet pet = chr.getSpawnPet();
         if ((pet == null) || (!PetFlag.PET_IGNORE_PICKUP.check(pet.getFlags()))) {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
@@ -97,7 +82,7 @@ public class PetHandler {
         }
         int petid = slea.readInt();
         c.getPlayer().updateTick(slea.readInt());
-        if ((chr == null) || (chr.getMap() == null) || (chr.getSpawnPet(petid) == null)) {
+        if ((chr == null) || (chr.getMap() == null) || (chr.getSpawnPet() == null)) {
             return;
         }
         short command = slea.readShort();
@@ -108,7 +93,7 @@ public class PetHandler {
     public static void PetCommand(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         int petId = slea.readInt();
         MaplePet pet;
-        pet = chr.getSpawnPet((byte) petId);
+        pet = chr.getSpawnPet();
         slea.readByte();
         if (pet == null) {
             c.getSession().write(MaplePacketCreator.enableActions());
@@ -120,7 +105,6 @@ public class PetHandler {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
-        byte petIndex = chr.getPetIndex(pet);
         boolean success = false;
         if (Randomizer.nextInt(99) <= petCommand.getProbability()) {
             success = true;
@@ -132,13 +116,13 @@ public class PetHandler {
                 pet.setCloseness(newCloseness);
                 if (newCloseness >= GameConstants.getClosenessNeededForLevel(pet.getLevel() + 1)) {
                     pet.setLevel(pet.getLevel() + 1);
-                    c.getSession().write(PetPacket.showOwnPetLevelUp(petIndex));
-                    chr.getMap().broadcastMessage(PetPacket.showPetLevelUp(chr, petIndex));
+                    c.getSession().write(PetPacket.showOwnPetLevelUp());
+                    chr.getMap().broadcastMessage(PetPacket.showPetLevelUp(chr));
                 }
                 c.getSession().write(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
             }
         }
-        chr.getMap().broadcastMessage(PetPacket.commandResponse(chr.getId(), (byte) petCommand.getCommand(), petIndex, success, false));
+        chr.getMap().broadcastMessage(PetPacket.commandResponse(chr.getId(), (byte) petCommand.getCommand(), success, false));
     }
 
     public static void PetFood(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
@@ -147,14 +131,8 @@ public class PetHandler {
         }
         int previousFullness = 100;
         byte petslot = 0;
-        MaplePet[] pets = chr.getSpawnPets();
-        for (byte i = 0; i < 3; i = (byte) (i + 1)) {
-            if ((pets[i] != null) && (pets[i].getFullness() < previousFullness)) {
-                petslot = i;
-                break;
-            }
-        }
-        MaplePet pet = chr.getSpawnPet(petslot);
+        MaplePet pets = chr.getSpawnPets();
+        MaplePet pet = chr.getSpawnPet();
         chr.updateTick(slea.readInt());
         short slot = slea.readShort();
         int itemId = slea.readInt();
@@ -173,7 +151,6 @@ public class PetHandler {
                 newFullness = 100;
             }
             pet.setFullness(newFullness);
-            byte index = chr.getPetIndex(pet);
             if ((gainCloseness) && (pet.getCloseness() < 30000)) {
                 int newCloseness = pet.getCloseness() + 1;
                 if (newCloseness > 30000) {
@@ -182,12 +159,12 @@ public class PetHandler {
                 pet.setCloseness(newCloseness);
                 if (newCloseness >= GameConstants.getClosenessNeededForLevel(pet.getLevel() + 1)) {
                     pet.setLevel(pet.getLevel() + 1);
-                    c.getSession().write(PetPacket.showOwnPetLevelUp(index));
-                    chr.getMap().broadcastMessage(PetPacket.showPetLevelUp(chr, index));
+                    c.getSession().write(PetPacket.showOwnPetLevelUp());
+                    chr.getMap().broadcastMessage(PetPacket.showPetLevelUp(chr));
                 }
             }
             c.getSession().write(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
-            chr.getMap().broadcastMessage(c.getPlayer(), PetPacket.commandResponse(chr.getId(), (byte) 1, index, true, true), true);
+            chr.getMap().broadcastMessage(c.getPlayer(), PetPacket.commandResponse(chr.getId(), (byte) 1, true, true), true);
         } else {
             if (gainCloseness) {
                 int newCloseness = pet.getCloseness() - 1;
@@ -201,7 +178,7 @@ public class PetHandler {
                 chr.dropMessage(5, "您的宠物的饥饿感是满值，如果继续使用将会有50%的几率减少1点亲密度。");
             }
             c.getSession().write(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), true));
-            chr.getMap().broadcastMessage(chr, PetPacket.commandResponse(chr.getId(), (byte) 1, chr.getPetIndex(pet), false, true), true);
+            chr.getMap().broadcastMessage(chr, PetPacket.commandResponse(chr.getId(), (byte) 1, false, true), true);
         }
         MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (short) 1, true, false);
         c.getSession().write(MaplePacketCreator.enableActions());
@@ -213,24 +190,23 @@ public class PetHandler {
      * @param chr
      */
     public static void MovePet(SeekableLittleEndianAccessor slea, MapleCharacter chr) {
-        int petSlot = slea.readInt();
-        slea.skip(1);
-        slea.skip(4);
+        // 4C
+        // 0F 00 B3 00
+        // 06 00 08 00 B3 00 83 FF 02 00 15 00 03 3C 00 00 07 00 B4 00 83 FF FE FF 15 00 03 0A 00 00 F6 FF B3 00 84 FF FE FF 14 00 03 8C 00 00 EE FF B3 00 CC FF FF FF 14 00 19 5A 00 00 EC FF B3 00 FC FF 00 00 14 00 19 3C 00 00 EC FF B3 00 00 00 00 00 14 00 19 96 00 00
+        MaplePet pet = chr.getSpawnPet();
+        if (pet == null) {
+            return;
+        }
         Point startPos = slea.readPos();
-        slea.skip(4);
         List res = MovementParse.parseMovement(slea, 3);
         if ((res != null) && (chr != null) && (!res.isEmpty()) && (chr.getMap() != null)) {
-            if (slea.available() != 8) {
-                System.out.println("slea.available != 8 (宠物移动出错) 剩余封包长度: " + slea.available());
-                FileoutputUtil.log(FileoutputUtil.Movement_Pet, "slea.available != 8 (宠物移动出错) 封包: " + slea.toString(true));
+            if (slea.available() != 1) {
+                System.out.println("slea.available != 1 (宠物移动出错) 剩余封包长度: " + slea.available());
+                FileoutputUtil.log(FileoutputUtil.Movement_Pet, "slea.available != 1 (宠物移动出错) 封包: " + slea.toString(true));
                 return;
             }
-            MaplePet pet = chr.getSpawnPet(petSlot);
-            if (pet == null) {
-                return;
-            }
-            chr.getSpawnPet(chr.getPetIndex(pet)).updatePosition(res);
-            chr.getMap().broadcastMessage(chr, PetPacket.movePet(chr.getId(), petSlot, startPos, res), false);
+            chr.getSpawnPet().updatePosition(res);
+            chr.getMap().broadcastMessage(chr, PetPacket.movePet(chr.getId(), (byte)1, startPos, res), false);
         }
     }
 
@@ -246,13 +222,11 @@ public class PetHandler {
         } else {
             chr.getQuestRemove(MapleQuest.getInstance(122902));
         }
-        MaplePet[] pet = c.getPlayer().getSpawnPets();
-        for (int i = 0; i < 3; i++) {
-            if ((pet[i] != null) && (pet[i].getSummoned())) {
-                pet[i].setCanPickup(data > 0);
-                chr.getClient().getSession().write(PetPacket.updatePet(pet[i], chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet[i].getInventoryPosition()), false));
+        MaplePet pet = c.getPlayer().getSpawnPets();
+            if ((pet != null) && (pet.getSummoned())) {
+                pet.setCanPickup(data > 0);
+                chr.getClient().getSession().write(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
             }
-        }
         c.getSession().write(PetPacket.showPetPickUpMsg(data > 0, 1));
     }
 

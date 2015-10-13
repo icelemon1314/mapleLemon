@@ -609,17 +609,10 @@ public class UseCashItemHandler {
                 break;
             case 212:
                 pet = null;
-                MaplePet[] pets = chr.getSpawnPets();
-                for (int i = 0; i < 3; i++) {
-                    if ((pets[i] != null) && (pets[i].canConsume(itemId))) {
-                        pet = pets[i];
-                        break;
-                    }
-                }
+                MaplePet pets = chr.getSpawnPets();
                 if (pet == null) {
                     chr.dropMessage(1, "没有可以喂食的宠物。\r\n请重新确认。");
                 } else {
-                    byte petIndex = chr.getPetIndex(pet);
                     pet.setFullness(100);
                     if (pet.getCloseness() < 30000) {
                         if (pet.getCloseness() + 100 * c.getChannelServer().getTraitRate() > 30000) {
@@ -629,12 +622,12 @@ public class UseCashItemHandler {
                         }
                         if (pet.getCloseness() >= GameConstants.getClosenessNeededForLevel(pet.getLevel() + 1)) {
                             pet.setLevel(pet.getLevel() + 1);
-                            c.getSession().write(PetPacket.showOwnPetLevelUp(chr.getPetIndex(pet)));
-                            chr.getMap().broadcastMessage(PetPacket.showPetLevelUp(chr, petIndex));
+                            c.getSession().write(PetPacket.showOwnPetLevelUp());
+                            chr.getMap().broadcastMessage(PetPacket.showPetLevelUp(chr));
                         }
                     }
                     c.getSession().write(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem(pet.getInventoryPosition()), false));
-                    chr.getMap().broadcastMessage(chr, PetPacket.commandResponse(chr.getId(), (byte) 1, petIndex, true, true), true);
+                    chr.getMap().broadcastMessage(chr, PetPacket.commandResponse(chr.getId(), (byte) 1, true, true), true);
                     used = true;
                 }
                 break;

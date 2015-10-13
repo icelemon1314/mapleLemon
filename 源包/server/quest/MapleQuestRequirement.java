@@ -156,17 +156,15 @@ public class MapleQuestRequirement implements Serializable {
                 return (chr.getQuest(this.quest).getStatus() != 2) || (chr.getQuest(this.quest).getCompletionTime() <= System.currentTimeMillis() - this.intStore * 60 * 1000L);
             case pet:
                 for (Pair a : this.dataStore) {
-                    if (chr.getPetByItemId(((Integer) a.getRight())) != -1) {
+                    if (chr.getSpawnPet() != null) {
                         return true;
                     }
                 }
                 return false;
             case pettamenessmin:
-                MaplePet[] pet = chr.getSpawnPets();
-                for (int i = 0; i < 3; i++) {
-                    if ((pet[i] != null) && (pet[i].getSummoned()) && (pet[i].getCloseness() >= this.intStore)) {
-                        return true;
-                    }
+                MaplePet pet = chr.getSpawnPets();
+                if ((pet != null) && (pet.getSummoned()) && (pet.getCloseness() >= this.intStore)) {
+                    return true;
                 }
                 return false;
             case partyQuest_S:

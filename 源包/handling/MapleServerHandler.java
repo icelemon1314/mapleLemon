@@ -357,7 +357,6 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 PlayerHandler.MovePlayer(slea, c, c.getPlayer());
                 break;
             case CHAR_INFO_REQUEST:
-                c.getPlayer().updateTick(slea.readInt());
                 PlayerHandler.CharInfoRequest(slea.readInt(), c, c.getPlayer());
                 break;
             case DAMAGE_SUMMON:
@@ -847,9 +846,6 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 break;
             case CHANGE_ZERO_LOOK_END:
                 PlayerHandler.changeZeroLook(slea, c, c.getPlayer(), true);
-                break;
-            case CHAR_INFO:
-                c.getSession().write(MaplePacketCreator.enableActions());
                 break;
             case EXIT_GAME:
                 c.getSession().write(MaplePacketCreator.exitGame());

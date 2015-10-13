@@ -179,7 +179,7 @@ public class PlayerHandler {
         }
         MapleCharacter player = chr.getMap().getCharacterById(objectid);
         c.getSession().write(MaplePacketCreator.enableActions());
-        if ((player != null) && ((!player.isGM()) || (chr.isGM()))) {
+        if ((player != null)) {
             c.getSession().write(MaplePacketCreator.charInfo(player, chr.getId() == objectid));
         }
     }
@@ -1382,5 +1382,14 @@ public class PlayerHandler {
         chr.setPQLog("FreeTransfer");
         chr.SpReset();
         chr.send(MaplePacketCreator.serverMessageRedText("自由转职成功!"));
+    }
+
+    /**
+     *
+     * @param slea
+     * @param c
+     */
+    public static void handleCharInfo(SeekableLittleEndianAccessor slea, MapleClient c) {
+
     }
 }

@@ -1564,8 +1564,7 @@ public class InventoryHandler {
             return;
         }
         c.getPlayer().setScrolledPosition((short) 0);
-        byte petz = (byte) slea.readInt();
-        MaplePet pet = chr.getSpawnPet(petz);
+        MaplePet pet = chr.getSpawnPet();
         slea.skip(1);
         chr.updateTick(slea.readInt());
         Point Client_Reportedpos = slea.readPos();
@@ -1617,17 +1616,17 @@ public class InventoryHandler {
                 } else {
                     chr.gainMeso(mapitem.getMeso(), true);
                 }
-                removeItem_Pet(chr, mapitem, petz);
+                removeItem_Pet(chr, mapitem);
             } else if ((MapleItemInformationProvider.getInstance().isPickupBlocked((int) mapitem.getItemId())) || (mapitem.getItemId() / 10000 == 291)) {
                 c.getSession().write(MaplePacketCreator.enableActions());
             } else if (useItem(c, (int) mapitem.getItemId())) {
-                removeItem_Pet(chr, mapitem, petz);
+                removeItem_Pet(chr, mapitem);
             } else if (MapleInventoryManipulator.checkSpace(c, (int) mapitem.getItemId(), mapitem.getItem().getQuantity(), mapitem.getItem().getOwner())) {
                 if ((mapitem.getItem().getQuantity() >= 50) && (mapitem.getItemId() == 2340000)) {
                     c.setMonitored(true);
                 }
                 MapleInventoryManipulator.addFromDrop(c, mapitem.getItem(), true/*, mapitem.getDropper() instanceof MapleMonster*/);
-                removeItem_Pet(chr, mapitem, petz);
+                removeItem_Pet(chr, mapitem);
             }
         } finally {
             lock.unlock();
@@ -1685,9 +1684,9 @@ public class InventoryHandler {
         }
     }
 
-    public static void removeItem_Pet(MapleCharacter chr, MapleMapItem mapitem, int pet) {
+    public static void removeItem_Pet(MapleCharacter chr, MapleMapItem mapitem) {
         mapitem.setPickedUp(true);
-        chr.getMap().broadcastMessage(InventoryPacket.removeItemFromMap(mapitem.getObjectId(), 5, chr.getId(), pet));
+        chr.getMap().broadcastMessage(InventoryPacket.removeItemFromMap(mapitem.getObjectId(), 5, chr.getId()));
         chr.getMap().removeMapObject(mapitem);
         if (mapitem.isRandDrop()) {
             chr.getMap().spawnRandDrop();

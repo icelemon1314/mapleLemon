@@ -58,34 +58,47 @@ public class PetPacket {
         return showPet(chr, pet, remove, hunger, false);
     }
 
+    /**
+     * 召唤宠物
+     * @param chr
+     * @param pet
+     * @param remove
+     * @param hunger
+     * @param show
+     * @return
+     */
     public static byte[] showPet(MapleCharacter chr, MaplePet pet, boolean remove, boolean hunger, boolean show) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-        mplew.writeShort(show ? SendPacketOpcode.SHOW_PET.getValue() : SendPacketOpcode.SPAWN_PET.getValue());
+        mplew.write(show ? SendPacketOpcode.SHOW_PET.getValue() : SendPacketOpcode.SPAWN_PET.getValue());
         mplew.writeInt(chr.getId());
-        mplew.writeInt(chr.getPetIndex(pet));
         mplew.write(remove ? 0 : 1);
-        mplew.write(hunger ? 1 : 0);
         if (!remove) {
             addPetInfo(mplew, chr, pet, false);
+        } else {
+            mplew.write(hunger ? 1 : 0);  // 1-肚子饿回家了；2-宠物到期变成娃娃
         }
 
         return mplew.getPacket();
     }
 
+    /**
+     * 添加宠物信息
+     * @param mplew
+     * @param chr
+     * @param pet
+     * @param showpet
+     */
     public static void addPetInfo(MaplePacketLittleEndianWriter mplew, MapleCharacter chr, MaplePet pet, boolean showpet) {
         if (showpet) {
             mplew.write(1);
-            mplew.writeInt(chr.getPetIndex(pet));
         }
         mplew.writeInt(pet.getPetItemId());
         mplew.writeMapleAsciiString(pet.getName());
         mplew.writeLong(pet.getUniqueId());
         mplew.writePos(pet.getPos());
         mplew.write(pet.getStance());
-        mplew.writeShort(pet.getFh());
-        mplew.writeInt(-1);
-        mplew.writeInt(100);
+        mplew.writeShort(pet.getFh()); // 宠物饥饿度？
     }
 
     /**
@@ -117,12 +130,11 @@ public class PetPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] commandResponse(int chrId, byte command, byte slot, boolean success, boolean food) {
+    public static byte[] commandResponse(int chrId, byte command, boolean success, boolean food) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.PET_COMMAND.getValue());
         mplew.writeInt(chrId);
-        mplew.writeInt(slot);
         mplew.write(food ? 2 : 1);
         if (food) {
             mplew.write(success ? 1 : 0);
@@ -134,26 +146,24 @@ public class PetPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] showOwnPetLevelUp(byte index) {
+    public static byte[] showOwnPetLevelUp() {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SHOW_SPECIAL_EFFECT.getValue());
         mplew.write(0x7);
         mplew.write(0);
-        mplew.writeInt(index);
         mplew.writeZero(3);
 
         return mplew.getPacket();
     }
 
-    public static byte[] showPetLevelUp(MapleCharacter chr, byte index) {
+    public static byte[] showPetLevelUp(MapleCharacter chr) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SHOW_FOREIGN_EFFECT.getValue());
         mplew.writeInt(chr.getId());
         mplew.write(6);
         mplew.write(0);
-        mplew.writeInt(index);
         mplew.writeZero(3);
 
         return mplew.getPacket();
@@ -164,7 +174,7 @@ public class PetPacket {
 
         mplew.write(SendPacketOpcode.PET_EXCEPTION_LIST.getValue());
         mplew.writeInt(chr.getId());
-        mplew.writeInt(chr.getPetIndex(pet));
+        mplew.writeInt(0);
         mplew.writeLong(pet.getUniqueId());
         List excluded = pet.getExcluded();
         mplew.write(excluded.size());
@@ -181,14 +191,12 @@ public class PetPacket {
         mplew.write(SendPacketOpcode.UPDATE_STATS.getValue());
         mplew.write(0);
         mplew.writeLong(MapleStat.宠物.getValue());
-        MaplePet[] pets = chr.getSpawnPets();
-        for (int i = 0; i < 3; i++) {
-            if (pets[i] != null) {
-                mplew.writeLong(pets[i].getUniqueId());
+        MaplePet pets = chr.getSpawnPets();
+            if (pets != null) {
+                mplew.writeLong(pets.getUniqueId());
             } else {
                 mplew.writeLong(0L);
             }
-        }
         mplew.write(0);
         mplew.writeShort(0);
 
