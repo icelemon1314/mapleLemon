@@ -45,7 +45,6 @@ public class ServerProperties {
         maxMp = Integer.parseInt(ServerProperties.getProperty("maxMp", String.valueOf(maxMp)));
         maxMeso = Long.parseLong(ServerProperties.getProperty("maxMeso", String.valueOf(maxMeso)));
         maxLevel = Integer.parseInt(ServerProperties.getProperty("maxLevel", String.valueOf(maxLevel)));
-        maxCygnusLevel = Integer.parseInt(ServerProperties.getProperty("maxCygnusLevel", String.valueOf(maxCygnusLevel)));
     }
 
     public static void saveProperties() {

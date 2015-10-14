@@ -2330,16 +2330,14 @@ public final class MapleMap {
         if ((GameConstants.isTeamMap(this.mapid)) ) {
             //chr.getClient().getSession().write(MaplePacketCreator.showEquipEffect(chr.getTeam()));
         }
-        /*
-        MaplePet[] pets = chr.getSpawnPets(); //宠物发的包
-        for (int i = 0; i < 3; i++) {
-            if ((pets[i] != null) && (pets[i].getSummoned())) {
-                pets[i].setPos(chr.getTruePosition());
-                chr.getClient().getSession().write(PetPacket.updatePet(pets[i], chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pets[i].getInventoryPosition()), false));
-                chr.getClient().getSession().write(PetPacket.showPet(chr, pets[i], false, false, true));
-                chr.getClient().getSession().write(PetPacket.loadExceptionList(chr, pets[i]));
-            }
-        }                */
+
+        MaplePet pets = chr.getSpawnPets(); //宠物发的包
+        if ((pets != null) && (pets.getSummoned())) {
+            pets.setPos(chr.getTruePosition());
+//            chr.getClient().getSession().write(PetPacket.updatePet(pets, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pets.getInventoryPosition()), false));
+            chr.getClient().getSession().write(PetPacket.showPet(chr, pets, false, false, true));
+//            chr.getClient().getSession().write(PetPacket.loadExceptionList(chr, pets));
+        }
         System.out.println("添加角色4");
         if (chr.getSummonedFamiliar() != null) {
 //            chr.spawnFamiliar(chr.getSummonedFamiliar());

@@ -34,6 +34,13 @@ public enum ItemLoader {
         return this.value;
     }
 
+    /**
+     * 加载道具信息
+     * @param login
+     * @param id
+     * @return
+     * @throws SQLException
+     */
     public Map<Long, Pair<Item, MapleInventoryType>> loadItems(boolean login, int id) throws SQLException {
         Map items = new LinkedHashMap();
 

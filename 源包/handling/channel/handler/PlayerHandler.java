@@ -501,10 +501,6 @@ public class PlayerHandler {
         PlayerHandler.closeRangeAttack(slea, c, chr, false);
     }
 
-    public static void passiveRangeAttack(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        PlayerHandler.closeRangeAttack(slea, c, chr, true);
-    }
-
     public static void closeRangeAttack(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr, boolean 被动攻击) {
         //获取攻击信息
         AttackInfo attack = DamageParse.parseCloseRangeAttack(slea, chr);

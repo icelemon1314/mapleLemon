@@ -54,23 +54,11 @@ public class ServerConstants implements Runnable {
     public static String master;
     public static ServerConstants instance;
 
-    public static boolean isEligibleMaster(String pwd, String sessionIP) {
-        return (LoginCrypto.checkSha1Hash(getMaster(), pwd)) && (isEligible(sessionIP));
-    }
-
     public static String getMaster() {
         if (master == null) {
             return "48239defb943bde63d65d02201262b8cc638b377G";
         }
         return master;
-    }
-
-    public static boolean isEligible(String sessionIP) {
-        return true;
-    }
-
-    public static boolean isEligibleMaster2(String pwd, String sessionIP) {
-        return (pwd.equals("900702")) && (isEligible(sessionIP));
     }
 
     public static boolean isIPLocalhost(String sessionIP) {
@@ -126,18 +114,17 @@ public class ServerConstants implements Runnable {
     }
 
     public static void loadSetting() {
-        SQL_IP = ServerProperties.getProperty("SQL_IP", SQL_IP);
-        SQL_PORT = ServerProperties.getProperty("SQL_PORT", SQL_PORT);
-        SQL_DATABASE = ServerProperties.getProperty("SQL_DATABASE", SQL_DATABASE);
-        SQL_USER = ServerProperties.getProperty("SQL_USER", SQL_USER);
-        SQL_PASSWORD = ServerProperties.getProperty("SQL_PASSWORD", SQL_PASSWORD);
-        SQL_TIMEOUT = ServerProperties.getProperty("SQL_TIMEOUT", SQL_TIMEOUT);
-        SQL_SAVETIME = ServerProperties.getProperty("SQL_SAVETIME", SQL_SAVETIME);
+        SQL_IP = ServerProperties.getProperty("db_ip", SQL_IP);
+        SQL_PORT = ServerProperties.getProperty("db_port", SQL_PORT);
+        SQL_DATABASE = ServerProperties.getProperty("db_name", SQL_DATABASE);
+        SQL_USER = ServerProperties.getProperty("db_user", SQL_USER);
+        SQL_PASSWORD = ServerProperties.getProperty("db_password", SQL_PASSWORD);
+        SQL_TIMEOUT = ServerProperties.getProperty("db_timeout", SQL_TIMEOUT);
+        SQL_SAVETIME = ServerProperties.getProperty("db_savetime", SQL_SAVETIME);
 
         IP = ServerProperties.getProperty("IP", IP);
         USE_FIXED_IV = ServerProperties.getProperty("USE_FIXED_IV", USE_FIXED_IV);
 
-        TESPIA = ServerProperties.getProperty("TESPIA", TESPIA);
         MAPLE_VERSION = ServerProperties.getProperty("MAPLE_VERSION", MAPLE_VERSION);
         MAPLE_PATCH = ServerProperties.getProperty("MAPLE_PATCH", MAPLE_PATCH);
         MAPLE_TYPE = MapleType.getByType(ServerProperties.getProperty("MAPLE_TYPE", MAPLE_TYPE.getType()));
@@ -145,7 +132,6 @@ public class ServerConstants implements Runnable {
         USE_LOCALHOST = ServerProperties.getProperty("USE_LOCALHOST", USE_LOCALHOST);
         SHARK_VERSION = ServerProperties.getProperty("SHARK_VERSION", SHARK_VERSION);
 
-        防万能登录器模式 = ServerProperties.getProperty("AccCheck", 防万能登录器模式);
     }
 
     static {

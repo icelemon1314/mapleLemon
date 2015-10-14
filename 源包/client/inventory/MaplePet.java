@@ -59,6 +59,13 @@ public class MaplePet implements Serializable {
         }
     }
 
+    /**
+     * 从数据库读取宠物信息
+     * @param itemid
+     * @param petid
+     * @param inventorypos
+     * @return
+     */
     public static MaplePet loadFromDb(int itemid, int petid, short inventorypos) {
         try {
             MaplePet ret = new MaplePet(itemid, petid, inventorypos);

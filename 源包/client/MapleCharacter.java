@@ -1266,6 +1266,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
     }
 
+    /**
+     * 保存玩家数据
+     * @param dc
+     * @param fromcs
+     */
     public void saveToDB(boolean dc, boolean fromcs) {
         if (this.isSaveing) {
             System.out.println(MapleClient.getLogMessage(this, "正在保存数据，本次操作返回."));
