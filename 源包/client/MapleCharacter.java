@@ -5388,11 +5388,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         //if ( pet != null) {
         //    unequipSpawnPet(pet, true, false);
         //} else {
-            int leadid = 8;
-            if (((getSkillLevel(SkillFactory.getSkill(leadid)) == 0)) && (getSpawnPet() != null)) {
-                unequipSpawnPet(pet,false, false);
-            } else if (lead && getSkillLevel(SkillFactory.getSkill(leadid)) > 0) {
-            }
             Point pos = getPosition();
             pet.setPos(pos);
             try {
@@ -5402,10 +5397,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             pet.setStance(0);
             pet.setSummoned(1); //let summoned be true..
-            if (getSkillLevel(pet.getBuffSkill()) == 0) {
-                pet.setBuffSkill(0);
-            }
-//                    pet.setCanPickup(getIntRecord(122902) > 0);
             pet.setCanPickup(true);
             addSpawnPet(pet);
             if (getMap() != null) {

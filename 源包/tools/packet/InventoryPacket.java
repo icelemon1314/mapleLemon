@@ -155,7 +155,7 @@ public class InventoryPacket {
 
         mplew.write(0); // 添加道具
         mplew.write(item.getType());
-        mplew.writeShort(item.getQuantity());
+        mplew.writeShort(item.getPosition());
 
         PacketHelper.addItemInfo(mplew, item,true);
         return mplew.getPacket();

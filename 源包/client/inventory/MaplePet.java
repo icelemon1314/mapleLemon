@@ -185,6 +185,11 @@ public class MaplePet implements Serializable {
     }
 
     public void setSummoned(int summoned) {
+        if (summoned == 0) {
+            System.out.println("设置宠物不召唤");
+        } else {
+            System.out.println("设置宠物召唤");
+        }
         this.summoned = (byte) summoned;
     }
 

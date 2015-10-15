@@ -125,13 +125,18 @@ public class PetHandler {
         chr.getMap().broadcastMessage(PetPacket.commandResponse(chr.getId(), (byte) petCommand.getCommand(), success, false));
     }
 
+    /**
+     * 宠物食品
+     * @param slea
+     * @param c
+     * @param chr
+     */
     public static void PetFood(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
+        // 2A 05 00 40 59 20 00
         if ((chr == null) || (chr.getMap() == null)) {
             return;
         }
         int previousFullness = 100;
-        byte petslot = 0;
-        MaplePet pets = chr.getSpawnPets();
         MaplePet pet = chr.getSpawnPet();
         chr.updateTick(slea.readInt());
         short slot = slea.readShort();

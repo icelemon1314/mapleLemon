@@ -131,6 +131,12 @@ public class PacketHelper {
             mplew.writeInt(0);
         }
     }
+
+    /**
+     * 添加背包信息
+     * @param mplew
+     * @param chr
+     */
     public static void addInventoryInfo(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
         System.out.println("添加背包信息发包1");
         MapleInventory iv = chr.getInventory(MapleInventoryType.EQUIPPED);

@@ -236,14 +236,14 @@ public class CharacterTransfer implements Externalizable {
         this.runningLightSlot = chr.getLightTotal();
 
         boolean uneq = false;
-            MaplePet pet = chr.getSpawnPet();
-            if (this.petStore == 0) {
-                this.petStore = -1;
-            }
-            if (pet != null) {
-                uneq = true;
-                this.petStore = (byte) Math.max(this.petStore, pet.getInventoryPosition());
-            }
+        MaplePet pet = chr.getSpawnPet();
+        if (this.petStore == 0) {
+            this.petStore = -1;
+        }
+        if (pet != null) {
+            uneq = true;
+            this.petStore = (byte) Math.max(this.petStore, pet.getInventoryPosition());
+        }
         if (uneq) {
             chr.unequipAllSpawnPets();
         }

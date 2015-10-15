@@ -70,7 +70,8 @@ public class PetPacket {
     public static byte[] showPet(MapleCharacter chr, MaplePet pet, boolean remove, boolean hunger, boolean show) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-        mplew.write(show ? SendPacketOpcode.SHOW_PET.getValue() : SendPacketOpcode.SPAWN_PET.getValue());
+        // mplew.write(show ? SendPacketOpcode.SHOW_PET.getValue() : SendPacketOpcode.SPAWN_PET.getValue());
+        mplew.write(SendPacketOpcode.SPAWN_PET.getValue());
         mplew.writeInt(chr.getId());
         mplew.write(remove ? 0 : 1);
         if (!remove) {

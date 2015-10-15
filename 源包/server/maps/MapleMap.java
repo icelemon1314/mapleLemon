@@ -424,7 +424,7 @@ public final class MapleMap {
     }
 
     public void removeMapObject(MapleMapObject obj) {
-        ReentrantReadWriteLock rl = (ReentrantReadWriteLock) this.mapobjectlocks.get(obj.getType());
+        ReentrantReadWriteLock rl = this.mapobjectlocks.get(obj.getType());
         rl.writeLock().lock();
         try {
             ((LinkedHashMap) this.mapobjects.get(obj.getType())).remove(obj.getObjectId());
@@ -2332,7 +2332,16 @@ public final class MapleMap {
         }
 
         MaplePet pets = chr.getSpawnPets(); //宠物发的包
+        if (pets == null)
+            System.out.println("召唤的宠物为空");
+        else
+            System.out.println("召唤的宠物不为空");
+        if (pets.getSummoned() == false)
+            System.out.println("宠物没有被召唤！");
+        else
+            System.out.println("宠物被召唤！");
         if ((pets != null) && (pets.getSummoned())) {
+            System.out.println("召唤已经召唤的宠物出来");
             pets.setPos(chr.getTruePosition());
 //            chr.getClient().getSession().write(PetPacket.updatePet(pets, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pets.getInventoryPosition()), false));
             chr.getClient().getSession().write(PetPacket.showPet(chr, pets, false, false, true));
