@@ -12,10 +12,8 @@ import constants.WorldConstants;
 import handling.SendPacketOpcode;
 import handling.login.LoginServer;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 import org.apache.log4j.Logger;
 import server.ServerProperties;
 import tools.HexTool;
@@ -159,7 +157,7 @@ public class LoginPacket {
         mplew.write(0);
 
         mplew.writeInt(client.getAccID());
-        mplew.write(client.getGender());
+        mplew.write(client.getGender()); // 早期版本角色性别由帐号控制
         mplew.write(client.isGm() ? 1 : 0);//给客户端判断是否GM,是GM客户端会给/找人命令加地图ID,有删除人物按钮,被封印后能使用技能,其他未知
 
 
@@ -335,7 +333,7 @@ public class LoginPacket {
 
         mplew.write(SendPacketOpcode.CHARLIST.getValue());
         mplew.write(0);
-        mplew.writeInt(0);
+        mplew.writeInt(10);
         mplew.write(chars.size());
         for (MapleCharacter chr : chars) {
             addCharEntry(mplew, chr);
@@ -393,34 +391,46 @@ public class LoginPacket {
     public static void addCharEntry(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
         PacketHelper.addCharStats(mplew, chr);
 
-        Map<Byte, Integer> myEquip = new LinkedHashMap();
-        Map<Byte, Integer> maskedEquip = new LinkedHashMap();
-        MapleInventory equip = chr.getInventory(MapleInventoryType.EQUIPPED);
+//        Map<Byte, Integer> myEquip = new LinkedHashMap();
+//        Map<Byte, Integer> maskedEquip = new LinkedHashMap();
+//        MapleInventory equip = chr.getInventory(MapleInventoryType.EQUIPPED);
+//
+//        for (Item item : equip.newList()) {
+//            if (item.getPosition() < -128) {
+//                continue;
+//            }
+//
+//            byte pos = (byte) (item.getPosition() * -1);
+//            if ((pos < 100) && (myEquip.get(pos) == null)) {
+//                myEquip.put(pos, item.getItemId());
+//            } else if (((pos > 100) || (pos == -128)) && (pos != 111)) {
+//                pos = (byte) (pos == -128 ? 28 : pos - 100);
+//                if (myEquip.get(pos) != null) {
+//                    maskedEquip.put(pos, myEquip.get(pos));
+//                }
+//                myEquip.put(pos, item.getItemId());
+//            } else if (myEquip.get(pos) != null) {
+//                maskedEquip.put(pos, item.getItemId());
+//            }
+//        }
 
-        for (Item item : equip.newList()) {
-            if (item.getPosition() < -128) {
-                continue;
-            }
-
-            byte pos = (byte) (item.getPosition() * -1);
-            if ((pos < 100) && (myEquip.get(pos) == null)) {
-                myEquip.put(pos, item.getItemId());
-            } else if (((pos > 100) || (pos == -128)) && (pos != 111)) {
-                pos = (byte) (pos == -128 ? 28 : pos - 100);
-                if (myEquip.get(pos) != null) {
-                    maskedEquip.put(pos, myEquip.get(pos));
-                }
-                myEquip.put(pos, item.getItemId());
-            } else if (myEquip.get(pos) != null) {
-                maskedEquip.put(pos, item.getItemId());
+        MapleInventory iv = chr.getInventory(MapleInventoryType.EQUIPPED);
+        List<Item> equippedList = iv.newList();
+        Map<Byte, Integer> equipped = new LinkedHashMap();
+        Map<Byte, Integer> equippedCash = new LinkedHashMap();
+        for (Item item : equippedList) {
+            if ((item.getPosition() < 0) && (item.getPosition() > -100)) {
+                equipped.put(item.getPosition(),item.getItemId());
+            } else if ((item.getPosition() <= -100) && (item.getPosition() > -1000)) {
+                equippedCash.put(item.getPosition(), item.getItemId());;
             }
         }
-        for (Map.Entry entry : maskedEquip.entrySet()) {
+        for (Map.Entry entry : equipped.entrySet()) {
             mplew.write(((Byte) entry.getKey()));
             mplew.writeInt((Integer) entry.getValue());
         }
         mplew.write(0);
-        for (Map.Entry entry : myEquip.entrySet()) {
+        for (Map.Entry entry : equippedCash.entrySet()) {
             mplew.write((Byte) entry.getKey());
             mplew.writeInt((Integer) entry.getValue());
         }

@@ -262,7 +262,7 @@ public class MobPacket {
 //            mplew.writeInt(life.getObjectId());
 //        }
         mplew.write(spawnType);
-        mplew.write(0);
+        mplew.write(1); // 召唤的时候特效，在wz中有对应的值
         mplew.writeLong(0);
 
         return mplew.getPacket();

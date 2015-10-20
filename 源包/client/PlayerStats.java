@@ -388,19 +388,6 @@ public class PlayerStats implements Serializable {
                 this.setHandling.put(set, value);
             }
             Iterator i$;
-            if ((equip.getIncSkill() > 0) && (ii.getEquipSkills(equip.getItemId()) != null)) {
-                for (i$ = ii.getEquipSkills(equip.getItemId()).iterator(); i$.hasNext();) {
-                    int skillId = ((Integer) i$.next());
-                    Skill skil = SkillFactory.getSkill(skillId);
-                    if ((skil != null) && (skil.canBeLearnedBy(chra.getJob()))) {
-                        int value = 1;
-                        if (this.skillsIncrement.get(skil.getId()) != null) {
-                            value += (this.skillsIncrement.get(skil.getId()));
-                        }
-                        this.skillsIncrement.put(skil.getId(), value);
-                    }
-                }
-            }
             Pair ix = handleEquipAdditions(ii, chra, first_login, sData, equip.getItemId());
             if (ix != null) {
                 localmaxhp_ += ((Integer) ix.getLeft());
@@ -435,22 +422,6 @@ public class PlayerStats implements Serializable {
                         this.percent_mp += setItemStat.incMMPr;
                         this.wdef += setItemStat.incPDD;
                         this.mdef += setItemStat.incMDD;
-                        if ((setItemStat.option1 > 0) && (setItemStat.option1Level > 0)) {
-                            StructItemOption soc = (StructItemOption) ii.getPotentialInfo(setItemStat.option1).get(setItemStat.option1Level);
-                            if (soc != null) {
-                                localmaxhp_ += soc.get("incMHP");
-                                localmaxmp_ += soc.get("incMMP");
-                                handleItemOption(soc, chra, first_login, sData);
-                            }
-                        }
-                        if ((setItemStat.option2 > 0) && (setItemStat.option2Level > 0)) {
-                            StructItemOption soc = (StructItemOption) ii.getPotentialInfo(setItemStat.option2).get(setItemStat.option2Level);
-                            if (soc != null) {
-                                localmaxhp_ += soc.get("incMHP");
-                                localmaxmp_ += soc.get("incMMP");
-                                handleItemOption(soc, chra, first_login, sData);
-                            }
-                        }
                     }
                 }
             }
@@ -1961,16 +1932,6 @@ public class PlayerStats implements Serializable {
                         eq = ii.levelUpEquip(eq, (Map) inc.get(lvlz + i));
                     }
 
-                    if ((GameConstants.getStatFromWeapon(eq.getItemId()) == null) && (GameConstants.getMaxLevel(eq.getItemId()) < lvlz + i) && (Math.random() < 0.1D) && (eq.getIncSkill() <= 0) && (ii.getEquipSkills(eq.getItemId()) != null)) {
-                        for (i$ = ii.getEquipSkills(eq.getItemId()).iterator(); i$.hasNext();) {
-                            int zzz = ((Integer) i$.next());
-                            Skill skil = SkillFactory.getSkill(zzz);
-                            if ((skil != null) && (skil.canBeLearnedBy(chr.getJob()))) {
-                                eq.setIncSkill(skil.getId());
-                                chr.dropMessage(5, "Your skill has gained a levelup: " + skil.getName() + " +1");
-                            }
-                        }
-                    }
                 }
                 changed = true;
             }

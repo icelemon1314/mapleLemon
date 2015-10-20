@@ -305,12 +305,4 @@ public class PlayerCommand {
         }
     }
 
-    public static class 文件封包 extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            c.getSession().write(LoadPacket.getPacket());
-            return 1;
-        }
-    }
 }

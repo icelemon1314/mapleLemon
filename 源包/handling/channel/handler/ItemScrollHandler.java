@@ -138,13 +138,6 @@ public class ItemScrollHandler {
                 }
             }
 
-//            if (chr.isIntern()) {
-//                if (chr.isAdmin()) {
-//                    chr.dropMessage(0, "添加管理员砸卷物品记录属性。");
-//                }
-//                scrolled.addFlag((short) ItemFlag.CRAFTED.getValue());
-//                scrolled.setOwner(chr.getName());
-//            }
         System.out.println("砸卷5555");
         chr.getInventory(ItemConstants.getInventoryType(scroll.getItemId())).removeItem(scroll.getPosition(), (short) 1, false);
        if ((scrollSuccess == Equip.ScrollResult.失败) && (scrolled.getUpgradeSlots() < oldSlots) && (chr.getInventory(MapleInventoryType.CASH).findById(5640000) != null)) {
@@ -156,7 +149,7 @@ public class ItemScrollHandler {
         System.out.println("砸卷7777"+vegas);
         c.getSession().write(InventoryPacket.updateInventorySlot(ItemConstants.getInventoryType(scroll.getItemId()), scroll, true));
         chr.getMap().broadcastMessage(chr, InventoryPacket.getScrollEffect(chr.getId(), scrollSuccess), vegas == 0);
-        if ((dst < 0) && ((scrollSuccess == Equip.ScrollResult.成功)) && (vegas == 0)) {
+        if (((scrollSuccess == Equip.ScrollResult.成功)) && (vegas == 0)) {
             chr.equipChanged();
         }
         return scrollSuccess == Equip.ScrollResult.成功;

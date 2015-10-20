@@ -247,28 +247,6 @@ public class InventoryPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] showScrollTip(boolean success) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SHOW_SCROLL_TIP.getValue());
-        mplew.writeInt(success ? 1 : 0);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] getScrollEffect(int chrId, int scroll, int toScroll) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SHOW_SCROLL_EFFECT.getValue());
-        mplew.writeInt(chrId);
-        mplew.writeShort(1);
-        mplew.writeInt(scroll);
-        mplew.writeInt(toScroll);
-        mplew.write(0);
-
-        return mplew.getPacket();
-    }
-
     /**
      * 砸卷结果
      * @param chrId
@@ -279,16 +257,17 @@ public class InventoryPacket {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
-        mplew.writeInt(4);
+        mplew.write(4);
         // 027 只有成功和失败，没有消失囧
         switch (scrollSuccess) {
             case 失败:
                 mplew.write(0);
                 break;
             case 成功:
-                mplew.write(2);
+                mplew.write(1);
                 break;
             default:
+                mplew.write(0);
                 throw new IllegalArgumentException("effect in illegal range");
         }
         return mplew.getPacket();

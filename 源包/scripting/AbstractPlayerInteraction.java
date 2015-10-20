@@ -1209,7 +1209,6 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void updateInfoQuest(int questId, String data) {
-        this.c.getPlayer().updateInfoQuest(questId, data);
     }
 
     public boolean getEvanIntroState(String data) {

@@ -1401,46 +1401,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return MapleInventoryManipulator.removeFromSlot(this.c, inv, (short) slot, (short) quantity, true);
     }
 
-    public List<Integer> getAllPotentialInfo() {
-        List list = new ArrayList(MapleItemInformationProvider.getInstance().getAllPotentialInfo().keySet());
-        Collections.sort(list);
-        return list;
-    }
-
-    public List<Integer> getAllPotentialInfoSearch(String content) {
-        List<Integer> list = new ArrayList<>();
-        for (Entry<Integer, List<StructItemOption>> i : MapleItemInformationProvider.getInstance().getAllPotentialInfo().entrySet()) {
-            for (StructItemOption ii : i.getValue()) {
-                if (ii.toString().contains(content)) {
-                    list.add(i.getKey());
-                }
-            }
-        }
-        Map.Entry i;
-        Collections.sort(list);
-        return list;
-    }
-
-    public String getPotentialInfo(int id) {
-        List<StructItemOption> potInfo = MapleItemInformationProvider.getInstance().getPotentialInfo(id);
-        StringBuilder builder = new StringBuilder("#b#e以下是潜能ID为 ");
-        builder.append(id);
-        builder.append(" 的信息#n#k\r\n\r\n");
-        int minLevel = 1;
-        int maxLevel = 10;
-        for (StructItemOption item : potInfo) {
-            builder.append("#e等级范围 ");
-            builder.append(minLevel);
-            builder.append("~");
-            builder.append(maxLevel);
-            builder.append(": #n");
-            builder.append(item.toString());
-            minLevel += 10;
-            maxLevel += 10;
-            builder.append("\r\n");
-        }
-        return builder.toString();
-    }
 
     public void sendRPS() {
         this.c.getSession().write(MaplePacketCreator.getRPSMode((byte) 8, -1, -1, -1));

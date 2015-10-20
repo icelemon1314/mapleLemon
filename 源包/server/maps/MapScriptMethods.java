@@ -385,20 +385,6 @@ public class MapScriptMethods {
             case boss_Event_PinkZakum:
                 c.getPlayer().getMap().startMapEffect("DO NOT BE ALARMED! The Pink Zakum clone was just to help adventurers like you relieve stress!", 5120039);
                 break;
-            case dojang_Eff: {
-                if (c.getPlayer().getMapId() == 925020100 || c.getPlayer().getMapId() == 925030100 || c.getPlayer().getMapId() == 925040100) {
-                    c.getPlayer().getMap().startMapEffect("Don't forget that you have to clear it within the time limit! Take down the monster and head to the next floor!", 5120024);
-                }
-                int temp = (c.getPlayer().getMapId() - 925000000) / 100;
-                int stage = (int) (temp - ((temp / 100) * 100));
-//                String lol = c.getPlayer().getInfoQuest((int)7214);
-//                System.err.println("ol " + lol);
-//                int ad = Integer.parseInt(lol);
-
-                sendDojoClock(c, 120);//getTiming(stage) * 60);
-                sendDojoStart(c, stage - getDojoStageDec(stage));
-                break;
-            }
             case PinkBeen_before: {
                 handlePinkBeanStart(c);
                 break;
@@ -2736,14 +2722,13 @@ public class MapScriptMethods {
             }
             case rienArrow: {
                 if (c.getPlayer().getInfoQuest(21019).equals("miss=o;helper=clear")) {
-                    c.getPlayer().updateInfoQuest(21019, "miss=o;arr=o;helper=clear");
                     c.getSession().write(UIPacket.TutInstructionalBalloon("Effect/OnUserEff.img/guideEffect/aranTutorial/tutorialArrow3"));
                 }
                 break;
             }
             case rien: {
                 if (c.getPlayer().getQuestStatus(21101) == 2 && c.getPlayer().getInfoQuest(21019).equals("miss=o;arr=o;helper=clear")) {
-                    c.getPlayer().updateInfoQuest(21019, "miss=o;arr=o;ck=1;helper=clear");
+//                    c.getPlayer().updateInfoQuest(21019, "miss=o;arr=o;ck=1;helper=clear");
                 }
                 c.getSession().write(UIPacket.IntroDisableUI(false));
                 c.getSession().write(UIPacket.IntroLock(false));
@@ -2900,23 +2885,6 @@ public class MapScriptMethods {
         c.getSession().write(UIPacket.IntroDisableUI(true));
         c.getSession().write(UIPacket.IntroLock(true));
         c.getSession().write(UIPacket.ShowWZEffect(data));
-    }
-
-    private static void sendDojoClock(MapleClient c, int time) {
-        c.getSession().write(MaplePacketCreator.getClock(time));
-    }
-
-    private static void sendDojoStart(MapleClient c, int stage) {
-        for (int i = 0; i < 3; i++) {
-            c.getPlayer().updateInfoQuest(1213, "try=3");
-        }
-        c.getSession().write(MaplePacketCreator.environmentChange("Dojang/start", 5));//was4
-        c.getSession().write(MaplePacketCreator.environmentChange("dojang/start/stage", 12));//was3
-        c.getSession().write(MaplePacketCreator.environmentChange("dojang/start/number/" + stage, 12));//was3
-        c.getSession().write(MaplePacketCreator.trembleEffect(0, 1));
-        if (stage == 1) {
-            c.getPlayer().getMap().startMapEffect("别忘了限制时间是10分钟，只要在时间内打倒怪物，进入下一层就行！", 5120024);
-        }
     }
 
     private static void handlePinkBeanStart(MapleClient c) {

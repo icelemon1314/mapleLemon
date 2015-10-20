@@ -290,62 +290,6 @@ public class MapleItemInformationProvider {
         return list;
     }
 
-    public List<StructItemOption> getPotentialInfo(int potId) {
-        return (List) this.potentialCache.get(potId);
-    }
-
-    public Map<Integer, List<StructItemOption>> getAllPotentialInfo() {
-        return this.potentialCache;
-    }
-
-    public Map<Integer, List<StructItemOption>> getPotentialInfos(int potId) {
-        Map ret = new HashMap();
-        for (Map.Entry pots : this.potentialCache.entrySet()) {
-            if (((Integer) pots.getKey()) >= potId) {
-                ret.put(pots.getKey(), pots.getValue());
-            }
-        }
-        return ret;
-    }
-
-    public String resolvePotentialId(int itemId, int potId) {
-        int eqLevel = getReqLevel(itemId);
-
-        List potInfo = getPotentialInfo(potId);
-        int potLevel;
-        if (eqLevel == 0) {
-            potLevel = 1;
-        } else {
-            potLevel = (eqLevel + 1) / 10;
-            potLevel++;
-        }
-        if (potId <= 0) {
-            return "没有潜能属性";
-        }
-        StructItemOption itemOption = (StructItemOption) potInfo.get(potLevel - 1);
-        String ret = itemOption.opString;
-        for (int i = 0; i < itemOption.opString.length(); i++) {
-            if (itemOption.opString.charAt(i) == '#') {
-                int j = i + 2;
-                while ((j < itemOption.opString.length()) && (itemOption.opString.substring(i + 1, j).matches("^(?!_)(?!.*?_$)[a-zA-Z0-9_一-龥]+$"))) {
-                    j++;
-                }
-                String curParam = itemOption.opString.substring(i, j);
-                String curParamStripped;
-                if ((j != itemOption.opString.length()) || (itemOption.opString.charAt(itemOption.opString.length() - 1) == '%')) {
-                    curParamStripped = curParam.substring(1, curParam.length() - 1);
-                } else {
-                    curParamStripped = curParam.substring(1);
-                }
-                String paramValue = Integer.toString(itemOption.get(curParamStripped));
-                if (curParam.charAt(curParam.length() - 1) == '%') {
-                    paramValue = paramValue.concat("%");
-                }
-                ret = ret.replace(curParam, paramValue);
-            }
-        }
-        return ret;
-    }
 
     public Map<Integer, StructItemOption> getAllSocketInfo(int grade) {
         return (Map) this.socketCache.get(grade);
@@ -560,14 +504,6 @@ public class MapleItemInformationProvider {
         return i.equipIncs;
     }
 
-    public List<Integer> getEquipSkills(int itemId) {
-        ItemInformation i = getItemInformation(itemId);
-        if (i == null) {
-            return null;
-        }
-        return i.incSkill;
-    }
-
     public Map<String, Integer> getEquipStats(int itemId) {
         ItemInformation i = getItemInformation(itemId);
         if (i == null) {
@@ -653,16 +589,18 @@ public class MapleItemInformationProvider {
         if (equip.getType() == 1) {
             int scrollId = scroll.getItemId();
             Equip nEquip = (Equip) equip;
-            Map<String, Integer> scrollStats = getEquipStats(scrollId);
-            Map<String, Integer> equipStats = getEquipStats(equip.getItemId());
+            Map<String, Integer> scrollStats = getEquipStats(scrollId);  //卷轴信息
+            Map<String, Integer> equipStats = getEquipStats(equip.getItemId()); // 装备信息
 
             int succ = scrollStats == null || !scrollStats.containsKey("success") ? 0 : ItemConstants.isTablet(scrollId) ? ItemConstants.getSuccessTablet(scrollId, nEquip.getLevel()) : scrollStats.get("success");
 
+            //诅咒卷轴
             int curse = scrollStats == null || !scrollStats.containsKey("cursed") ? 0 : ItemConstants.isTablet(scrollId) ? ItemConstants.getCurseTablet(scrollId, nEquip.getLevel()) : scrollStats.get("cursed");
 
             int limitedLv = scrollStats == null || !scrollStats.containsKey("limitedLv") ? 0 : scrollStats.get("limitedLv");
 
             if (limitedLv > 0 && nEquip.getLevel() < limitedLv) {
+                chr.dropMessage(1,"装备等级不够："+limitedLv );
                 return nEquip;
             }
 
@@ -671,8 +609,11 @@ public class MapleItemInformationProvider {
                 chr.dropSpouseMessage(11, "普通卷轴 - 默认几率: " + succ + "% 最终概率: " + success + "% 失败消失几率: " + curse + "%");
             }
             if (Randomizer.nextInt(100) <= success) {
+                chr.dropMessage(1,"砸卷成功！");
+                nEquip.setUpgradeSlots((byte) (nEquip.getUpgradeSlots() - 1));
                 for (Map.Entry stat : scrollStats.entrySet()) {
                     String key = (String) stat.getKey();
+                    System.out.println("装备属性："+key);
                     switch (key) {
                         case "STR":
                             nEquip.setStr((short) (nEquip.getStr() + ((Integer) stat.getValue())));
@@ -719,6 +660,7 @@ public class MapleItemInformationProvider {
                     }
                 }
             } else {
+                chr.dropMessage(1,"砸卷失败！");
                 if (Randomizer.nextInt(99) < curse) {
                     return null;
                 }
@@ -1265,7 +1207,7 @@ public class MapleItemInformationProvider {
         if (itemId <= 0) {
             return null;
         }
-        return (ItemInformation) this.dataCache.get(itemId);
+        return this.dataCache.get(itemId);
     }
 
     public void initItemRewardData(ResultSet sqlRewardData)

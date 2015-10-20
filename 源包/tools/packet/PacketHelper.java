@@ -212,14 +212,22 @@ public class PacketHelper {
     public static void addCharStats(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
         mplew.writeInt(chr.getId());
         mplew.writeAsciiString(chr.getName(), 0x13);
-        mplew.write(chr.getGender());
-        mplew.write(chr.getSkinColor());
+//        mplew.write(chr.getGender());
+        mplew.write(chr.getClient().getGender()); // 帐号控制
+        mplew.write(chr.getSkinColor()); // 肤色
         mplew.writeInt(chr.getFace());
         mplew.writeInt(chr.getHair());
         mplew.writeLong(0); // Pet SN
         mplew.write(chr.getLevel());
         mplew.writeShort(chr.getJob());
-        chr.getStat().connectData(mplew);
+        mplew.writeShort(chr.getStat().str);
+        mplew.writeShort(chr.getStat().dex);
+        mplew.writeShort(chr.getStat().int_);
+        mplew.writeShort(chr.getStat().luk);
+        mplew.writeShort(chr.getStat().baseHp);
+        mplew.writeShort(chr.getStat().baseMaxHp);
+        mplew.writeShort(chr.getStat().baseMp);
+        mplew.writeShort(chr.getStat().baseMaxMp);
         mplew.writeShort(chr.getRemainingAp());
         mplew.writeShort(chr.getRemainingSp());
         mplew.writeInt((int)chr.getExp()); // @TODO 经验用int

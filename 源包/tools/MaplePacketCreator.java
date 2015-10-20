@@ -528,18 +528,6 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
-    public static byte[] GainEXP_Others(int gain, boolean inChat, boolean white) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
-        mplew.write(3);
-        mplew.write(white ? 1 : 0);
-        mplew.writeInt(gain);
-        mplew.write(inChat ? 1 : 0);
-
-        return mplew.getPacket();
-    }
-
     /**
      * 捡取金币消息
      * @param gain
@@ -550,12 +538,8 @@ public class MaplePacketCreator {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
-        if (!inChat) {
-            mplew.write(0);
-            mplew.write(1); // 捡到金币
-        } else {
-            mplew.write(5);
-        }
+        mplew.write(0);
+        mplew.write(1); // 捡到金币
         mplew.writeInt((int)gain);
 
         return mplew.getPacket();
@@ -573,24 +557,13 @@ public class MaplePacketCreator {
      * @return
      */
     public static byte[] getShowItemGain(int itemId, short quantity, boolean inChat) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-        if (inChat) {
-            mplew.write(SendPacketOpcode.SHOW_SPECIAL_EFFECT.getValue());
-            mplew.write(0x6);
-            mplew.write(1);
-            mplew.writeInt(itemId);
-            mplew.writeInt(quantity);
-        } else {
-            mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
-            mplew.write(0);
-            mplew.write(0); //-2：你不能再取得这种道具，非0 不能捡取物品
-            mplew.writeInt(itemId);
-            mplew.writeInt(quantity);
-        }
+        mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
+        mplew.write(0);
+        mplew.write(0); //-2：你不能再取得这种道具，非0 不能捡取物品
+        mplew.writeInt(itemId);
+        mplew.writeInt(quantity);
         return mplew.getPacket();
     }
 
@@ -1057,6 +1030,11 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
+    /**
+     * 更新任务状态
+     * @param quest
+     * @return
+     */
     public static byte[] updateQuest(MapleQuestStatus quest) {
         if (ServerProperties.ShowPacket()) {
             System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
@@ -1065,32 +1043,13 @@ public class MaplePacketCreator {
 
         mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
         mplew.write(1);
-        mplew.writeShort(quest.getQuest().getId());
-        mplew.write(quest.getStatus());
-        switch (quest.getStatus()) {
-            case 0:
-                mplew.writeZero(10);
-                break;
-            case 1:
-                mplew.writeMapleAsciiString(quest.getCustomData() != null ? quest.getCustomData() : "");
-                break;
-            case 2:
-                mplew.writeLong(PacketHelper.getTime(System.currentTimeMillis()));
+        byte isUpdateQuest = 1; // 0-移除任务 1-修改任务状态
+        mplew.write(isUpdateQuest);
+        mplew.writeInt(quest.getQuest().getId());
+        if (isUpdateQuest == 1) {
+            // 使用对应的状态值即可
+            mplew.writeMapleAsciiString(quest.getCustomData() != null ? quest.getCustomData() : "");
         }
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] updateInfoQuest(int quest, String data) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
-        mplew.write(12);
-        mplew.writeShort(quest);
-        mplew.writeMapleAsciiString(data);
 
         return mplew.getPacket();
     }
@@ -1155,7 +1114,7 @@ public class MaplePacketCreator {
         mplew.write(chr.getLevel());
         mplew.writeShort(chr.getJob());
         mplew.writeShort(chr.getFame());
-        mplew.writeMapleAsciiString("ICELEMON");
+        mplew.writeMapleAsciiString("ICELEMON"); // 社区名字
         /*
         MapleRing mRing = chr.getMarriageRing();
         mplew.write(mRing != null ? 1 : 0);
@@ -1170,6 +1129,8 @@ public class MaplePacketCreator {
             mplew.writeAsciiString(mRing.getPartnerName(), 13);
         }
         */
+        mplew.write(0);
+        /*
         MaplePet pet = chr.getSpawnPet();
         mplew.write(pet != null ? 1 : 0);
         if (pet != null) {
@@ -1179,7 +1140,7 @@ public class MaplePacketCreator {
             mplew.writeShort(pet.getCloseness());
             mplew.write(pet.getFullness());
             mplew.writeInt(0);
-        }
+        }*/
 
         mplew.write(0); // wishlist 4*size
 //        mplew.writeLong(0); // ring
@@ -1410,24 +1371,6 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
-    public static byte[] updateQuestMobKills(MapleQuestStatus status) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
-        mplew.write(1);
-        mplew.writeInt(status.getQuest().getId());
-        StringBuilder sb = new StringBuilder();
-        for (Iterator i$ = status.getMobKills().values().iterator(); i$.hasNext();) {
-            int kills = ((Integer) i$.next());
-            sb.append(StringUtil.getLeftPaddedStr(String.valueOf(kills), '0', 3));
-        }
-        mplew.writeMapleAsciiString(sb.toString());
-
-        return mplew.getPacket();
-    }
 
     public static byte[] getShowQuestCompletion(int id) {
         if (ServerProperties.ShowPacket()) {
@@ -4130,16 +4073,6 @@ public class MaplePacketCreator {
                 mplew.writeLong(PacketHelper.getTime(-1));
             }
         }
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] showQuestMessage(String msg) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
-        mplew.write(11);
-        mplew.writeMapleAsciiString(msg);
 
         return mplew.getPacket();
     }

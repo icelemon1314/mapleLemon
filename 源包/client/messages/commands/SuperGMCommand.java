@@ -7,6 +7,7 @@ import client.messages.PlayerGMRank;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 import constants.GameConstants;
+import custom.LoadPacket;
 import database.DatabaseConnection;
 import handling.RecvPacketOpcode;
 import handling.SendPacketOpcode;
@@ -919,90 +920,11 @@ public class SuperGMCommand {
         }
     }
 
-    /*public static class 制作玩家NPC extends CommandExecute {
-
-     @Override
-     public int execute(MapleClient c, String[] splitted) {
-     if (splitted.length < 3) {
-     c.getPlayer().dropMessage(6, splitted[0] + " <玩家名字> <NPCID>");
-     return 0;
-     }
-     try {
-     c.getPlayer().dropMessage(6, "正在制作玩家NPC...");
-     MapleClient cs = new MapleClient(null, null, new MockIOSession());
-     MapleCharacter chhr = MapleCharacter.loadCharFromDB(MapleCharacterUtil.getIdByName(splitted[1]), cs, false);
-     if (chhr == null) {
-     c.getPlayer().dropMessage(6, splitted[1] + "不存在");
-     return 0;
-     }
-     PlayerNPC npc = new PlayerNPC(chhr, Integer.parseInt(splitted[2]), c.getPlayer().getMap(), c.getPlayer());
-     npc.addToServer();
-     c.getPlayer().dropMessage(6, "完成");
-     } catch (NumberFormatException e) {
-     c.getPlayer().dropMessage(6, "制作NPC失败... : " + e.getMessage());
-     }
-     return 1;
-     }
-     }*/
-    public static class 移除玩家NPC extends CommandExecute {
+    public static class sendFilePacket extends CommandExecute {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
-            if (splitted.length < 2) {
-                c.getPlayer().dropMessage(6, splitted[0] + " <NPCoid>");
-                return 0;
-            }
-            try {
-                c.getPlayer().dropMessage(6, "正在移除玩家NPC...");
-                final MapleNPC npc = c.getPlayer().getMap().getNPCByOid(Integer.parseInt(splitted[1]));
-                if (npc instanceof PlayerNPC) {
-                    ((PlayerNPC) npc).destroy(true);
-                    c.getPlayer().dropMessage(6, "完成");
-                } else {
-                    c.getPlayer().dropMessage(6, splitted[0] + " <NPCoid>");
-                }
-            } catch (NumberFormatException e) {
-                c.getPlayer().dropMessage(6, "移除NPC失败... : " + e.getMessage());
-            }
-            return 1;
-        }
-    }
-
-    public static class 数据包 extends CommandExecute {
-
-        protected static StringBuilder builder = new StringBuilder();
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            if (builder.length() > 1) {
-                c.getSession().write(MaplePacketCreator.getPacketFromHexString(builder.toString()));
-                builder = new StringBuilder();
-            } else {
-                c.getPlayer().dropMessage(6, "请输入数据包数据");
-            }
-            return 1;
-        }
-    }
-
-    public static class 添加数据 extends 数据包 {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            if (splitted.length > 1) {
-                builder.append(StringUtil.joinStringFrom(splitted, 1));
-                c.getPlayer().dropMessage(6, "目前的数据包数据: " + builder.toString());
-            } else {
-                c.getPlayer().dropMessage(6, "请输入数据包数据");
-            }
-            return 1;
-        }
-    }
-
-    public static class 创建数据包 extends 数据包 {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            builder = new StringBuilder();
+            c.getSession().write(LoadPacket.getPacket());
             return 1;
         }
     }
@@ -1013,23 +935,6 @@ public class SuperGMCommand {
         public int execute(MapleClient c, String[] splitted) {
             if (splitted.length > 1) {
                 c.getSession().write(MaplePacketCreator.getPacketFromHexString(StringUtil.joinStringFrom(splitted, 1)));
-            } else {
-                c.getPlayer().dropMessage(6, "请输入数据包数据");
-            }
-            return 1;
-        }
-    }
-
-    public static class 封包转字符串 extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            if (splitted.length > 1) {
-                try {
-                    c.getSession().getHandler().messageReceived(c.getSession(), MaplePacketCreator.getPacketFromHexString(StringUtil.joinStringFrom(splitted, 1)));
-                } catch (Exception e) {
-                    c.getPlayer().dropMessage(6, "错误: " + e);
-                }
             } else {
                 c.getPlayer().dropMessage(6, "请输入数据包数据");
             }
@@ -1424,7 +1329,7 @@ public class SuperGMCommand {
                 c.getPlayer().dropMessage(6, splitted[0] + " <任务ID> (customData:默认空)");
                 return 0;
             }
-            c.getPlayer().updateInfoQuest(Integer.parseInt(splitted[1]), splitted.length >= 3 ? splitted[2] : null);
+//            c.getPlayer().updateInfoQuest(Integer.parseInt(splitted[1]), splitted.length >= 3 ? splitted[2] : null);
             return 1;
         }
     }
@@ -1442,7 +1347,7 @@ public class SuperGMCommand {
                 c.getPlayer().dropMessage(6, "玩家不存在");
                 return 0;
             }
-            player.updateInfoQuest(Integer.parseInt(splitted[1]), splitted.length >= 3 ? splitted[2] : null);
+//            player.updateInfoQuest(Integer.parseInt(splitted[1]), splitted.length >= 3 ? splitted[2] : null);
             return 1;
         }
     }

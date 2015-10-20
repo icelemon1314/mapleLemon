@@ -1781,19 +1781,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.keyValue.put(key, values);
         this.changed_keyValue = true;
     }
-
-    public void updateInfoQuest(int questid, String data) {
-        updateInfoQuest(questid, data, true);
-    }
-
-    public void updateInfoQuest(int questid, String data, boolean show) {
-        this.questinfo.put(questid, data);
-        this.changed_questinfo = true;
-        if (show) {
-            this.client.getSession().write(MaplePacketCreator.updateInfoQuest(questid, data));
-        }
-    }
-
     public String getInfoQuest(int questid) {
         if (this.questinfo.containsKey(questid)) {
             return (String) this.questinfo.get(questid);
@@ -1822,13 +1809,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void setInfoQuestStat(int id, String stat, String statData) {
         String info = getInfoQuest(id);
         if ((info.length() == 0) || (!info.contains(stat))) {
-            updateInfoQuest(id, new StringBuilder().append(stat).append("=").append(statData).append(info.length() == 0 ? "" : ";").append(info).toString());
         } else {
             String newInfo = new StringBuilder().append(stat).append("=").append(statData).toString();
             String beforeStat = info.substring(0, info.indexOf(stat));
             int from = info.indexOf(";", info.indexOf(stat) + stat.length());
             String afterStat = from == -1 ? "" : info.substring(from + 1);
-            updateInfoQuest(id, new StringBuilder().append(beforeStat).append(newInfo).append(afterStat.length() != 0 ? new StringBuilder().append(";").append(afterStat).toString() : "").toString());
         }
     }
 
@@ -3955,9 +3940,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     }
                 }
                 updateSingleStat(MapleStat.经验, getExp());
-                if (show) {
-                    this.client.getSession().write(MaplePacketCreator.GainEXP_Others((int) total, inChat, white));
-                }
             }
         } catch (Exception e) {
             FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, e);
@@ -4436,7 +4418,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 continue;
             }
             if (q.mobKilled(id, skillID)) {
-                this.client.getSession().write(MaplePacketCreator.updateQuestMobKills(q));
                 if (q.getQuest().canComplete(this, null)) {
                     this.client.getSession().write(MaplePacketCreator.getShowQuestCompletion(q.getQuest().getId()));
                 }
@@ -6312,8 +6293,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             this.client.getSession().write(UIPacket.getMidMsg(message, false, 0));
         } else if (type == -8) {
             this.client.getSession().write(UIPacket.getMidMsg(message, true, 0));
-        } else if (type == -9) {
-            this.client.getSession().write(MaplePacketCreator.showQuestMessage(message));
         } else if (type == -10) {
             this.client.getSession().write(MaplePacketCreator.getFollowMessage(message));
         } else if (type == -11) {
@@ -6918,19 +6897,14 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 case 1300:
                 case 1301:
                 case 1302:
-                    updateInfoQuest(questid, "min=0;sec=0;date=0000-00-00;have=0;rank=F;try=0;cmp=0;CR=0;VR=0;gvup=0;vic=0;lose=0;draw=0");
                     break;
                 case 1303:
-                    updateInfoQuest(questid, "min=0;sec=0;date=0000-00-00;have=0;have1=0;rank=F;try=0;cmp=0;CR=0;VR=0;vic=0;lose=0");
                     break;
                 case 1204:
-                    updateInfoQuest(questid, "min=0;sec=0;date=0000-00-00;have0=0;have1=0;have2=0;have3=0;rank=F;try=0;cmp=0;CR=0;VR=0");
                     break;
                 case 1206:
-                    updateInfoQuest(questid, "min=0;sec=0;date=0000-00-00;have0=0;have1=0;rank=F;try=0;cmp=0;CR=0;VR=0");
                     break;
                 default:
-                    updateInfoQuest(questid, "min=0;sec=0;date=0000-00-00;have=0;rank=F;try=0;cmp=0;CR=0;VR=0");
             }
 
             ret = true;
@@ -6972,7 +6946,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             newQuest.append(";");
             changed = true;
         }
-        updateInfoQuest(questid, changed ? newQuest.toString().substring(0, newQuest.toString().length() - 1) : newQuest.toString());
     }
 
     public void recalcPartyQuestRank(int questid) {
@@ -7915,7 +7888,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void checkTailAndEar() {
         if (!this.questinfo.containsKey(59300)) {
-            updateInfoQuest(59300, "bTail=1;bEar=1;TailID=5010119;EarID=5010116", false);
         }
     }
 

@@ -1064,7 +1064,6 @@ public class PlayerHandler {
                 }
                 chr.gainMeso(-price, true, true);
                 MapleInventoryManipulator.addById(c, itemId, (short) 1, "");
-                chr.updateInfoQuest(infoQuestId, infoData);
                 c.getSession().write(MaplePacketCreator.updateMedalQuestInfo((byte) 0, itemId));
             } else {
                 c.getSession().write(MaplePacketCreator.updateMedalQuestInfo((byte) 3, itemId));
@@ -1363,7 +1362,6 @@ public class PlayerHandler {
             skillid = i == 0 ? skillid : 0;
             StrArray[index] = "cmd" + index + "=" + skillid;
             newstr = StrArray[0] + ";" + StrArray[1] + ";" + StrArray[2];
-            chr.updateInfoQuest(52554, newstr);
             chr.send(MaplePacketCreator.UpdateMacrSkill(index, skillid));
             MapleQuest.getInstance(52554).forceStart(chr, 0, newstr);
         }

@@ -1124,8 +1124,8 @@ public class MapleGuild
         } else {
             removeJoinList(chr.getId());
         }
-        chr.updateInfoQuest(GameConstants.申请公会名, add ? "name=" + name : "");
-        chr.updateInfoQuest(GameConstants.申请公ID, add ? "GuildID=" + id : "");
+//        chr.updateInfoQuest(GameConstants.申请公会名, add ? "name=" + name : "");
+//        chr.updateInfoQuest(GameConstants.申请公ID, add ? "GuildID=" + id : "");
     }
 
     public final void addJoinList(int cid) {

@@ -243,7 +243,6 @@ public class PetHandler {
         slea.skip(4);
         slea.skip(4);
         boolean data = slea.readByte() > 0;
-        chr.updateInfoQuest(12334, data ? "autoEat=0" : "autoEat=1");
         c.getSession().write(PetPacket.showPetAutoEatMsg());
     }
 }
