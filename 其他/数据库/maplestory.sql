@@ -402,7 +402,7 @@ CREATE TABLE `characters` (
   `guildrank` tinyint(1) unsigned NOT NULL DEFAULT '5',
   `allianceRank` tinyint(1) unsigned NOT NULL DEFAULT '5',
   `guildContribution` int(11) NOT NULL DEFAULT '0',
-  `pets` varchar(13) NOT NULL DEFAULT '-1,-1,-1',
+  `pets` varchar(13) NOT NULL DEFAULT '-1',
   `sp` varchar(255) NOT NULL DEFAULT '0,0,0,0,0,0,0,0,0,0',
   `subcategory` int(11) NOT NULL DEFAULT '0',
   `rank` int(11) NOT NULL DEFAULT '1',

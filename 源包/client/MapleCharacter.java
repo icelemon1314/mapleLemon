@@ -1141,7 +1141,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ps.setLong(18, chr.meso);
             ps.setInt(19, -1);
             ps.setByte(20, chr.buddylist.getCapacity());
-            ps.setString(21, "-1,-1,-1");
+            ps.setString(21, "-1");
             ps.setInt(22, chr.decorate);
             ps.setInt(23, 0);
             ps.setByte(24, (byte) chr.getGMLevel());
@@ -5980,7 +5980,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void setLevel(short level) {
-        this.level = (short) (level - 1);
+        this.level = level;
     }
 
     public void sendNote(String to, String msg) {

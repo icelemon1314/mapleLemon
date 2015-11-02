@@ -65,10 +65,12 @@ public class LoginPacket {
         return mplew.getPacket();
     }
 
+    /**
+     * 发送选择性别的包
+     * @param c
+     * @return
+     */
     public static byte[] genderNeeded(MapleClient c) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(3);
 
         mplew.write(SendPacketOpcode.CHOOSE_GENDER.getValue());
@@ -78,9 +80,6 @@ public class LoginPacket {
     }
 
     public static byte[] genderChanged(MapleClient c) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(3);
 
         mplew.write(SendPacketOpcode.GENDER_SET.getValue());

@@ -102,7 +102,7 @@ public class CreateCharHandler {
             MapleCharacter.saveNewCharToDB(newchar);
             c.getSession().write(LoginPacket.addNewCharEntry(newchar, true));
             c.createdChar(newchar.getId());
-            ServerUI.getInstance().addCharTable(newchar);
+//            ServerUI.getInstance().addCharTable(newchar); // 报错，先注释掉
         } else {
             c.getSession().write(LoginPacket.addNewCharEntry(newchar, false));
         }

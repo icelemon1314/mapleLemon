@@ -62,7 +62,7 @@ public class MapleClient implements Serializable {
     public static final byte LOGIN_SERVER_TRANSITION = 1;
     public static final byte LOGIN_LOGGEDIN = 2;
     public static final byte CHANGE_CHANNEL = 3;
-    public static final byte ENTERING_PIN = 4;
+    public static final byte ENTERING_PIN = 4; // 需要设置性别
     public static final byte PIN_CORRECT = 5;
     public static final int DEFAULT_CHARSLOT = LoginServer.getMaxCharacters();
     public static final String CLIENT_KEY = "CLIENT";
