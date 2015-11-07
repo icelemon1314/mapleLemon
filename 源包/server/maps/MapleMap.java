@@ -399,7 +399,7 @@ public final class MapleMap {
             this.runningOidLock.unlock();
         }
 
-        ReentrantReadWriteLock rl = (ReentrantReadWriteLock) this.mapobjectlocks.get(mapobject.getType());
+        ReentrantReadWriteLock rl = this.mapobjectlocks.get(mapobject.getType());
         rl.writeLock().lock();
         try {
             ((LinkedHashMap) this.mapobjects.get(mapobject.getType())).put(mapobject.getObjectId(), mapobject);
@@ -1307,7 +1307,7 @@ public final class MapleMap {
     }
 
     public boolean containsNPC(int npcid) {
-        ((ReentrantReadWriteLock) this.mapobjectlocks.get(MapleMapObjectType.NPC)).readLock().lock();
+        this.mapobjectlocks.get(MapleMapObjectType.NPC).readLock().lock();
         try {
             Iterator itr = ((LinkedHashMap) this.mapobjects.get(MapleMapObjectType.NPC)).values().iterator();
             MapleNPC n;
@@ -1319,12 +1319,12 @@ public final class MapleMap {
             }
             return false;
         } finally {
-            ((ReentrantReadWriteLock) this.mapobjectlocks.get(MapleMapObjectType.NPC)).readLock().unlock();
+            this.mapobjectlocks.get(MapleMapObjectType.NPC).readLock().unlock();
         }
     }
 
     public MapleNPC getNPCById(int id) {
-        ((ReentrantReadWriteLock) this.mapobjectlocks.get(MapleMapObjectType.NPC)).readLock().lock();
+        this.mapobjectlocks.get(MapleMapObjectType.NPC).readLock().lock();
         try {
             Iterator itr = ((LinkedHashMap) this.mapobjects.get(MapleMapObjectType.NPC)).values().iterator();
             MapleNPC n;
@@ -1336,7 +1336,7 @@ public final class MapleMap {
             }
             return null;
         } finally {
-            ((ReentrantReadWriteLock) this.mapobjectlocks.get(MapleMapObjectType.NPC)).readLock().unlock();
+            this.mapobjectlocks.get(MapleMapObjectType.NPC).readLock().unlock();
         }
     }
 

@@ -48,9 +48,9 @@ public class QuestScriptManager extends AbstractScriptManager {
                 FileoutputUtil.log(FileoutputUtil.Quest_ScriptEx_Log, "开始任务脚本不存在 NPC：" + npcId + " Quest：" + questId);
                 return;
             }
-//            if (c.getPlayer().isAdmin()) {
-//                c.getPlayer().dropMessage(5, "开始脚本任务 NPC：" + npcId + " Quest：" + questId);
-//            }
+            if (c.getPlayer().isAdmin()) {
+                c.getPlayer().dropMessage(5, "开始脚本任务 NPC：" + npcId + " Quest：" + questId);
+            }
             ScriptEngine scriptengine = (ScriptEngine) iv;
             QuestActionManager qm = new QuestActionManager(c, npcId, questId, true, ScriptType.QUEST_START, iv);
             this.qms.put(c, qm);

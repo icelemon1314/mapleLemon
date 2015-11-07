@@ -59,14 +59,13 @@ public class DumpQuests {
     public void dumpQuests() throws Exception {
         if (!hadError) {
             PreparedStatement psai = con.prepareStatement("INSERT INTO wz_questactitemdata(uniqueid, itemid, count, period, gender, job, jobEx, prop) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            PreparedStatement psas = con.prepareStatement("INSERT INTO wz_questactskilldata(uniqueid, skillid, skillLevel, masterLevel) VALUES (?, ?, ?, ?)");
             PreparedStatement psaq = con.prepareStatement("INSERT INTO wz_questactquestdata(uniqueid, quest, state) VALUES (?, ?, ?)");
             PreparedStatement ps = con.prepareStatement("INSERT INTO wz_questdata(questid, name, autoStart, autoPreComplete, viewMedalItem, selectedSkillID, blocked, autoAccept, autoComplete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
             PreparedStatement psr = con.prepareStatement("INSERT INTO wz_questreqdata(questid, type, name, stringStore, intStoresFirst, intStoresSecond) VALUES (?, ?, ?, ?, ?, ?)");
             PreparedStatement psq = con.prepareStatement("INSERT INTO wz_questpartydata(questid, rank, mode, property, value) VALUES(?,?,?,?,?)");
             PreparedStatement psa = con.prepareStatement("INSERT INTO wz_questactdata(questid, type, name, intStore, applicableJobs, uniqueid) VALUES (?, ?, ?, ?, ?, ?)");
             try {
-                dumpQuests(psai, psas, psaq, ps, psr, psq, psa);
+                dumpQuests(psai, psaq, ps, psr, psq, psa);
             } catch (Exception e) {
                 System.out.println(id + " quest.");
                 System.out.println(e);
@@ -74,8 +73,6 @@ public class DumpQuests {
             } finally {
                 psai.executeBatch();
                 psai.close();
-                psas.executeBatch();
-                psas.close();
                 psaq.executeBatch();
                 psaq.close();
                 psa.executeBatch();
@@ -105,12 +102,11 @@ public class DumpQuests {
     }
 
     //kinda inefficient
-    public void dumpQuests(PreparedStatement psai, PreparedStatement psas, PreparedStatement psaq, PreparedStatement ps, PreparedStatement psr, PreparedStatement psq, PreparedStatement psa) throws Exception {
+    public void dumpQuests(PreparedStatement psai, PreparedStatement psaq, PreparedStatement ps, PreparedStatement psr, PreparedStatement psq, PreparedStatement psa) throws Exception {
         if (!update) {
             delete("DELETE FROM wz_questdata");
             delete("DELETE FROM wz_questactdata");
             delete("DELETE FROM wz_questactitemdata");
-            delete("DELETE FROM wz_questactskilldata");
             delete("DELETE FROM wz_questactquestdata");
             delete("DELETE FROM wz_questreqdata");
             delete("DELETE FROM wz_questpartydata");
@@ -293,17 +289,6 @@ public class DumpQuests {
                                         psai.setInt(8, MapleDataTool.getInt("prop", iEntry, -1));
                                     }
                                     psai.addBatch();
-                                }
-                                break;
-                            case "skill":
-                                uniqueid++;
-                                psa.setInt(6, uniqueid);
-                                psas.setInt(1, uniqueid);
-                                for (MapleData sEntry : act) {
-                                    psas.setInt(2, MapleDataTool.getInt("id", sEntry, 0));
-                                    psas.setInt(3, MapleDataTool.getInt("skillLevel", sEntry, 0));
-                                    psas.setInt(4, MapleDataTool.getInt("masterLevel", sEntry, 0));
-                                    psas.addBatch();
                                 }
                                 break;
                             case "quest":

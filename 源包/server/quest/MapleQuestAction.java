@@ -39,7 +39,7 @@ public class MapleQuestAction implements Serializable {
     private List<Triple<Integer, Integer, Integer>> skill = null;
     private List<Pair<Integer, Integer>> state = null;
 
-    public MapleQuestAction(MapleQuestActionType type, ResultSet rse, MapleQuest quest, PreparedStatement pss, PreparedStatement psq, PreparedStatement psi)
+    public MapleQuestAction(MapleQuestActionType type, ResultSet rse, MapleQuest quest, PreparedStatement psq, PreparedStatement psi)
             throws SQLException {
         this.type = type;
         this.quest = quest;
@@ -74,14 +74,6 @@ public class MapleQuestAction implements Serializable {
                 }
                 rs.close();
                 break;
-            case skill:
-                this.skill = new ArrayList();
-                pss.setInt(1, rse.getInt("uniqueid"));
-                rs = pss.executeQuery();
-                while (rs.next()) {
-                    this.skill.add(new Triple(rs.getInt("skillid"), rs.getInt("skillLevel"), rs.getInt("masterLevel")));
-                }
-                rs.close();
         }
     }
 
@@ -129,6 +121,11 @@ public class MapleQuestAction implements Serializable {
         return false;
     }
 
+    /**
+     * 开始执行任务
+     * @param chr
+     * @param extSelection
+     */
     public void runStart(MapleCharacter chr, Integer extSelection) {
         MapleQuestStatus status;
         int selection;

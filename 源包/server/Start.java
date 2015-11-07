@@ -145,8 +145,8 @@ public class Start {
         System.out.println("加载排名信息数据");
         MapleGuildRanking.getInstance().load(reload);
 
-        System.out.println("加载公会数据并清理不存在公会");
-        MapleGuild.loadAll();
+        //System.out.println("加载公会数据并清理不存在公会");
+        //MapleGuild.loadAll();
 
         System.out.println("加载任务数据");
         //加载任务信息

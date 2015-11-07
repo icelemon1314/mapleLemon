@@ -20,6 +20,7 @@ public final class MapleQuestStatus implements Serializable {
     private int forfeited = 0;
     private String customData;
 
+    public static final int QUEST_UNSTART = 0;
     public static final int QUEST_STARTED=1;
     public static final int QUEST_COMPLETED=2;
 

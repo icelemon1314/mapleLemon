@@ -8,21 +8,20 @@ import client.inventory.Item;
 import client.inventory.MapleInventoryType;
 import client.inventory.MaplePet;
 import constants.ItemConstants;
+import tools.Pair;
+
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.LinkedList;
 import java.util.List;
-import tools.Pair;
 
-public class MapleQuestRequirement implements Serializable {
+public class MapleQuestReward implements Serializable {
 
     private static final long serialVersionUID = 9179541993413738569L;
-    private MapleQuest quest;
-    private MapleQuestRequirementType type;
+    private MapleQuestRewardType type;
     private int intStore;
-    private String stringStore;
     private List<Pair<Integer, Integer>> dataStore;
 
     /**
@@ -32,10 +31,13 @@ public class MapleQuestRequirement implements Serializable {
      * @param rse
      * @throws SQLException
      */
-    public MapleQuestRequirement(MapleQuest quest, MapleQuestRequirementType type, ResultSet rse) throws SQLException {
+    public MapleQuestReward(MapleQuestRewardType type, ResultSet rse) throws SQLException {
         this.type = type;
-        this.quest = quest;
-        this.intStore = Integer.parseInt(rse.getString("stringStore"));
+        if (type == MapleQuestRewardType.item) {
+            this.dataStore.add(new Pair(rse.getInt("itemId"),rse.getInt("num")));
+        } else {
+            System.out.println("暂时不支持的奖励类型："+type.toString());
+        }
     }
 
     public boolean check(MapleCharacter chr, Integer npcid) {
@@ -93,22 +95,8 @@ public class MapleQuestRequirement implements Serializable {
                 return chr.getLevel() >= this.intStore;
             case lvmax:
                 return chr.getLevel() <= this.intStore;
-            case end:
-                String timeStr = this.stringStore;
-                if ((timeStr == null) || (timeStr.length() <= 0)) {
-                    return true;
-                }
-                Calendar cal = Calendar.getInstance();
-                cal.set(Integer.parseInt(timeStr.substring(0, 4)), Integer.parseInt(timeStr.substring(4, 6)), Integer.parseInt(timeStr.substring(6, 8)), Integer.parseInt(timeStr.substring(8, 10)), 0);
-                return cal.getTimeInMillis() >= System.currentTimeMillis();
             case mob:
-                for (Pair a : this.dataStore) {
-                    int mobId = ((Integer) a.getLeft());
-                    int killReq = ((Integer) a.getRight());
-                    if (chr.getQuest(this.quest).getMobKills(mobId) < killReq) {
-                        return false;
-                    }
-                }
+                // @TODO 给召唤几只怪物吧
                 return true;
             case npc:
                 return (npcid == null) || (npcid == this.intStore);
@@ -121,8 +109,6 @@ public class MapleQuestRequirement implements Serializable {
                 return chr.getFame() >= this.intStore;
             case questComplete:
                 return chr.getNumQuest() >= this.intStore;
-            case interval:
-                return (chr.getQuest(this.quest).getStatus() != 2) || (chr.getQuest(this.quest).getCompletionTime() <= System.currentTimeMillis() - this.intStore * 60 * 1000L);
             case pet:
                 for (Pair a : this.dataStore) {
                     if (chr.getSpawnPet() != null) {
@@ -160,7 +146,7 @@ public class MapleQuestRequirement implements Serializable {
         return true;
     }
 
-    public MapleQuestRequirementType getType() {
+    public MapleQuestRewardType getType() {
         return this.type;
     }
 

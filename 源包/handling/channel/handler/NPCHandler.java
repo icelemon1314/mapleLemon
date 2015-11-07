@@ -116,6 +116,13 @@ public class NPCHandler {
         if (npc.hasShop()) {
             chr.setConversation(1);
             npc.sendShop(c);
+        } else if (npc.hasQuest(chr)) { // wz中的任务
+            System.out.println("NPC TALK Q");
+            MapleQuest.getInstance(npc.getQuestId()).start(chr,npc.getId());
+//            QuestScriptManager.getInstance().startQuest(c, npc.getId(),npc.getQuestId());
+        } else if (npc.hasScriptQuest()) { // 脚本任务 可以无限做，暂时不记录状态
+            System.out.println("NPC TALK Script Quest");
+            QuestScriptManager.getInstance().startQuest(c, npc.getId(),npc.getQuestId());
         } else {
             NPCScriptManager.getInstance().start(c, npc.getId());
         }

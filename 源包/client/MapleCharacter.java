@@ -1886,6 +1886,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         updateQuest(quest, false);
     }
 
+    /**
+     * 更新玩家任务信息
+     * @param quest
+     * @param update
+     */
     public void updateQuest(MapleQuestStatus quest, boolean update) {
         this.quests.put(quest.getQuest(), quest);
         this.client.getSession().write(MaplePacketCreator.updateQuest(quest));
@@ -4392,11 +4397,24 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return ret;
     }
 
-    public List<MapleQuestStatus> getCompletedQuests() {
-        List ret = new LinkedList();
+    public MapleQuest getQuestInfoById(int questId) {
+        for (MapleQuestStatus q : this.quests.values()) {
+            if (q.getQuest().getId() == questId && (q.getStatus() == MapleQuestStatus.QUEST_STARTED) && (!q.getQuest().isBlocked())) {
+                return q.getQuest();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获得所有完成的任务
+     * @return
+     */
+    public Map<Integer,MapleQuestStatus> getCompletedQuests() {
+        Map<Integer,MapleQuestStatus> ret = new LinkedHashMap<>();
         for (MapleQuestStatus q : this.quests.values()) {
             if ((q.getStatus() == MapleQuestStatus.QUEST_COMPLETED) && (!q.getQuest().isBlocked())) {
-                ret.add(q);
+                ret.put(q.getQuest().getId(),q);
             }
         }
         return ret;
@@ -5003,6 +5021,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         levelUp(true);
     }
 
+    /**
+     * 玩家升级了
+     * @param takeexp
+     */
     public void levelUp(boolean takeexp) {
         try {
             remainingAp += 5;
@@ -5011,42 +5033,15 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             if (GameConstants.is新手职业(job)) {
                 maxhp += Randomizer.rand(12, 16);
                 maxmp += Randomizer.rand(10, 12);
-            } else if ((job >= 3100) && (job <= 3112)) {
-                maxhp += Randomizer.rand(48, 52);
-            } else if ((job == 3101) || (job == 3120) || (job == 3121) || (job == 3122)) {
-                maxhp += Randomizer.rand(30, 40);
-            } else if (((job >= 100) && (job <= 132)) || ((job >= 1100) && (job <= 1112)) || ((job >= 5100) && (job <= 5112))) {
+            } else if ((job >= 100) && (job <= 132)) {
                 maxhp += Randomizer.rand(48, 52);
                 maxmp += Randomizer.rand(4, 6);
-            } else if (((job >= 200) && (job <= 232)) || ((job >= 1200) && (job <= 1212)) || ((job >= 2700) && (job <= 2712))) {
+            } else if ((job >= 200) && (job <= 232))  {
                 maxhp += Randomizer.rand(10, 14);
                 maxmp += Randomizer.rand(48, 52);
-            } else if ((job >= 3200) && (job <= 3212)) {
-                maxhp += Randomizer.rand(20, 24);
-                maxmp += Randomizer.rand(42, 44);
-            } else if (((job >= 300) && (job <= 322)) || ((job >= 400) && (job <= 434)) || ((job >= 1300) && (job <= 1312)) || ((job >= 1400) && (job <= 1412)) || ((job >= 2300) && (job <= 2312)) || ((job >= 2400) && (job <= 2412)) || ((job >= 3300) && (job <= 3312)) || ((job >= 3600) && (job <= 3612))) {
+            }else if (((job >= 300) && (job <= 322)) || ((job >= 400) && (job <= 434)))  {
                 maxhp += Randomizer.rand(20, 24);
                 maxmp += Randomizer.rand(14, 16);
-            } else if (((job >= 2510) && (job <= 2512)) || ((job >= 510) && (job <= 512)) || ((job >= 580) && (job <= 582)) || ((job >= 1510) && (job <= 1512)) || ((job >= 6500) && (job <= 6512))) {
-                maxhp += Randomizer.rand(37, 41);
-                maxmp += Randomizer.rand(18, 22);
-            } else if (((job >= 500) && (job <= 532)) || ((job >= 570) && (job <= 572)) || (job == 508) || ((job >= 590) && (job <= 592)) || ((job >= 3500) && (job <= 3512)) || (job == 1500) || (job == 2500)) {
-                maxhp += Randomizer.rand(22, 26);
-                maxmp += Randomizer.rand(18, 22);
-            } else if ((job >= 2100) && (job <= 2112)) {
-                maxhp += Randomizer.rand(50, 52);
-                maxmp += Randomizer.rand(4, 6);
-            } else if ((job >= 2200) && (job <= 2218)) {
-                maxhp += Randomizer.rand(12, 16);
-                maxmp += Randomizer.rand(50, 52);
-            } else if ((job >= 6100) && (job <= 6112)) {
-                maxhp += Randomizer.rand(68, 74);
-                maxmp += Randomizer.rand(4, 6);
-            } else if ((job >= 10100) && (job <= 10112)) {
-                maxhp += Randomizer.rand(48, 52);
-            } else if ((job >= 11200) && (job <= 11212)) {
-                maxhp += Randomizer.rand(38, 42);
-                maxmp += Randomizer.rand(20, 24);
             } else {
                 maxhp += Randomizer.rand(24, 38);
                 maxmp += Randomizer.rand(12, 24);
@@ -5058,8 +5053,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             if ((getSkillLevel(20040221) > 0)) {
                 maxmp += Randomizer.rand(18, 22);
             }
-            //maxhp += Randomizer.rand(53, 75);
-            //maxmp += Randomizer.rand(53, 75);
             maxhp = Math.min(500000, Math.abs(maxhp));
             maxmp = Math.min(500000, Math.abs(maxmp));
             if (takeexp) {
@@ -5071,10 +5064,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 setExp(0);
             }
             level += 1;
-            /*if (level == 10) {
-             String msg = "升到11级时\r\n经验倍率由35倍提升到100倍";
-             this.getClient().getSession().write(MaplePacketCreator.sendHint(msg, 250, 5));
-             }*/
             if (level >= getMaxLevelForSever()) {
                 setExp(0);
             }
@@ -5097,13 +5086,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 sb.append(getMedalText());
                 sb.append(getName());
                 sb.append("终于达到了200级.大家一起祝贺下吧。");
-                WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.serverMessageNotice(sb.toString()));
-            }
-            if ((level == 250) && (!isGM())) {
-                StringBuilder sb = new StringBuilder("[祝贺] ");
-                sb.append(getMedalText());
-                sb.append(getName());
-                sb.append("终于达到了250级.大家一起祝贺下吧。");
                 WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.serverMessageNotice(sb.toString()));
             }
             Map<MapleStat, Long> statup = new EnumMap(MapleStat.class);
@@ -5134,11 +5116,20 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             silentPartyUpdate();
             guildUpdate();
             sidekickUpdate();
-//        familyUpdate();
-            autoChangeJob(level, job);
+            checkNewQuest();
+//            autoChangeJob(level, job);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 升级后需要把新的任务放到角色的任务表里面
+     */
+    public void checkNewQuest(){
+        List<MapleQuestStatus> completeQuest=getCompletedQuests();
+
+
     }
 
     public boolean isValidJob(int id) {

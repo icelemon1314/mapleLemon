@@ -16,7 +16,7 @@ public class MaplePortal {
     private String scriptName;
     private Point position;
     private int targetmap;
-    private final int type;
+    private final int type; // portal类型
     private int id;
     private boolean portalState = true;
 
@@ -56,6 +56,10 @@ public class MaplePortal {
         return this.scriptName;
     }
 
+    /**
+     * 传送的脚本名字
+     * @param name
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -64,6 +68,11 @@ public class MaplePortal {
         this.position = position;
     }
 
+
+    /**
+     * 目标地图脚本名字
+     * @param target
+     */
     public void setTarget(String target) {
         this.target = target;
     }

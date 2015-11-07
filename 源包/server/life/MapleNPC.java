@@ -1,19 +1,51 @@
 package server.life;
 
+import client.MapleCharacter;
 import client.MapleClient;
 import server.maps.MapleMapObjectType;
+import server.quest.MapleQuest;
 import server.shop.MapleShopFactory;
 import tools.packet.NPCPacket;
 
 public class MapleNPC extends AbstractLoadedMapleLife {
 
-    private String name = "MISSINGNO";
+    private String name = "MISSION";
     private boolean custom = false;
+    private String questScript = "";
 
     public MapleNPC(int id, String name) {
         super(id);
         this.name = name;
     }
+
+    public void setScriptName(String name) {
+        this.questScript = name;
+    }
+
+    public String getScriptName() {
+        return this.questScript;
+    }
+
+    public boolean hasScriptQuest() {
+        if (this.questScript == "")
+            return false;
+
+        // 检测脚本任务是否完成
+//        MapleQuest.getInstatce().canStart()
+
+        return this.questScript != null;
+    }
+
+    public boolean hasQuest(MapleCharacter chr) {
+        return MapleQuest.getInstatce().canStart(chr,getId());
+    }
+
+    public int getQuestId() {
+        return 0;
+//        int questid=MapleQuest.getInstance().getQuestForNPC(getId()).getId();
+//        return questid;
+    }
+
 
     public boolean hasShop() {
         return MapleShopFactory.getInstance().getShopForNPC(getId()) != null;
@@ -22,6 +54,8 @@ public class MapleNPC extends AbstractLoadedMapleLife {
     public void sendShop(MapleClient c) {
         MapleShopFactory.getInstance().getShopForNPC(getId()).sendShop(c);
     }
+
+
 
     @Override
     public void sendSpawnData(MapleClient client) {

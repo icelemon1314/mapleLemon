@@ -17,6 +17,7 @@ import provider.MapleDataTool;
 import provider.wz.MapleDataType;
 
 import server.Randomizer;
+import server.maps.MapleMapFactory;
 import tools.Pair;
 import tools.StringUtil;
 
@@ -320,12 +321,27 @@ public class MapleLifeFactory {
         return false;
     }
 
+    /**
+     * 新建一个NPC的实例
+     * @param nid
+     * @return
+     */
     public static MapleNPC getNPC(int nid) {
-        String name = (String) npcNames.get(Integer.valueOf(nid));
+        String name = npcNames.get(Integer.valueOf(nid));
         if (name == null) {
             return null;
         }
-        return new MapleNPC(nid, name);
+        // 增加一个NPC的脚本属性属性值
+        MapleNPC npc = new MapleNPC(nid, name);
+        final MapleDataProvider wzNpc = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("wzpath", "wz") + "/Npc.wz"));
+        MapleData data = wzNpc.getData(StringUtil.getLeftPaddedStr(Integer.toString(nid) + ".img", '0', 11));
+        MapleData link = data.getChildByPath("info/quest");
+        if (link != null) {
+            String scriptName = MapleDataTool.getString("info/quest", data);
+            npc.setScriptName(scriptName);
+            System.out.println("NPC("+nid+")存在脚本任务："+scriptName);
+        }
+        return npc;
     }
 
     public static int getRandomNPC() {
@@ -333,7 +349,7 @@ public class MapleLifeFactory {
         int ret = 0;
         while (ret <= 0) {
             ret = ((Integer) vals.get(Randomizer.nextInt(vals.size())));
-            if (((String) npcNames.get(ret)).contains("MISSINGNO")) {
+            if ((npcNames.get(ret)).contains("MISSINGNO")) {
                 ret = 0;
             }
         }

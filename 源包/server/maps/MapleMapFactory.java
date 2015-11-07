@@ -71,12 +71,12 @@ public class MapleMapFactory {
                 if (mapData == null) {
                     return null;
                 }
-                int linkMapId = -1;
-                MapleData link = mapData.getChildByPath("info/link");
-                if (link != null) {
-                    linkMapId = MapleDataTool.getIntConvert("info/link", mapData);
-                    mapData = source.getData(getMapName(linkMapId));
-                }
+//                int linkMapId = -1;
+//                MapleData link = mapData.getChildByPath("info/link");
+//                if (link != null) {
+//                    linkMapId = MapleDataTool.getIntConvert("info/link", mapData);
+//                    mapData = source.getData(getMapName(linkMapId));
+//                }
 
                 float monsterRate = 0.0F;
                 if (respawns) {
@@ -88,10 +88,14 @@ public class MapleMapFactory {
                 map = new MapleMap(mapid, this.channel, MapleDataTool.getInt("info/returnMap", mapData), monsterRate);
 
                 loadPortals(map, mapData.getChildByPath("portal"));
+
+                // 地图边界
                 map.setTop(MapleDataTool.getInt(mapData.getChildByPath("info/VRTop"), 0));
                 map.setLeft(MapleDataTool.getInt(mapData.getChildByPath("info/VRLeft"), 0));
                 map.setBottom(MapleDataTool.getInt(mapData.getChildByPath("info/VRBottom"), 0));
                 map.setRight(MapleDataTool.getInt(mapData.getChildByPath("info/VRRight"), 0));
+
+                // 可以走的点
                 List<MapleFoothold> allFootholds = new LinkedList<>();
                 Point lBound = new Point();
                 Point uBound = new Point();
@@ -181,8 +185,8 @@ public class MapleMapFactory {
 
                 for (MapleData life : mapData.getChildByPath("life")) {
                     String type = MapleDataTool.getString(life.getChildByPath("type"));
-                    String limited = MapleDataTool.getString("limitedname", life, "");
-                    if (((npcs) || (!type.equals("n"))) && (!limited.equals("Stage0"))) {
+//                    String limited = MapleDataTool.getString("limitedname", life, "");
+//                    if (((npcs) || (!type.equals("n"))) && (!limited.equals("Stage0"))) {
                         AbstractLoadedMapleLife myLife = loadLife(life, MapleDataTool.getString(life.getChildByPath("id")), type);
 
                         if (((myLife instanceof MapleMonster)) && (!BattleConstants.isBattleMap(mapid))) {
@@ -198,9 +202,8 @@ public class MapleMapFactory {
                         } else if ((myLife instanceof MapleNPC)) {
                             map.addMapObject(myLife);
                         }
-                    }
+//                    }
                 }
-                addAreaBossSpawn(map);
                 map.setCreateMobInterval((short) MapleDataTool.getInt(mapData.getChildByPath("info/createMobInterval"), 9000));
                 map.setFixedMob(MapleDataTool.getInt(mapData.getChildByPath("info/fixedMobCapacity"), 0));
                 map.setPartyBonusRate(GameConstants.getPartyPlay(mapid, MapleDataTool.getInt(mapData.getChildByPath("info/partyBonusR"), 0)));
@@ -251,8 +254,8 @@ public class MapleMapFactory {
                 }
 
                 try {
-                    map.setMapName(MapleDataTool.getString("mapName", MapleMapFactory.nameData.getChildByPath(getMapStringName(linkMapId > 0 ? linkMapId : omapid)), ""));
-                    map.setStreetName(MapleDataTool.getString("streetName", MapleMapFactory.nameData.getChildByPath(getMapStringName(linkMapId > 0 ? linkMapId : omapid)), ""));
+                    map.setMapName(MapleDataTool.getString("mapName", MapleMapFactory.nameData.getChildByPath(getMapStringName(omapid)), ""));
+                    map.setStreetName(MapleDataTool.getString("streetName", MapleMapFactory.nameData.getChildByPath(getMapStringName(omapid)), ""));
                 } catch (Exception e) {
                     map.setMapName("");
                     map.setStreetName("");
@@ -444,7 +447,6 @@ public class MapleMapFactory {
                 }
             }
         }
-        addAreaBossSpawn(map);
         map.setCreateMobInterval((short) MapleDataTool.getInt(mapData.getChildByPath("info/createMobInterval"), 9000));
         map.setFixedMob(MapleDataTool.getInt(mapData.getChildByPath("info/fixedMobCapacity"), 0));
         map.setPartyBonusRate(GameConstants.getPartyPlay(mapid, MapleDataTool.getInt(mapData.getChildByPath("info/partyBonusR"), 0)));
@@ -528,6 +530,13 @@ public class MapleMapFactory {
         return this.maps.values();
     }
 
+    /**
+     * 加载地图中的动物
+     * @param life
+     * @param id
+     * @param type
+     * @return
+     */
     private AbstractLoadedMapleLife loadLife(MapleData life, String id, String type) {
         AbstractLoadedMapleLife myLife = MapleLifeFactory.getLife(Integer.parseInt(id), type);
         if (myLife == null) {
@@ -639,349 +648,11 @@ public class MapleMapFactory {
         this.channel = channel;
     }
 
-    private void addAreaBossSpawn(MapleMap map) {
-        int monsterid = -1;
-        int mobtime = -1;
-        String msg = null;
-        boolean shouldSpawn = true;
-        boolean sendWorldMsg = false;
-        Point pos1 = null;
-        Point pos2 = null;
-        Point pos3 = null;
-
-        switch (map.getId()) {
-            case 104010200:
-                mobtime = 1200;
-                monsterid = 2220000;
-                msg = "天气凉快了就会出现红蜗牛王。";
-                pos1 = new Point(189, 2);
-                pos2 = new Point(478, 250);
-                pos3 = new Point(611, 489);
-                break;
-            case 102020500:
-                mobtime = 1200;
-                monsterid = 3220000;
-                msg = "树妖王出现了。";
-                pos1 = new Point(1121, 2130);
-                pos2 = new Point(483, 2171);
-                pos3 = new Point(1474, 1706);
-                break;
-            case 100020101:
-                mobtime = 1200;
-                monsterid = 6130101;
-                msg = "什么地方出现了巨大的蘑菇。";
-                pos1 = new Point(-311, 201);
-                pos2 = new Point(-903, 197);
-                pos3 = new Point(-568, 196);
-                break;
-            case 100020301:
-                mobtime = 1200;
-                monsterid = 8220007;
-                msg = "什么地方出现了巨大的蓝色蘑菇。";
-                pos1 = new Point(-188, -657);
-                pos2 = new Point(625, -660);
-                pos3 = new Point(508, -648);
-                break;
-            case 100020401:
-                mobtime = 1200;
-                monsterid = 6300005;
-                msg = "什么地方出现了笼罩着阴暗气息的巨大蘑菇。";
-                pos1 = new Point(-130, -773);
-                pos2 = new Point(504, -760);
-                pos3 = new Point(608, -641);
-                break;
-            case 120030500:
-                mobtime = 1200;
-                monsterid = 5220001;
-                msg = "从沙滩里慢慢的走出了一只巨居蟹。";
-                pos1 = new Point(-355, 179);
-                pos2 = new Point(-1283, -113);
-                pos3 = new Point(-571, -593);
-                break;
-            case 250010304:
-                mobtime = 2100;
-                monsterid = 7220000;
-                msg = "随着微弱的口哨声，肯德熊出现了。";
-                pos1 = new Point(-210, 33);
-                pos2 = new Point(-234, 393);
-                pos3 = new Point(-654, 33);
-                break;
-            case 200010300:
-                mobtime = 1200;
-                monsterid = 8220000;
-                msg = "艾利杰出现了。";
-                pos1 = new Point(665, 83);
-                pos2 = new Point(672, -217);
-                pos3 = new Point(-123, -217);
-                break;
-            case 250010503:
-                mobtime = 1800;
-                monsterid = 7220002;
-                msg = "周边的妖气慢慢浓厚，可以听到诡异的猫叫声。";
-                pos1 = new Point(-303, 543);
-                pos2 = new Point(227, 543);
-                pos3 = new Point(719, 543);
-                break;
-            case 222010310:
-                mobtime = 2700;
-                monsterid = 7220001;
-                msg = "在阴暗的月光中随着九尾狐的哭声，可以感受到它阴气。";
-                pos1 = new Point(-169, -147);
-                pos2 = new Point(-517, 93);
-                pos3 = new Point(247, 93);
-                break;
-            case 103030400:
-                mobtime = 1800;
-                monsterid = 6220000;
-                msg = "从沼泽出现了巨大的多尔。";
-                pos1 = new Point(-831, 109);
-                pos2 = new Point(1525, -75);
-                pos3 = new Point(-511, 107);
-                break;
-            case 101040300:
-                mobtime = 1800;
-                monsterid = 5220002;
-                msg = "蓝雾慢慢散去，浮士德慢慢的显现了出来。";
-                pos1 = new Point(600, -600);
-                pos2 = new Point(600, -800);
-                pos3 = new Point(600, -300);
-                break;
-            case 220050200:
-                mobtime = 1500;
-                monsterid = 5220003;
-                msg = "嘀嗒嘀嗒! 随着规则的指针声出现了提莫。";
-                pos1 = new Point(-467, 1032);
-                pos2 = new Point(532, 1032);
-                pos3 = new Point(-47, 1032);
-                break;
-            case 221040301:
-                mobtime = 2400;
-                monsterid = 6220001;
-                msg = "厚重的机器运作声，朱诺出现了!";
-                pos1 = new Point(-4134, 416);
-                pos2 = new Point(-4283, 776);
-                pos3 = new Point(-3292, 776);
-                break;
-            case 240040401:
-                mobtime = 7200;
-                monsterid = 8220003;
-                msg = "大海兽出现了。";
-                pos1 = new Point(-15, 2481);
-                pos2 = new Point(127, 1634);
-                pos3 = new Point(159, 1142);
-                break;
-            case 260010201:
-                mobtime = 3600;
-                monsterid = 3220001;
-                msg = "从沙尘中可以看到大宇的身影。";
-                pos1 = new Point(-215, 275);
-                pos2 = new Point(298, 275);
-                pos3 = new Point(592, 275);
-                break;
-            case 251010102:
-                mobtime = 3600;
-                monsterid = 5220004;
-                msg = "大王蜈蚣出现了。";
-                pos1 = new Point(-41, 124);
-                pos2 = new Point(-173, 126);
-                pos3 = new Point(79, 118);
-                break;
-            case 261030000:
-                mobtime = 2700;
-                monsterid = 8220002;
-                msg = "吉米拉出现了。";
-                pos1 = new Point(-1094, -405);
-                pos2 = new Point(-772, -116);
-                pos3 = new Point(-108, 181);
-                break;
-            case 230020100:
-                mobtime = 2700;
-                monsterid = 4220000;
-                msg = "在海草中间，出现了奇怪的蛤蚌。";
-                pos1 = new Point(-291, -20);
-                pos2 = new Point(-272, -500);
-                pos3 = new Point(-462, 640);
-                break;
-            case 103020320:
-                mobtime = 1800;
-                monsterid = 5090000;
-                msg = "在地铁的阴影中出现了什么东西。";
-                pos1 = new Point(79, 174);
-                pos2 = new Point(-223, 296);
-                pos3 = new Point(80, 275);
-                break;
-            case 103020420:
-                mobtime = 1800;
-                monsterid = 5090000;
-                msg = "在地铁的阴影中出现了什么东西。";
-                pos1 = new Point(2241, 301);
-                pos2 = new Point(1990, 301);
-                pos3 = new Point(1684, 307);
-                break;
-            case 261020300:
-                mobtime = 2700;
-                monsterid = 7090000;
-                msg = "自动警备系统出现了。";
-                pos1 = new Point(312, 157);
-                pos2 = new Point(539, 136);
-                pos3 = new Point(760, 141);
-                break;
-            case 261020401:
-                mobtime = 2700;
-                monsterid = 8090000;
-                msg = "迪特和罗伊出现了。";
-                pos1 = new Point(-263, 155);
-                pos2 = new Point(-436, 122);
-                pos3 = new Point(22, 144);
-                break;
-            case 250020300:
-                mobtime = 2700;
-                monsterid = 5090001;
-                msg = "仙人玩偶出现了。";
-                pos1 = new Point(1208, 27);
-                pos2 = new Point(1654, 40);
-                pos3 = new Point(927, -502);
-                break;
-            case 211050000:
-                mobtime = 2700;
-                monsterid = 6090001;
-                msg = "被束缚在冰里的魔女睁开了眼睛。";
-                pos1 = new Point(-233, -431);
-                pos2 = new Point(-370, -426);
-                pos3 = new Point(-526, -420);
-                break;
-            case 261010003:
-                mobtime = 2700;
-                monsterid = 6090004;
-                msg = "陆陆猫出现了。";
-                pos1 = new Point(-861, 301);
-                pos2 = new Point(-703, 301);
-                pos3 = new Point(-426, 287);
-                break;
-            case 222010300:
-                mobtime = 2700;
-                monsterid = 6090003;
-                msg = "书生鬼出现了。";
-                pos1 = new Point(1300, -400);
-                pos2 = new Point(1100, -100);
-                pos3 = new Point(1100, 100);
-                break;
-            case 251010101:
-                mobtime = 2700;
-                monsterid = 6090002;
-                msg = "竹林里出现了一个来历不明的青竹武士，只要打碎小竹片，就可让青竹武士大发雷霆而葬失自制力，并将他打倒。";
-                pos1 = new Point(-15, -449);
-                pos2 = new Point(-114, -442);
-                pos3 = new Point(-255, -446);
-                break;
-            case 211041400:
-                mobtime = 2700;
-                monsterid = 6090000;
-                msg = "黑山老妖出现了！";
-                pos1 = new Point(1672, 82);
-                pos2 = new Point(2071, 10);
-                pos3 = new Point(1417, 57);
-                break;
-            case 105030500:
-                mobtime = 2700;
-                monsterid = 8130100;
-                msg = "蝙蝠怪出现了。";
-                pos1 = new Point(1275, -399);
-                pos2 = new Point(1254, -412);
-                pos3 = new Point(1058, -427);
-                break;
-            case 105020400:
-                mobtime = 2700;
-                monsterid = 8220008;
-                msg = "出现了一个奇怪的商店。";
-                pos1 = new Point(-163, 82);
-                pos2 = new Point(958, 107);
-                pos3 = new Point(706, -206);
-                break;
-            case 211040101:
-                mobtime = 3600;
-                monsterid = 8220001;
-                msg = "驮狼雪人出现了。";
-                pos1 = new Point(485, 244);
-                pos2 = new Point(-60, 249);
-                pos3 = new Point(208, 255);
-                break;
-            case 209000000:
-                mobtime = 300;
-                monsterid = 9500317;
-                msg = "小雪人出现了。";
-                pos1 = new Point(-115, 154);
-                pos2 = new Point(-115, 154);
-                pos3 = new Point(-115, 154);
-                break;
-            case 677000001:
-                mobtime = 60;
-                monsterid = 9400612;
-                msg = "牛魔王出现了。";
-                pos1 = new Point(99, 60);
-                pos2 = new Point(99, 60);
-                pos3 = new Point(99, 60);
-                break;
-            case 677000003:
-                mobtime = 60;
-                monsterid = 9400610;
-                msg = "黑暗独角兽出现了。";
-                pos1 = new Point(6, 35);
-                pos2 = new Point(6, 35);
-                pos3 = new Point(6, 35);
-                break;
-            case 677000005:
-                mobtime = 60;
-                monsterid = 9400609;
-                msg = "印第安老斑鸠出现了。";
-                pos1 = new Point(-277, 78);
-                pos2 = new Point(547, 86);
-                pos3 = new Point(-347, 80);
-                break;
-            case 677000007:
-                mobtime = 60;
-                monsterid = 9400611;
-                msg = "雪之猫女出现了。";
-                pos1 = new Point(117, 73);
-                pos2 = new Point(117, 73);
-                pos3 = new Point(117, 73);
-                break;
-            case 677000009:
-                mobtime = 60;
-                monsterid = 9400613;
-                msg = "沃勒福出现了。";
-                pos1 = new Point(85, 66);
-                pos2 = new Point(85, 66);
-                pos3 = new Point(85, 66);
-                break;
-            case 931000500:
-            case 931000502:
-                mobtime = 3600;
-                monsterid = 9304005;
-                msg = "美洲豹栖息地出现 剑齿豹 ，喜欢此坐骑的弩豹游侠职业可以前往抓捕。";
-                pos1 = new Point(-872, -332);
-                pos2 = new Point(409, -572);
-                pos3 = new Point(-131, 0);
-                shouldSpawn = false;
-                sendWorldMsg = true;
-                break;
-            case 931000501:
-            case 931000503:
-                mobtime = 7200;
-                monsterid = 9304006;
-                msg = "美洲豹栖息地出现 雪豹 ，喜欢此坐骑的弩豹游侠职业可以前往抓捕。";
-                pos1 = new Point(-872, -332);
-                pos2 = new Point(409, -572);
-                pos3 = new Point(-131, 0);
-                shouldSpawn = false;
-                sendWorldMsg = true;
-        }
-
-        if (monsterid > 0) {
-            map.addAreaMonsterSpawn(MapleLifeFactory.getMonster(monsterid), pos1, pos2, pos3, mobtime, msg, shouldSpawn, sendWorldMsg);
-        }
-    }
-
+    /**
+     * 地图上的加载portal数据
+     * @param map
+     * @param port
+     */
     private void loadPortals(MapleMap map, MapleData port) {
         if (port == null) {
             return;
