@@ -41,11 +41,8 @@ public class MapleNPC extends AbstractLoadedMapleLife {
     }
 
     public int getQuestId() {
-        return 0;
-//        int questid=MapleQuest.getInstance().getQuestForNPC(getId()).getId();
-//        return questid;
+        return MapleQuest.getInstatce().getQuestIdByNpcId(getId()).get(0);
     }
-
 
     public boolean hasShop() {
         return MapleShopFactory.getInstance().getShopForNPC(getId()) != null;

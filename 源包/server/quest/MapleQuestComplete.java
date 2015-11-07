@@ -13,24 +13,24 @@ import tools.Pair;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapleQuestComplete implements Serializable {
 
     private static final long serialVersionUID = 9179541993413738569L;
     private MapleQuestCompleteType type;
-    private List<Pair<Integer, Integer>> dataStore;
+    private List<Pair<Integer, Integer>> dataStore = new ArrayList();
 
     /**
      * 任务的必要条件
      * @param type
-     * @param rse
      * @throws SQLException
      */
-    public MapleQuestComplete(MapleQuestCompleteType type, ResultSet rse) throws SQLException {
+    public MapleQuestComplete(MapleQuestCompleteType type, int itemId,int num) throws SQLException {
         this.type = type;
         if (type == MapleQuestCompleteType.item) {
-            this.dataStore.add(new Pair(rse.getInt("itemId"),rse.getInt("num")));
+            this.dataStore.add(new Pair(itemId,num));
         } else {
             System.out.println("暂时不支持的奖励类型："+type.toString());
         }
@@ -108,6 +108,7 @@ public class MapleQuestComplete implements Serializable {
     }
 
     public boolean removeQuestItem(MapleCharacter chr){
+        System.out.println("准备扣除道具！");
         switch (type) {
             case item:
                 for (Pair a : this.dataStore) {

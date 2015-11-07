@@ -35,6 +35,7 @@ public class QuestActionManager extends NPCConversationManager {
     }
 
     public void forceStartQuest() {
+
         MapleQuest.getInstance(this.quest).forceStart(getPlayer(), getNpc(), null);
     }
 
@@ -43,6 +44,7 @@ public class QuestActionManager extends NPCConversationManager {
     }
 
     public void forceCompleteQuest() {
+
         MapleQuest.getInstance(this.quest).forceComplete(getPlayer(), getNpc());
     }
 

@@ -28,9 +28,6 @@ public final class MapleQuestStatus implements Serializable {
         this.quest = quest;
         setStatus((byte) status);
         this.completionTime = System.currentTimeMillis();
-        if ((status == QUEST_STARTED) && (!quest.getRelevantMobs().isEmpty())) {
-            registerMobs();
-        }
     }
 
     public MapleQuestStatus(MapleQuest quest, byte status, int npc) {
@@ -38,9 +35,6 @@ public final class MapleQuestStatus implements Serializable {
         setStatus(status);
         setNpc(npc);
         this.completionTime = System.currentTimeMillis();
-        if ((status == QUEST_STARTED) && (!quest.getRelevantMobs().isEmpty())) {
-            registerMobs();
-        }
     }
 
     public void setQuest(int qid) {
@@ -73,18 +67,9 @@ public final class MapleQuestStatus implements Serializable {
 
     private void registerMobs() {
         this.killedMobs = new LinkedHashMap();
-        for (Iterator i$ = this.quest.getRelevantMobs().keySet().iterator(); i$.hasNext();) {
-            int i = ((Integer) i$.next());
-            this.killedMobs.put(i, 0);
-        }
     }
 
     private int maxMob(int mobid) {
-        for (Map.Entry qs : this.quest.getRelevantMobs().entrySet()) {
-            if (((Integer) qs.getKey()) == mobid) {
-                return ((Integer) qs.getValue());
-            }
-        }
         return 0;
     }
 
@@ -176,6 +161,7 @@ public final class MapleQuestStatus implements Serializable {
     }
 
     public void setCustomData(String customData) {
+
         this.customData = customData;
     }
 

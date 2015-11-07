@@ -67,6 +67,7 @@ public class PacketHelper {
     public static void addQuestInfo(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
         List<MapleQuestStatus> started = chr.getStartedQuests();
         System.out.println("任务个数："+started.size());
+        /*
         mplew.writeShort(4);
         mplew.writeInt(100);
         mplew.writeMapleAsciiString("info"); // quest值 info不行
@@ -76,22 +77,13 @@ public class PacketHelper {
         mplew.writeMapleAsciiString("w");
         mplew.writeInt(1001800);
         mplew.writeMapleAsciiString("2s");
-        /*
+        */
+
         mplew.writeShort(started.size());
         for (MapleQuestStatus q : started) {
             mplew.writeInt(q.getQuest().getId());
-            if (q.hasMobKills()) {
-                StringBuilder sb = new StringBuilder();
-                for (Iterator i$ = q.getMobKills().values().iterator(); i$.hasNext();) {
-                    int kills = ((Integer) i$.next());
-                    sb.append(StringUtil.getLeftPaddedStr(String.valueOf(kills), '0', 3));
-                }
-                mplew.writeMapleAsciiString(sb.toString());
-            } else {
-                mplew.writeMapleAsciiString(q.getCustomData() == null ? "" : q.getCustomData());
-            }
+            mplew.writeMapleAsciiString(q.getCustomData() == null ? "" : q.getCustomData());
         }
-        */
     }
 
     /**

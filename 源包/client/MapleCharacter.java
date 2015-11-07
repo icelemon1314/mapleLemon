@@ -814,15 +814,16 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ps = con.prepareStatement("SELECT * FROM queststatus WHERE characterid = ?");
             ps.setInt(1, charid);
             rs = ps.executeQuery();
-            pse = con.prepareStatement("SELECT * FROM queststatusmobs WHERE queststatusid = ?");
             while (rs.next()) {
                 int id = rs.getInt("quest");
+                System.out.println("加载任务信息ID："+id);
                 MapleQuest q = MapleQuest.getInstance(id);
+                System.out.println("加载任务信息ID2："+id);
                 byte stat = rs.getByte("status");
-                if ((stat == 1 || stat == 2) && ((channelserver && (q == null || q.isBlocked())) || (stat == 1 && channelserver && (!q.canStart(ret, null))))) {
-                    System.out.println("已经完成的任务ID"+id);
-                    continue;
-                }
+//                if ((stat == 1 || stat == 2) && ((channelserver && (q == null || q.isBlocked())) || (stat == 1 && channelserver && (!q.canStart(ret, null))))) {
+//                    System.out.println("已经完成的任务ID"+id);
+//                    continue;
+//                }
                 System.out.println("任务ID："+id+"；任务状态："+stat);
                 MapleQuestStatus status = new MapleQuestStatus(q, stat);
                 long cTime = rs.getLong("time");
@@ -833,11 +834,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 status.setCustomData(rs.getString("customData"));
                 ret.quests.put(q, status);
                 System.out.println("加载任务信息："+id);
-                pse.setInt(1, rs.getInt("queststatusid"));
-                ResultSet rsMobs = pse.executeQuery();
-                while (rsMobs.next()) {
-                    status.setMobKills(rsMobs.getInt("mob"), rsMobs.getInt("count"));
-                }
             }
             System.out.println("加载角色信息6");
             ps.close();
@@ -1162,7 +1158,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             rs.close();
 
             ps = con.prepareStatement("INSERT INTO queststatus (`queststatusid`, `characterid`, `quest`, `status`, `time`, `forfeited`, `customData`) VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)", 1);
-            pse = con.prepareStatement("INSERT INTO queststatusmobs VALUES (DEFAULT, ?, ?, ?)");
             ps.setInt(1, chr.id);
             for (MapleQuestStatus q : chr.quests.values()) {
                 ps.setInt(2, q.getQuest().getId());
@@ -1172,21 +1167,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 ps.setString(6, q.getCustomData());
                 ps.execute();
                 rs = ps.getGeneratedKeys();
-                Iterator i$;
-                if (q.hasMobKills()) {
-                    rs.next();
-                    for (i$ = q.getMobKills().keySet().iterator(); i$.hasNext();) {
-                        int mob = ((Integer) i$.next());
-                        pse.setInt(1, rs.getInt(1));
-                        pse.setInt(2, mob);
-                        pse.setInt(3, q.getMobKills(mob));
-                        pse.execute();
-                    }
-                }
                 rs.close();
             }
             ps.close();
-            pse.close();
 
             ps = con.prepareStatement("INSERT INTO character_keyvalue (`characterid`, `key`, `value`) VALUES (?, ?, ?)");
             ps.setInt(1, chr.id);
@@ -1488,7 +1471,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
             deleteWhereCharacterId(con, "DELETE FROM queststatus WHERE characterid = ?");
             ps = con.prepareStatement("INSERT INTO queststatus (`queststatusid`, `characterid`, `quest`, `status`, `time`, `forfeited`, `customData`) VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)", 1);
-            pse = con.prepareStatement("INSERT INTO queststatusmobs VALUES (DEFAULT, ?, ?, ?)");
             ps.setInt(1, this.id);
             for (MapleQuestStatus q : this.quests.values()) {
                 ps.setInt(2, q.getQuest().getId());
@@ -1498,21 +1480,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 ps.setString(6, q.getCustomData());
                 ps.execute();
                 rs = ps.getGeneratedKeys();
-                Iterator i$;
-                if (q.hasMobKills()) {
-                    rs.next();
-                    for (i$ = q.getMobKills().keySet().iterator(); i$.hasNext();) {
-                        int mob = ((Integer) i$.next());
-                        pse.setInt(1, rs.getInt(1));
-                        pse.setInt(2, mob);
-                        pse.setInt(3, q.getMobKills(mob));
-                        pse.execute();
-                    }
-                }
                 rs.close();
             }
             ps.close();
-            pse.close();
 
             System.out.println("保存玩家技能！"+this.skills.size() );
             if (this.skills.size() >= 0) {
@@ -1846,7 +1816,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (!this.quests.containsKey(quest)) {
             return new MapleQuestStatus(quest, 0);
         }
-        return (MapleQuestStatus) this.quests.get(quest);
+        return this.quests.get(quest);
     }
 
     public boolean needQuestItem(int questId, int itemId) {
@@ -1854,7 +1824,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             return true;
         }
         MapleQuest quest = MapleQuest.getInstance(questId);
-        return getInventory(ItemConstants.getInventoryType(itemId)).countById(itemId) < quest.getAmountofItems(itemId);
+        return false;
     }
 
     public void setQuestAdd(MapleQuest quest, byte status, String customData) {
@@ -5127,7 +5097,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
      * 升级后需要把新的任务放到角色的任务表里面
      */
     public void checkNewQuest(){
-        List<MapleQuestStatus> completeQuest=getCompletedQuests();
+//        List<MapleQuestStatus> completeQuest=getCompletedQuests();
 
 
     }

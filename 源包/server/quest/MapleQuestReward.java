@@ -22,7 +22,7 @@ public class MapleQuestReward implements Serializable {
     private static final long serialVersionUID = 9179541993413738569L;
     private MapleQuestRewardType type;
     private int intStore;
-    private List<Pair<Integer, Integer>> dataStore;
+    private List<Pair<Integer, Integer>> dataStore = new ArrayList();
 
     /**
      * 任务的必要条件
