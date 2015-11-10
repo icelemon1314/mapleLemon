@@ -26,7 +26,6 @@ public class MapleQuestReward implements Serializable {
 
     /**
      * 任务的必要条件
-     * @param quest
      * @param type
      * @param rse
      * @throws SQLException
@@ -38,6 +37,32 @@ public class MapleQuestReward implements Serializable {
         } else {
             System.out.println("暂时不支持的奖励类型："+type.toString());
         }
+    }
+
+    /**
+     *
+     * @param chr
+     * @return
+     */
+    public boolean getRewardToChr(MapleCharacter chr){
+        switch (type) {
+            case item:
+                for (Pair a : this.dataStore) {
+                    int itemId = ((Integer) a.getLeft());
+                    short quantity = 0;
+                    MapleInventoryType iType = ItemConstants.getInventoryType(itemId);
+                    for (Item item : chr.getInventory(iType).listById(itemId)) {
+                        quantity = (short) (quantity + item.getQuantity());
+                    }
+                    int count = ((Integer) a.getRight());
+                    if ((quantity < count) || ((count <= 0) && (quantity > 0))) {
+                        return false;
+                    }
+                    chr.gainItem(itemId,count,"任务获得道具！");
+                }
+                return true;
+        }
+        return true;
     }
 
     public boolean check(MapleCharacter chr, Integer npcid) {

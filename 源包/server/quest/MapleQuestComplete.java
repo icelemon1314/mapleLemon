@@ -39,10 +39,9 @@ public class MapleQuestComplete implements Serializable {
     /**
      * 检查任务是否能完成
      * @param chr
-     * @param npcid
      * @return
      */
-    public boolean check(MapleCharacter chr, Integer npcid) {
+    public boolean check(MapleCharacter chr) {
         switch (type) {
             case job:
                 for (Pair a : this.dataStore) {

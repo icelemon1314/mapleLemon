@@ -43,13 +43,28 @@ public class QuestActionManager extends NPCConversationManager {
         MapleQuest.getInstance(this.quest).forceStart(getPlayer(), getNpc(), customData);
     }
 
+    /**
+     * 完成任务了
+     */
     public void forceCompleteQuest() {
 
-        MapleQuest.getInstance(this.quest).forceComplete(getPlayer(), getNpc());
+        MapleQuest.getInstance(this.quest).complete(getPlayer(), getNpc());
     }
 
     public String getQuestCustomData() {
         return this.c.getPlayer().getQuestNAdd(MapleQuest.getInstance(this.quest)).getCustomData();
+    }
+
+    /**
+     * 检查是否能够完成任务
+     * @return
+     */
+    public boolean canCompleteQuest(){
+        MapleQuest chrQuest = getPlayer().getQuestInfoById(this.quest);
+        if (chrQuest.canComplete(getPlayer())) {
+           return true;
+        }
+        return false;
     }
 
     public void setQuestCustomData(String customData) {

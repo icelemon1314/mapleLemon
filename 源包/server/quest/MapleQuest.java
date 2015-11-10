@@ -320,23 +320,22 @@ public class MapleQuest implements Serializable {
     /**
      * 判断任务是否能够完成
      * @param chr
-     * @param npcid
      * @return
      */
-    public boolean canComplete(MapleCharacter chr, Integer npcid) {
+    public boolean canComplete(MapleCharacter chr) {
         if (chr.getQuest(this).getStatus() != 1) {
             return false;
         }
         if ((this.blocked) && (!chr.isGM())) {
             return false;
         }
-        if ((this.autoComplete) && (npcid != null) && (this.viewMedalItem <= 0)) {
-            forceComplete(chr, npcid);
-            return false;
-        }
+//        if ((this.autoComplete) && (npcid != null) && (this.viewMedalItem <= 0)) {
+//            forceComplete(chr, npcid);
+//            return false;
+//        }
         List <MapleQuestComplete> com = this.completeReqs.get(id);
         for (MapleQuestComplete r : com) {
-            if (!r.check(chr,npcid)) {
+            if (!r.check(chr)) {
                 return false;
             }
         }
@@ -406,14 +405,22 @@ public class MapleQuest implements Serializable {
      * @param selection
      */
     public void complete(MapleCharacter chr, int npc, Integer selection) {
-        if ((chr.getMap() != null) && ((this.autoPreComplete) || (checkNPCOnMap(chr, npc))) && (canComplete(chr, npc))) {
+        if ((chr.getMap() != null) && ((this.autoPreComplete) || (checkNPCOnMap(chr, npc))) && (canComplete(chr))) {
 
             // 扣除任务道具
             List <MapleQuestComplete> com = this.completeReqs.get(id);
+            String curStatus = chr.getQuest(this).getCustomData();
             for (MapleQuestComplete r : com) {
                 if (!r.removeQuestItem(chr)) {
+
                     // 更新玩家任务状态
                     forceComplete(chr, npc);
+
+                    // 发送奖励
+                    List <MapleQuestReward> rewardData = this.rewards.get(curStatus);
+                    for (MapleQuestReward reward : rewardData) {
+                        reward.getRewardToChr(chr);
+                    }
                 }
             }
 

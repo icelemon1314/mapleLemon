@@ -327,12 +327,19 @@ public class LoginPacket {
         return mplew.getPacket();
     }
 
+    /**
+     * 角色列表
+     * @param secondpw
+     * @param chars
+     * @param charslots
+     * @return
+     */
     public static byte[] getCharList(String secondpw, List<MapleCharacter> chars, int charslots) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CHARLIST.getValue());
         mplew.write(0);
-        mplew.writeInt(10);
+        mplew.writeInt(0);
         mplew.write(chars.size());
         for (MapleCharacter chr : chars) {
             addCharEntry(mplew, chr);
@@ -390,46 +397,36 @@ public class LoginPacket {
     public static void addCharEntry(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
         PacketHelper.addCharStats(mplew, chr);
 
-//        Map<Byte, Integer> myEquip = new LinkedHashMap();
-//        Map<Byte, Integer> maskedEquip = new LinkedHashMap();
-//        MapleInventory equip = chr.getInventory(MapleInventoryType.EQUIPPED);
-//
-//        for (Item item : equip.newList()) {
-//            if (item.getPosition() < -128) {
-//                continue;
-//            }
-//
-//            byte pos = (byte) (item.getPosition() * -1);
-//            if ((pos < 100) && (myEquip.get(pos) == null)) {
-//                myEquip.put(pos, item.getItemId());
-//            } else if (((pos > 100) || (pos == -128)) && (pos != 111)) {
-//                pos = (byte) (pos == -128 ? 28 : pos - 100);
-//                if (myEquip.get(pos) != null) {
-//                    maskedEquip.put(pos, myEquip.get(pos));
-//                }
-//                myEquip.put(pos, item.getItemId());
-//            } else if (myEquip.get(pos) != null) {
-//                maskedEquip.put(pos, item.getItemId());
-//            }
-//        }
+        Map<Byte, Integer> myEquip = new LinkedHashMap();
+        Map<Byte, Integer> maskedEquip = new LinkedHashMap();
+        MapleInventory equip = chr.getInventory(MapleInventoryType.EQUIPPED);
 
-        MapleInventory iv = chr.getInventory(MapleInventoryType.EQUIPPED);
-        List<Item> equippedList = iv.newList();
-        Map<Byte, Integer> equipped = new LinkedHashMap();
-        Map<Byte, Integer> equippedCash = new LinkedHashMap();
-        for (Item item : equippedList) {
-            if ((item.getPosition() < 0) && (item.getPosition() > -100)) {
-                equipped.put(item.getPosition(),item.getItemId());
-            } else if ((item.getPosition() <= -100) && (item.getPosition() > -1000)) {
-                equippedCash.put(item.getPosition(), item.getItemId());;
+        for (Item item : equip.newList()) {
+            if (item.getPosition() < -128) {
+                continue;
+            }
+
+            byte pos = (byte) (item.getPosition() * -1);
+            if ((pos < 100) && (myEquip.get(pos) == null)) {
+                myEquip.put(pos, item.getItemId());
+            } else if (((pos > 100) || (pos == -128)) && (pos != 111)) {
+                pos = (byte) (pos == -128 ? 28 : pos - 100);
+                if (myEquip.get(pos) != null) {
+                    maskedEquip.put(pos, myEquip.get(pos));
+                }
+                myEquip.put(pos, item.getItemId());
+            } else if (myEquip.get(pos) != null) {
+                maskedEquip.put(pos, item.getItemId());
             }
         }
-        for (Map.Entry entry : equipped.entrySet()) {
+
+
+        for (Map.Entry entry : myEquip.entrySet()) {
             mplew.write(((Byte) entry.getKey()));
             mplew.writeInt((Integer) entry.getValue());
         }
         mplew.write(0);
-        for (Map.Entry entry : equippedCash.entrySet()) {
+        for (Map.Entry entry : maskedEquip.entrySet()) {
             mplew.write((Byte) entry.getKey());
             mplew.writeInt((Integer) entry.getValue());
         }

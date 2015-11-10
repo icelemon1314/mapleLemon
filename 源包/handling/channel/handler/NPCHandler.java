@@ -43,7 +43,7 @@ public class NPCHandler {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.NPC_ACTION.getValue());
         int length = (int) slea.available();
-        if (length == 5) {
+        if (length == 6) {
             mplew.writeInt(slea.readInt());
             mplew.writeShort(slea.readShort());
         } else{

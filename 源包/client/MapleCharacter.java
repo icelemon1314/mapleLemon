@@ -685,6 +685,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return ret;
     }
 
+    /**
+     * 从数据库中读取角色信息
+     * @param charid
+     * @param client
+     * @param channelserver
+     * @return
+     */
     public static MapleCharacter loadCharFromDB(int charid, MapleClient client, boolean channelserver) {
         MapleCharacter ret = new MapleCharacter(channelserver);
         ret.client = client;
@@ -862,6 +869,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 rs = ps.executeQuery();
                 if (rs.next()) {
                     ret.getClient().setAccountName(rs.getString("name"));
+                    ret.getClient().setGender(rs.getByte("gender"));
                     ret.acash = rs.getInt("ACash");
                     ret.maplepoints = rs.getInt("mPoints");
                     ret.points = rs.getInt("points");
@@ -4406,7 +4414,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 continue;
             }
             if (q.mobKilled(id, skillID)) {
-                if (q.getQuest().canComplete(this, null)) {
+                if (q.getQuest().canComplete(this)) {
                     this.client.getSession().write(MaplePacketCreator.getShowQuestCompletion(q.getQuest().getId()));
                 }
             }

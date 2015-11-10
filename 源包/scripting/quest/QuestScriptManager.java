@@ -91,7 +91,7 @@ public class QuestScriptManager extends AbstractScriptManager {
     }
 
     public void endQuest(MapleClient c, int npcId, int questId, boolean customEnd) {
-        if ((!customEnd) && (!MapleQuest.getInstance(questId).canComplete(c.getPlayer(), null))) {
+        if ((!customEnd) && (!MapleQuest.getInstance(questId).canComplete(c.getPlayer()))) {
             if (c.getPlayer().isAdmin()) {
                 c.getPlayer().dropMessage(6, "不能完成这个任务 NPC：" + npcId + " Quest：" + questId);
             }
