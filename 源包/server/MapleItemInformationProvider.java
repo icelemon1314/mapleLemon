@@ -588,9 +588,9 @@ public class MapleItemInformationProvider {
     public Item scrollEquipWithId(Item equip, Item scroll, boolean whiteScroll, MapleCharacter chr, int vegas) {
         if (equip.getType() == 1) {
             int scrollId = scroll.getItemId();
-            Equip nEquip = (Equip) equip;
-            Map<String, Integer> scrollStats = getEquipStats(scrollId);  //卷轴信息
-            Map<String, Integer> equipStats = getEquipStats(equip.getItemId()); // 装备信息
+            final Equip nEquip = (Equip) equip;
+            final Map<String, Integer> scrollStats = getEquipStats(scrollId);  //卷轴信息
+            final Map<String, Integer> equipStats = getEquipStats(equip.getItemId()); // 装备信息
 
             int succ = scrollStats == null || !scrollStats.containsKey("success") ? 0 : ItemConstants.isTablet(scrollId) ? ItemConstants.getSuccessTablet(scrollId, nEquip.getLevel()) : scrollStats.get("success");
 
@@ -608,12 +608,10 @@ public class MapleItemInformationProvider {
             if (chr.isAdmin()) {
                 chr.dropSpouseMessage(11, "普通卷轴 - 默认几率: " + succ + "% 最终概率: " + success + "% 失败消失几率: " + curse + "%");
             }
+            nEquip.setUpgradeSlots((byte) (nEquip.getUpgradeSlots() - 1));
             if (Randomizer.nextInt(100) <= success) {
-                chr.dropMessage(1,"砸卷成功！");
-                nEquip.setUpgradeSlots((byte) (nEquip.getUpgradeSlots() - 1));
                 for (Map.Entry stat : scrollStats.entrySet()) {
                     String key = (String) stat.getKey();
-                    System.out.println("装备属性："+key);
                     switch (key) {
                         case "STR":
                             nEquip.setStr((short) (nEquip.getStr() + ((Integer) stat.getValue())));
@@ -659,8 +657,8 @@ public class MapleItemInformationProvider {
                             break;
                     }
                 }
+                nEquip.setLevel((byte) (nEquip.getLevel() + 1));
             } else {
-                chr.dropMessage(1,"砸卷失败！");
                 if (Randomizer.nextInt(99) < curse) {
                     return null;
                 }

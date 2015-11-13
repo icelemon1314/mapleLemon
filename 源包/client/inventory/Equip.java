@@ -306,6 +306,7 @@ public class Equip extends Item implements Serializable {
     }
 
     public void setUpgradeSlots(byte upgradeSlots) {
+
         this.upgradeSlots = upgradeSlots;
     }
 
@@ -512,6 +513,6 @@ public class Equip extends Item implements Serializable {
 
     public static enum ScrollResult {
 
-        失败, 成功;
+        失败, 成功,消失;
     }
 }

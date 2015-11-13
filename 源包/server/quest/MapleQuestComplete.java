@@ -117,10 +117,12 @@ public class MapleQuestComplete implements Serializable {
                     for (Item item : chr.getInventory(iType).listById(itemId)) {
                         quantity = (short) (quantity + item.getQuantity());
                     }
+                    System.out.println("准备扣除道具:"+quantity);
                     int count = ((Integer) a.getRight());
                     if ((quantity < count) || ((count <= 0) && (quantity > 0))) {
                         return false;
                     }
+                    System.out.println("扣除道具:"+itemId+'|'+count);
                     chr.removeItem(itemId,count);
                 }
                 return true;

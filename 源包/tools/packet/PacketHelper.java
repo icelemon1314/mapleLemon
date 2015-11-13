@@ -302,15 +302,20 @@ public class PacketHelper {
             mplew.write(0);
             return;
         }
-        byte pos = item.getPosition();
-        if (pos <= -1) {
-            pos = (byte) (pos * -1);
-            if ((pos > 100) && (pos < 1000)) {
-                pos = (byte)(pos - 100);
+        if (!isCreateItem) {
+            byte pos = item.getPosition();
+            if (pos <= -1) { // 身上的装备
+                pos = (byte) (pos * -1);
+                if ((pos > 100) && (pos < 1000)) {
+                    pos = (byte)(pos - 100);
+                }
+                mplew.write(pos);
+            } else {
+                mplew.write(pos);
             }
         }
-        if (isCreateItem == false)
-            mplew.write(pos);
+
+
         if (item.getPet() != null) {
             addPetItemInfo(mplew, item, item.getPet());
         } else {

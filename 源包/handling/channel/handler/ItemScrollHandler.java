@@ -77,11 +77,6 @@ public class ItemScrollHandler {
             return false;
         }
         byte oldLevel = toScroll.getLevel();
-        byte oldEnhance = toScroll.getEnhance();
-        byte oldState = toScroll.getState();
-        byte oldAddState = toScroll.getAddState();
-        short oldFlag = toScroll.getFlag();
-        byte oldSlots = toScroll.getUpgradeSlots();
         Item scroll;
         if (cash) {
             scroll = chr.getInventory(MapleInventoryType.CASH).getItem(slot);
@@ -106,8 +101,6 @@ public class ItemScrollHandler {
             c.getSession().write(InventoryPacket.getInventoryFull());
             return false;
         }
-        System.out.println("砸卷222");
-        Item wscroll = null;
         List scrollReqs = ii.getScrollReqs(scroll.getItemId());
         if ((scrollReqs != null) && (scrollReqs.size() > 0) && (!scrollReqs.contains(toScroll.getItemId()))) {
             if (chr.isAdmin()) {
@@ -116,40 +109,36 @@ public class ItemScrollHandler {
             c.getSession().write(InventoryPacket.getInventoryFull());
             return false;
         }
-        System.out.println("砸卷3333");
         if (scroll.getQuantity() <= 0) {
             chr.dropSpouseMessage(0, new StringBuilder().append("砸卷错误，背包卷轴[").append(ii.getName(scroll.getItemId())).append("]数量为 0 .").toString());
             c.getSession().write(InventoryPacket.getInventoryFull());
             return false;
         }
-        System.out.println("砸卷4444");
         Equip scrolled = (Equip) ii.scrollEquipWithId(toScroll, scroll, false, chr, vegas);
         Equip.ScrollResult scrollSuccess;
-            //  Equip.ScrollResult scrollSuccess;
-            if ((scrolled.getUpgradeSlots() > oldSlots)) {
+        if (scrolled != null) {
+            if ((scrolled.getLevel() > oldLevel)) {
                 scrollSuccess = Equip.ScrollResult.成功;
             } else {
-                //  Equip.ScrollResult scrollSuccess;
-                if ((scrolled != toScroll)) {
-                    scrolled = toScroll;
-                    scrollSuccess = Equip.ScrollResult.成功;
-                } else {
-                    scrollSuccess = Equip.ScrollResult.失败;
-                }
+                scrollSuccess = Equip.ScrollResult.失败;
             }
-
-        System.out.println("砸卷5555");
-        chr.getInventory(ItemConstants.getInventoryType(scroll.getItemId())).removeItem(scroll.getPosition(), (short) 1, false);
-       if ((scrollSuccess == Equip.ScrollResult.失败) && (scrolled.getUpgradeSlots() < oldSlots) && (chr.getInventory(MapleInventoryType.CASH).findById(5640000) != null)) {
-            chr.setScrolledPosition(scrolled.getPosition());
-            if (vegas == 0) {
-                c.getSession().write(MaplePacketCreator.pamSongUI());
-            }
+        } else {
+            scrollSuccess = Equip.ScrollResult.消失;
         }
-        System.out.println("砸卷7777"+vegas);
-        c.getSession().write(InventoryPacket.updateInventorySlot(ItemConstants.getInventoryType(scroll.getItemId()), scroll, true));
+        chr.getInventory(ItemConstants.getInventoryType(scroll.getItemId())).removeItem(scroll.getPosition(), (short) 1, false);
+        if (scrollSuccess == Equip.ScrollResult.消失) {
+            c.getSession().write(InventoryPacket.scrolledItem(scroll, toScroll, true));
+            if (dst < 0) {
+                chr.getInventory(MapleInventoryType.EQUIPPED).removeItem(toScroll.getPosition());
+            } else {
+                chr.getInventory(MapleInventoryType.EQUIP).removeItem(toScroll.getPosition());
+            }
+        } else {
+            c.getSession().write(InventoryPacket.scrolledItem(scroll, scrolled, false));
+        }
+
         chr.getMap().broadcastMessage(chr, InventoryPacket.getScrollEffect(chr.getId(), scrollSuccess), vegas == 0);
-        if (((scrollSuccess == Equip.ScrollResult.成功)) && (vegas == 0)) {
+        if ((scrollSuccess == Equip.ScrollResult.成功) || scrollSuccess == Equip.ScrollResult.消失) {
             chr.equipChanged();
         }
         return scrollSuccess == Equip.ScrollResult.成功;

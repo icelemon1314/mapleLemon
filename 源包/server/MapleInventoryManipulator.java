@@ -186,7 +186,7 @@ public class MapleInventoryManipulator {
                         }
                         //c.getSession().write(InventoryPacket.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nItem))));
                         System.out.println("添加新道具到背包："+nItem.getItemId());
-                        c.getSession().write(InventoryPacket.addInventorySlot(type,nItem));
+                        c.getSession().write(InventoryPacket.addItemToInventory(nItem));
 
                         if ((ItemConstants.isRechargable(itemId)) && (quantity == 0)) {
                             break;
@@ -216,7 +216,7 @@ public class MapleInventoryManipulator {
                     nItem.setGMLog(gmLog);
                 }
                 System.out.println("添加新道具到背包2："+nItem.getItemId());
-                c.getSession().write(InventoryPacket.addInventorySlot(type,nItem));
+                c.getSession().write(InventoryPacket.addItemToInventory(nItem));
                 c.getSession().write(MaplePacketCreator.enableActions());
             }
 
@@ -245,7 +245,7 @@ public class MapleInventoryManipulator {
                 return -1;
             }
             System.out.println("添加新装备到背包1："+nEquip.getItemId());
-            c.getSession().write(InventoryPacket.addInventorySlot(type,nEquip));
+            c.getSession().write(InventoryPacket.addItemToInventory(nEquip));
             c.getPlayer().checkCopyItems();
         } else {
             throw new InventoryException("Trying to create equip with non-one quantity");

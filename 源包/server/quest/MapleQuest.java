@@ -102,7 +102,6 @@ public class MapleQuest implements Serializable {
 //                }
 //            }
             ret.startReqs.add(req);
-//                ret.completeReqs.add(req);
         }
         rse.close();
 
@@ -123,6 +122,8 @@ public class MapleQuest implements Serializable {
             tmpReward.add(reward);
             ret.completeReqs.put(questStatus,tmpReward);
         }
+
+        System.out.println(ret.completeReqs.toString());
 
 
         // 任务奖励数据
@@ -323,23 +324,34 @@ public class MapleQuest implements Serializable {
      * @return
      */
     public boolean canComplete(MapleCharacter chr) {
+        System.out.println("FUCK 1");
         if (chr.getQuest(this).getStatus() != 1) {
             return false;
         }
+        System.out.println("FUCK 2");
         if ((this.blocked) && (!chr.isGM())) {
             return false;
         }
+        System.out.println("FUCK 3");
 //        if ((this.autoComplete) && (npcid != null) && (this.viewMedalItem <= 0)) {
 //            forceComplete(chr, npcid);
 //            return false;
 //        }
-        List <MapleQuestComplete> com = this.completeReqs.get(id);
+        String queststatus = chr.getQuest(this).getCustomData();
+        System.out.println("FUCK 7"+queststatus);
+        List <MapleQuestComplete> com = this.completeReqs.get(queststatus);
+        if (com == null) {
+            System.out.println("FUCK 6");
+            return false;
+        }
         for (MapleQuestComplete r : com) {
+            System.out.println("FUCK 4");
             if (!r.check(chr)) {
+                System.out.println("FUCK 5");
                 return false;
             }
         }
-
+        System.out.println("FUCK 14");
         return true;
     }
 
@@ -408,27 +420,29 @@ public class MapleQuest implements Serializable {
         if ((chr.getMap() != null) && ((this.autoPreComplete) || (checkNPCOnMap(chr, npc))) && (canComplete(chr))) {
 
             // 扣除任务道具
-            List <MapleQuestComplete> com = this.completeReqs.get(id);
-            String curStatus = chr.getQuest(this).getCustomData();
+            List <MapleQuestComplete> com = this.completeReqs.get(chr.getQuest(this).getCustomData());
+
             for (MapleQuestComplete r : com) {
-                if (!r.removeQuestItem(chr)) {
+                if (r.removeQuestItem(chr)) {
 
                     // 更新玩家任务状态
+                    System.out.println("更新玩家任务状态！");
                     forceComplete(chr, npc);
 
                     // 发送奖励
+                    System.out.println("发送奖励");
+                    String curStatus = chr.getQuest(this).getCustomData();
                     List <MapleQuestReward> rewardData = this.rewards.get(curStatus);
+                    // 通用奖励，金币和经验
+                    if (rewardData == null) {
+                        System.out.println("奖励数据为空！");
+                        return ;
+                    }
                     for (MapleQuestReward reward : rewardData) {
                         reward.getRewardToChr(chr);
                     }
                 }
             }
-
-//            for (MapleQuestAction a : this.completeActs) {
-//                a.runEnd(chr, selection);
-//            }
-//            chr.getClient().getSession().write(MaplePacketCreator.showSpecialEffect(0x0E));
-//            chr.getMap().broadcastMessage(chr, MaplePacketCreator.showSpecialEffect(chr.getId(), 0x0E), false);
         }
     }
 

@@ -632,7 +632,6 @@ public abstract class AbstractPlayerInteraction {
                     c.getPlayer().getInventory(type).addItem(item);
                     c.getSession().write(InventoryPacket.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, item))));
                 }
-//                c.getSession().write(InventoryPacket.addInventorySlot(type, item));
                 return;
             }
             if ((type.equals(MapleInventoryType.EQUIP)) && (!ItemConstants.is飞镖道具(itemId)) && (!ItemConstants.is子弹道具(itemId))) {

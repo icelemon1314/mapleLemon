@@ -19,12 +19,15 @@ function start(mode, type, selection) {
         } else if (status == 1) {
             qm.sendNext("你帮我收集10个花蘑菇的盖和30个蓝蜗牛的壳，赶紧去吧，骚年！");
         } else if (status == 2) {
-			if (qm.haveItem(4000001,10) && qm.haveItem(4000000,30)) {
+			if (qm.canCompleteQuest()) {
 				qm.forceCompleteQuest();
-				qm.gainItem(1332005,1);
+				qm.sendOk("给你的东西收好了么？");
             } else {
+				//qm.gainItem(4000001,10);
+				//qm.gainItem(4000000,30);
 				qm.sendOk("你还没有获得我需要的道具！");
 			}
+			
 			qm.dispose();
         }
     }

@@ -45,19 +45,13 @@ public class MapleQuestReward implements Serializable {
      * @return
      */
     public boolean getRewardToChr(MapleCharacter chr){
+        System.out.println("发送奖励："+type.toString());
         switch (type) {
             case item:
                 for (Pair a : this.dataStore) {
                     int itemId = ((Integer) a.getLeft());
-                    short quantity = 0;
-                    MapleInventoryType iType = ItemConstants.getInventoryType(itemId);
-                    for (Item item : chr.getInventory(iType).listById(itemId)) {
-                        quantity = (short) (quantity + item.getQuantity());
-                    }
                     int count = ((Integer) a.getRight());
-                    if ((quantity < count) || ((count <= 0) && (quantity > 0))) {
-                        return false;
-                    }
+                    System.out.println("发送奖励：："+itemId+"|"+count);
                     chr.gainItem(itemId,count,"任务获得道具！");
                 }
                 return true;

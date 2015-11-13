@@ -47,8 +47,7 @@ public class QuestActionManager extends NPCConversationManager {
      * 完成任务了
      */
     public void forceCompleteQuest() {
-
-        MapleQuest.getInstance(this.quest).complete(getPlayer(), getNpc());
+            MapleQuest.getInstance(this.quest).complete(getPlayer(), getNpc());
     }
 
     public String getQuestCustomData() {
@@ -60,8 +59,7 @@ public class QuestActionManager extends NPCConversationManager {
      * @return
      */
     public boolean canCompleteQuest(){
-        MapleQuest chrQuest = getPlayer().getQuestInfoById(this.quest);
-        if (chrQuest.canComplete(getPlayer())) {
+        if (MapleQuest.getInstance(this.quest).canComplete(getPlayer())) {
            return true;
         }
         return false;
