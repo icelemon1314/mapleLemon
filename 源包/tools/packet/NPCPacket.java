@@ -367,101 +367,127 @@ public class NPCPacket {
         return mplew.getPacket();
     }
 
+    /**
+     * 发送仓库内的道具
+     * @param npcId
+     * @param slots
+     * @param items
+     * @param meso
+     * @return
+     */
     public static byte[] getStorage(int npcId, byte slots, Collection<Item> items, long meso) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-        mplew.write(SendPacketOpcode.OPEN_STORAGE.getValue());
-        mplew.write(22);
+        mplew.write(SendPacketOpcode.STORAGE_OPEN.getValue());
         mplew.writeInt(npcId);
         mplew.write(slots);
-        mplew.writeLong(126L);
-        mplew.writeLong(meso);
 
-        mplew.write(items.size());
+        short flag = 0x7E; // 标记位
+        mplew.writeShort(flag);
+        mplew.writeInt((int)meso);
+
+        byte size[] = new byte[]{0,0,0,0,0,0};
         for (Item item : items) {
-            PacketHelper.addItemInfo(mplew, item);
+            switch(item.getItemId() / 1000000) {
+                case 1: size[1]++; break;
+                case 2: size[2]++; break;
+                case 3: size[3]++; break;
+                case 4: size[4]++; break;
+                case 5: size[5]++; break;
+                default: System.out.println("Unknown type found!"); break;
+            }
         }
-        mplew.writeInt(0);
+
+        for (int i=1;i<6;i++) {
+            if (size[i] > 0) {
+                mplew.write(size[i]);
+                for (Item item : items) {
+                    if (item.getItemId() / 1000000 == i) {
+                        PacketHelper.addItemInfo(mplew, item, true);
+                    }
+                }
+            } else {
+                mplew.write(0);
+            }
+        }
 
         return mplew.getPacket();
     }
 
+    /**
+     * 仓库操作错误包
+     * @param op
+     * @return
+     */
     public static byte[] getStorageError(byte op) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-        mplew.write(SendPacketOpcode.OPEN_STORAGE.getValue());
+        mplew.write(SendPacketOpcode.STORAGE_OPERATION.getValue());
         mplew.write(op);
 
         return mplew.getPacket();
     }
 
+    /**
+     * 存钱
+     * @param slots
+     * @param meso
+     * @return
+     */
     public static byte[] mesoStorage(byte slots, long meso) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-        mplew.write(SendPacketOpcode.OPEN_STORAGE.getValue());
+        mplew.write(SendPacketOpcode.STORAGE_OPERATION.getValue());
 
-        mplew.write(19);
+        mplew.write(0xF);
         mplew.write(slots);
-        mplew.writeLong(2L);
-        mplew.writeLong(meso);
+        mplew.writeShort(2);
+        mplew.writeInt((int)meso);
 
         return mplew.getPacket();
     }
 
-    public static byte[] arrangeStorage(byte slots, Collection<Item> items, boolean changed) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.OPEN_STORAGE.getValue());
-        mplew.write(15);
-        mplew.write(slots);
-        mplew.writeLong(124L);
-
-        mplew.write(items.size());
-        for (Item item : items) {
-            PacketHelper.addItemInfo(mplew, item);
-        }
-        mplew.writeInt(0);
-
-        return mplew.getPacket();
-    }
-
+    /**
+     * 存放道具
+     * @param slots
+     * @param type
+     * @param items
+     * @return
+     */
     public static byte[] storeStorage(byte slots, MapleInventoryType type, Collection<Item> items) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-        mplew.write(SendPacketOpcode.OPEN_STORAGE.getValue());
-        mplew.write(13);
+        mplew.write(SendPacketOpcode.STORAGE_OPERATION.getValue());
+        mplew.write(0xF);
+
         mplew.write(slots);
-        mplew.writeLong(type.getBitfieldEncoding());
+        mplew.writeShort(type.getBitfieldEncoding());
+
         mplew.write(items.size());
         for (Item item : items) {
-            PacketHelper.addItemInfo(mplew, item);
+            PacketHelper.addItemInfo(mplew, item,true);
         }
 
         return mplew.getPacket();
     }
 
+    /**
+     * 从仓库取道具出来
+     * @param slots
+     * @param type
+     * @param items
+     * @return
+     */
     public static byte[] takeOutStorage(byte slots, MapleInventoryType type, Collection<Item> items) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-        mplew.write(SendPacketOpcode.OPEN_STORAGE.getValue());
-        mplew.write(9);
+        mplew.write(SendPacketOpcode.STORAGE_OPERATION.getValue());
+        mplew.write(0x0F);
         mplew.write(slots);
-        mplew.writeLong(type.getBitfieldEncoding());
+        mplew.writeShort(type.getBitfieldEncoding());
         mplew.write(items.size());
         for (Item item : items) {
-            PacketHelper.addItemInfo(mplew, item);
+            PacketHelper.addItemInfo(mplew, item,true);
         }
         return mplew.getPacket();
     }

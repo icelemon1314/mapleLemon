@@ -232,10 +232,6 @@ public class MapleStorage
         }
     }
 
-    public void update(MapleClient c) {
-        c.getSession().write(NPCPacket.arrangeStorage(this.slots, this.items, true));
-    }
-
     public void sendStored(MapleClient c, MapleInventoryType type) {
         c.getSession().write(NPCPacket.storeStorage(this.slots, type, (Collection) this.typeItems.get(type)));
     }

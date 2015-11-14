@@ -116,6 +116,9 @@ public class NPCHandler {
         if (npc.hasShop()) {
             chr.setConversation(1);
             npc.sendShop(c);
+        } else if (npc.isStorage()) {
+            System.out.println("NPC Storage");
+            c.getPlayer().getStorage().sendStorage(c, npc.getId());
         } else if (npc.hasQuest(chr)) { // wz中的任务
             System.out.println("NPC TALK Q");
             MapleQuest.getInstance(npc.getQuestId()).start(chr,npc.getId());
@@ -229,7 +232,12 @@ public class NPCHandler {
         }
     }
 
-    //TODO 需要修复仓库物品不能取出
+    /**
+     * 仓库包处理
+     * @param slea
+     * @param c
+     * @param chr
+     */
     public static void Storage(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         byte mode = slea.readByte();
         if (chr == null) {
@@ -240,18 +248,18 @@ public class NPCHandler {
         switch (mode) {
             case 4://取出
                 byte type = slea.readByte();
-                byte slot = slea.readByte();
+                byte slot = slea.readByte();  // 从0开始计算的
                 slot = storage.getSlot(MapleInventoryType.getByType(type), slot);
                 Item item = storage.getItem(slot);
                 if (item != null) {
                     if ((ii.isPickupRestricted(item.getItemId())) && (chr.getItemQuantity(item.getItemId(), true) > 0)) {
-                        c.getSession().write(NPCPacket.getStorageError((byte) 12));
+                        c.getSession().write(NPCPacket.getStorageError((byte) 9));
                         return;
                     }
 
                     long meso = (storage.getNpcId() == 9030100) || (storage.getNpcId() == 9031016) ? 1000 : 0;
                     if (chr.getMeso() < meso) {
-                        c.getSession().write(NPCPacket.getStorageError((byte) 11));
+                        c.getSession().write(NPCPacket.getStorageError((byte) 13));
                         return;
                     }
 
@@ -267,7 +275,7 @@ public class NPCHandler {
                         }
                         storage.sendTakenOut(c, ItemConstants.getInventoryType(item.getItemId()));
                     } else {
-                        c.getSession().write(NPCPacket.getStorageError((byte) 10));
+                        c.getSession().write(NPCPacket.getStorageError((byte) 9));
                     }
                 } else {
                     System.out.println("[作弊] " + chr.getName() + " (等级 " + chr.getLevel() + ") 试图从仓库取出不存在的道具.");
@@ -286,7 +294,7 @@ public class NPCHandler {
                 }
 
                 if (storage.isFull()) {
-                    c.getSession().write(NPCPacket.getStorageError((byte) 17));
+                    c.getSession().write(NPCPacket.getStorageError((byte) 9));
                     return;
                 }
 
@@ -298,7 +306,7 @@ public class NPCHandler {
 
                 long meso = (storage.getNpcId() == 9030100) || (storage.getNpcId() == 9031016) ? 500 : 100;
                 if (chr.getMeso() < meso) {
-                    c.getSession().write(NPCPacket.getStorageError((byte) 16));
+                    c.getSession().write(NPCPacket.getStorageError((byte) 13));
                     return;
                 }
 
@@ -327,35 +335,9 @@ public class NPCHandler {
                 }
                 break;
             case 6:
-                storage.arrange();
-                storage.update(c);
-                break;
-            case 7:
-                meso = slea.readLong();
+                meso = slea.readInt();
                 long storageMesos = storage.getMeso();
                 long playerMesos = chr.getMeso();
-//                int maxmeso = 0;
-//                if (chr.getLevel() >= 0 && chr.getLevel() <= 30) {
-//                    maxmeso = 500000;
-//                } else if (chr.getLevel() > 30 && chr.getLevel() <= 80) {
-//                    maxmeso = 3000000;
-//                } else if (chr.getLevel() > 80 && chr.getLevel() <= 100) {
-//                    maxmeso = 15000000;
-//                } else if (chr.getLevel() > 100 && chr.getLevel() <= 130) {
-//                    maxmeso = 50000000;
-//                } else if (chr.getLevel() > 130 && chr.getLevel() <= 180) {
-//                    maxmeso = 200000000;
-//                } else if (chr.getLevel() > 180 && chr.getLevel() <= 220) {
-//                    maxmeso = 400000000;
-//                } else if (chr.getLevel() > 200) {
-//                    maxmeso = 500000000;
-//                }
-//                if (meso < 0 && (meso + storageMesos > maxmeso)) {
-//                    chr.dropMessage(1, "仓库可以保护您的金币不被掠夺\r\n仓库金币容量：\r\n1级到30级  五十万\r\n30级到80级  三百万\r\n80级到100级  一千五百万\r\n100级到130级  五千万\r\n130级到180级  两亿\r\n180级到220级  四亿\r\n200级以上  五亿");
-//                    c.getSession().write(MaplePacketCreator.enableActions());
-//                    return;
-//                }
-
                 if (((meso > 0) && (storageMesos >= meso)) || ((meso < 0) && (playerMesos >= -meso))) {
                     if ((meso < 0) && (storageMesos - meso < 0)) {
                         meso = -(9999999999L - storageMesos);
@@ -376,7 +358,7 @@ public class NPCHandler {
                 }
                 storage.sendMeso(c);
                 break;
-            case 8:
+            case 7:
                 storage.close();
                 chr.setConversation(0);
                 break;

@@ -5,7 +5,6 @@ import client.MapleClient;
 import client.messages.commands.AdminCommand;
 import client.messages.commands.CommandExecute;
 import client.messages.commands.CommandObject;
-import client.messages.commands.DonatorCommand;
 import client.messages.commands.GMCommand;
 import client.messages.commands.InternCommand;
 import client.messages.commands.PlayerCommand;
@@ -176,7 +175,7 @@ public class CommandProcessor {
     }
 
     static {
-        Class[] CommandFiles = {PlayerCommand.class, InternCommand.class, GMCommand.class, AdminCommand.class, DonatorCommand.class, SuperDonatorCommand.class, SuperGMCommand.class};
+        Class[] CommandFiles = {PlayerCommand.class, InternCommand.class, GMCommand.class, AdminCommand.class, SuperDonatorCommand.class, SuperGMCommand.class};
 
         for (Class clasz : CommandFiles) {
             try {

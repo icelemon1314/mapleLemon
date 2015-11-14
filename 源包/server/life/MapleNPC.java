@@ -52,6 +52,11 @@ public class MapleNPC extends AbstractLoadedMapleLife {
         MapleShopFactory.getInstance().getShopForNPC(getId()).sendShop(c);
     }
 
+    public boolean isStorage(){
+        int npcid = getId();
+        return npcid==1012009 || npcid==1022005 || npcid==1032006 || npcid==1052017 || npcid==1061008 || npcid==2020004;
+    }
+
 
 
     @Override
