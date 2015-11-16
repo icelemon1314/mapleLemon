@@ -127,6 +127,7 @@ public class NPCHandler {
 //            System.out.println("NPC TALK Script Quest");
 //            QuestScriptManager.getInstance().startQuest(c, npc.getId(),npc.getQuestId());
         } else {
+            chr.dropMessage(5,"当前对话NPC:"+npc.getId());
             NPCScriptManager.getInstance().start(c, npc.getId());
         }
     }

@@ -519,10 +519,6 @@ public abstract class AbstractPlayerInteraction {
         }
     }
 
-    public int getJob() {
-        return this.c.getPlayer().getJob();
-    }
-
     public int getJobId() {
         return this.c.getPlayer().getJob();
     }
@@ -532,7 +528,7 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public boolean isBeginnerJob() {
-        return (GameConstants.is新手职业(getJob())) && (getLevel() < 11);
+        return (GameConstants.is新手职业(getJobId())) && (getLevel() < 11);
     }
 
     public int getLevel() {

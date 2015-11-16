@@ -1,14 +1,6 @@
 package scripting.npc;
 
-import client.Battler;
-import client.MapleCharacter;
-import client.MapleCharacterUtil;
-import client.MapleClient;
-import client.MapleStat;
-import client.PlayerStats;
-import client.Skill;
-import client.SkillEntry;
-import client.SkillFactory;
+import client.*;
 import client.inventory.Equip;
 import client.inventory.Item;
 import client.inventory.ItemFlag;
@@ -284,7 +276,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendNext(text);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCSay(id,text));
+        this.c.getSession().write(NPCPacket.sendChoose(id,text));
     }
 
     public void sendSimpleS(String text, byte type) {
@@ -2062,6 +2054,16 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     public void directionEffect(String data, int value, int x, int y, int npc) {
         c.getSession().write(UIPacket.getDirectionEffect(data, value, x, y, npc));
     }
+
+    /**
+     * 是否为新手
+     * @return
+     */
+    public boolean isBeginner(){
+        return c.getPlayer().getJob() == MapleJob.新手.getId();
+    }
+
+    public boolean isMagician(){ return c.getPlayer().getJob() == MapleJob.魔法师.getId();}
 
     @Override
     public void getDirectionInfo(byte type, int value) {

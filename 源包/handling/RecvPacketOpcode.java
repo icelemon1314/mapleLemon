@@ -361,6 +361,7 @@ public enum RecvPacketOpcode implements WritableIntValueHolder {
         switch (header) {
             case PONG:
             case MOVE_LIFE:
+            case NPC_ACTION:
 //            case CRASH_INFO:
 //            case AUTH_REQUEST:
 //            case MOVE_PLAYER:

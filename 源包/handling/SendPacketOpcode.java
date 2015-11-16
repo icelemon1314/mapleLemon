@@ -517,6 +517,9 @@ public enum SendPacketOpcode implements WritableIntValueHolder {
     public static boolean isSpamHeader(SendPacketOpcode opcode) {
         switch (opcode) {
             case MOVE_MONSTER_RESPONSE:
+            case SPAWN_MONSTER:
+            case SPAWN_MONSTER_CONTROL:
+            case NPC_ACTION:
                 return true;
             default:
                 return false;

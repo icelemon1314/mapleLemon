@@ -19,8 +19,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* Robin
-	First NPC on Snail Hunting Ground I (40000)
+/* Shanks
+	Warp NPC to Lith Harbor (104000000)
+	located in Southperry (60000)
 */
 
 var status = 0;
@@ -31,19 +32,26 @@ function start() {
 }
 
 function action(mode, type, selection) {
-	if (mode == -1) {
+	if (mode == -1 || status == 4) {
 		cm.dispose();
 	} else {
+		if (status == 2 && mode == 0) {
+			cm.sendOk("好吧，我会在这里等着你的！");
+			status = 4;
+			return;
+		}
 		if (mode == 1)
 			status++;
 		else
 			status--;
 		if (status == 0) {
-			cm.sendNext("欢迎来到怀旧冒×岛，目前只能单机，如有bug欢迎在群内反馈，QQ群：479357604");
+			cm.sendNext("看上去你很强大了！");
 		} else if (status == 1) {
-			cm.gainMeso(10000000);
-			cm.gainNX(1000000);
-			cm.sendOk("我给了你一点启动资金，祝你玩得愉快！");
+			cm.sendNextPrev("如果你达到了10级，那么我就可以送你去#m104000000#，在那里你可以遇见更强大的冒险家！")
+		} else if (status == 2) {
+			cm.sendYesNo("你准备好了么？");
+		} else if (status == 3) {
+			cm.warp(104000000);
 			cm.dispose();
 		}
 	}

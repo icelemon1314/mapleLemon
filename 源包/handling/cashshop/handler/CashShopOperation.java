@@ -18,6 +18,12 @@ public class CashShopOperation {
 
     private static final Logger log = Logger.getLogger(CashShopOperation.class);
 
+    /**
+     * 玩家离开商城
+     * @param slea
+     * @param c
+     * @param chr
+     */
     public static void LeaveCS(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         if (chr == null) {
             return;

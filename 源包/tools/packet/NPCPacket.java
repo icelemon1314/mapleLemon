@@ -215,6 +215,20 @@ public class NPCPacket {
     }
 
     /**
+     *
+     * @param npc
+     * @param talk
+     * @return
+     */
+    public static byte[] sendChoose(int npc,String talk){
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        baseScriptMan(mplew,npc,(byte)4);
+
+        mplew.writeMapleAsciiString(talk);
+        return mplew.getPacket();
+    }
+
+    /**
      * NPC说话
      * @param npc
      * @param talk

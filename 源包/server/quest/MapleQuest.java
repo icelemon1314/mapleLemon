@@ -315,7 +315,12 @@ public class MapleQuest implements Serializable {
      * @return
      */
     public List <Integer> getQuestIdByNpcId(int npcId) {
-        return this.npcQuest.get(npcId);
+        List <Integer> questList = this.npcQuest.get(npcId);
+        if (questList == null) {
+            return new ArrayList<Integer>();
+        } else {
+            return questList;
+        }
     }
 
     /**
