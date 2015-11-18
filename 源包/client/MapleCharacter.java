@@ -2960,6 +2960,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     private void changeMapInternal(final MapleMap to, final Point pos, byte[] warpPacket, final MaplePortal pto) {
         if (to == null) {
+            System.out.println("目标地图为空了，不能传送过去！");
             return;
         }
         final int nowmapid = this.map.getId();

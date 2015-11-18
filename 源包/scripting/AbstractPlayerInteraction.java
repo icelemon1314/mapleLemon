@@ -129,9 +129,16 @@ public abstract class AbstractPlayerInteraction {
         }
     }
 
+    /**
+     * 传送到地图
+     * @param mapId
+     * @param portal
+     */
     public void warp(int mapId, int portal) {
         MapleMap mapz = getWarpMap(mapId);
+        System.out.println("准备传送到地图："+mapId);
         if ((portal != 0) && (mapId == this.c.getPlayer().getMapId())) {
+            System.out.println("准备地图内传送："+mapId);
             Point portalPos = new Point(this.c.getPlayer().getMap().getPortal(portal).getPosition());
             if (portalPos.distanceSq(getPlayer().getTruePosition()) < 90000.0D) {
                 this.c.getSession().write(MaplePacketCreator.instantMapWarp((byte) portal));
@@ -140,6 +147,7 @@ public abstract class AbstractPlayerInteraction {
                 this.c.getPlayer().changeMap(mapz, mapz.getPortal(portal));
             }
         } else {
+            System.out.println("准备跨地图传送："+mapId);
             this.c.getPlayer().changeMap(mapz, mapz.getPortal(portal));
         }
     }
@@ -432,7 +440,9 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public byte getQuestStatus(int questId) {
-        return this.c.getPlayer().getQuestStatus(questId);
+        byte status = this.c.getPlayer().getQuestStatus(questId);
+        System.out.println("任务状态："+questId+"-"+status);
+        return status;
     }
 
     public boolean isQuestActive(int questId) {

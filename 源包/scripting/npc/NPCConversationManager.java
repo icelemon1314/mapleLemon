@@ -508,6 +508,10 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         this.c.getPlayer().changeJob(jobId, true);
     }
 
+    public void changeJobById(int jobId) {
+        this.c.getPlayer().changeJob(jobId, true);
+    }
+
     public boolean isValidJob(int jobId) {
         return MapleCarnivalChallenge.getJobNameByIdNull(jobId) != null;
     }

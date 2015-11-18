@@ -42,41 +42,6 @@ public class GMCommand {
         return PlayerGMRank.GM;
     }
 
-    public static class 飞 extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            SkillFactory.getSkill(1146).getEffect(1).applyTo(c.getPlayer());
-            SkillFactory.getSkill(1142).getEffect(1).applyTo(c.getPlayer());
-            c.getPlayer().dispelBuff(1146);
-            return 1;
-        }
-    }
-
-    public static class 玩家飞 extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            MapleCharacter chr = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[1]);
-            SkillFactory.getSkill(1146).getEffect(1).applyTo(chr);
-            SkillFactory.getSkill(1142).getEffect(1).applyTo(chr);
-            chr.dispelBuff(1146);
-            return 1;
-        }
-    }
-
-    public static class 地图飞 extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            for (MapleCharacter mch : c.getChannelServer().getPlayerStorage().getAllCharacters()) {
-                SkillFactory.getSkill(1146).getEffect(1).applyTo(mch);
-                SkillFactory.getSkill(1142).getEffect(1).applyTo(mch);
-                mch.dispelBuff(1146);
-            }
-            return 1;
-        }
-    }
 
     public static class 给予宠物 extends CommandExecute {
 

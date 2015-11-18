@@ -159,6 +159,16 @@ public class PlayerCommand {
         }
     }
 
+    public static class tomap extends CommandExecute {
+
+        @Override
+        public int execute(MapleClient c, String[] splitted){
+            final int mapId = Integer.parseInt(splitted[1]);
+            c.getPlayer().changeMap(mapId,0);
+            return 0;
+        }
+    }
+
     public static class 搜索物品 extends CommandExecute {
 
         @Override

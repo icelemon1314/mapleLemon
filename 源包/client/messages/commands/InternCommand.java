@@ -829,17 +829,6 @@ public class InternCommand {
         }
     }
 
-    public static class 飞 extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            SkillFactory.getSkill(1146).getEffect(1).applyTo(c.getPlayer());
-            SkillFactory.getSkill(1142).getEffect(1).applyTo(c.getPlayer());
-            c.getPlayer().dispelBuff(1146);
-            return 1;
-        }
-    }
-
     public static class 打开NPC extends CommandExecute {
 
         @Override
