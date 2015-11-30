@@ -217,7 +217,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private transient ReentrantReadWriteLock visibleMapObjectsLock;
     private transient ReentrantReadWriteLock summonsLock;
     private transient ReentrantReadWriteLock controlledLock;
-    private final Map<MapleQuest, MapleQuestStatus> quests;
+    private final Map<MapleQuest, MapleQuestStatus> quests; // 任务数据
+    private final Map<Integer, MapleQuestStatus> questScript; // 脚本任务数据
     private Map<Integer, String> questinfo;
     private Map<String, String> keyValue;
     private final Map<Skill, SkillEntry> skills;
@@ -374,6 +375,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.keyValue = new LinkedHashMap();
         this.questinfo = new LinkedHashMap();
         this.quests = new LinkedHashMap();
+        this.questScript = new LinkedHashMap();
         this.skills = new LinkedHashMap();
         this.stats = new PlayerStats();
         this.remainingSp = 0;
@@ -770,13 +772,16 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 MapleMapFactory mapFactory = ChannelServer.getInstance(client.getChannel()).getMapFactory();
                 ret.map = mapFactory.getMap(ret.mapid);
                 if (ret.map == null) {
-                    ret.map = mapFactory.getMap(950000100);
+                    System.out.println("不存在的地图："+ret.mapid);
+                    ret.map = mapFactory.getMap(101000000);
                 }
+                System.out.println("加载角色信息31");
                 MaplePortal portal = ret.map.getPortal(ret.initialSpawnPoint);
                 if (portal == null) {
                     portal = ret.map.getPortal(0);
                     ret.initialSpawnPoint = 0;
                 }
+                System.out.println("加载角色信息32");
                 ret.setPosition(portal.getPosition());
                 int partyid = rs.getInt("party");
                 if (partyid >= 0) {
@@ -785,14 +790,18 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                         ret.party = party;
                     }
                 }
+                System.out.println("加载角色信息33");
                 String pets = rs.getString("pets");
                 ret.petStore = Byte.parseByte(pets);
+                System.out.println("加载角色信息34");
                 psd = con.prepareStatement("SELECT * FROM achievements WHERE accountid = ?");
                 psd.setInt(1, ret.accountid);
                 rsd = psd.executeQuery();
+                System.out.println("加载角色信息35");
                 while (rsd.next()) {
                     ret.finishedAchievements.add(rsd.getInt("achievementid"));
                 }
+                System.out.println("加载角色信息36");
                 psd.close();
 
             }
@@ -1820,9 +1829,15 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return getQuestNoAdd(qq).getStatus();
     }
 
+    /**
+     * 获取玩家的任务信息
+     * @param quest
+     * @return
+     */
     public MapleQuestStatus getQuest(MapleQuest quest) {
         if (!this.quests.containsKey(quest)) {
-            return new MapleQuestStatus(quest, 0);
+            System.out.println("在玩家的任务列表中找不到这个任务："+quest.getId());
+            this.setQuestAdd(quest,(byte)0,""); // 一般是脚本任务
         }
         return this.quests.get(quest);
     }
@@ -3862,6 +3877,12 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         int alpha = Math.min(getStat().getCurrentMaxHp(), stats.getHp() + hpDiff);
         int beta = Math.min(getStat().getCurrentMaxMp(getJob()), stats.getMp() + mpDiff);
         Map statups = new EnumMap(MapleStat.class);
+        if (alpha < 0) {
+            alpha = 0;
+        }
+        if (beta < 0) {
+            beta = 0;
+        }
         if (stats.setMp(beta)) {
             statups.put(MapleStat.MP, (long) stats.getMp());
         }
@@ -5006,7 +5027,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
      */
     public void levelUp(boolean takeexp) {
         try {
-            remainingAp += 5;
             int maxhp = stats.getMaxHp();
             int maxmp = stats.getMaxMp();
             if (GameConstants.is新手职业(job)) {
@@ -5048,18 +5068,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             maxhp = Math.min(getMaxHpForSever(), Math.abs(maxhp));
             maxmp = Math.min(getMaxMpForSever(), Math.abs(maxmp));
-            if (level == 30) {
-                finishAchievement(2);
-            }
-            if (level == 70) {
-                finishAchievement(3);
-            }
-            if (level == 120) {
-                finishAchievement(4);
-            }
-            if (level == 200) {
-                finishAchievement(5);
-            }
             if ((level == 200) && (!isGM())) {
                 StringBuilder sb = new StringBuilder("[祝贺] ");
                 sb.append(getMedalText());
@@ -5077,15 +5085,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
             if ((isGM()) || (!GameConstants.is新手职业(job))) {
                 remainingSp += 3;
-            } else if (level < 10) {
-                PlayerStats tmp = stats;
-                tmp.str = (short) (tmp.str + remainingAp);
-                remainingAp = 0;
-                statup.put(MapleStat.力量, Long.valueOf(stats.getStr()));
-            } else if (level == 10) {
-                resetStats(4, 4, 4, 4);
             }
-
+            remainingAp += 5;
             statup.put(MapleStat.AVAILABLEAP, Long.valueOf(remainingAp));
             statup.put(MapleStat.AVAILABLESP, Long.valueOf(remainingSp));
             stats.setInfo(maxhp, maxmp, maxhp, maxmp);
@@ -5096,7 +5097,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             guildUpdate();
             sidekickUpdate();
             checkNewQuest();
-//            autoChangeJob(level, job);
         } catch (Exception e) {
             e.printStackTrace();
         }

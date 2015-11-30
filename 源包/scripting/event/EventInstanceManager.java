@@ -61,6 +61,10 @@ public class EventInstanceManager {
         this.channel = channel;
     }
 
+    /**
+     * 注册角色
+     * @param chr
+     */
     public void registerPlayer(MapleCharacter chr) {
         if ((this.disposed) || (chr == null)) {
             return;
@@ -324,6 +328,10 @@ public class EventInstanceManager {
         return this.chars.size();
     }
 
+    /**
+     * 注册一个怪物
+     * @param mob
+     */
     public void registerMonster(MapleMonster mob) {
         if (this.disposed) {
             return;
@@ -602,6 +610,11 @@ public class EventInstanceManager {
         }
     }
 
+    /**
+     * 创建一个地图实例
+     * @param mapid
+     * @return
+     */
     public MapleMap createInstanceMap(int mapid) {
         if (this.disposed) {
             return null;
@@ -694,7 +707,7 @@ public class EventInstanceManager {
                     FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, "Event name" + EventInstanceManager.this.em.getName() + ", Instance name : " + EventInstanceManager.this.name + ", method Name(schedule) : " + methodName + " :\n" + ex);
                 }
             }
-        }, delay);
+        }, delay*1000);
     }
 
     public String getName() {

@@ -957,32 +957,25 @@ public class PlayerHandler {
      */
     public static void ChangeMap(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         // 15 00 00 00 00 00 00 00 00 00 角色回城
+        // 15 08 00 00 00 00 00 00 00 00 死亡后回程
         if ((chr == null) || (chr.getMap() == null)) {
             return;
         }
         if (slea.available() != 0L) {
-            slea.readByte();
+            int type = slea.readByte();
             int targetid = slea.readInt();
             System.out.println("换地图目标："+targetid);
             MaplePortal portal = chr.getMap().getPortal(slea.readMapleAsciiString());
-            System.out.println("传送口："+portal.getName());
-            boolean wheel = (!GameConstants.isEventMap(chr.getMapId())) && (chr.haveItem(5510000, 1, false, true)) && (chr.getMapId() / 1000000 != 925);
             if ((targetid != -1) && (!chr.isAlive())) { // 角色死亡
                 chr.setStance(0);
                 if ((chr.getEventInstance() != null) && (chr.getEventInstance().revivePlayer(chr)) && (chr.isAlive())) {
+                    System.out.println("没有死亡但是要回程："+targetid);
                     return;
                 }
-                if (!wheel) {
-                    chr.getStat().setHp(50);
-                    MapleMap to = chr.getMap().getReturnMap();
-                    chr.changeMap(to, to.getPortal(0));
-                } else {
-                    c.getSession().write(MTSCSPacket.useWheel((byte) (chr.getInventory(MapleInventoryType.CASH).countById(5510000) - 1)));
-                    chr.getStat().setHp(chr.getStat().getMaxHp() / 100 * 40);
-                    MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, 5510000, 1, true, false);
-                    MapleMap to = chr.getMap();
-                    chr.changeMap(to, to.getPortal(0));
-                }
+                chr.getStat().setHp(50);
+                MapleMap to = chr.getMap().getReturnMap();
+                System.out.println("死亡后准备回程：："+to.getId());
+                chr.changeMap(to, to.getPortal(0));
             } else if (targetid != -1 && c.getPlayer().isGM()) {
                 MapleMap to = ChannelServer.getInstance(c.getChannel()).getMapFactory().getMap(targetid);
                 MaplePortal pto = to.getPortal(0);

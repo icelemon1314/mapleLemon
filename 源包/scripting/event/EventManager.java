@@ -114,6 +114,11 @@ public class EventManager {
         return Collections.unmodifiableCollection(this.instances.values());
     }
 
+    /**
+     * 创建一个实例
+     * @param name
+     * @return
+     */
     public EventInstanceManager newInstance(String name) {
         EventInstanceManager ret = new EventInstanceManager(this, name, this.channel);
         this.instances.put(name, ret);

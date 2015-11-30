@@ -521,11 +521,26 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     }
 
     public void startQuest(int questId) {
-        MapleQuest.getInstance(questId).start(getPlayer(), getNpc());
+        MapleQuestStatus tmp = getPlayer().getQuest(MapleQuest.getInstance(questId));
+        if (tmp.getCustomData().isEmpty()) {
+            System.out.println("开始纯记录任务！");
+            tmp.setStatus((byte)MapleQuestStatus.QUEST_STARTED);
+        } else {
+            System.out.println("开始WZ任务");
+            MapleQuest.getInstance(questId).start(getPlayer(), getNpc());
+        }
     }
 
     public void completeQuest(int questId) {
-        MapleQuest.getInstance(questId).complete(getPlayer(), getNpc());
+        System.out.println("任务附加数据："+getPlayer().getQuest(MapleQuest.getInstance(questId)).getCustomData());
+        MapleQuestStatus tmp = getPlayer().getQuest(MapleQuest.getInstance(questId));
+        if (tmp.getCustomData().isEmpty()) {
+            System.out.println("完成纯记录任务！");
+            getPlayer().getQuest(MapleQuest.getInstance(questId)).setStatus((byte)MapleQuestStatus.QUEST_COMPLETED);
+        } else {
+            System.out.println("完成WZ任务");
+            MapleQuest.getInstance(questId).complete(getPlayer(), getNpc());
+        }
     }
 
     public void forfeitQuest(int questId) {
@@ -627,7 +642,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         }
         for (Iterator i$ = itemIds.iterator(); i$.hasNext();) {
             short ids = ((Short) i$.next());
-            MapleInventoryManipulator.unequip(getC(), ids, equip.getNextFreeSlot());
+            MapleInventoryManipulator.unequip(getClient(), ids, equip.getNextFreeSlot());
         }
     }
 

@@ -169,6 +169,20 @@ public class PlayerCommand {
         }
     }
 
+    /**
+     * 重置事件脚本
+     */
+    public static class reloadevents extends CommandExecute {
+
+        @Override
+        public int execute(MapleClient c, String[] splitted) {
+            for (ChannelServer instance : ChannelServer.getAllInstances()) {
+                instance.reloadEvents();
+            }
+            return 1;
+        }
+    }
+
     public static class 搜索物品 extends CommandExecute {
 
         @Override

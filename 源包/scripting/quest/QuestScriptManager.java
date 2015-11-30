@@ -42,7 +42,7 @@ public class QuestScriptManager extends AbstractScriptManager {
             Invocable iv = getInvocable("任务/" + questId + ".js", c, true);
             System.out.println("读取脚本任务完成！！！");
             if (iv == null) {
-                c.getPlayer().forceCompleteQuest(questId);
+                //c.getPlayer().forceCompleteQuest(questId);
                 if (c.getPlayer().isAdmin()) {
                     c.getPlayer().dropMessage(5, "开始任务脚本不存在 NPC：" + npcId + " Quest：" + questId);
                 }
@@ -101,7 +101,7 @@ public class QuestScriptManager extends AbstractScriptManager {
             if ((!this.qms.containsKey(c)) && (c.canClickNPC())) {
                 Invocable iv = getInvocable("任务/" + questId + ".js", c, true);
                 if (iv == null) {
-                    c.getPlayer().forceCompleteQuest(questId);
+                    //c.getPlayer().forceCompleteQuest(questId);
 //                    if (c.getPlayer().isAdmin()) {
 //                        c.getPlayer().dropMessage(5, "完成任务脚本不存在 NPC：" + npcId + " Quest：" + questId);
 //                    }

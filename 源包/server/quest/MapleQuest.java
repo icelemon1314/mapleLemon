@@ -38,6 +38,9 @@ public class MapleQuest implements Serializable {
 //    protected Map<Integer, Integer> relevantMobs = new LinkedHashMap();
 //    protected Map<Integer, Integer> questItems = new LinkedHashMap();
 
+    // 脚本任务
+    private static final Map<Integer, MapleQuest> questScript = new LinkedHashMap();
+
     protected Map<String, List<Pair<String, Pair<String, Integer>>>> partyQuestInfo = new LinkedHashMap();
 
     private int npcId = 0;
@@ -217,9 +220,11 @@ public class MapleQuest implements Serializable {
     public static MapleQuest getInstance(int id) {
         MapleQuest ret = quests.get(Integer.valueOf(id));
         if (ret == null) {
-            System.out.println("任务为空，new一个新的："+id);
-            ret = new MapleQuest(id);
-            quests.put(id, ret);
+            // 这是一个脚本任务
+            System.out.println("找不到任务："+id+"有可能是脚本任务！");
+            MapleQuest vet = new MapleQuest(id);
+            quests.put(id,vet);
+            return vet;
         }
         return ret;
     }
@@ -392,7 +397,7 @@ public class MapleQuest implements Serializable {
 //                }
 //            }
             // 没有任务达到完成条件
-            System.out.println("没有任务达到完成条件！");
+            System.out.println("开始任务");
             QuestScriptManager.getInstance().startQuest(chr.getClient(), npc, getId());
 
 //            for (MapleQuestAction a : this.startActs) {

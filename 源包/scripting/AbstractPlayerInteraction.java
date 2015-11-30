@@ -87,14 +87,6 @@ public abstract class AbstractPlayerInteraction {
         return this.c;
     }
 
-    public MapleClient getC() {
-        return this.c;
-    }
-
-    public MapleCharacter getChar() {
-        return this.c.getPlayer();
-    }
-
     public MapleCharacter getPlayer() {
         return this.c.getPlayer();
     }
@@ -108,20 +100,12 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public EventInstanceManager getEventInstance() {
+
         return this.c.getPlayer().getEventInstance();
     }
 
-    public void warp(int mapId) {
+    public void warp_rand(int mapId) {
         MapleMap mapz = getWarpMap(mapId);
-        try {
-            this.c.getPlayer().changeMap(mapz, mapz.getPortal(Randomizer.nextInt(mapz.getPortals().size())));
-        } catch (Exception e) {
-            this.c.getPlayer().changeMap(mapz, mapz.getPortal(0));
-        }
-    }
-
-    public void warp_Instanced(int mapId) {
-        MapleMap mapz = getMap_Instanced(mapId);
         try {
             this.c.getPlayer().changeMap(mapz, mapz.getPortal(Randomizer.nextInt(mapz.getPortals().size())));
         } catch (Exception e) {
@@ -152,11 +136,6 @@ public abstract class AbstractPlayerInteraction {
         }
     }
 
-    public void warpS(int mapId, int portal) {
-        MapleMap mapz = getWarpMap(mapId);
-        this.c.getPlayer().changeMap(mapz, mapz.getPortal(portal));
-    }
-
     public void warp(int mapId, String portal) {
         MapleMap mapz = getWarpMap(mapId);
         if ((mapId == 109060000) || (mapId == 109060002) || (mapId == 109060004)) {
@@ -173,14 +152,6 @@ public abstract class AbstractPlayerInteraction {
         } else {
             this.c.getPlayer().changeMap(mapz, mapz.getPortal(portal));
         }
-    }
-
-    public void warpS(int mapId, String portal) {
-        MapleMap mapz = getWarpMap(mapId);
-        if ((mapId == 109060000) || (mapId == 109060002) || (mapId == 109060004)) {
-            portal = mapz.getSnowballPortal();
-        }
-        this.c.getPlayer().changeMap(mapz, mapz.getPortal(portal));
     }
 
     public void warpMap(int mapId, int portal) {
@@ -326,6 +297,11 @@ public abstract class AbstractPlayerInteraction {
         this.c.getPlayer().addHP(delta);
     }
 
+    /**
+     * 获取角色的属性
+     * @param type
+     * @return
+     */
     public int getPlayerStat(String type) {
         if (type.equals("LVL")) {
             return this.c.getPlayer().getLevel();
@@ -443,6 +419,18 @@ public abstract class AbstractPlayerInteraction {
         byte status = this.c.getPlayer().getQuestStatus(questId);
         System.out.println("任务状态："+questId+"-"+status);
         return status;
+    }
+
+    public boolean isQuestCompleted(int questId){
+        byte status = this.c.getPlayer().getQuestStatus(questId);
+        System.out.println("任务状态1："+questId+"-"+status);
+        return status == MapleQuestStatus.QUEST_COMPLETED;
+    }
+
+    public boolean isQuestStarted(int questId){
+        byte status = this.c.getPlayer().getQuestStatus(questId);
+        System.out.println("任务状态2："+questId+"-"+status);
+        return status == MapleQuestStatus.QUEST_STARTED;
     }
 
     public boolean isQuestActive(int questId) {
@@ -860,7 +848,7 @@ public abstract class AbstractPlayerInteraction {
     public void warpParty(int mapId, int portal) {
         if ((getPlayer().getParty() == null) || (getPlayer().getParty().getMembers().size() == 1)) {
             if (portal < 0) {
-                warp(mapId);
+                warp(mapId,0);
             } else {
                 warp(mapId, portal);
             }
@@ -887,7 +875,7 @@ public abstract class AbstractPlayerInteraction {
 
     public void warpParty_Instanced(int mapId) {
         if ((getPlayer().getParty() == null) || (getPlayer().getParty().getMembers().size() == 1)) {
-            warp_Instanced(mapId);
+            warp(mapId,0);
             return;
         }
         MapleMap target = getMap_Instanced(mapId);

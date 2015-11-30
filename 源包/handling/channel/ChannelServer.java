@@ -174,8 +174,7 @@ public class ChannelServer {
         acceptor.getFilterChain().addLast("exceutor", new ExecutorFilter(/*threadPool*/));
         //acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(threadPool));
         players = new PlayerStorage(channel);
-        getShopPack();
-        loadEvents();
+        loadEvents(); // 事件脚本
         //loadShare();
         try {
             acceptor.setHandler(new MapleServerHandler(channel));
@@ -651,22 +650,6 @@ public class ChannelServer {
 
     public int getTraitRate() {
         return traitRate;
-    }
-
-    public String getShopPack() {
-        if (ShopPack != null) {
-            return ShopPack;
-        }
-        Properties props = new Properties();
-        try {
-            try (FileInputStream is = new FileInputStream("商城封包.txt")) {
-                props.load(is);
-            }
-        } catch (IOException ex) {
-            log.error("无法加载 商城封包.txt 的商城信息数据文件.");
-        }
-        ShopPack = props.getProperty("pack");
-        return ShopPack;
     }
 
     public void saveAll() {

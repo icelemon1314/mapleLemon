@@ -36,6 +36,7 @@ public class TakeDamageHandler {
         // 00 A2 86 01
         // 00 35 FC 01 00 00 00
         //TODO 修复反射伤害给怪物 还有其他的掉血类型
+        // 1E FE 19 00 00 00 00 00 高处掉落下来扣血
         if ((chr == null) || (chr.getMap() == null) || (chr.isHidden())) {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
@@ -58,14 +59,19 @@ public class TakeDamageHandler {
         if (chr.isShowPacket()) {
             chr.dropMessage(5, "受伤类型: " + type + " 受伤数值: " + damage);
         }
-        slea.readByte();
-        oid = slea.readInt();
-        attacker = chr.getMap().getMonsterByOid(oid);
+        if (type == -1) { // 怪物伤害
+            slea.readByte();
+            oid = slea.readInt();
+            attacker = chr.getMap().getMonsterByOid(oid);
 //        MapleStatEffect.applyDoubleDefense(chr);
-        if ((attacker == null)) {
-            chr.dropMessage(5, "攻击着为空！");
-            return;
+            if ((attacker == null)) {
+                chr.dropMessage(5, "攻击着为空！");
+                return;
+            }
+        } else if (type == -2) { // 高处掉落扣血
+            slea.readShort();
         }
+
 //        if (stats.reduceDamageRate > 0) {
 //            damage = (int) (damage - damage * (stats.reduceDamageRate / 100.0D));
 //        }
