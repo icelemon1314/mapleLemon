@@ -556,15 +556,6 @@ public class EventInstanceManager {
         return this.mobs;
     }
 
-    public void giveAchievement(int type) {
-        if (this.disposed) {
-            return;
-        }
-        for (MapleCharacter chr : getPlayers()) {
-            chr.finishAchievement(type);
-        }
-    }
-
     public void broadcastPlayerMsg(int type, String msg) {
         if (this.disposed) {
             return;

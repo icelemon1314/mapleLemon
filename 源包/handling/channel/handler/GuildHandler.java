@@ -272,7 +272,6 @@ public class GuildHandler {
                     c.getPlayer().setGuildId(guildId);
                     c.getPlayer().setGuildRank((byte) 1);
                     c.getPlayer().saveGuildStatus();
-                    c.getPlayer().finishAchievement(35);
                     WorldGuildService.getInstance().setGuildMemberOnline(c.getPlayer().getMGC(), true, c.getChannel());
                     //c.getSession().write(GuildPacket.showGuildInfo(c.getPlayer()));
                     c.getSession().write(GuildPacket.newGuildInfo(c.getPlayer()));

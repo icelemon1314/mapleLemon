@@ -684,26 +684,12 @@ public final class MapleMap {
             doShrine(getAllReactor().isEmpty());
         }else if ((mobid == 8840000) && (this.mapid == 211070100)) {
             this.charactersLock.readLock().lock();
-            try {
-                for (MapleCharacter c : this.characters) {
-                    c.finishAchievement(38);
-                }
-            } finally {
-                this.charactersLock.readLock().unlock();
-            }
             if (this.speedRunStart > 0L) {
                 type = ExpeditionType.Von_Leon;
             }
             doShrine(true);
         } else if ((mobid == 8800002) && ((this.mapid == 280030000) || (this.mapid == 280030100))) {
             this.charactersLock.readLock().lock();
-            try {
-                for (MapleCharacter c : this.characters) {
-                    c.finishAchievement(15);
-                }
-            } finally {
-                this.charactersLock.readLock().unlock();
-            }
 
             if (this.speedRunStart > 0L) {
                 type = ExpeditionType.Zakum;
@@ -711,13 +697,6 @@ public final class MapleMap {
             doShrine(true);
         } else if ((mobid == 8800102) && (this.mapid == 280030001)) {
             this.charactersLock.readLock().lock();
-            try {
-                for (MapleCharacter c : this.characters) {
-                    c.finishAchievement(23);
-                }
-            } finally {
-                this.charactersLock.readLock().unlock();
-            }
 
             if (this.speedRunStart > 0L) {
                 type = ExpeditionType.Chaos_Zakum;
@@ -725,39 +704,18 @@ public final class MapleMap {
             doShrine(true);
         } else if ((mobid == 8870000) && (this.mapid == 262031300)) {
             this.charactersLock.readLock().lock();
-            try {
-                for (MapleCharacter c : this.characters) {
-                    c.finishAchievement(55);
-                }
-            } finally {
-                this.charactersLock.readLock().unlock();
-            }
             if (this.speedRunStart > 0L) {
                 type = ExpeditionType.Hillah;
             }
             doShrine(true);
         } else if ((mobid == 8870100) && (this.mapid == 262031300)) {
             this.charactersLock.readLock().lock();
-            try {
-                for (MapleCharacter c : this.characters) {
-                    c.finishAchievement(56);
-                }
-            } finally {
-                this.charactersLock.readLock().unlock();
-            }
             if (this.speedRunStart > 0L) {
                 type = ExpeditionType.Hillah;
             }
             doShrine(true);
         } else if ((mobid == 8860000) && (this.mapid == 272030400)) {
             this.charactersLock.readLock().lock();
-            try {
-                for (MapleCharacter c : this.characters) {
-                    c.finishAchievement(58);
-                }
-            } finally {
-                this.charactersLock.readLock().unlock();
-            }
             if (this.speedRunStart > 0L) {
                 type = ExpeditionType.Akyrum;
             }

@@ -14,7 +14,6 @@ public class MapleOla extends MapleSurvival {
     @Override
     public void finished(MapleCharacter chr) {
         givePrize(chr);
-        chr.finishAchievement(21);
     }
 
     @Override

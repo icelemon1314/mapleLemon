@@ -93,7 +93,6 @@ import server.StructSetItemStat;
 import server.Timer.BuffTimer;
 import server.Timer.MapTimer;
 import server.Timer.WorldTimer;
-import server.achievement.MapleAchievements;
 import server.cashshop.CashShop;
 import server.life.MapleLifeFactory;
 import server.life.MapleMonster;
@@ -218,7 +217,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private transient ReentrantReadWriteLock summonsLock;
     private transient ReentrantReadWriteLock controlledLock;
     private final Map<MapleQuest, MapleQuestStatus> quests; // 任务数据
-    private final Map<Integer, MapleQuestStatus> questScript; // 脚本任务数据
     private Map<Integer, String> questinfo;
     private Map<String, String> keyValue;
     private final Map<Skill, SkillEntry> skills;
@@ -375,7 +373,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.keyValue = new LinkedHashMap();
         this.questinfo = new LinkedHashMap();
         this.quests = new LinkedHashMap();
-        this.questScript = new LinkedHashMap();
         this.skills = new LinkedHashMap();
         this.stats = new PlayerStats();
         this.remainingSp = 0;
@@ -2925,9 +2922,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void addFame(int famechange) {
         this.fame += famechange;
-        if (this.fame >= 50) {
-            finishAchievement(7);
-        }
     }
 
     public void updateFame() {
@@ -4318,18 +4312,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (this.meso > 2147480000) {
             this.meso = 2147480000;
         }
-        if (this.meso >= 1000000) {
-            finishAchievement(31);
-        }
-        if (this.meso >= 10000000) {
-            finishAchievement(32);
-        }
-        if (this.meso >= 100000000) {
-            finishAchievement(33);
-        }
-        if (this.meso >= 1000000000) {
-            finishAchievement(34);
-        }
         updateSingleStat(MapleStat.金币, this.meso, false);
         this.client.getSession().write(MaplePacketCreator.enableActions());
         if (show) {
@@ -5106,9 +5088,16 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
      * 升级后需要把新的任务放到角色的任务表里面
      */
     public void checkNewQuest(){
-//        List<MapleQuestStatus> completeQuest=getCompletedQuests();
+        Collection<MapleQuest> allQuestInfo = MapleQuest.getInstatce().getAllInstances();
 
-
+        for (MapleQuest info : allQuestInfo) {
+            if (!this.quests.containsKey(info.getId())) {
+                if (info.canStart(this,info.getNpcId())) {
+                    System.out.println("升级后自动开始任务："+info.getId());
+                    MapleQuest.getInstance(info.getId()).forceStart(this,info.getNpcId(),info.getStartStatus());
+                }
+            }
+        }
     }
 
     public boolean isValidJob(int id) {
@@ -6353,13 +6342,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return this.finishedAchievements.contains(achievementid);
     }
 
-    public void finishAchievement(int id) {
-        if ((!achievementFinished(id))
-                && (isAlive())) {
-            MapleAchievements.getInstance().getById(id).finishAchievement(this);
-        }
-    }
-
     public List<Integer> getFinishedAchievements() {
         return this.finishedAchievements;
     }
@@ -6431,9 +6413,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void setPoints(int p) {
         this.points = p;
-        if (this.points >= 1) {
-            finishAchievement(1);
-        }
     }
 
     public int getPoints() {

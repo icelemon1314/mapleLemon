@@ -534,26 +534,6 @@ public class InternCommand {
                     } else {
                         c.getPlayer().dropMessage(6, "该物品信息搜索不到");
                     }
-                } else if (type.equalsIgnoreCase("任务")) {
-                    List<String> retQuests = new ArrayList<>();
-                    for (MapleQuest questPair : MapleQuest.getAllInstances()) {
-                        if (questPair.getName().length() > 0 && questPair.getName().toLowerCase().contains(search.toLowerCase())) {
-                            retQuests.add("\r\n" + questPair.getId() + " - " + questPair.getName());
-                        }
-                    }
-                    if (retQuests.size() > 0) {
-                        for (String singleRetQuest : retQuests) {
-                            if (sb.length() > 10000) {
-                                sb.append("\r\n后面还有很多搜索结果, 但已经无法显示更多");
-                                break;
-                            }
-                            sb.append(singleRetQuest);
-                            //c.getSession().write(NPCPacket.getNPCTalk(9010000, (byte) 0, retQuests.toString(), "00 00", (byte) 0, 9010000));
-                            //    c.getPlayer().dropMessage(6, singleRetItem);
-                        }
-                    } else {
-                        c.getPlayer().dropMessage(6, "该任务信息搜索不到");
-                    }
                 } else if (type.equalsIgnoreCase("技能")) {
                     List<String> retSkills = new ArrayList<>();
                     for (Skill skill : SkillFactory.getAllSkills()) {

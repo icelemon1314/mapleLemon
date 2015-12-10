@@ -18,7 +18,6 @@ public class MapleSurvival extends MapleEvent {
     @Override
     public void finished(MapleCharacter chr) {
         givePrize(chr);
-        chr.finishAchievement(25);
     }
 
     @Override

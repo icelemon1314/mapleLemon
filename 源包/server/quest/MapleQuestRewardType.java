@@ -61,6 +61,7 @@ public enum MapleQuestRewardType {
             return valueOf(name);
         } catch (IllegalArgumentException ex) {
         }
+        System.out.println("不支持的奖励类型："+name);
         return UNDEFINED;
     }
 }

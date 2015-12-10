@@ -127,6 +127,18 @@ public class MapleInventoryManipulator {
         return addId(c, itemId, quantity, owner, pet, period, state, gmLog) >= 0;
     }
 
+    /**
+     * 通过ID来添加道具
+     * @param c
+     * @param itemId
+     * @param quantity
+     * @param owner
+     * @param pet
+     * @param period
+     * @param state
+     * @param gmLog
+     * @return
+     */
     public static byte addId(MapleClient c, int itemId, short quantity, String owner, MaplePet pet, long period, int state, String gmLog) {
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         if (((ii.isPickupRestricted(itemId)) && (c.getPlayer().haveItem(itemId, 1, true, false))) || (!ii.itemExists(itemId))) {
@@ -959,15 +971,7 @@ public class MapleInventoryManipulator {
 //            chr.cancelEffectFromBuffStat(MapleBuffStat.无形箭弩);
 //            chr.cancelEffectFromBuffStat(MapleBuffStat.属性攻击);
         }
-        if (GameConstants.isReverseItem(source.getItemId())) {
-            chr.finishAchievement(9);
-        } else if (GameConstants.isTimelessItem(source.getItemId())) {
-            chr.finishAchievement(10);
-        } else if ((stats.containsKey("reqLevel")) && (((Integer) stats.get("reqLevel")) >= 140)) {
-            chr.finishAchievement(41);
-        } else if ((stats.containsKey("reqLevel")) && (((Integer) stats.get("reqLevel")) >= 130)) {
-            chr.finishAchievement(40);
-        } else if (source.getItemId() == 1122017) {
+        if (source.getItemId() == 1122017) {
             chr.startFairySchedule(true, true);
         }
         mods.add(new ModifyInventory(2, source, src));

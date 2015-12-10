@@ -88,7 +88,6 @@ public class MapleOxQuiz extends MapleEvent {
                     for (MapleCharacter chr : toSend.getCharactersThreadsafe()) {
                         if ((chr != null) && (!chr.isGM()) && (chr.isAlive())) {
                             chr.canTalk(true);
-                            chr.finishAchievement(19);
                             MapleEvent.givePrize(chr);
                             MapleOxQuiz.this.warpBack(chr);
                         }

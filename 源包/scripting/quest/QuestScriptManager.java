@@ -21,18 +21,6 @@ public class QuestScriptManager extends AbstractScriptManager {
     }
 
     public void startQuest(MapleClient c, int npcId, int questId) {
-//        if (!MapleQuest.getInstance(questId).canStart(c.getPlayer(), null)
-//                && questId != 1401
-//                && questId != 1402
-//                && questId != 1403
-//                && questId != 1404
-//                && questId != 1405
-//                && questId != 32240) {
-//            if (c.getPlayer().isAdmin()) {
-//                c.getPlayer().dropMessage(6, "startQuest - 不能开始这个任务 NPC：" + npcId + " Quest：" + questId);
-//            }
-//            return;
-//        }
         try {
             if (this.qms.containsKey(c)) {
                 System.out.println("脚本任务挂了！！！！");
