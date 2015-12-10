@@ -1646,6 +1646,12 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
+    /**
+     * 坐椅子
+     * @param characterid
+     * @param itemid
+     * @return
+     */
     public static byte[] showChair(int characterid, int itemid) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1659,9 +1665,6 @@ public class MaplePacketCreator {
     }
 
     public static byte[] cancelChair(int id, int cid) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CANCEL_CHAIR.getValue());

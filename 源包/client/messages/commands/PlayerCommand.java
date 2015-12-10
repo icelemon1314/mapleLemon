@@ -152,7 +152,7 @@ public class PlayerCommand {
                     toDrop = new client.inventory.Item(itemId, (byte) 0, quantity, (byte) 0);
                 }
                 toDrop.setGMLog(c.getPlayer().getName() + " 使用 " + splitted[0] + " 命令制作");
-                toDrop.setOwner(c.getPlayer().getName());
+                //toDrop.setOwner(c.getPlayer().getName());
                 c.getPlayer().getMap().spawnItemDrop(c.getPlayer(), c.getPlayer(), toDrop, c.getPlayer().getPosition(), true, true);
             }
             return 1;

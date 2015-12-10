@@ -1,6 +1,8 @@
 package client.inventory;
 
 import java.io.Serializable;
+
+import constants.ItemConstants;
 import server.MapleItemInformationProvider;
 
 public class Item implements Comparable<Item>, Serializable {
@@ -101,7 +103,8 @@ public class Item implements Comparable<Item>, Serializable {
     }
 
     public byte getType() {
-        return 2;
+        return ItemConstants.getInventoryType(this.id).getType();
+//        return 2;
     }
 
     public String getOwner() {

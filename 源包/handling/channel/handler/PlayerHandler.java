@@ -112,20 +112,24 @@ public class PlayerHandler {
         }
     }
 
+    // 坐椅子
     public static void UseChair(int itemId, MapleClient c, MapleCharacter chr) {
+        // 19 0A 00
+        // 19 FF FF 取消
         if ((chr == null) || (chr.getMap() == null)) {
             return;
         }
-        Item toUse = chr.getInventory(MapleInventoryType.SETUP).findById(itemId);
-        if (toUse == null && itemId != 3010587) {
-            return;
-        }
-        if ((GameConstants.isFishingMap(chr.getMapId())) && (itemId == 3011000)
-                && (chr.getStat().canFish)) {
-            chr.startFishingTask();
-        }
+//        Item toUse = chr.getInventory(MapleInventoryType.SETUP).findById(itemId);
+//        if (toUse == null && itemId != 3010587) {
+//            return;
+//        }
+//        if ((GameConstants.isFishingMap(chr.getMapId())) && (itemId == 3011000)
+//                && (chr.getStat().canFish)) {
+//            chr.startFishingTask();
+//        }
 
         chr.setChair(itemId);
+        c.getSession().write(MaplePacketCreator.showChair(c.getPlayer().getId(),itemId));
         chr.getMap().broadcastMessage(chr, MaplePacketCreator.showChair(chr.getId(), itemId), false);
         c.getSession().write(MaplePacketCreator.enableActions());
     }

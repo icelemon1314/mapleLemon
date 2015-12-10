@@ -407,10 +407,10 @@ public class MapleInventoryManipulator {
         int before = c.getPlayer().itemQuantity(item.getItemId());
         short quantity = item.getQuantity();
         MapleInventoryType type = ItemConstants.getInventoryType(item.getItemId());
-        if (!type.equals(MapleInventoryType.EQUIP)) {
+        if (!type.equals(MapleInventoryType.EQUIP)) { // 不是装备
             short slotMax = ii.getSlotMax(item.getItemId());
             List existing = c.getPlayer().getInventory(type).listById(item.getItemId());
-            if (!ItemConstants.isRechargable(item.getItemId())) {
+            if (!ItemConstants.isRechargable(item.getItemId())) { // 不是飞镖类
                 if (quantity <= 0) {
                     c.getSession().write(InventoryPacket.getInventoryFull());
                     c.getSession().write(InventoryPacket.showItemUnavailable());

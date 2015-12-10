@@ -429,7 +429,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 PlayerHandler.CancelItemEffect(slea.readInt(), c.getPlayer());
                 break;
             case USE_CHAIR:
-                PlayerHandler.UseChair(slea.readInt(), c, c.getPlayer());
+                PlayerHandler.UseChair(slea.readShort(), c, c.getPlayer());
                 break;
             case CANCEL_CHAIR:
                 PlayerHandler.CancelChair(slea.readShort(), c, c.getPlayer());
