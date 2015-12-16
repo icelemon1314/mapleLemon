@@ -52,7 +52,6 @@ public class MapleServerHandler extends IoHandlerAdapter {
 
     @Override
     public void sessionCreated(IoSession session) throws Exception {
-        // TODO Auto-generated method stub  
         SocketSessionConfig cfg = (SocketSessionConfig) session.getConfig();
         cfg.setReceiveBufferSize(2 * 1024 * 1024);
         cfg.setReadBufferSize(2 * 1024 * 1024);
@@ -864,9 +863,6 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 break;
             case OPEN_MAP:
                 c.getSession().write(UIPacket.openMap());
-                break;
-            case FREE_TRANFSER:
-                PlayerHandler.FreeTransfer(slea, c.getPlayer());
                 break;
             default:
                 System.out.println(new StringBuilder().append("[未处理封包] Recv ").append(header.toString()).append(" [").append(HexTool.getOpcodeToString(header.getValue())).append("]").toString());

@@ -423,7 +423,7 @@ public class DamageParse {
                         eachd = monsterstats.getOnlyNoramlAttack() ? 0 : fixeddmg;
                     } else {
                         if ((player.isShowPacket()) && (eachd > 0)) {
-                            player.dropMessage(-1, new StringBuilder().append("魔法攻击打怪伤害 : ").append(eachd).append(" 服务端预计伤害 : ").append(maxDamagePerHit).append(" 是否超过 : ").append(eachd > maxDamagePerHit).toString());
+                            player.dropMessage(0, new StringBuilder().append("魔法攻击打怪伤害 : ").append(eachd).append(" 服务端预计伤害 : ").append(maxDamagePerHit).append(" 是否超过 : ").append(eachd > maxDamagePerHit).toString());
                         }
                         if (monsterstats.getOnlyNoramlAttack()) {
                             eachd = 0;

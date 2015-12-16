@@ -1364,17 +1364,6 @@ public class PlayerHandler {
         }
     }
 
-    public static void FreeTransfer(LittleEndianAccessor slea, MapleCharacter chr) { //TODO 自由转职 干掉
-        int job = slea.readInt();
-        int clevel = chr.getLevel() - 120;
-        long needmeso = clevel * 1550000 + (clevel - 1) * clevel / 2 * 100000 + 21250000;
-        chr.gainMeso(-needmeso, false);
-        chr.changeJob(job, false);
-        chr.setPQLog("FreeTransfer");
-        chr.SpReset();
-        chr.send(MaplePacketCreator.serverMessageRedText("自由转职成功!"));
-    }
-
     /**
      *
      * @param slea

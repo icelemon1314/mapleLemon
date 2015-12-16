@@ -463,8 +463,24 @@ public final class MapleMap {
     }
 
     private void dropFromMonster(MapleCharacter chr, MapleMonster mob, boolean instanced) {//TODO 怪物死亡掉落物品
-        if (mob == null || chr == null || (ChannelServer.getInstance(this.channel) == null) || (this.dropsDisabled) || (mob.dropsDisabled())) {
-            System.out.println("由于Alex的力量，掉落物被回收了！");
+        if (mob == null) {
+            chr.dropMessage(1,"怪物为空了！");
+            return;
+        }
+        if (chr == null) {
+            chr.dropMessage(1,"角色为空了！");
+            return;
+        }
+        if ((ChannelServer.getInstance(this.channel) == null) ) {
+            chr.dropMessage(1,"频道为空了！");
+            return;
+        }
+//        if ((this.dropsDisabled)) {
+//            chr.dropMessage(1,"该地图不能掉落道具");
+//            return;
+//        }
+        if ((mob.dropsDisabled())) {
+            chr.dropMessage(1,"怪物不能掉落道具："+mob.getId());
             return;
         }
 
@@ -873,15 +889,6 @@ public final class MapleMap {
             dropFromMonster(drop, monster, instanced);
         }
 
-        if (Randomizer.nextInt(100) < 5 && !cangetNXMap() && !monster.isFake() && !this.isBossMap() && !monster.getStats().isBoss() && chr.getEventInstance() == null) {
-            MapleMonster mob = MapleLifeFactory.getMonster(monster.getId());
-            Point pos = monster.getTruePosition();
-            int 怪物类型 = (int) (Math.random() * 2) + 1;
-            mob.set怪物类型(怪物类型);
-            mob.getStats().setChange(true);
-            mob.changeLevel(mob.getMobLevel() + 5);
-            spawnMonsterOnGroundBelow(mob, pos);
-        }
         if ((ServerConstants.打怪获得点抵用卷 || this.isBossMap()) && Randomizer.nextInt(100) < 30) {
             int NX = Math.max(monster.getMobLevel(), 1);
             if (chr.getParty() != null && chr.getParty().getMembers().size() >= 2) {
@@ -2045,6 +2052,32 @@ public final class MapleMap {
     public void spawnItemDrop(final MapleMapObject dropper, MapleCharacter owner, Item item, Point pos, boolean ffaDrop, boolean playerDrop) {
         final Point droppos = calcDropPos(pos, pos);
         final MapleMapItem drop = new MapleMapItem(item, droppos, dropper, owner, (byte) 2, playerDrop);
+
+        spawnAndAddRangedMapObject(drop, new DelayedPacketCreation() {
+            @Override
+            public void sendPackets(MapleClient c) {
+                c.getSession().write(InventoryPacket.dropItemFromMapObject(drop, dropper.getTruePosition(), droppos, (byte) 1, false));
+            }
+        });
+        broadcastMessage(InventoryPacket.dropItemFromMapObject(drop, dropper.getTruePosition(), droppos, (byte) 0, false));
+
+        if (!this.everlast) {
+            drop.registerExpire(120000L);
+            activateItemReactors(drop, owner.getClient());
+        }
+    }
+
+    public void spawnItemDrop(final MapleMapObject dropper, MapleCharacter owner,int itemId,short quantity) {
+        final Point droppos = calcDropPos(owner.getPosition(), owner.getPosition());
+        Item toDrop;
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        if (GameConstants.getInventoryType(itemId) == MapleInventoryType.EQUIP) {
+            toDrop = ii.randomizeStats((Equip) ii.getEquipById(itemId));
+        } else {
+            toDrop = new client.inventory.Item(itemId, (byte) 0, quantity, (byte) 0);
+        }
+
+        final MapleMapItem drop = new MapleMapItem(toDrop, droppos, dropper, owner, (byte) 2, false);
 
         spawnAndAddRangedMapObject(drop, new DelayedPacketCreation() {
             @Override

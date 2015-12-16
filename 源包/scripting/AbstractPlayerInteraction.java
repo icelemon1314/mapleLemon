@@ -710,7 +710,6 @@ public abstract class AbstractPlayerInteraction {
         this.c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.serverNotice(type, message));
     }
 
-    // @TODO 优化消息
     public void guildMessage(int type, String message) {
         if (getPlayer().getGuildId() > 0) {
             WorldGuildService.getInstance().guildPacket(getPlayer().getGuildId(), MaplePacketCreator.serverNotice(type, message));

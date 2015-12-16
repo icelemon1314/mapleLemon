@@ -52,11 +52,11 @@ public class MapleMapFactory {
 
     public MapleMap getMap(int mapid, boolean respawns, boolean npcs, boolean reactors) {
         Integer omapid = mapid;
-        MapleMap map = (MapleMap) this.maps.get(omapid);
+        MapleMap map = this.maps.get(omapid);
         if (map == null) {
             this.lock.lock();
             try {
-                map = (MapleMap) this.maps.get(omapid);
+                map = this.maps.get(omapid);
                 if (map != null) {
                     MapleMap localMapleMap1 = map;
                     return localMapleMap1;
@@ -179,27 +179,16 @@ public class MapleMapFactory {
                     System.out.println("读取SQL刷Npc和刷新怪物出错.");
                 }
 
-                List herbRocks = new ArrayList();
-                int lowestLevel = 200;
-                int highestLevel = 0;
-
                 for (MapleData life : mapData.getChildByPath("life")) {
                     String type = MapleDataTool.getString(life.getChildByPath("type"));
 //                    String limited = MapleDataTool.getString("limitedname", life, "");
 //                    if (((npcs) || (!type.equals("n"))) && (!limited.equals("Stage0"))) {
                         AbstractLoadedMapleLife myLife = loadLife(life, MapleDataTool.getString(life.getChildByPath("id")), type);
 
-                        if (((myLife instanceof MapleMonster)) && (!BattleConstants.isBattleMap(mapid))) {
+                        if (((myLife instanceof MapleMonster)) && (!BattleConstants.isBattleMap(mapid))) { // 怪物
                             MapleMonster mob = (MapleMonster) myLife;
-
-                            herbRocks.add(map.addMonsterSpawn(mob, MapleDataTool.getInt("mobTime", life, 0), (byte) MapleDataTool.getInt("team", life, -1), mob.getId() == bossid ? msg : null).getPosition());
-                            if ((mob.getStats().getLevel() > highestLevel) && (!mob.getStats().isBoss())) {
-                                highestLevel = mob.getStats().getLevel();
-                            }
-                            if ((mob.getStats().getLevel() < lowestLevel) && (!mob.getStats().isBoss())) {
-                                lowestLevel = mob.getStats().getLevel();
-                            }
-                        } else if ((myLife instanceof MapleNPC)) {
+                            map.addMonsterSpawn(mob, MapleDataTool.getInt("mobTime", life, 0), (byte) MapleDataTool.getInt("team", life, -1), mob.getId() == bossid ? msg : null).getPosition();
+                        } else if ((myLife instanceof MapleNPC)) {  // NPC
                             map.addMapObject(myLife);
                         }
 //                    }
@@ -209,8 +198,7 @@ public class MapleMapFactory {
                 map.setPartyBonusRate(GameConstants.getPartyPlay(mapid, MapleDataTool.getInt(mapData.getChildByPath("info/partyBonusR"), 0)));
                 map.loadMonsterRate(true);
                 map.setNodes(loadNodes(mapid, mapData));
-                map.setSpawnPoints(herbRocks);
-
+                
                 if ((reactors) && (mapData.getChildByPath("reactor") != null) && (!BattleConstants.isBattleMap(mapid))) {
                     for (MapleData reactor : mapData.getChildByPath("reactor")) {
                         String id = MapleDataTool.getString(reactor.getChildByPath("id"));
@@ -219,40 +207,11 @@ public class MapleMapFactory {
                         }
                     }
                 }
+                
                 map.setFirstUserEnter(MapleDataTool.getString(mapData.getChildByPath("info/onFirstUserEnter"), ""));
                 map.setUserEnter(mapid == 180000001 ? "jail" : MapleDataTool.getString(mapData.getChildByPath("info/onUserEnter"), ""));
-                if ((reactors) && (herbRocks.size() > 0) && (highestLevel >= 30) && (map.getFirstUserEnter().equals("")) && (map.getUserEnter().equals(""))) {
-                    List allowedSpawn = new ArrayList(24);
-                    allowedSpawn.add(100011);
-                    allowedSpawn.add(200011);
-                    if (highestLevel >= 100) {
-                        for (int i = 0; i < 10; i++) {
-                            for (int x = 0; x < 4; x++) {
-                                allowedSpawn.add(100000 + i);
-                                allowedSpawn.add(200000 + i);
-                            }
-                        }
-                    } else {
-                        for (int i = lowestLevel % 10 > highestLevel % 10 ? 0 : lowestLevel % 10; i < highestLevel % 10; i++) {
-                            for (int x = 0; x < 4; x++) {
-                                allowedSpawn.add(100000 + i);
-                                allowedSpawn.add(200000 + i);
-                            }
-                        }
-                    }
-                    int numSpawn = Randomizer.nextInt(allowedSpawn.size()) / 6;
-                    for (int i = 0; (i < numSpawn) && (!herbRocks.isEmpty()); i++) {
-                        int idd = ((Integer) allowedSpawn.get(Randomizer.nextInt(allowedSpawn.size())));
-                        int theSpawn = Randomizer.nextInt(herbRocks.size());
-                        MapleReactor myReactor = new MapleReactor(MapleReactorFactory.getReactor(idd), idd);
-                        myReactor.setPosition((Point) herbRocks.get(theSpawn));
-                        myReactor.setDelay(idd % 100 == 11 ? 60000 : 5000);
-                        map.spawnReactor(myReactor);
-                        herbRocks.remove(theSpawn);
-                    }
 
-                }
-
+                
                 try {
                     map.setMapName(MapleDataTool.getString("mapName", MapleMapFactory.nameData.getChildByPath(getMapStringName(omapid)), ""));
                     map.setStreetName(MapleDataTool.getString("streetName", MapleMapFactory.nameData.getChildByPath(getMapStringName(omapid)), ""));
@@ -263,7 +222,7 @@ public class MapleMapFactory {
                 if ((map.getMapName().length() <= 1) && (map.getStreetName().length() <= 1)) {
                     FileoutputUtil.log(FileoutputUtil.地图名字错误, new StringBuilder().append("地图ID: ").append(mapid).toString(), true);
                 }
-
+                
                 map.setClock(mapData.getChildByPath("clock") != null);
                 map.setEverlast(MapleDataTool.getInt(mapData.getChildByPath("info/everlast"), 0) > 0);
                 map.setTown(MapleDataTool.getInt(mapData.getChildByPath("info/town"), 0) > 0);

@@ -28,7 +28,6 @@ public class CashItemInfo {
         this.discount = discount;
     }
 
-    // @TODO 修改为getItemID
     public int getId() {
         return this.itemId;
     }

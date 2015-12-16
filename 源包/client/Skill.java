@@ -156,7 +156,7 @@ public class Skill {
                     }
                 }
             }
-            switch (id) { //TODO 添加新的BUFF技能
+            switch (id) {
                 case 1076:
                 case 2111002:
                 case 2111003:

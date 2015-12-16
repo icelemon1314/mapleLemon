@@ -433,34 +433,6 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
-    /**
-     * 情景喇叭 @TODO 需要删除掉
-     * @param chr
-     * @param channel
-     * @param itemId
-     * @param message
-     * @param ear
-     * @return
-     */
-    public static byte[] getAvatarMega(MapleCharacter chr, int channel, int itemId, List<String> message, boolean ear) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.AVATAR_MEGA.getValue());
-        mplew.writeInt(itemId);
-        mplew.writeMapleAsciiString(chr.getName());
-        for (int i = 0; i < 4; i++) {
-            mplew.writeMapleAsciiString((String) message.get(i));
-        }
-        mplew.writeInt(channel - 1);
-        mplew.write(ear ? 1 : 0);
-        PacketHelper.addCharLook(mplew, chr, true, chr.isZeroSecondLook());
-
-        return mplew.getPacket();
-    }
-
     public static byte[] getChatText(int cidfrom, String text, boolean whiteBG, int show) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -690,7 +662,7 @@ public class MaplePacketCreator {
 //            buffmask |= MapleBuffStat.SHADOWPARTNER.getValue();
 //        }
 
-        mplew.writeInt(buffmask); // TODO: Finish buffmasks
+        mplew.writeInt(buffmask);
 
         PacketHelper.addCharLook(mplew, chr, true, chr.isZeroSecondLook());
 
@@ -2173,9 +2145,6 @@ public class MaplePacketCreator {
     }
 
     public static byte[] coconutScore(int[] coconutscore) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.COCONUT_SCORE.getValue());

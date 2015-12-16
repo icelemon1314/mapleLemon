@@ -146,7 +146,6 @@ public class PlayerCommand {
             } else {
                 Item toDrop;
                 if (GameConstants.getInventoryType(itemId) == MapleInventoryType.EQUIP) {
-
                     toDrop = ii.randomizeStats((Equip) ii.getEquipById(itemId));
                 } else {
                     toDrop = new client.inventory.Item(itemId, (byte) 0, quantity, (byte) 0);

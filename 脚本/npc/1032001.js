@@ -1,5 +1,3 @@
-
-
 /*
 	This file is part of the OdinMS Maple Story Server
     Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
@@ -112,16 +110,19 @@ function action(mode, type, selection) {
 				}
 			}
 		} else if (cm.isQuestStarted(100100)){
-			if (cm.isQuestCompleted(100101)) {
-				cm.sendOk("好吧，赶紧拿着这个去找#b鲁碧#k。");
-			} else {
-				cm.sendOk("Hey, 我需要一个#r#t4031059##k，赶紧去寻找异界之门吧！");
-				cm.startQuest(100101);
-				cm.completeQuest(100100);
-			}
+			cm.sendOk("Hey, 我需要一个#r#t4031059##k，赶紧去寻找异界之门吧！");
+			cm.startQuest(100101);
+			cm.completeQuest(100100);
 			cm.dispose();
 		} else if (cm.isQuestStarted(100101)) {
-			cm.sendOk("你还没有找到我需要的 #r#t4031059##k，赶紧去寻找异界之门吧！");
+			if (cm.haveItem(4031059)) {
+				cm.gainItem(4031059,-1);
+				cm.gainItem(4031057,1);
+				cm.completeQuest(100101);
+				cm.sendOk("好吧，赶紧拿着这个去找#b鲁碧#k。");
+			} else {
+				cm.sendOk("你还没有找到我需要的 #r#t4031059##k，赶紧去寻找异界之门吧！");
+			}
 			cm.dispose();
 		}else {
 			cm.sendOk("魔法是很神奇的一种事物！");

@@ -70,11 +70,12 @@ function action(mode, type, selection) {
             //cm.completeQuest(100100);
             //cm.completeQuest(100102);
             if (cm.isQuestCompleted(100102)) // 三转问答完成
+				cm.gainItem(4031058, -1);
                 cm.sendNext("哇哦，看上你也挺聪明的嘛！");
             else if (cm.isQuestStarted(100102)) { // 三转问答没完成
                 cm.sendOk("去找到隐藏在冰封雪域某处圣地中的#r黑圣石#k吧！");
                 cm.dispose();
-            } else if (cm.isQuestCompleted(100100)) // 完成了挑战
+            } else if (cm.isQuestCompleted(100101)) // 完成了第一阶段挑战
                 cm.sendNext("我的预感是对的，你证明了你的力量！");
             else if (cm.isQuestStarted(100100)) { // 没完成镜像挑战
                 cm.sendOk("赶紧去找一转教官吧，他会教你怎么做的！");
@@ -103,15 +104,16 @@ function action(mode, type, selection) {
                     cm.sendOk("恭喜你，成功转职为了#r祭祀#k！");
                     cm.dispose();
                 }
-            } else if (cm.isQuestCompleted(100100)) // 完成第一阶段
+            } else if (cm.isQuestCompleted(100101)) // 完成第一阶段
                 cm.sendYesNo("你准备好接受最后的挑战了么？");
             else {
 				// 准备开始转职
                 cm.sendYesNo("我可以让你变得更加的强大，在此之前你需要证明你拥有强大的力量和睿智的头脑，准备好接受挑战了么？");
 			}
         } else if (status == 2) {
-            if (cm.isQuestCompleted(100100)) { // 开始第二阶段挑战
+            if (cm.isQuestCompleted(100101)) { // 开始第二阶段挑战
                 cm.startQuest(100102);
+				cm.gainItem(4031057,-1);
                 cm.sendOk("去找到隐藏在冰封雪域某处圣地中的#r黑圣石#k吧！别忘记带一个黑暗水晶成品过去！！！");
                 cm.dispose();
             } else { // 开始第一阶段任务

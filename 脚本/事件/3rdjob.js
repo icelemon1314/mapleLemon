@@ -70,14 +70,13 @@ function playerDisconnected(eim, player) {
 }
 
 function allMonstersDead(eim) {
-    var price = new client.inventory.Item(4031059, 0, 1);
     var winner = eim.getPlayers().get(0);
     var info = setClassVars(winner);
     var mapId = info[0];
-    var monsterId = info[2];
+    //var monsterId = info[2];
 
     var map = eim.getMapInstance(mapId);
-    map.spawnItemDrop(winner, winner, price, winner.getPosition(), true, false);
+    map.spawnItemDrop(winner, winner, 4031059, 1);
     eim.schedule("warpOut", 120);
     //var mob = em.getMonster(monsterId);
     //em.getChannelServer().broadcastPacket(tools.MaplePacketCreator.serverNotice(6, "[Event] " + winner.getName() + " defeated " + mob.getName() + "!"));

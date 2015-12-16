@@ -132,7 +132,6 @@ public class PlayerStats implements Serializable {
     public transient int pickRate;
     public transient int decreaseDebuff;
     public transient int equippedFairy;
-    public transient int equippedSummon; // @TODO 这个可以去掉
     public transient int pvpDamage;
     public transient int hpRecoverTime = 0;
     public transient int mpRecoverTime = 0;
@@ -271,7 +270,6 @@ public class PlayerStats implements Serializable {
         this.incMaxDamage = 0; //最大伤害
         this.equippedWelcomeBackRing = false;
         this.equippedFairy = 0;
-        this.equippedSummon = 0;
         this.hasPartyBonus = false;
         this.hasClone = false;
         this.Berserk = false;
