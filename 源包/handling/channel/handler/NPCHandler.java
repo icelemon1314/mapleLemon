@@ -119,9 +119,9 @@ public class NPCHandler {
         } else if (npc.isStorage()) {
             System.out.println("NPC Storage");
             c.getPlayer().getStorage().sendStorage(c, npc.getId());
-        } else if (npc.hasQuest(chr)) { // wz中的任务
-            System.out.println("NPC TALK Q");
-            MapleQuest.getInstance(npc.getQuestId()).start(chr,npc.getId());
+        //} else if (npc.hasQuest(chr)) { // wz中的任务 @TODO 放到脚本中控制
+          //  System.out.println("NPC TALK Q");
+            //MapleQuest.getInstance(npc.getQuestId()).start(chr,npc.getId());
 //            QuestScriptManager.getInstance().startQuest(c, npc.getId(),npc.getQuestId());
 //        } else if (npc.hasScriptQuest()) { // 脚本任务 可以无限做，暂时不记录状态
 //            System.out.println("NPC TALK Script Quest");

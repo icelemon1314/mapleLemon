@@ -3097,20 +3097,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 case 110:
                 case 120:
                 case 130:
-                case 1110:
-                case 2110:
-                case 3210:
-                case 5110:
                     maxhp += Randomizer.rand(300, 350);
-                    break;
-                case 6110:
-                    maxhp += Randomizer.rand(350, 400);
-                    maxmp += Randomizer.rand(120, 180);
                     break;
                 case 210:
                 case 220:
                 case 230:
-                case 2710:
                     maxmp += Randomizer.rand(400, 450);
                     break;
                 case 310:
@@ -3124,14 +3115,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 case 570:
                 case 580:
                 case 590:
-                case 1310:
-                case 1410:
-                case 2310:
-                case 2410:
-                case 2510:
-                case 3310:
-                case 3510:
-                case 3610:
                     maxhp += Randomizer.rand(200, 250);
                     maxhp += Randomizer.rand(150, 200);
                     break;
@@ -3162,9 +3145,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             sidekickUpdate();
             baseSkills();
             giveSubWeaponItem();
-            if ((newJob >= 3300) && (newJob <= 3312)) {
-                this.client.getSession().write(SkillPacket.updateJaguar(this));
-            }
         } catch (Exception e) {
             FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, e);
         }

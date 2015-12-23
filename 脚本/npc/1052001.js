@@ -148,14 +148,22 @@ function action(mode, type, selection) {
                      cm.sendOk("想进行第二阶段转职必须达到#r等级30级以上#k，#r30级#k后再来吧。");
                      cm.dispose();
                 }         
-        }else if(cm.getJobId()==410||cm.getJobId()==420){ // 若当前玩家职业是刺客或侠客
-              if (cm.getPlayerStat("LVL") >= 70) {//三转条件
-                  
-              }else{
-                   cm.sendOk("第三阶段的转职必须达到#r70级以上#k，请达到#r70级#k后再来找我。");
-                   cm.dispose();
-              }              
-        }else {
+        } else if (cm.isQuestStarted(100100)){
+			cm.sendOk("Hey, 我需要一个#r#t4031059##k，赶紧去寻找异界之门吧！");
+			cm.startQuest(100101);
+			cm.completeQuest(100100);
+			cm.dispose();
+		} else if (cm.isQuestStarted(100101)) {
+			if (cm.haveItem(4031059)) {
+				cm.gainItem(4031059,-1);
+				cm.gainItem(4031057,1);
+				cm.completeQuest(100101);
+				cm.sendOk("好吧，赶紧拿着这个去找#b艾瑞克#k。");
+			} else {
+				cm.sendOk("你还没有找到我需要的 #r#t4031059##k，赶紧去寻找异界之门吧！");
+			}
+			cm.dispose();
+		}else {
             cm.sendOk("想成为飞侠的到这里来。。。");
             cm.dispose();
         }             

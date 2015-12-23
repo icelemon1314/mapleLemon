@@ -287,7 +287,6 @@ public class MapleQuest implements Serializable {
             }
             return false;
         }
-
         Map<Integer,MapleQuestStatus> questComplete = chr.getCompletedQuests();
         boolean isCanStart = false;
         for (Integer r : getQuestIdByNpcId(npcid)) {
@@ -296,6 +295,7 @@ public class MapleQuest implements Serializable {
             }
             // 检查其它要求
             if (this.startReqs.size() == 0) { // 没有条件要求
+                System.out.println("可以开始的任务1："+r);
                 isCanStart = true;
                 break;
             } else {
@@ -306,6 +306,7 @@ public class MapleQuest implements Serializable {
                         break;
                     }
                 }
+                System.out.println("可以开始的任务2："+r);
                 isCanStart = isOk;
             }
             break;
@@ -387,14 +388,14 @@ public class MapleQuest implements Serializable {
         if ((checkNPCOnMap(chr, npc))) {
             // 检查任务是否开始
 
-//            // 检查是否达到任务完成条件
-//            for (Integer questId : getQuestIdByNpcId(npc)) {
-//                MapleQuest chrQuest = chr.getQuestInfoById(questId);
-//                if (chrQuest.canComplete(chr,npc)) {
-//                    System.out.println("准备完成任务："+questId);
-//                    chrQuest.complete(chr,npc);
-//                }
-//            }
+            // 检查是否达到任务完成条件
+            for (Integer questId : getQuestIdByNpcId(npc)) {
+                MapleQuest chrQuest = chr.getQuestInfoById(questId);
+                if (chrQuest.canComplete(chr)) {
+                    System.out.println("准备完成任务："+questId);
+                    chrQuest.complete(chr,npc);
+                }
+            }
             // 没有任务达到完成条件
             System.out.println("开始任务");
             QuestScriptManager.getInstance().startQuest(chr.getClient(), npc, getId());

@@ -47,19 +47,6 @@ function action(mode, type, selection) {
             status++;
         else
             status--;
-		/*
-		if ((cm.getJobId()==210 ||cm.getJobId()==220||cm.getJobId()==230) && cm.getLevel() >= 70) { // 准备三转
-			
-			if (status == 0) {
-				cm.sendNext("  #b恭喜你达到了70级以上！\r\n#k你现在已经可以进行第三次转职了！\r\n如果你已经准备好请点击下一步！");
-			} else if (status == 1) {
-				
-			}
-		} else {
-			cm.sendOk(" 你的等级还未达到70级以上！\r\n#r不能进行第三次转职！");
-			cm.dispose();
-		}
-		*/
 		
         if (status == 0) {
             if (!(cm.getJobId()==210 ||cm.getJobId()==220||cm.getJobId()==230)) { // 非法师职业

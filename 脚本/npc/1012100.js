@@ -144,14 +144,22 @@ function action(mode, type, selection) {
                      cm.sendOk("第二阶段转职需要达到#r等级30级#k，请到#r30级#k之后再来找我。");
                      cm.dispose();
                 }         
-        }else if(cm.getJobId()==310||cm.getJobId()==320){ // 若当前玩家职业是猎人或弩弓手
-              if (cm.getPlayerStat("LVL") >= 70) {//三转条件
-                  
-              }else{
-                   cm.sendOk("第三阶段的转职是在#r70级#k后，请达到#r70级#k后再来找我吧！");
-                   cm.dispose();
-              }              
-        }else {
+        }else if (cm.isQuestStarted(100100)){
+			cm.sendOk("Hey, 我需要一个#r#t4031059##k，赶紧去寻找异界之门吧！");
+			cm.startQuest(100101);
+			cm.completeQuest(100100);
+			cm.dispose();
+		} else if (cm.isQuestStarted(100101)) {
+			if (cm.haveItem(4031059)) {
+				cm.gainItem(4031059,-1);
+				cm.gainItem(4031057,1);
+				cm.completeQuest(100101);
+				cm.sendOk("好吧，赶紧拿着这个去找#b蕾妮#k。");
+			} else {
+				cm.sendOk("你还没有找到我需要的 #r#t4031059##k，赶紧去寻找异界之门吧！");
+			}
+			cm.dispose();
+		}else {
             cm.sendOk("你想成为弓箭手吗?");
             cm.dispose();
         }             
