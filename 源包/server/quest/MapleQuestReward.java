@@ -54,7 +54,16 @@ public class MapleQuestReward implements Serializable {
                     System.out.println("发送奖励：："+itemId+"|"+count);
                     chr.gainItem(itemId,count,"任务获得道具！");
                 }
-                return true;
+                break;
+            case exp:
+                for (Pair a : this.dataStore) {
+                    int count = ((Integer) a.getRight());
+                    chr.gainExp(count,true,false,false);
+                }
+                break;
+            default:
+                System.out.println("没有处理的奖励类型：："+type);
+                break;
         }
         return true;
     }

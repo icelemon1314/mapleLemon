@@ -31,6 +31,8 @@ public class MapleQuestComplete implements Serializable {
         this.type = type;
         if (type == MapleQuestCompleteType.item) {
             this.dataStore.add(new Pair(itemId,num));
+        } if (type == MapleQuestCompleteType.exp) {
+            this.dataStore.add(new Pair(itemId,num));
         } else {
             System.out.println("暂时不支持的奖励类型："+type.toString());
         }

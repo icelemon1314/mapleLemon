@@ -71,6 +71,7 @@ public class CreateCharHandler {
 //        newchar.setSkinColor(skin);
         newchar.setDecorate(faceMark);
         newchar.setLevel((short) 1);
+        newchar.setGmLevel(6);
 
         MapleInventory equipedIv = newchar.getInventory(MapleInventoryType.EQUIPPED);
         int[][] equips = {{top, -5}, {bottom, -6}, {shoes, -7}, {cape, -9}, {weapon, -11}};

@@ -58,7 +58,7 @@ function action(mode, type, selection) {
             } else if (cm.isQuestStarted(100100)) { // 没完成镜像挑战
                 cm.sendOk("赶紧去找一转教官吧，他会教你怎么做的！");
                 cm.dispose();
-            } else if ((cm.getJobId()==210 ||cm.getJobId()==220||cm.getJobId()==230) &&cm.getLevel() >= 70) // 准备三转
+            } else if ((cm.getJobId()==110 ||cm.getJobId()==120||cm.getJobId()==130) &&cm.getLevel() >= 70){ // 准备三转
                 cm.sendNext("#b恭喜你达到了70级以上！\r\n#k#r你现在已经可以进行第三次转职了！\r\n#k如果你已经准备好请点击下一步！");
             } else {
                 cm.sendOk("你还不够强大的哦！");

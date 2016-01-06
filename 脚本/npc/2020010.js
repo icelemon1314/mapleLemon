@@ -55,20 +55,20 @@ function action(mode, type, selection) {
                 cm.dispose();
                 return;
             }
-            if (cm.isQuestCompleted(100102)) // 三转问答完成
+            if (cm.isQuestCompleted(100102)){ // 三转问答完成
 				cm.gainItem(4031058, -1);
                 cm.sendNext("哇哦，看上你也挺聪明的嘛！");
-            else if (cm.isQuestStarted(100102)) { // 三转问答没完成
+            } else if (cm.isQuestStarted(100102)) { // 三转问答没完成
                 cm.sendOk("去找到隐藏在冰封雪域某处圣地中的#r黑圣石#k吧！");
                 cm.dispose();
-            } else if (cm.isQuestCompleted(100101)) // 完成了第一阶段挑战
+            } else if (cm.isQuestCompleted(100101)){ // 完成了第一阶段挑战
                 cm.sendNext("我的预感是对的，你证明了你的力量！");
-            else if (cm.isQuestStarted(100100)) { // 没完成镜像挑战
+            } else if (cm.isQuestStarted(100100)) { // 没完成镜像挑战
                 cm.sendOk("赶紧去找一转教官吧，他会教你怎么做的！");
                 cm.dispose();
-            } else if ((cm.getJobId()==310 ||cm.getJobId()==320) &&cm.getLevel() >= 70) // 准备三转
+            } else if ((cm.getJobId()==310 ||cm.getJobId()==320) &&cm.getLevel() >= 70){ // 准备三转
                 cm.sendNext("#b恭喜你达到了70级以上！\r\n#k#r你现在已经可以进行第三次转职了！\r\n#k如果你已经准备好请点击下一步！");
-            else {
+            }else {
                 cm.sendOk("你还不够强大的哦！");
                 cm.dispose();
             }
