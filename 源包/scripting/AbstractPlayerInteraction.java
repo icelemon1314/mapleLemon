@@ -650,12 +650,6 @@ public abstract class AbstractPlayerInteraction {
                     item.setOwner(owner);
                 }
                 item.setGMLog("脚本获得 " + id + " (" + script + ") 地图: " + cg.getPlayer().getMapId() + " 时间: " + FileoutputUtil.CurrentReadable_Time());
-                String name = ii.getName(itemId);
-                if ((itemId / 10000 == 114) && (name != null) && (name.length() > 0)) {
-                    String msg = new StringBuilder().append("恭喜您获得勋章 <").append(name).append(">").toString();
-                    cg.getPlayer().dropMessage(-1, msg);
-                    cg.getPlayer().dropMessage(5, msg);
-                }
                 MapleInventoryManipulator.addbyItem(cg, item.copy());
             } else {
                 MapleInventoryManipulator.addById(cg, itemId, quantity, owner == null ? "" : owner, null, period, new StringBuilder().append("脚本获得 ").append(id).append(" (").append(script).append(") 地图: ").append(cg.getPlayer().getMapId()).append(" 时间: ").append(FileoutputUtil.CurrentReadable_Time()).toString());

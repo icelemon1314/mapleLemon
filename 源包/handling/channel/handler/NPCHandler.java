@@ -386,23 +386,24 @@ public class NPCHandler {
             return;
         }
 
-        if (lastMsg == 3) {
-            if (action != 0) {
-                String returnText = slea.readMapleAsciiString();
-                if ((!player.isShowPacket())
-                        || (c.getQM() != null)) {
-                    c.getQM().setGetText(returnText);
+        if (lastMsg == 3) { // 数字框
+            int selection = -1;
+            if (slea.available() >= 4L) {
+                selection = slea.readInt();
+            } else if (slea.available() > 0L) {
+                selection = slea.readByte();
+            }
+            if ((!player.isShowPacket()) || ((selection >= -1) && (action != -1))) {
+                if (c.getQM() != null) {
                     if (c.getQM().isStart()) {
-                        QuestScriptManager.getInstance().startAction(c, action, lastMsg, -1);
+                        QuestScriptManager.getInstance().startAction(c, action, lastMsg, selection);
                     } else {
-                        QuestScriptManager.getInstance().endAction(c, action, lastMsg, -1);
+                        QuestScriptManager.getInstance().endAction(c, action, lastMsg, selection);
                     }
                 } else if (c.getIM() != null) {
-                    c.getIM().setGetText(returnText);
-                    ItemScriptManager.getInstance().action(c, action, lastMsg, -1);
+                    ItemScriptManager.getInstance().action(c, action, lastMsg, selection);
                 } else if (c.getCM() != null) {
-                    c.getCM().setGetText(returnText);
-                    NPCScriptManager.getInstance().action(c, action, lastMsg, -1);
+                    NPCScriptManager.getInstance().action(c, action, lastMsg, selection);
                 }
             } else {
                 if (c.getQM() != null) {
