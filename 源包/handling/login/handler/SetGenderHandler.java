@@ -11,7 +11,7 @@ public class SetGenderHandler {
         byte gender = slea.readByte();
         String username = slea.readMapleAsciiString();
         if (c.getAccountName().equals(username) && c.getLoginState() == MapleClient.ENTERING_PIN) {
-            c.setGender(gender);
+            c.changeGender(gender);
 //            c.getSession().write(LoginPacket.genderChanged(c));
 //            c.getSession().write(LoginPacket.getAuthSuccessRequest(c));
             c.updateLoginState(MapleClient.LOGIN_NOTLOGGEDIN);

@@ -498,12 +498,6 @@ public class MapleServerHandler extends IoHandlerAdapter {
             case CLOSE_CHALKBOARD:
                 c.getPlayer().setChalkboard(null);
                 break;
-            case ITEM_SORT:
-                InventoryHandler.ItemSort(slea, c);
-                break;
-            case ITEM_GATHER:
-                InventoryHandler.ItemGather(slea, c);
-                break;
             case ITEM_MOVE:
                 InventoryHandler.ItemMove(slea, c);
                 break;
@@ -657,12 +651,6 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 break;
             case DENY_GUILD_JOIN:
                 GuildHandler.DenyGuildJoin(slea, c);
-                break;
-            case QUICK_MOVE:
-                NPCHandler.OpenQuickMoveNpc(slea, c);
-                break;
-            case QUICK_MOVE_SPECIAL:
-                NPCHandler.OpenQuickMoveSpecial(slea, c);
                 break;
             case BBS_OPERATION:
                 BBSHandler.BBSOperation(slea, c);

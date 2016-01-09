@@ -109,7 +109,8 @@ public class ItemScrollHandler {
             c.getSession().write(InventoryPacket.getInventoryFull());
             return false;
         }
-        if (scroll.getQuantity() <= 0) {
+        int scrollCount = scroll.getQuantity();
+        if (scrollCount <= 0) {
             chr.dropSpouseMessage(0, new StringBuilder().append("砸卷错误，背包卷轴[").append(ii.getName(scroll.getItemId())).append("]数量为 0 .").toString());
             c.getSession().write(InventoryPacket.getInventoryFull());
             return false;
@@ -125,7 +126,14 @@ public class ItemScrollHandler {
         } else {
             scrollSuccess = Equip.ScrollResult.消失;
         }
+        // 消耗卷轴
         chr.getInventory(ItemConstants.getInventoryType(scroll.getItemId())).removeItem(scroll.getPosition(), (short) 1, false);
+        if (scrollCount == 1) {
+            // 如果只有一个道具了，那么就需要移除道具，否则是更新道具数量
+            c.getSession().write(InventoryPacket.clearInventoryItem(ItemConstants.getInventoryType(scroll.getItemId()), scroll.getPosition(), false));
+        } else {
+            c.getSession().write(InventoryPacket.updateInventorySlot(ItemConstants.getInventoryType(scroll.getItemId()), scroll, false));
+        }
         if (scrollSuccess == Equip.ScrollResult.消失) {
             c.getSession().write(InventoryPacket.scrolledItem(scroll, toScroll, true));
             if (dst < 0) {

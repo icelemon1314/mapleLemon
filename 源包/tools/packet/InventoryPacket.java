@@ -68,6 +68,10 @@ public class InventoryPacket {
         return mplew.getPacket();
     }
 
+    /**
+     * 清除道具
+     * @return
+     */
     public static byte[] clearInventoryItem(MapleInventoryType type, byte slot, boolean fromDrop) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.MODIFY_INVENTORY_ITEM.getValue());
@@ -77,6 +81,9 @@ public class InventoryPacket {
         mplew.write(3);
         mplew.write(type.getType());
         mplew.writeShort(slot);
+        if (type.getType() == 1) {
+            mplew.write(1);
+        }
         return mplew.getPacket();
     }
 
@@ -237,21 +244,13 @@ public class InventoryPacket {
         mplew.write(SendPacketOpcode.MODIFY_INVENTORY_ITEM.getValue());
         // 修改道具
         mplew.write(1); // fromdrop always true
-        mplew.write(destroyed ? 1 : 2); // 操作次数的控制
+        mplew.write(1); // 操作次数的控制
 
-        mplew.write(1);// 操作类型
-        mplew.write(ItemConstants.getInventoryType(scroll.getItemId()).getType());
-        mplew.writeShort(scroll.getPosition());
-        mplew.writeShort(scroll.getQuantity());
-
-        // 修改装备
-        if (destroyed == false) {
-            mplew.write(0);//v104
-            mplew.write(ItemConstants.getInventoryType(item.getItemId()).getType());
-            mplew.writeShort(item.getPosition());
-            if (!destroyed) {
-                PacketHelper.addItemInfo(mplew, item,true);
-            }
+        mplew.write(0);//v104
+        mplew.write(ItemConstants.getInventoryType(item.getItemId()).getType());
+        mplew.writeShort(item.getPosition());
+        if (!destroyed) {
+            PacketHelper.addItemInfo(mplew, item,true);
         }
 
 

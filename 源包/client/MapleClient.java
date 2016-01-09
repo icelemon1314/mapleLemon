@@ -916,6 +916,10 @@ public class MapleClient implements Serializable {
 
     public void setGender(byte gender) {
         this.gender = gender;
+    }
+
+    public void changeGender(byte gender) {
+        this.gender = gender;
         Connection con = DatabaseConnection.getConnection();
         try (PreparedStatement ps = con.prepareStatement("UPDATE accounts SET gender = ? WHERE id = ?")) {
             ps.setByte(1, gender);
@@ -926,6 +930,8 @@ public class MapleClient implements Serializable {
             log.error("设置性别出错", e);
         }
     }
+
+
 
     public String getSecondPassword() {
         return this.secondPassword;

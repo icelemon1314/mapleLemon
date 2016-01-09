@@ -119,13 +119,20 @@ public class NPCHandler {
         } else if (npc.isStorage()) {
             System.out.println("NPC Storage");
             c.getPlayer().getStorage().sendStorage(c, npc.getId());
-        //} else if (npc.hasQuest(chr)) { // wz中的任务 @TODO 放到脚本中控制
-          //  System.out.println("NPC TALK Q");
-            //MapleQuest.getInstance(npc.getQuestId()).start(chr,npc.getId());
-//            QuestScriptManager.getInstance().startQuest(c, npc.getId(),npc.getQuestId());
-//        } else if (npc.hasScriptQuest()) { // 脚本任务 可以无限做，暂时不记录状态
-//            System.out.println("NPC TALK Script Quest");
-//            QuestScriptManager.getInstance().startQuest(c, npc.getId(),npc.getQuestId());
+        } else if (npc.hasQuest(chr)) { // 检查是否有任务可以开始
+            System.out.println("NPC TALK Q");
+            MapleQuest quest = MapleQuest.getInstance(npc.getQuestId());
+            if (quest == null) {
+                chr.dropMessage(0,"未知的任务："+npc.getQuestId()+"！");
+            } else {
+                chr.addQuest(quest);
+                chr.dropMessage(0,"恭喜开始任务："+quest.getName()+"！赶紧打开任务面板查看任务信息吧！");
+            }
+
+//            quest.start(chr,npc.getId());
+//            MapleQuest.getInstance(npc.getQuestId()).start(chr,npc.getId());
+        } else if (npc.hasCompleteQuest(chr)) {
+
         } else {
             chr.dropMessage(5,"当前对话NPC:"+npc.getId());
             NPCScriptManager.getInstance().start(c, npc.getId());
@@ -532,58 +539,4 @@ public class NPCHandler {
         }
     }
 
-    public static void OpenQuickMoveNpc(SeekableLittleEndianAccessor slea, MapleClient c) {
-        int npcid = slea.readInt();
-        if ((c.getPlayer().hasBlockedInventory()) || (c.getPlayer().isInBlockedMap()) || (c.getPlayer().getLevel() < 10)) {
-            c.getPlayer().dropMessage(-1, "您当前已经和1个NPC对话了. 如果不是请输入 @解卡 命令进行解卡。");
-            return;
-        }
-        for (MapleQuickMove qm : MapleQuickMove.values()) {
-            if (qm.getMap() == c.getPlayer().getMapId()) {
-                int npcs = qm.getNPCFlag();
-                for (MapleQuickMove.QuickMoveNPC npc : MapleQuickMove.QuickMoveNPC.values()) {
-                    if ((npcs & npc.getValue()) != 0 && npc.getId() == npcid) {
-                        NPCScriptManager.getInstance().start(c, npcid);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    public static void OpenQuickMoveSpecial(SeekableLittleEndianAccessor slea, MapleClient c) {
-        final int selection = slea.readInt();
-        if (c.getPlayer().hasBlockedInventory() || c.getPlayer().isInBlockedMap() || c.getPlayer().getLevel() < 10) {
-            return;
-        }
-        for (MapleQuickMove qm : MapleQuickMove.values()) {
-            if (qm.getMap() == c.getPlayer().getMapId()) {
-                MapleQuickMove.QuickMoveNPC quickMove = null;
-                int npcs = qm.getNPCFlag();
-                int i = 0;
-                for (MapleQuickMove.QuickMoveNPC npc : MapleQuickMove.QuickMoveNPC.values()) {
-                    if (!npc.show() || (npcs & npc.getValue()) == 0) {
-                        continue;
-                    }
-                    if (selection == i++) {
-                        quickMove = npc;
-                        break;
-                    }
-                }
-                if (quickMove == null) {
-                    System.err.println("未找到QuickMove动作, 选项:" + selection);
-                    return;
-                }
-                int npcId = 0;
-                String special = null;
-                switch (quickMove) {
-                    default:
-                        System.err.println("未处理QuickMove动作, 类型:" + quickMove.getType());
-                }
-                if (npcId > 0) {
-                    NPCScriptManager.getInstance().start(c, npcId, special);
-                }
-            }
-        }
-    }
 }

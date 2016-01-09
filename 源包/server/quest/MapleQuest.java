@@ -59,7 +59,7 @@ public class MapleQuest implements Serializable {
     private int selectedSkillID = 0;
     protected String name = "";
 
-    protected MapleQuest(int id) {
+    public MapleQuest(int id) {
         this.id = id;
     }
 
@@ -287,13 +287,17 @@ public class MapleQuest implements Serializable {
             }
             return false;
         }
+
+
         Map<Integer,MapleQuestStatus> questComplete = chr.getCompletedQuests();
         boolean isCanStart = false;
         for (Integer r : getQuestIdByNpcId(npcid)) {
+            System.out.println("NPC拥有的任务："+r);
             if (questComplete.containsKey(r)) {
                 continue;
             }
             // 检查其它要求
+
             if (this.startReqs.size() == 0) { // 没有条件要求
                 System.out.println("可以开始的任务1："+r);
                 isCanStart = true;
@@ -311,6 +315,13 @@ public class MapleQuest implements Serializable {
             }
             break;
         }
+
+        // 检查已经开始的任务
+        MapleQuest tmp = chr.getQuestInfoById(getId());
+        if (tmp != null) {
+            return false;
+        }
+
         return isCanStart;
     }
 
@@ -322,6 +333,7 @@ public class MapleQuest implements Serializable {
     public List <Integer> getQuestIdByNpcId(int npcId) {
         List <Integer> questList = this.npcQuest.get(npcId);
         if (questList == null) {
+            System.out.println("NPC没有对应的任务："+npcId);
             return new ArrayList<Integer>();
         } else {
             return questList;
@@ -381,25 +393,22 @@ public class MapleQuest implements Serializable {
      * @param chr
      * @param npc
      */
-    public void start(MapleCharacter chr, int npc) {
-        if (chr.isShowPacket()) {
-            chr.dropMessage(6, new StringBuilder().append("开始任务 start: ").append(npc).append(" autoStart：").append(this.autoStart).append(" checkNPCOnMap: ").append(checkNPCOnMap(chr, npc)).append(" canStart: ").append(canStart(chr, npc)).toString());
-        }
+    public boolean start(MapleCharacter chr, int npc) {
+        boolean isComplete = false;
         if ((checkNPCOnMap(chr, npc))) {
-            // 检查任务是否开始
 
             // 检查是否达到任务完成条件
             for (Integer questId : getQuestIdByNpcId(npc)) {
                 MapleQuest chrQuest = chr.getQuestInfoById(questId);
                 if (chrQuest.canComplete(chr)) {
-                    System.out.println("准备完成任务："+questId);
                     chrQuest.complete(chr,npc);
+                    isComplete = true;
                 }
             }
-            // 没有任务达到完成条件
-            System.out.println("开始任务");
-            QuestScriptManager.getInstance().startQuest(chr.getClient(), npc, getId());
-
+            return isComplete;
+        } else {
+            System.out.println("NPC不在该地图上："+npc);
+            return isComplete;
         }
     }
 
@@ -418,28 +427,33 @@ public class MapleQuest implements Serializable {
 
             // 扣除任务道具
             List <MapleQuestComplete> com = this.completeReqs.get(chr.getQuest(this).getCustomData());
-
+            boolean removeItem = true;
             for (MapleQuestComplete r : com) {
-                if (r.removeQuestItem(chr)) {
-
-                    // 更新玩家任务状态
-                    System.out.println("更新玩家任务状态！");
-                    forceComplete(chr, npc);
-
-                    // 发送奖励
-                    System.out.println("发送奖励");
-                    String curStatus = chr.getQuest(this).getCustomData();
-                    List <MapleQuestReward> rewardData = this.rewards.get(curStatus);
-                    // 通用奖励，金币和经验
-                    if (rewardData == null) {
-                        System.out.println("奖励数据为空！");
-                        return ;
-                    }
-                    for (MapleQuestReward reward : rewardData) {
-                        reward.getRewardToChr(chr);
-                    }
+                if (r.removeQuestItem(chr) == false) {
+                    removeItem = false;
+                    return ;
                 }
             }
+
+            if (removeItem == true) {
+                // 更新玩家任务状态
+                System.out.println("更新玩家任务状态！");
+                forceComplete(chr, npc);
+
+                // 发送奖励
+                System.out.println("发送奖励");
+                String curStatus = chr.getQuest(this).getCustomData();
+                List <MapleQuestReward> rewardData = this.rewards.get(curStatus);
+                // 通用奖励，金币和经验
+                if (rewardData == null) {
+                    System.out.println("奖励数据为空！");
+                    return ;
+                }
+                for (MapleQuestReward reward : rewardData) {
+                    reward.getRewardToChr(chr);
+                }
+            }
+
         }
     }
 
@@ -474,9 +488,9 @@ public class MapleQuest implements Serializable {
         if (nextData == null) {
             nextData = this.endStatus;
         }
-        System.out.println("新的任务状态："+nextData);
         newStatus.setCustomData(nextData);
         chr.updateQuest(newStatus);
+        chr.dropMessage(0,"恭喜完成任务："+this.getName());
     }
 
     public int getId() {
@@ -485,7 +499,7 @@ public class MapleQuest implements Serializable {
 
 
     private boolean checkNPCOnMap(MapleCharacter player, int npcId) {
-        return ((npcId == 1013000)) ||((npcId == 0)) || (npcId == 2151009) || (npcId == 3000018) || (npcId == 9010000) || ((npcId >= 2161000) && (npcId <= 2161011)) || (npcId == 9000040) || (npcId == 9000066) || (npcId == 2010010) || (npcId == 1032204) || (npcId == 0) || ((player.getMap() != null) && (player.getMap().containsNPC(npcId)));
+        return ((npcId == 1013000)) || (npcId == 2151009) || (npcId == 3000018) || (npcId == 9010000) || ((npcId >= 2161000) && (npcId <= 2161011)) || (npcId == 9000040) || (npcId == 9000066) || (npcId == 2010010) || (npcId == 1032204) || (npcId == 0) || ((player.getMap() != null) && (player.getMap().containsNPC(npcId)));
     }
 
     public int getMedalItem() {

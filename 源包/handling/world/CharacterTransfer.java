@@ -166,6 +166,10 @@ public class CharacterTransfer implements Externalizable {
         this.mbook = new LinkedHashMap();
     }
 
+    /**
+     * 角色快照数据
+     * @param chr
+     */
     public CharacterTransfer(MapleCharacter chr) {
         this.characterid = chr.getId();
         this.accountid = chr.getAccountID();
@@ -177,7 +181,7 @@ public class CharacterTransfer implements Externalizable {
         this.name = chr.getName();
         this.fame = chr.getFame();
         this.love = chr.getLove();
-        this.gender = chr.getGender();
+        this.gender = chr.getClient().getGender();
         this.level = chr.getLevel();
         this.str = chr.getStat().getStr();
         this.dex = chr.getStat().getDex();

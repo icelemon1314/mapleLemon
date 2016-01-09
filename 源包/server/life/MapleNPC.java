@@ -7,6 +7,8 @@ import server.quest.MapleQuest;
 import server.shop.MapleShopFactory;
 import tools.packet.NPCPacket;
 
+import java.util.List;
+
 public class MapleNPC extends AbstractLoadedMapleLife {
 
     private String name = "MISSION";
@@ -36,12 +38,35 @@ public class MapleNPC extends AbstractLoadedMapleLife {
         return this.questScript != null;
     }
 
+    /**
+     * 检查是否有任务可以开始
+     * @param chr
+     * @return
+     */
     public boolean hasQuest(MapleCharacter chr) {
-        return MapleQuest.getInstatce().canStart(chr,getId());
+        // 判断任务是否可以开始
+        int questId = this.getQuestId();
+        if (questId == 0) {
+            return false;
+        }
+        return MapleQuest.getInstance(questId).canStart(chr,getId());
+    }
+
+    public boolean hasCompleteQuest(MapleCharacter chr){
+        MapleQuest quest = chr.getQuestInfoById(getQuestId());
+        if (quest == null) {
+            quest = new MapleQuest(getQuestId());
+        }
+        return quest.start(chr,getId());
     }
 
     public int getQuestId() {
-        return MapleQuest.getInstatce().getQuestIdByNpcId(getId()).get(0);
+        List<Integer> questIdList = MapleQuest.getInstatce().getQuestIdByNpcId(getId());
+        if (questIdList.size() > 0) {
+            return questIdList.get(0);
+        } else {
+            return 0;
+        }
     }
 
     public boolean hasShop() {

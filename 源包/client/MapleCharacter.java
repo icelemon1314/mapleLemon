@@ -510,6 +510,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return ret;
     }
 
+    /**
+     * 还原玩家数据
+     * @param ct
+     * @param client
+     * @param isChannel
+     * @return
+     */
     public static MapleCharacter ReconstructChr(CharacterTransfer ct, MapleClient client, boolean isChannel) {
         MapleCharacter ret = new MapleCharacter(true);
         ret.client = client;
@@ -530,6 +537,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.stats.baseMaxMp = ct.maxmp;
         ret.stats.baseHp = ct.hp;
         ret.stats.baseMp = ct.mp;
+
+        ret.client.setGender(ct.gender);
 
         ret.chalktext = ct.chalkboard;
         ret.gmLevel = ct.gmLevel;
@@ -3062,19 +3071,21 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             this.job = (short) newJob;
             updateSingleStat(MapleStat.职业, newJob);
             if ((!GameConstants.is新手职业(newJob)) && gainsp) {
-                    this.remainingSp += (this.getLevel() == 10 ? 5 : 1);
-                    if (newJob % 10 >= 2) {
-                        this.remainingSp += 2;
-                    }
-                if (!isGM()) {
-                    resetStatsByJob(true);
-                        if (getLevel() > (newJob == 200 ? 8 : 10)) {
-                            if ((newJob % 100 == 0) && (newJob % 1000 / 100 > 0)) {
-                                this.remainingSp += 3 * (getLevel() - (newJob == 200 ? 8 : 10));
-                            }
-                        }
-                }
-                updateSingleStat(MapleStat.AVAILABLESP, 0L);
+                gainSP(1);
+//                    this.remainingSp += (this.getLevel() == 10 ? 5 : 1);
+//                    if (newJob % 10 >= 2) {
+//                        this.remainingSp += 2;
+//                    }
+//                if (!isGM()) {
+////                    resetStatsByJob(true);
+////                    if (getLevel() > (newJob == 200 ? 8 : 10)) {
+////                        if ((newJob % 100 == 0) && (newJob % 1000 / 100 > 0)) {
+////                            this.remainingSp += 3 * (getLevel() - (newJob == 200 ? 8 : 10));
+////                        }
+////                    }
+//                }
+//                System.out.println("SP能力点的值为："+this.remainingSp);
+//                updateSingleStat(MapleStat.AVAILABLESP, this.remainingSp);
             }
 
             int maxhp = this.stats.getMaxHp();
@@ -3501,17 +3512,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void gainSP(int sp) {
         this.remainingSp += sp;
-        updateSingleStat(MapleStat.AVAILABLESP, 0L);
+        updateSingleStat(MapleStat.AVAILABLESP, this.remainingSp);
     }
 
     public void gainSP(int sp, int skillbook) {
         this.remainingSp += sp;
-        updateSingleStat(MapleStat.AVAILABLESP, 0L);
+        updateSingleStat(MapleStat.AVAILABLESP, this.remainingSp);
     }
 
     public void resetSP(int sp) {
         this.remainingSp = sp;
-        updateSingleStat(MapleStat.AVAILABLESP, 0L);
+        updateSingleStat(MapleStat.AVAILABLESP, this.remainingSp);
     }
 
     public void resetAPSP() {
@@ -4350,13 +4361,19 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public List<MapleQuestStatus> getStartedQuests() {
         List ret = new LinkedList();
         for (MapleQuestStatus q : this.quests.values()) {
-            System.out.println(q.getStatus());
             if ((q.getStatus() == MapleQuestStatus.QUEST_STARTED) && (!q.getQuest().isBlocked())) {
                 System.out.println("已经开始的任务："+q.getQuest().getId());
                 ret.add(q);
             }
         }
         return ret;
+    }
+
+    public void addQuest(MapleQuest quest){
+        MapleQuestStatus status = new MapleQuestStatus(quest, MapleQuestStatus.QUEST_STARTED);
+        status.setCustomData(quest.getStartStatus());
+        this.quests.put(quest, status);
+        updateQuest(status);
     }
 
     public MapleQuest getQuestInfoById(int questId) {
@@ -5787,7 +5804,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         } else if (type == -11) {
             this.client.getSession().write(MaplePacketCreator.yellowChat(message));
         } else {
-            this.client.getSession().write(MaplePacketCreator.getChatText(getId(), message, isSuperGM(), 0));
+            this.client.getSession().write(MaplePacketCreator.serverMessageRedText(message));
         }
     }
 

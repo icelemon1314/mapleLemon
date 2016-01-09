@@ -51,7 +51,7 @@ function action(mode, type, selection) {
 		} else if (status == 2) {
 			cm.sendYesNo("你准备好了么？");
 		} else if (status == 3) {
-			cm.warp(104000000);
+			cm.warp(104000000,0);
 			cm.dispose();
 		}
 	}

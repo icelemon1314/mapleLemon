@@ -515,7 +515,7 @@ public final class MapleMap {
             if (de.itemId == mob.getStolen()) {
                 continue;
             }
-            if (Randomizer.nextInt(9999) < (int) (de.chance * dropServerRate * chr.getDropMod() * (chr.getStat().getDropBuff() / 100.0D))) {
+            if (Randomizer.nextInt(79999) < (int) (de.chance * dropServerRate * chr.getDropMod() * (chr.getStat().getDropBuff() / 100.0D))) {
                 if (((droptype != 3) && (de.itemId == 0))) {
                     continue;
                 }

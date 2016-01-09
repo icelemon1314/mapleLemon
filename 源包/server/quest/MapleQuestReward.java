@@ -8,6 +8,7 @@ import client.inventory.Item;
 import client.inventory.MapleInventoryType;
 import client.inventory.MaplePet;
 import constants.ItemConstants;
+import server.MapleItemInformationProvider;
 import tools.Pair;
 
 import java.io.Serializable;
@@ -53,6 +54,7 @@ public class MapleQuestReward implements Serializable {
                     int count = ((Integer) a.getRight());
                     System.out.println("发送奖励：："+itemId+"|"+count);
                     chr.gainItem(itemId,count,"任务获得道具！");
+                    chr.dropMessage(0,"任务奖励："+ itemId + " "+count+"个！");
                 }
                 break;
             case exp:
