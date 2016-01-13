@@ -63,6 +63,8 @@ public class ChannelServer {
 
     public static long serverStartTime;
     private int cashRate;
+    private int expRate;
+    private int dropRate;
     private int traitRate;
     private int stateRate;
     private int statLimit;
@@ -86,7 +88,7 @@ public class ChannelServer {
     private boolean adminOnly = false;
     private boolean canPvp = false;
     private boolean shieldWardAll = false;
-    private final boolean autoPoints = false;
+    private boolean autoPoints = false;
     private boolean checkSp = false;
     private boolean checkCash = false;
     private boolean useMapScript = false;//?
@@ -140,12 +142,16 @@ public class ChannelServer {
         setChannel(channel);
         try {
             cashRate = ServerProperties.getProperty("CASH_RATE", 1);
+            expRate = ServerProperties.getProperty("EXP_RATE",1);
+            setExpRate(expRate);
+            dropRate = ServerProperties.getProperty("DROP_RATE",1);
+            setDropRate(dropRate);
             globalRate = ServerProperties.getProperty("GLOBAL_RATE", 1);
             traitRate = ServerProperties.getProperty("TRAIT_RATE", 1);
             stateRate = ServerProperties.getProperty("STATE_RATE", 4);
             statLimit = ServerProperties.getProperty("statLimit", 999);
-            //autoNx = Integer.parseInt(ServerProperties.getProperty("autoNx", "10"));
-            //autoGain = Integer.parseInt(ServerProperties.getProperty("autoGain", "10"));
+            autoNx = Integer.parseInt(ServerProperties.getProperty("autoNx", "10"));
+            autoGain = Integer.parseInt(ServerProperties.getProperty("autoGain", "10"));
             createGuildCost = ServerProperties.getProperty("createGuildCost", 10000000);
             merchantTime = ServerProperties.getProperty("merchantTime", 24);
             serverName = ServerProperties.getProperty("serverName", "MapleStory");
@@ -156,7 +162,7 @@ public class ChannelServer {
             checkSp = ServerProperties.getProperty("checkSp", true);
             checkCash = ServerProperties.getProperty("checkCash", true);
             useMapScript = ServerProperties.getProperty("useMapScript", false);
-            //autoPoints = Boolean.parseBoolean(ServerProperties.getProperty("autoPoints", "false"));
+            autoPoints = Boolean.parseBoolean(ServerProperties.getProperty("autoPoints", "false"));
             eventSMs = ServerProperties.getProperty("channel.events", "ArkariumBattle,AlienBattle,AutoSave,Hillah_170,Hillah_120,Aswan,FairyBoss,Gailou,2xEvent,Olivia,PVP,CygnusBattle,ScarTarBattle,VonLeonBattle,Ghost,MV,cpq,cpq2,OrbisPQ,HenesysPQ,Romeo,Juliet,Pirate,Amoria,Ellin,CWKPQ,AutomatedEvent,Rex,DollHouse,BossBalrog_EASY,BossBalrog_NORMAL,HorntailBattle,Nibergen,PinkBeanBattle,ZakumBattle,NamelessMagicMonster,Dunas,Dunas2,2095_tokyo,ZakumPQ,LudiPQ,ServerMessage,KerningPQ,ProtectTylus,WitchTower_EASY,WitchTower_Med,WitchTower_Hard,Vergamot,ChaosHorntail,ChaosZakum,CoreBlaze,BossQuestEASY,BossQuestMed,BossQuestHARD,BossQuestHELL,Ravana_EASY,Ravana_HARD,Ravana_MED,GuildQuest,Aufhaven,Dragonica,English,MonsterPark,PinkZakum,BeidlerPQ,ZChaosPQ1,ZChaosPQ2,ZChaosPQ3,ZChaosPQ4,ZChaosPQ5,ZChaosPQ6,ZChaosPQ7,ZChaosPQ8,ZChaosPQ9,Pirate,Dragonica,BloodyBoss,BloodyJBoss,PierreBoss,PierreJBoss,BelenBoss,BelenJBoss,HalfBoss,HalfJBoss,ShenmlyBoss,ZChaosPQ10,ChaosPinkBean,NewEvent0,NewEvent1,NewEvent2,NewEvent3,NewEvent4,NewEvent5,NewEvent6,NewEvent7,NewEvent8,NewEvent9,NewEvent10,NewEvent11,NewEvent12,NewEvent13,NewEvent14,NewEvent15,NewEvent16,NewEvent17,NewEvent18,NewEvent19,NewEvent20,NewEvent21,NewEvent22,NewEvent23,NewEvent24,NewEvent25,NewEvent26,NewEvent27,NewEvent28,NewEvent29,NewEvent30,NewEvent31,NewEvent32,NewEvent33,NewEvent34,NewEvent35,NewEvent36,NewEvent37,NewEvent38,NewEvent39,NewEvent40,NewEvent41,NewEvent42,NewEvent43,NewEvent44,NewEvent45,SimpleZakum,zuanji,Iceman,Kenta,Prison");
             eventSM = new EventScriptManager(this, eventSMs.split(","));
             port = Short.parseShort(ServerProperties.getProperty("channel.port" + channel, String.valueOf(DEFAULT_PORT + channel)));

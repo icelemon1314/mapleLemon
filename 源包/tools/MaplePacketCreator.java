@@ -488,7 +488,7 @@ public class MaplePacketCreator {
      * @param 召回戒指经验
      * @return
      */
-    public static byte[] GainEXP_Monster(int gain, boolean 白色, Map<MapleExpStat, Integer> expStats, int 召回戒指经验) {
+    public static byte[] GainEXP_Monster(int gain, boolean 白色, Map<MapleExpStat, Integer> expStats) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
@@ -1484,6 +1484,16 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
+    public static byte[] getClockType0(int time) {
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+        mplew.write(SendPacketOpcode.CLOCK.getValue());
+        mplew.write(0);
+        mplew.writeInt(time);
+
+        return mplew.getPacket();
+    }
+
     public static byte[] getClock(int time) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1507,9 +1517,6 @@ public class MaplePacketCreator {
     }
 
     public static byte[] stopClock() {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.STOP_CLOCK.getValue());
@@ -1555,6 +1562,16 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
+    /**
+     * 召唤爱心
+     * @param oid
+     * @param itemid
+     * @param name
+     * @param msg
+     * @param pos
+     * @param ft
+     * @return
+     */
     public static byte[] spawnLove(int oid, int itemid, String name, String msg, Point pos, int ft) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1569,12 +1586,19 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
+    /**
+     * 移除爱心
+     * @param oid
+     * @param itemid
+     * @return
+     */
     public static byte[] removeLove(int oid, int itemid) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.REMOVE_LOVE.getValue());
+        mplew.write(0);
         mplew.writeInt(oid);
-        mplew.writeInt(itemid);
+        //mplew.writeInt(itemid);
 
         return mplew.getPacket();
     }
@@ -1747,6 +1771,14 @@ public class MaplePacketCreator {
         return startMapEffect(msg, 0, -1, active);
     }
 
+    /**
+     * 播放地图效果
+     * @param msg
+     * @param itemid
+     * @param effectType
+     * @param active
+     * @return
+     */
     public static byte[] startMapEffect(String msg, int itemid, int effectType, boolean active) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1755,6 +1787,103 @@ public class MaplePacketCreator {
         mplew.writeInt(itemid);
 
         return mplew.getPacket();
+    }
+
+    public static byte[] startMapSummonEffect(){
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+        mplew.write(SendPacketOpcode.MAP_EFFECT.getValue());
+        mplew.write(0);
+
+        mplew.write(0);
+        mplew.writeInt(0);
+        mplew.writeInt(0);
+
+        return mplew.getPacket();
+    }
+
+    public static byte[] startMap2Effect(){
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+        mplew.write(SendPacketOpcode.MAP_EFFECT.getValue());
+        mplew.write(2);
+
+        mplew.write(0);
+        mplew.writeMapleAsciiString("icelemon1314");
+
+        return mplew.getPacket();
+    }
+
+    public static byte[] startShopBackgroundEffect(){
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+        mplew.write(SendPacketOpcode.MAP_EFFECT.getValue());
+        mplew.write(3);
+
+        mplew.writeMapleAsciiString("icelemon1314");
+
+        return mplew.getPacket();
+    }
+
+    public static byte[] startMap4Effect(){
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+        mplew.write(SendPacketOpcode.MAP_EFFECT.getValue());
+        mplew.write(4);
+
+        mplew.writeMapleAsciiString("icelemon1314");
+
+        return mplew.getPacket();
+    }
+
+    public static byte[] startMap5Effect(){
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+        mplew.write(SendPacketOpcode.MAP_EFFECT.getValue());
+        mplew.write(5);
+
+        mplew.writeInt(0);
+        mplew.writeInt(0);
+        mplew.writeInt(0);
+        mplew.writeInt(0);
+
+        return mplew.getPacket();
+    }
+
+    public static byte[] startMapSoundEffect(String soundPath){
+        // sound/Object.img/Whistle 轮船来了
+        // sound/Game.img/LevelUp
+        // Sound/Jukebox.img/Congratulation 音乐盒
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+        mplew.write(SendPacketOpcode.MAP_EFFECT.getValue());
+        mplew.write(6);
+
+        mplew.writeMapleAsciiString(soundPath);
+
+        return mplew.getPacket();
+    }
+
+    public static byte[] startFullScreenBless(int itemId,String bless){
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+        mplew.write(SendPacketOpcode.FULLSCREEN_BLESS.getValue());
+
+        mplew.writeInt(itemId);
+        mplew.writeMapleAsciiString(bless);
+
+        return mplew.getPacket();
+
+    }
+
+    public static byte[] stopFullScreenBless(){
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+        mplew.write(SendPacketOpcode.FULLSCREEN_BLESS.getValue());
+
+        mplew.writeInt(0);
+        return mplew.getPacket();
+
     }
 
     public static byte[] removeMapEffect() {
@@ -1922,6 +2051,7 @@ public class MaplePacketCreator {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.BOAT_EFFECT.getValue());
+        mplew.writeMapleAsciiString("ship/ossyria");
         mplew.writeShort(effect);
 
         return mplew.getPacket();
@@ -1934,6 +2064,7 @@ public class MaplePacketCreator {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.BOAT_EFF.getValue());
+        mplew.writeMapleAsciiString("ship/ossyria");
         mplew.writeShort(effect);
 
         return mplew.getPacket();

@@ -269,6 +269,15 @@ public class PlayerCommand {
         }
     }
 
+    public static class fp extends CommandExecute {
+
+        @Override
+        public int execute(MapleClient c, String[] splitted) {
+            c.getSession().write(LoadPacket.getPacket());
+            return 1;
+        }
+    }
+
     public static class 重载商店 extends CommandExecute {
 
         @Override

@@ -20,7 +20,7 @@ public class ItemConstants {
 
     public static ArrayList<Integer> get经验值卡(double type) {
         ArrayList<Integer> list = new ArrayList();
-        int[] 双倍经验值卡 = {
+        int[] doubleCards = {
                 4100000, //双倍经验值卡一天权
                 4100001, //双倍经验值卡七天权
                 4100002, //双倍经验值卡一天权(白)
@@ -29,7 +29,7 @@ public class ItemConstants {
                 4100005, //双倍经验值卡七天权(晚)
         };
         if (type == 2.0D || type == 0.0D) {
-            for (int i : 双倍经验值卡) {
+            for (int i : doubleCards) {
                 list.add(i);
             }
         }

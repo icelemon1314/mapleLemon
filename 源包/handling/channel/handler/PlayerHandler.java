@@ -148,29 +148,22 @@ public class PlayerHandler {
         }
     }
 
+    /**
+     * 使用缩地石
+     * @param slea
+     * @param c
+     * @param chr
+     */
     public static void TrockAddMap(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         byte type = slea.readByte();
-        byte vip = slea.readByte();
-        if (type == 0) {
+        if (type == 0) { // 删除地图
             int mapId = slea.readInt();
-            if (vip == 1) {
-                chr.deleteFromRegRocks(mapId);
-            } else if (vip == 2) {
-                chr.deleteFromRocks(mapId);
-            } else if (vip == 3) {
-                chr.deleteFromHyperRocks(mapId);
-            }
-            c.getSession().write(MTSCSPacket.getTrockRefresh(chr, vip, true));
+            chr.deleteFromRegRocks(mapId);
+            c.getSession().write(MTSCSPacket.getTrockRefresh(chr, (byte)1, true));
         } else if (type == 1) {
             if (!FieldLimitType.VipRock.check(chr.getMap().getFieldLimit())) {
-                if (vip == 1) {
-                    chr.addRegRockMap();
-                } else if (vip == 2) {
-                    chr.addRockMap();
-                } else if (vip == 3) {
-                    chr.addHyperRockMap();
-                }
-                c.getSession().write(MTSCSPacket.getTrockRefresh(chr, vip, false));
+                chr.addRegRockMap();
+                c.getSession().write(MTSCSPacket.getTrockRefresh(chr, (byte)1, false));
             } else {
                 chr.dropMessage(1, "你可能没有保存此地图.");
             }

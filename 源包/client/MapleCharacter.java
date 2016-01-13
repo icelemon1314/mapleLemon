@@ -3940,7 +3940,16 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     }
 
-    public void gainExpMonster(long gain, boolean 显示, boolean 最高伤害, byte pty, int Class_Bonus_EXP, int 道具佩戴经验, int 召回戒指经验, MapleMonster mob) {
+    /**
+     * 打怪后获得经验
+     * @param gain
+     * @param 显示
+     * @param 最高伤害
+     * @param pty
+     * @param Class_Bonus_EXP
+     * @param mob
+     */
+    public void gainExpMonster(long gain, boolean 显示, boolean 最高伤害, byte pty, int Class_Bonus_EXP, MapleMonster mob) {
         double 额外的经验值倍率 = 1.0D;
         MonsterStatusEffect ms = mob.getBuff(MonsterStatus.挑衅);
         if (ms != null) {
@@ -3956,14 +3965,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             if (side != null) {
                 Sidekick_Bonus_EXP = gain / 2L;
             }
-        }
-        int 网吧特别经验 = 0;
-        if (haveItem(5420008)) {
-            网吧特别经验 = (int) (gain / 100.0D * 25.0D);
-        }
-        int 精灵祝福经验 = 0;
-        if (get精灵祝福() > 0) {
-            精灵祝福经验 = (int) (gain / 100.0D * 10.0D);
         }
         int 结婚奖励经验 = 0;
         if (this.marriageId > 0) {
@@ -3995,20 +3996,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             组队经验 = (int) ((float) gain * rate * (pty + (rate > 5 ? -1 : 1)) / 100.0D);
         }
 
-        //连杀处理
-        long 连杀经验 = 0;
-        if (killMonsterExps.isEmpty()) {
-            if ((monsterCombo > 0) && (System.currentTimeMillis() - lastMonsterCombo > 7000)) {
-                monsterCombo = 0;
-            }
-            monsterCombo += monsterCombo == 999 ? 0 : 1;
-            lastMonsterCombo = System.currentTimeMillis();
-        }
-        if (monsterCombo > 1) {//连杀经验
-            连杀经验 += (long) Math.ceil((double) (gain * Math.min(monsterCombo, 60) * 0.5D / 100.0D));
-        }
-
-        long total = gain + 额外的经验值 + 组队经验 + 道具佩戴经验 + 召回戒指经验 + Sidekick_Bonus_EXP + 网吧特别经验 + 精灵祝福经验 + 结婚奖励经验 + 连杀经验;
+        long total = gain + 额外的经验值 + 组队经验  + Sidekick_Bonus_EXP  + 结婚奖励经验;
         if ((gain > 0L) && (total < gain)) {
             total = 2147483647L;
         }
@@ -4059,9 +4047,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 if (结婚奖励经验 > 0) {
                     expStatup.put(MapleExpStat.结婚奖励经验, 结婚奖励经验);
                 }
-                this.client.getSession().write(MaplePacketCreator.GainEXP_Monster((int) gain, 最高伤害, expStatup, 召回戒指经验));
-//                this.client.getSession().write(MaplePacketCreator.GainEXP_Combo(white, 1));
-                //this.client.getSession().write(MaplePacketCreator.GainEXP_Monster(gain, white, 组队经验, 精灵祝福经验, 道具佩戴经验, 召回戒指经验, Sidekick_Bonus_EXP, 网吧特别经验, 结婚奖励经验));
+                this.client.getSession().write(MaplePacketCreator.GainEXP_Monster((int) gain, 最高伤害, expStatup));
             }
         }
         killMonsterExps.add(gain);
@@ -5907,9 +5893,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public double hasEXPCard() {
         ArrayList<Integer> expCards = ItemConstants.get经验值卡();
-        ArrayList<Integer> expCards1_5 = ItemConstants.get经验值卡(1.5D);
-        ArrayList<Integer> expCards2 = ItemConstants.get经验值卡(2.0D);
-        ArrayList<Integer> expCards3 = ItemConstants.get经验值卡(3.0D);
         MapleInventory iv = getInventory(MapleInventoryType.CASH);
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         double canuse = 1.0D;
@@ -5920,15 +5903,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
                 continue;
             }
-            if (expCards1_5.contains(i)) {
-                canuse = 1.5D;
-            }
-            if (expCards2.contains(i)) {
-                canuse = 2.0D;
-            }
-            if (expCards3.contains(i)) {
-                canuse = 3.0D;
-            }
+            canuse = 2.0D;
         }
         return canuse;
     }
@@ -7710,9 +7685,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public int getMaxLevelForSever() {
-        if (!isIntern()) {
-            return ServerProperties.getMaxCygnusLevel();
-        }
         return ServerProperties.getMaxLevel();
     }
 

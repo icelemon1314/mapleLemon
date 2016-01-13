@@ -240,13 +240,6 @@ public class ServerProperties {
         return maxLevel;
     }
 
-    public static int getMaxCygnusLevel() {
-        if ((maxCygnusLevel < 120) || (maxCygnusLevel > 250)) {
-            maxCygnusLevel = 120;
-        }
-        return maxCygnusLevel;
-    }
-
     static {
         loadProperties();
     }

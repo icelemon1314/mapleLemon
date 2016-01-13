@@ -244,6 +244,13 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
         damage(from, damage, updateAttackTime, 0);
     }
 
+    /**
+     * 对怪物造成伤害
+     * @param from
+     * @param damage
+     * @param updateAttackTime
+     * @param lastSkill
+     */
     public void damage(MapleCharacter from, long damage, boolean updateAttackTime, int lastSkill) {
         if ((from == null) || (damage <= 0L) || (!isAlive())) {
             return;
@@ -410,15 +417,7 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
             if (Class_Bonus_EXP_PERCENT > 0) {
                 Class_Bonus_EXP = (int) (exp / 100.0D * Class_Bonus_EXP_PERCENT);
             }
-            int 召回戒指经验 = 0;
-            if (Premium_Bonus_EXP_PERCENT > 0) {
-                召回戒指经验 = (int) (exp / 100.0D * Premium_Bonus_EXP_PERCENT);
-            }
-            int 道具佩戴经验 = (int) (exp / 100.0D * attacker.getStat().equipmentBonusExp);
-            if ((attacker.getStat().equippedFairy > 0) && (attacker.getFairyExp() > 0)) {
-                道具佩戴经验 += (int) (exp / 100.0D * attacker.getFairyExp());
-            }
-            attacker.gainExpMonster(exp, true, 最高伤害, pty, Class_Bonus_EXP, 道具佩戴经验, 召回戒指经验, this);
+            attacker.gainExpMonster(exp, true, 最高伤害, pty, Class_Bonus_EXP, this);
         }
         attacker.mobKilled(getId(), lastskillID);
     }

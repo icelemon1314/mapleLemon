@@ -473,6 +473,7 @@ public enum SendPacketOpcode implements WritableIntValueHolder {
     TOP_MSG_WHITE,
     ELAB_OPERATION,
     OPEN_UI,
+    FULLSCREEN_BLESS,
     ;
 
     private byte code = -2;

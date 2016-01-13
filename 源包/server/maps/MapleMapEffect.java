@@ -37,14 +37,17 @@ public class MapleMapEffect {
     }
 
     public byte[] makeDestroyData() {
-        return this.jukebox ? MTSCSPacket.playCashSong(0, "") : MaplePacketCreator.removeMapEffect();
+        return MaplePacketCreator.stopFullScreenBless();
+        //return this.jukebox ? MTSCSPacket.playCashSong(0, "") : MaplePacketCreator.removeMapEffect();
     }
 
     public void sendStartData(MapleClient c) {
+
         c.getSession().write(makeStartData());
     }
 
     public byte[] makeStartData() {
-        return this.jukebox ? MTSCSPacket.playCashSong(this.itemId, this.msg) : MaplePacketCreator.startMapEffect(this.msg, this.itemId, this.effectType, this.active);
+        return MaplePacketCreator.startFullScreenBless(this.itemId,this.msg);
+        //return this.jukebox ? MTSCSPacket.playCashSong(this.itemId, this.msg) : MaplePacketCreator.startMapEffect(this.msg, this.itemId, this.effectType, this.active);
     }
 }

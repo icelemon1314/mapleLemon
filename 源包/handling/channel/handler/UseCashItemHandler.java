@@ -81,6 +81,8 @@ public class UseCashItemHandler {
                     used = InventoryHandler.UseTeleRock(slea, c, itemId);
                 break;
             case 218: // 洗点卷
+                // 2B 10 00 A0 43 21 00 80 00 00 00 40 00 00 00 敏捷加力量
+                // 2B 10 00 A0 43 21 00 00 01 00 00 00 02 00 00 减运气加智力
                 if (itemId == 2180000) { // 洗能力点
                         Map statupdate = new EnumMap(MapleStat.class);
                         int apto = (int) slea.readLong();
@@ -351,6 +353,7 @@ public class UseCashItemHandler {
                     }
                 break;
             case 208: // 喇叭
+                // 2B 08 00 E8 C0 1F 00 0A 00 BA EC C0 AE B0 C8 B2 E2 CA D4
                 if (chr.isAdmin()) {
                     chr.dropMessage(0, new StringBuilder().append("使用商场喇叭 道具类型: ").append(itemId / 1000 % 10).toString());
                 }
@@ -373,6 +376,8 @@ public class UseCashItemHandler {
                 }
                 break;
             case 213: // 真情告白
+                // 2B 09 00 51 80 20 00
+                // 31 00 31 32 33 32 31 34 33 32 34 33 71 65 77 71 65 77 71 65 77 71 65 0A 65 77 71 65 77 71 65 77 0A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A
                 MapleLove love = new MapleLove(chr, chr.getPosition(), chr.getMap().getFootholds().findBelow(chr.getPosition()).getId(), slea.readMapleAsciiString(), itemId);
                 chr.getMap().spawnLove(love);
                 used = true;

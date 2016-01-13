@@ -631,6 +631,15 @@ public final class MapleMap {
         killMonster(monster, chr, withDrops, second, animation, 0);
     }
 
+    /**
+     * 杀死怪物
+     * @param monster
+     * @param chr
+     * @param withDrops
+     * @param second
+     * @param animation
+     * @param lastSkill
+     */
     public void killMonster(final MapleMonster monster, final MapleCharacter chr, boolean withDrops, boolean second, byte animation, int lastSkill) {
         if (((monster.getId() == 8810122) || (monster.getId() == 8810018)) && (!second)) {
             MapTimer.getInstance().schedule(new Runnable() {
@@ -664,7 +673,7 @@ public final class MapleMap {
         if (animation >= 0) {
             broadcastMessage(MobPacket.killMonster(monster.getObjectId(), animation));
         }
-        if (dropOwner != -1) {
+        if (dropOwner != -1) { // 这里加经验
             monster.killGainExp(lastSkill);
         }
 
@@ -696,14 +705,6 @@ public final class MapleMap {
             if (this.speedRunStart > 0L) {
                 type = ExpeditionType.Normal_Balrog;
             }
-        } else if (((mobid == 9420544) || (mobid == 9420549)) && (this.mapid == 551030200) && (monster.getEventInstance() != null) && (monster.getEventInstance().getName().contains(getEMByMap().getName()))) {
-            doShrine(getAllReactor().isEmpty());
-        }else if ((mobid == 8840000) && (this.mapid == 211070100)) {
-            this.charactersLock.readLock().lock();
-            if (this.speedRunStart > 0L) {
-                type = ExpeditionType.Von_Leon;
-            }
-            doShrine(true);
         } else if ((mobid == 8800002) && ((this.mapid == 280030000) || (this.mapid == 280030100))) {
             this.charactersLock.readLock().lock();
 
@@ -861,8 +862,7 @@ public final class MapleMap {
             }
         }
 
-        if ((type != null)
-                && (this.speedRunStart > 0L) && (this.speedRunLeader.length() > 0)) {
+        if ((type != null) && (this.speedRunStart > 0L) && (this.speedRunLeader.length() > 0)) {
             String name = "";
             switch (type.name()) {
                 case "Normal_Balrog":
@@ -2213,7 +2213,7 @@ public final class MapleMap {
         }
         this.mapEffect = new MapleMapEffect(msg, itemId);
         this.mapEffect.setJukebox(jukebox);
-//        broadcastMessage(this.mapEffect.makeStartData());
+        broadcastMessage(this.mapEffect.makeStartData());
         MapTimer.getInstance().schedule(new Runnable() {
             @Override
             public void run() {
@@ -2222,7 +2222,7 @@ public final class MapleMap {
                     MapleMap.this.mapEffect = null;
                 }
             }
-        }, jukebox ? 300000L : 15000L);
+        }, jukebox ? 300000L : 30000L);
     }
 
     public void startPredictCardMapEffect(String msg, int itemId, int effectType) {
