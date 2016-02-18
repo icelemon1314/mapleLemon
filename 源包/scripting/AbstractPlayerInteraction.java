@@ -113,6 +113,10 @@ public abstract class AbstractPlayerInteraction {
         }
     }
 
+    public void warp(int mapId) {
+        warp(mapId,0);
+    }
+
     /**
      * 传送到地图
      * @param mapId

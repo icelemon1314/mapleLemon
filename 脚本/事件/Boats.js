@@ -46,10 +46,10 @@ importPackage(Packages.server.life);
 
 //Time Setting is in millisecond
 // 15分钟一趟 登船4分钟 等待1分钟 航行10分钟
-var closeTime = 24000; //The time to close the gate
-var beginTime = 30000; //The time to begin the ride
-var rideTime = 60000; //The time that require move to destination
-var invasionTime = 6000; //The time that spawn balrog
+var closeTime = 240000; //The time to close the gate
+var beginTime = 300000; //The time to begin the ride
+var rideTime = 600000; //The time that require move to destination
+var invasionTime = 60000; //The time that spawn balrog
 var Orbis_btf;
 var Boat_to_Orbis;
 var Orbis_Boat_Cabin;
@@ -78,7 +78,6 @@ function init() {
     EBoatsetup();
     //scheduleNew();
 	nextTime = getNextTime();
-	em.log("飞船等待时间："+nextTime);
 	em.schedule("scheduleNew", nextTime*60*1000);
 }
 
@@ -87,7 +86,6 @@ function getNextTime(){
 	// 秒数的控制不精确
 	//var curTime = em.getCurentMin();
 	var curTime = 9
-	em.log("飞船当前时间："+curTime);
 	if ( 0 <= curTime && curTime <10) {
 		return 10-curTime;
 	} else if (14<=curTime && curTime <25) {
