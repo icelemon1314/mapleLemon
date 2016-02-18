@@ -285,9 +285,7 @@ public class CharacterTransfer implements Externalizable {
         this.quickslot = chr.getQuickSlot().Layout();
         this.savedlocation = chr.getSavedLocations();
         this.wishlist = chr.getWishlist();
-        this.rocks = chr.getRocks();
         this.regrocks = chr.getRegRocks();
-        this.hyperrocks = chr.getHyperRocks();
         this.famedcharacters = chr.getFamedCharacters();
         this.lastfametime = chr.getLastFameTime();
         this.storage = chr.getStorage();

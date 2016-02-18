@@ -414,12 +414,12 @@ public class PacketHelper {
         mplew.writeShort(0); // Mini Games ?
         addRingInfo(mplew, chr);
         // getVIPRockMaps
-        for (int i = 0; i < 5; i++) {
-            mplew.writeInt(910000000 + i);
-        }
-//        for (int map : chr.getVIPRockMaps()) {
-//            mplew.writeInt(map);
+//        for (int i = 0; i < 5; i++) {
+//            mplew.writeInt(910000000 + i);
 //        }
+        for (int map : chr.getRegRocks()) {
+            mplew.writeInt(map);
+        }
     }
 
     public static void addQuestDataInfo(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {

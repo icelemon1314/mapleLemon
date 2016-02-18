@@ -1807,7 +1807,7 @@ public class InventoryHandler {
         boolean used = false;
         if (slea.readByte() == 0) {
             MapleMap target = c.getChannelServer().getMapFactory().getMap(slea.readInt());
-            if (((itemId == 5041000) && (c.getPlayer().isRockMap(target.getId()))) || ((itemId != 5041000) && (c.getPlayer().isRegRockMap(target.getId()))) || (((itemId == 5040004) || (itemId == 5041001)) && ((c.getPlayer().isHyperRockMap(target.getId())) || (GameConstants.isHyperTeleMap(target.getId())))
+            if (((itemId == 5041000) && (c.getPlayer().isRegRockMap(target.getId()))) || ((itemId != 5041000) && (c.getPlayer().isRegRockMap(target.getId()))) || (((itemId == 5040004) || (itemId == 5041001)) && ((GameConstants.isHyperTeleMap(target.getId())))
                     && (!FieldLimitType.VipRock.check(c.getPlayer().getMap().getFieldLimit())) && (!FieldLimitType.VipRock.check(target.getFieldLimit())) && (!c.getPlayer().isInBlockedMap()))) {
                 c.getPlayer().changeMap(target, target.getPortal(0));
                 used = true;

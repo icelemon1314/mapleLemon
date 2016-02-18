@@ -1733,7 +1733,7 @@ public class MaplePacketCreator {
     }
 
     public static byte[] musicChange(String song) {
-        return environmentChange(song, 7);
+        return startMapSoundEffect(song);
     }
 
     public static byte[] showEffect(String effect) {
@@ -1850,6 +1850,11 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
+    /**
+     * 播放背景音乐
+     * @param soundPath
+     * @return
+     */
     public static byte[] startMapSoundEffect(String soundPath){
         // sound/Object.img/Whistle 轮船来了
         // sound/Game.img/LevelUp
@@ -2044,23 +2049,28 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
-    public static byte[] boatPacket(int effect) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
+    /**
+     * 控制船的来和走
+     * @param isEnter
+     * @return
+     */
+    public static byte[] boatPacket(boolean isEnter) {
+        // 3C 0D 07 船来了
+        // 3C 09 03 船走了
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.BOAT_EFFECT.getValue());
-        mplew.writeMapleAsciiString("ship/ossyria");
-        mplew.writeShort(effect);
-
+        if (isEnter == true) {
+            mplew.write(0x0D);
+            mplew.write(0x07);
+        } else {
+            mplew.write(0x09);
+            mplew.write(0x03);
+        }
         return mplew.getPacket();
     }
 
     public static byte[] boatEffect(int effect) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.BOAT_EFF.getValue());

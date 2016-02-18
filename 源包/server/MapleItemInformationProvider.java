@@ -603,6 +603,10 @@ public class MapleItemInformationProvider {
                 chr.dropMessage(1,"装备等级不够："+limitedLv );
                 return nEquip;
             }
+            if (nEquip.getUpgradeSlots()<=0) {
+                chr.dropMessage(1,"装备已经没有升级次数了："+nEquip.getUpgradeSlots() );
+                return nEquip;
+            }
 
             int success = succ + succ * (getSuccessRates(scroll.getItemId())) / 100;
             if (chr.isAdmin()) {

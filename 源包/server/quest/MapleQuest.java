@@ -319,9 +319,10 @@ public class MapleQuest implements Serializable {
         // 检查已经开始的任务
         MapleQuest tmp = chr.getQuestInfoById(getId());
         if (tmp != null) {
+            System.out.println("任务已经开始了："+getId());
             return false;
         }
-
+        System.out.println("可以开始的任务3："+isCanStart);
         return isCanStart;
     }
 
@@ -400,6 +401,10 @@ public class MapleQuest implements Serializable {
             // 检查是否达到任务完成条件
             for (Integer questId : getQuestIdByNpcId(npc)) {
                 MapleQuest chrQuest = chr.getQuestInfoById(questId);
+                if (chrQuest == null) {
+                    isComplete = false;
+                    break;
+                }
                 if (chrQuest.canComplete(chr)) {
                     chrQuest.complete(chr,npc);
                     isComplete = true;

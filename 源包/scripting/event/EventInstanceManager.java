@@ -86,6 +86,11 @@ public class EventInstanceManager {
         }
     }
 
+    /**
+     * 玩家换地图
+     * @param chr
+     * @param mapid
+     */
     public void changedMap(MapleCharacter chr, int mapid) {
         if (this.disposed) {
             return;

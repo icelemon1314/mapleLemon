@@ -934,6 +934,12 @@ public class PlayerHandler {
         }
     }
 
+    /**
+     * 请求传送口数据
+     * @param portal_name
+     * @param c
+     * @param chr
+     */
     public static void ChangeMapSpecial(String portal_name, MapleClient c, MapleCharacter chr) {
         if ((chr == null) || (chr.getMap() == null)) {
             return;

@@ -460,7 +460,6 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 }
                 break;
             case CHANGE_MAP_SPECIAL:
-                slea.skip(1);
                 PlayerHandler.ChangeMapSpecial(slea.readMapleAsciiString(), c, c.getPlayer());
                 break;
             case USE_INNER_PORTAL:

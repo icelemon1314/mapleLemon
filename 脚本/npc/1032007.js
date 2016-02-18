@@ -20,32 +20,44 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
--- NPC JavaScript --------------------------------------------------------------------------------
-	Cherry  - Ellinia Station(101000300)
+-- Odin JavaScript --------------------------------------------------------------------------------
+	Joel  - Ellinia Station(101000300)
 -- By ---------------------------------------------------------------------------------------------
-	BubblesDev 0.75 / ShootSource
+	Information
 -- Version Info -----------------------------------------------------------------------------------
-
+	1.2 - Price as GMS [Sadiq]
+	1.1 - Changed Price as GMS by Shogi
+	1.0 - First Version by Information
 ---------------------------------------------------------------------------------------------------
 **/
 
+var cost = 5000;
+var status = 0;
+
 function start() {
-    if(cm.haveItem(4031045)){
-        var em = cm.getEventManager("Boats");
-        if (em.getProperty("entry") == "true")
-            cm.sendYesNo("你想现在登船么？");
-        else{
-            cm.sendOk("开往天空之城的飞船已经起飞了，请耐心等候下一趟！");
-            cm.dispose();
-        }
-    }else{
-        cm.sendOk("你得先去买张去天空之城的船票！");
-        cm.dispose();
-    }
+	status = -1;
+    cm.sendYesNo("你好, 我负责出售开往天空之城的船票。开往天空之城的飞船每15分钟一趟，船票的价格为：#b"+cost+" 金币#k. 你确定需要购买 #b#t4031045##k？");
 }
 
 function action(mode, type, selection) {
-    cm.gainItem(4031045, -1);
-    cm.warp(101000301,0);
-    cm.dispose();
-}	
+    if(mode == -1)
+        cm.dispose();
+    else {
+        if(mode == 0) {
+            cm.sendNext("看来你在这里还有其它事情要做？");
+            cm.dispose();
+            return;
+        }
+        status++;
+        if(status == 0) {
+            if (cm.getMeso() >= cost && cm.canHold(4031045)) {
+                cm.gainItem(4031045,1);
+                cm.gainMeso(-cost);
+                cm.dispose();
+            } else {
+                cm.sendOk("你确定你有 #b"+cost+" 金币#k？ 如果你确定你有的话，那么检查下背包是否有空位！");
+                cm.dispose();
+            }
+        }
+    }
+}

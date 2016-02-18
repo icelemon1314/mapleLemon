@@ -284,37 +284,41 @@ public class MTSCSPacket {
         return mplew.getPacket();
     }
 
+    /**
+     * 刷新传送石头信息
+     * @param chr
+     * @param vip
+     * @param delete
+     * @return
+     */
     public static byte[] getTrockRefresh(MapleCharacter chr, byte vip, boolean delete) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.TROCK_LOCATIONS.getValue());
-        mplew.write(delete ? 2 : 3);
-        mplew.write(vip);
-        if (vip == 1) {
-            int[] map = chr.getRegRocks();
-            for (int i = 0; i < 5; i++) {
-                mplew.writeInt(map[i]);
-            }
-        } else if (vip == 2) {
-            int[] map = chr.getRocks();
-            for (int i = 0; i < 10; i++) {
-                mplew.writeInt(map[i]);
-            }
-        } else if (vip == 3) {
-            int[] map = chr.getHyperRocks();
-            for (int i = 0; i < 13; i++) {
-                mplew.writeInt(map[i]);
-            }
+        mplew.write(2);
+        int[] map = chr.getRegRocks();
+        for (int i = 0; i < 5; i++) {
+            mplew.writeInt(map[i]);
         }
         return mplew.getPacket();
     }
 
+    /**
+     * 错误信息
+     * 0xA-不能登录的地图
+     * 0x5-未知原因，请求失败
+     * 0x9-你现在位置的地图？
+     * 0x6/7-现在找不到%s玩家的位置，不能做瞬间移动
+     * 0x8-不能移动到您指定的位置
+     * @param op
+     * @return
+     */
     public static byte[] getTrockMessage(byte op) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.TROCK_LOCATIONS.getValue());
 
-        mplew.writeShort((short) op);
+        mplew.write(op);
 
         return mplew.getPacket();
     }

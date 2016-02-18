@@ -120,6 +120,8 @@ public final class MapleMap {
     private int partyBonusRate = 0;
     private boolean town;
     private boolean clock;
+    private boolean boat;
+    private boolean docked;
     private boolean personalShop;
     private boolean everlast = false;
     private boolean dropsDisabled = false;
@@ -1038,6 +1040,10 @@ public final class MapleMap {
             ((ReentrantReadWriteLock) this.mapobjectlocks.get(MapleMapObjectType.MONSTER)).readLock().unlock();
         }
         return ret;
+    }
+
+    public void killAllMonsters(){
+        killAllMonsters(false);
     }
 
     public void killAllMonsters(boolean animate) {
@@ -2410,6 +2416,10 @@ public final class MapleMap {
             Calendar cal = Calendar.getInstance();
             chr.getClient().getSession().write(MaplePacketCreator.getClockTime(cal.get(11), cal.get(12), cal.get(13)));
         }
+        if(hasBoat() == 2) { // 船还在
+            chr.getClient().getSession().write(MaplePacketCreator.boatPacket(true));
+        }
+
         System.out.println("添加角色11");
         if ((chr.getCarnivalParty() != null) && (chr.getEventInstance() != null)) {
             chr.getEventInstance().onMapLoad(chr);
@@ -4017,6 +4027,22 @@ public final class MapleMap {
                 return true;
         }
         return false;
+    }
+
+    private int hasBoat() {
+        return docked ? 2 : (boat ? 1 : 0);
+    }
+
+    public void setBoat(boolean hasBoat) {
+        this.boat = hasBoat;
+    }
+
+    /**
+     * 设置是否可以停靠船只
+     * @param isDocked
+     */
+    public void setDocked(boolean isDocked) {
+        this.docked = isDocked;
     }
 
     public void checkMoveMonster(Point from, boolean fly, MapleCharacter chr) {

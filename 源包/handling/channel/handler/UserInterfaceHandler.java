@@ -78,6 +78,6 @@ public class UserInterfaceHandler {
                 System.out.println("Unhandled ship object, MapID : " + mapid);
         }
 
-        c.getSession().write(MaplePacketCreator.boatPacket(effect));
+        c.getSession().write(MaplePacketCreator.boatPacket(effect==1?true:false));
     }
 }

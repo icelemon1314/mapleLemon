@@ -20,32 +20,30 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
--- NPC JavaScript --------------------------------------------------------------------------------
-	Cherry  - Ellinia Station(101000300)
--- By ---------------------------------------------------------------------------------------------
-	BubblesDev 0.75 / ShootSource
--- Version Info -----------------------------------------------------------------------------------
-
----------------------------------------------------------------------------------------------------
+Purin (On Boat ) 1032009
 **/
 
+var status = 0;
+
 function start() {
-    if(cm.haveItem(4031045)){
-        var em = cm.getEventManager("Boats");
-        if (em.getProperty("entry") == "true")
-            cm.sendYesNo("你想现在登船么？");
-        else{
-            cm.sendOk("开往天空之城的飞船已经起飞了，请耐心等候下一趟！");
-            cm.dispose();
-        }
-    }else{
-        cm.sendOk("你得先去买张去天空之城的船票！");
-        cm.dispose();
-    }
+    action(1, 0, 0);
 }
 
 function action(mode, type, selection) {
-    cm.gainItem(4031045, -1);
-    cm.warp(101000301,0);
-    cm.dispose();
-}	
+    if (status == 0) {
+        cm.sendYesNo("你想要离开飞船么？");
+        status++;
+    } else {
+        if (mode < 1) {
+            cm.dispose();
+        } else {
+            if (status == 1) {
+                cm.sendNext ("好吧，那下次再见哦！");
+                status++;
+            } else if (status == 2) {
+                cm.warp(101000300, 0);// back to orbis
+                cm.dispose();
+            }
+        }
+    }
+}

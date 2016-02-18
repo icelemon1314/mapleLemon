@@ -198,10 +198,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private Point old;
     private MonsterFamiliar summonedFamiliar;
     private int[] wishlist;
-    private int[] rocks;
     private int[] savedLocations;
     private int[] regrocks;
-    private int[] hyperrocks;
     private int remainingSp;
     private transient AtomicInteger inst;
     private transient AtomicInteger insd;
@@ -433,9 +431,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             smega = true;
             petStore = -1;
             wishlist = new int[12];
-            rocks = new int[10];
             regrocks = new int[5];
-            hyperrocks = new int[13];
             imps = new MapleImp[3];
             boxed = new ArrayList();
             familiars = new LinkedHashMap();
@@ -669,9 +665,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.familiars = ct.familiars;
         ret.savedLocations = ct.savedlocation;
         ret.wishlist = ct.wishlist;
-        ret.rocks = ct.rocks;
         ret.regrocks = ct.regrocks;
-        ret.hyperrocks = ct.hyperrocks;
         ret.buddylist.loadFromTransfer(ct.buddies);
 
         ret.keydown_skill = 0L;
@@ -1060,26 +1054,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     if (v == 0) {
                         ret.regrocks[reg] = m;
                         reg++;
-                    } else if (v == 1) {
-                        ret.rocks[r] = m;
-                        r++;
-                    } else if (v == 2) {
-                        ret.hyperrocks[hyper] = m;
-                        hyper++;
                     }
                 }
                 while (reg < 5) {
                     ret.regrocks[reg] = 999999999;
                     reg++;
                 }
-                while (r < 10) {
-                    ret.rocks[r] = 999999999;
-                    r++;
-                }
-                while (hyper < 13) {
-                    ret.hyperrocks[hyper] = 999999999;
-                    hyper++;
-                }
+
                 ps.close();
                 System.out.println("加载角色信息14");
                 ps = con.prepareStatement("SELECT * FROM imps WHERE characterid = ?");
@@ -1643,34 +1624,14 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
             }
 
-            if (this.changed_trocklocations) {
-                deleteWhereCharacterId(con, "DELETE FROM trocklocations WHERE characterid = ?");
-                for (int i = 0; i < this.regrocks.length; i++) {
-                    if (this.regrocks[i] != 999999999) {
-                        ps = con.prepareStatement("INSERT INTO trocklocations(characterid, mapid) VALUES (?, ?, 0)");
-                        ps.setInt(1, getId());
-                        ps.setInt(2, this.regrocks[i]);
-                        ps.execute();
-                        ps.close();
-                    }
-                }
-                for (int i = 0; i < this.rocks.length; i++) {
-                    if (this.rocks[i] != 999999999) {
-                        ps = con.prepareStatement("INSERT INTO trocklocations(characterid, mapid) VALUES (?, ?, 1)");
-                        ps.setInt(1, getId());
-                        ps.setInt(2, this.rocks[i]);
-                        ps.execute();
-                        ps.close();
-                    }
-                }
-                for (int i = 0; i < this.hyperrocks.length; i++) {
-                    if (this.hyperrocks[i] != 999999999) {
-                        ps = con.prepareStatement("INSERT INTO trocklocations(characterid, mapid) VALUES (?, ?, 2)");
-                        ps.setInt(1, getId());
-                        ps.setInt(2, this.hyperrocks[i]);
-                        ps.execute();
-                        ps.close();
-                    }
+            deleteWhereCharacterId(con, "DELETE FROM trocklocations WHERE characterid = ?");
+            for (int i = 0; i < this.regrocks.length; i++) {
+                if (this.regrocks[i] != 999999999) {
+                    ps = con.prepareStatement("INSERT INTO trocklocations(characterid, mapid,vip) VALUES (?, ?, 0)");
+                    ps.setInt(1, getId());
+                    ps.setInt(2, this.regrocks[i]);
+                    ps.execute();
+                    ps.close();
                 }
             }
             this.isSaveing = false;
@@ -5637,47 +5598,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.changed_wishlist = true;
     }
 
-    public int[] getRocks() {
-        return this.rocks;
-    }
-
-    public int getRockSize() {
-        int ret = 0;
-        for (int i = 0; i < 10; i++) {
-            if (this.rocks[i] != 999999999) {
-                ret++;
-            }
-        }
-        return ret;
-    }
-
-    public void deleteFromRocks(int map) {
-        for (int i = 0; i < 10; i++) {
-            if (this.rocks[i] == map) {
-                this.rocks[i] = 999999999;
-                this.changed_trocklocations = true;
-                break;
-            }
-        }
-    }
-
-    public void addRockMap() {
-        if (getRockSize() >= 10) {
-            return;
-        }
-        this.rocks[getRockSize()] = getMapId();
-        this.changed_trocklocations = true;
-    }
-
-    public boolean isRockMap(int id) {
-        for (int i = 0; i < 10; i++) {
-            if (this.rocks[i] == id) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public int[] getRegRocks() {
         return this.regrocks;
     }
@@ -5713,47 +5633,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public boolean isRegRockMap(int id) {
         for (int i = 0; i < 5; i++) {
             if (this.regrocks[i] == id) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public int[] getHyperRocks() {
-        return this.hyperrocks;
-    }
-
-    public int getHyperRockSize() {
-        int ret = 0;
-        for (int i = 0; i < 13; i++) {
-            if (this.hyperrocks[i] != 999999999) {
-                ret++;
-            }
-        }
-        return ret;
-    }
-
-    public void deleteFromHyperRocks(int map) {
-        for (int i = 0; i < 13; i++) {
-            if (this.hyperrocks[i] == map) {
-                this.hyperrocks[i] = 999999999;
-                this.changed_trocklocations = true;
-                break;
-            }
-        }
-    }
-
-    public void addHyperRockMap() {
-        if (getRegRockSize() >= 13) {
-            return;
-        }
-        this.hyperrocks[getHyperRockSize()] = getMapId();
-        this.changed_trocklocations = true;
-    }
-
-    public boolean isHyperRockMap(int id) {
-        for (int i = 0; i < 13; i++) {
-            if (this.hyperrocks[i] == id) {
                 return true;
             }
         }

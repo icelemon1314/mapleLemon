@@ -4,13 +4,8 @@ import client.MapleCharacter;
 import handling.channel.ChannelServer;
 import handling.world.party.MapleParty;
 import handling.world.party.MaplePartyCharacter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.WeakHashMap;
+
+import java.util.*;
 import java.util.concurrent.ScheduledFuture;
 import javax.script.Invocable;
 import javax.script.ScriptException;
@@ -96,6 +91,15 @@ public class EventManager {
                 }
             }
         }, timestamp);
+    }
+
+    public int getCurentMin(){
+        Calendar cal = Calendar.getInstance();
+        return cal.get(12);
+    }
+
+    public void log(String str){
+        System.out.println(str);
     }
 
     public int getChannel() {
@@ -417,10 +421,6 @@ public class EventManager {
 
     public MapleReactor getReactor(int id) {
         return new MapleReactor(MapleReactorFactory.getReactor(id), id);
-    }
-
-    public void broadcastShip(int mapid, int effect) {
-        getMapFactory().getMap(mapid).broadcastMessage(MaplePacketCreator.boatPacket(effect));
     }
 
     public void broadcastYellowMsg(String msg) {

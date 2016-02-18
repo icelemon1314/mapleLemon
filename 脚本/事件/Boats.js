@@ -45,10 +45,11 @@ importPackage(Packages.tools);
 importPackage(Packages.server.life);
 
 //Time Setting is in millisecond
-var closeTime = 240000; //The time to close the gate
-var beginTime = 300000; //The time to begin the ride
-var rideTime = 600000; //The time that require move to destination
-var invasionTime = 60000; //The time that spawn balrog
+// 15分钟一趟 登船4分钟 等待1分钟 航行10分钟
+var closeTime = 24000; //The time to close the gate
+var beginTime = 30000; //The time to begin the ride
+var rideTime = 60000; //The time that require move to destination
+var invasionTime = 6000; //The time that spawn balrog
 var Orbis_btf;
 var Boat_to_Orbis;
 var Orbis_Boat_Cabin;
@@ -56,11 +57,17 @@ var Orbis_docked;
 var Ellinia_btf;
 var Ellinia_Boat_Cabin;
 var Ellinia_docked;
+var nextTime;
 
+// 服务端启动的时候调用
 function init() {
+	// 候船开往魔法密林
     Orbis_btf = em.getChannelServer().getMapFactory().getMap(200000112);
+	// 候船开往天空之城
     Ellinia_btf = em.getChannelServer().getMapFactory().getMap(101000301);
+	// 航海中开往天空之城
     Boat_to_Orbis = em.getChannelServer().getMapFactory().getMap(200090010);
+	// 航海中开往魔法密林
     Boat_to_Ellinia = em.getChannelServer().getMapFactory().getMap(200090000);
     Orbis_Boat_Cabin = em.getChannelServer().getMapFactory().getMap(200090011);
     Ellinia_Boat_Cabin = em.getChannelServer().getMapFactory().getMap(200090001);
@@ -69,10 +76,35 @@ function init() {
     Orbis_Station = em.getChannelServer().getMapFactory().getMap(200000111);
     OBoatsetup();
     EBoatsetup();
-    scheduleNew();
+    //scheduleNew();
+	nextTime = getNextTime();
+	em.log("飞船等待时间："+nextTime);
+	em.schedule("scheduleNew", nextTime*60*1000);
+}
+
+function getNextTime(){
+	// 每隔15分钟一班 前4分钟登船，1分钟关门，10分钟航行
+	// 秒数的控制不精确
+	//var curTime = em.getCurentMin();
+	var curTime = 9
+	em.log("飞船当前时间："+curTime);
+	if ( 0 <= curTime && curTime <10) {
+		return 10-curTime;
+	} else if (14<=curTime && curTime <25) {
+		return 25-curTime;
+	} else if (29<=curTime && curTime <40) {
+		return 40-curTime;
+	} else if (44<=curTime && curTime <55) {
+		return 55-curTime;
+	} else if (59 <= curTime) {
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 function scheduleNew() {
+	em.log("船来了！");
     Ellinia_docked.setDocked(true);
     Orbis_Station.setDocked(true);
     Ellinia_docked.broadcastMessage(MaplePacketCreator.boatPacket(true));
@@ -85,12 +117,14 @@ function scheduleNew() {
 }
 
 function stopentry() {
+	em.log("关闭舱门");
     em.setProperty("entry","false");
     Orbis_Boat_Cabin.resetReactors();
     Ellinia_Boat_Cabin.resetReactors();
 }
 
 function takeoff() {
+	em.log("开船了！");
     em.setProperty("docked","false");
     var temp1 = Orbis_btf.getCharacters().iterator();
     while(temp1.hasNext()) {
@@ -109,6 +143,7 @@ function takeoff() {
 }
 
 function arrived() {
+	em.log("飞船到了！");
     var temp1 = Boat_to_Orbis.getCharacters().iterator();
     while(temp1.hasNext()) {
         temp1.next().changeMap(Orbis_docked, Orbis_docked.getPortal(0));
@@ -131,21 +166,22 @@ function arrived() {
 }
 
 function invasion() {
+	em.log("怪物来了！");
     var numspawn;
     var chance = Math.floor(Math.random() * 10);
-    if(chance <= 5)
-        numspawn = 0;
-    else
+    //if(chance <= 2)
+    //    numspawn = 0;
+    //else
         numspawn = 2;
     if(numspawn > 0) {
         for(var i=0; i < numspawn; i++) {
-            Boat_to_Orbis.spawnMonsterOnGroudBelow(MapleLifeFactory.getMonster(8150000), new java.awt.Point(485, -221));
-            Boat_to_Ellinia.spawnMonsterOnGroudBelow(MapleLifeFactory.getMonster(8150000), new java.awt.Point(-590, -221));
+            Boat_to_Orbis.spawnMonsterOnGroundBelow(em.getMonster(8150000), new java.awt.Point(485, -221));
+            Boat_to_Ellinia.spawnMonsterOnGroundBelow(em.getMonster(8150000), new java.awt.Point(-590, -221));
         }
-        Boat_to_Orbis.setDocked(true);
-        Boat_to_Ellinia.setDocked(true);
-        Boat_to_Orbis.broadcastMessage(MaplePacketCreator.boatPacket(true));
-        Boat_to_Ellinia.broadcastMessage(MaplePacketCreator.boatPacket(true));
+        //Boat_to_Orbis.setDocked(true);
+        //Boat_to_Ellinia.setDocked(true);
+        //Boat_to_Orbis.broadcastMessage(MaplePacketCreator.boatPacket(true));
+        //Boat_to_Ellinia.broadcastMessage(MaplePacketCreator.boatPacket(true));
         Boat_to_Orbis.broadcastMessage(MaplePacketCreator.musicChange("Bgm04/ArabPirate"));
         Boat_to_Ellinia.broadcastMessage(MaplePacketCreator.musicChange("Bgm04/ArabPirate"));
         em.setProperty("haveBalrog","true");

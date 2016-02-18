@@ -306,7 +306,6 @@ public class Equip extends Item implements Serializable {
     }
 
     public void setUpgradeSlots(byte upgradeSlots) {
-
         this.upgradeSlots = upgradeSlots;
     }
 
