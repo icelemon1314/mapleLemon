@@ -115,7 +115,13 @@ public class PlayersHandler {
         }
     }
 
+    /**
+     * 通过传送门
+     * @param slea
+     * @param chr
+     */
     public static void UseDoor(SeekableLittleEndianAccessor slea, MapleCharacter chr) {
+        // 49 08 00 00 00 00
         int oid = slea.readInt();
         boolean mode = slea.readByte() == 0;
         for (MapleMapObject obj : chr.getMap().getAllDoorsThreadsafe()) {

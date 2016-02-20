@@ -729,7 +729,7 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
         if (this.poisons.size() > 0) {
             this.poisonsLock.readLock().lock();
             try {
-                client.getSession().write(MobPacket.applyMonsterPoisonStatus(this, this.poisons));
+                client.getSession().write(MobPacket.applyMonsterPoisonStatus(this, this.poisons,100));
             } finally {
                 this.poisonsLock.readLock().unlock();
             }
@@ -971,10 +971,10 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
                 this.poisons.add(status);
                 status.scheduledoPoison(this);
                 if (con != null) {
-                    this.map.broadcastMessage(con, MobPacket.applyMonsterPoisonStatus(this, this.poisons), getTruePosition());
-                    con.getClient().getSession().write(MobPacket.applyMonsterPoisonStatus(this, this.poisons));
+                    this.map.broadcastMessage(con, MobPacket.applyMonsterPoisonStatus(this, this.poisons,(int)duration), getTruePosition());
+                    con.getClient().getSession().write(MobPacket.applyMonsterPoisonStatus(this, this.poisons,(int)duration));
                 } else {
-                    this.map.broadcastMessage(MobPacket.applyMonsterPoisonStatus(this, this.poisons), getTruePosition());
+                    this.map.broadcastMessage(MobPacket.applyMonsterPoisonStatus(this, this.poisons,(int)duration), getTruePosition());
                 }
             } finally {
                 this.poisonsLock.writeLock().unlock();
@@ -982,12 +982,12 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
         } else {
             this.stati.put(stat, status);
             if (con != null) {
-                this.map.broadcastMessage(con, MobPacket.applyMonsterStatus(this, status), getTruePosition());
+                this.map.broadcastMessage(con, MobPacket.applyMonsterStatus(this, status,(int)duration), getTruePosition());
                 // MapleMonster mons, MonsterStatusEffect ms
                 // int oid, Map<MonsterStatus, Integer> stati, List<Integer> reflection, MobSkill skil
-                con.getClient().getSession().write(MobPacket.applyMonsterStatus(this, status));
+                con.getClient().getSession().write(MobPacket.applyMonsterStatus(this, status,(int)duration));
             } else {
-                this.map.broadcastMessage(MobPacket.applyMonsterStatus(this, status), getTruePosition());
+                this.map.broadcastMessage(MobPacket.applyMonsterStatus(this, status,(int)duration), getTruePosition());
             }
         }
     }
@@ -997,7 +997,7 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
             cancelStatus(status.getStati());
         }
         this.stati.put(status.getStati(), status);
-        this.map.broadcastMessage(MobPacket.applyMonsterStatus(this, status), getTruePosition());
+        this.map.broadcastMessage(MobPacket.applyMonsterStatus(this, status,status.getDotTime()), getTruePosition());
     }
 
     public void dispelSkill(MobSkill skillId) {
@@ -1024,7 +1024,7 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
         }
         MapleCharacter con = getController();
         if (reflection.size() > 0) {
-            this.reflectpack = MobPacket.applyMonsterStatus(getObjectId(), effect, reflection, skill);
+            this.reflectpack = MobPacket.applyMonsterStatus(getObjectId(), effect, reflection, skill,duration);
             if (con != null) {
                 this.map.broadcastMessage(con, this.reflectpack, getTruePosition());
                 con.getClient().getSession().write(this.reflectpack);
@@ -1034,10 +1034,10 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
         } else {
             for (Map.Entry status : effect.entrySet()) {
                 if (con != null) {
-                    this.map.broadcastMessage(con, MobPacket.applyMonsterStatus(getObjectId(), (MonsterStatus) status.getKey(), ((Integer) status.getValue()), skill), getTruePosition());
-                    con.getClient().getSession().write(MobPacket.applyMonsterStatus(getObjectId(), (MonsterStatus) status.getKey(), ((Integer) status.getValue()), skill));
+                    this.map.broadcastMessage(con, MobPacket.applyMonsterStatus(getObjectId(), (MonsterStatus) status.getKey(), ((Integer) status.getValue()), skill,duration), getTruePosition());
+                    con.getClient().getSession().write(MobPacket.applyMonsterStatus(getObjectId(), (MonsterStatus) status.getKey(), ((Integer) status.getValue()), skill,duration));
                 } else {
-                    this.map.broadcastMessage(MobPacket.applyMonsterStatus(getObjectId(), (MonsterStatus) status.getKey(), ((Integer) status.getValue()), skill), getTruePosition());
+                    this.map.broadcastMessage(MobPacket.applyMonsterStatus(getObjectId(), (MonsterStatus) status.getKey(), ((Integer) status.getValue()), skill,duration), getTruePosition());
                 }
             }
         }

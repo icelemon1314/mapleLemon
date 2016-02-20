@@ -2944,7 +2944,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             this.eventInstance.changedMap(this, to.getId());
         }
         if (this.map.getId() == nowmapid) {
-            this.client.getSession().write(warpPacket);
             boolean shouldChange = this.client.getChannelServer().getPlayerStorage().getCharacterById(getId()) != null;
             boolean shouldState = this.map.getId() == to.getId();
             if ((shouldChange) && (shouldState)) {
@@ -2952,6 +2951,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             this.map.removePlayer(this);
             if (shouldChange) {
+                this.client.getSession().write(warpPacket);
                 this.map = to;
                 setPosition(pos);
                 to.addPlayer(this);
@@ -4669,26 +4669,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         System.out.println("召唤玩家0");
         if (client.getPlayer().allowedToTarget(this)) {
             System.out.println("召唤玩家1");
-//            client.getSession().write(MaplePacketCreator.spawnPlayerMapobject(this));
-
-            if (this.summonedFamiliar != null) {
-//                client.getSession().write(MaplePacketCreator.spawnFamiliar(this.summonedFamiliar, true));
-            }
-            System.out.println("召唤玩家2");
-            if ((this.summons != null) && (this.summons.size() > 0)) {
-                this.summonsLock.readLock().lock();
-                try {
-                    for (MapleSummon summon : this.summons.values()) {
-                        client.getSession().write(SummonPacket.spawnSummon(summon, false));
-                    }
-                } finally {
-                    this.summonsLock.readLock().unlock();
-                }
-            }
-            System.out.println("召唤玩家3");
-            if ((this.followid > 0) && (this.followon)) {
-//                client.getSession().write(MaplePacketCreator.followEffect(this.followinitiator ? this.followid : this.id, this.followinitiator ? this.id : this.followid, null));
-            }
+            client.getSession().write(MaplePacketCreator.spawnPlayerMapobject(this));
         }
     }
 

@@ -117,7 +117,7 @@ public class GameConstants {
 
 	private static final long[] exp = new long[201];
 	
-	public static void LoadEXP() {
+	public static void LoadExp() {
 		for (int i = 1; i<=50;i++) {
 			if (i <= 5) {
 				exp[i] = i*(i*i/2+15);

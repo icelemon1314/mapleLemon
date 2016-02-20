@@ -237,6 +237,7 @@ public class MaplePacketCreator {
     public static byte[] spawnPortal(int townId, int targetId, int skillId, Point pos) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
+        // 27 40 23 05 06 B4 4A 05 06 7A FB 14 08
         mplew.write(SendPacketOpcode.SPAWN_PORTAL.getValue());
         mplew.writeInt(townId);
         mplew.writeInt(targetId);

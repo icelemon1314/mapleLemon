@@ -1,6 +1,7 @@
 package client.messages.commands;
 
 import client.MapleClient;
+import client.MapleJob;
 import client.inventory.Equip;
 import client.inventory.Item;
 import client.inventory.MapleInventoryType;
@@ -154,6 +155,25 @@ public class PlayerCommand {
                 //toDrop.setOwner(c.getPlayer().getName());
                 c.getPlayer().getMap().spawnItemDrop(c.getPlayer(), c.getPlayer(), toDrop, c.getPlayer().getPosition(), true, true);
             }
+            return 1;
+        }
+    }
+
+    public static class job extends CommandExecute {
+
+        @Override
+        public int execute(MapleClient c, String[] splitted) {
+            if (splitted.length < 2) {
+                c.getPlayer().dropMessage(6, splitted[0] + " <职业ID>");
+                return 0;
+            }
+            int jobid = Integer.parseInt(splitted[1]);
+            if (!MapleJob.isExist(jobid)) {
+                c.getPlayer().dropMessage(5, "职业ID无效");
+                return 0;
+            }
+            c.getPlayer().changeJob((short) jobid, true);
+            c.getPlayer().setSubcategory(c.getPlayer().getSubcategory());
             return 1;
         }
     }

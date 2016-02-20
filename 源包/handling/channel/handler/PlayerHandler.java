@@ -343,6 +343,7 @@ public class PlayerHandler {
         // 31 CE CC 10 00 01 80 00 00
         // 31 2B 46 0F 00 14 00 00
         // 31 BC BC 21 00 04 01 A6 86 01 00 58 02
+        // 31 5A 43 23 00 14 49 FB 16 08  时空门
         if ((chr == null) || (chr.hasBlockedInventory()) || (chr.getMap() == null)) {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
@@ -362,43 +363,6 @@ public class PlayerHandler {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
-//        int checkSkilllevel = chr.getTotalSkillLevel(skillid);
-//        if ((checkSkilllevel <= 0) || (checkSkilllevel != skillLevel)) {
-//            if ((!GameConstants.isMulungSkill(skillid)) && (!GameConstants.isPyramidSkill(skillid)) && (checkSkilllevel <= 0) && !GameConstants.isRingBuff(skillid)) {
-//                if (chr.isAdmin()) {
-//                    chr.dropSpouseMessage(25, new StringBuilder().append("[SpecialSkill] 使用技能出现异常 技能ID: ").append(skillid).append(" 角色技能等级: ").append(checkSkilllevel).append(" 封包获取等级: ").append(skillLevel).append(" 是否相同: ").append(checkSkilllevel == skillLevel).toString());
-//                }
-//                FileoutputUtil.log(FileoutputUtil.SpecialSkill_log, "玩家[" + chr.getName() + " 职业: " + chr.getJobName() + "] 使用技能: " + skill.getName() + " (" + skillid + ")效果为空 技能等级: " + checkSkilllevel + " 是否武陵技能 - " + !GameConstants.isMulungSkill(skillid) + "  是否金字塔技能- " + !GameConstants.isPyramidSkill(skillid) + " 封包:" + slea.toString(true));
-//                c.getSession().write(MaplePacketCreator.enableActions());
-//                return;
-//            }
-//            if (GameConstants.isMulungSkill(skillid)) {
-//                if (chr.getMapId() / 10000 != 92502) {
-//                    return;
-//                }
-//                if (chr.getMulungEnergy() < 10000) {
-//                    return;
-//                }
-//                chr.mulung_EnergyModify(false);
-//            } else if ((GameConstants.isPyramidSkill(skillid))
-//                    && (chr.getMapId() / 10000 != 92602) && (chr.getMapId() / 10000 != 92601)) {
-//                return;
-//            }
-//        }
-
-//        if (GameConstants.isEventMap(chr.getMapId())) {
-//            for (MapleEventType t : MapleEventType.values()) {
-//                MapleEvent e = ChannelServer.getInstance(chr.getClient().getChannel()).getEvent(t);
-//                if ((e.isRunning()) && (!chr.isGM())) {
-//                    for (int i : e.getType().mapids) {
-//                        if (chr.getMapId() == i) {
-//                            chr.dropMessage(5, "无法在这里使用.");
-//                            return;
-//                        }
-//                    }
-//                }
-//            }
-//        }
         skillLevel = chr.getTotalSkillLevel(skillid);
         MapleStatEffect effect = skill.getEffect(skillLevel);
         if ((effect.getCooldown(chr) > 0) && (!chr.isGM())) {

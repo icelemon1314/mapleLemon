@@ -2760,6 +2760,10 @@ public final class MapleMap {
         return ChannelServer.getInstance(this.channel).getEventSM().getEventManager(em);
     }
 
+    /**
+     * 移除玩家离开地图
+     * @param chr
+     */
     public void removePlayer(MapleCharacter chr) {
         if (this.everlast) {
             returnEverLastItem(chr);
@@ -2787,6 +2791,7 @@ public final class MapleMap {
             for (MapleSummon summon : listSummons.values()) {
                 broadcastMessage(SummonPacket.removeSummon(summon, true));
                 removeMapObject(summon);
+                // 不能移动的召唤物，换地图后就没有了
                 if ((summon.getMovementType() == SummonMovementType.不会移动) || (summon.getMovementType() == SummonMovementType.CIRCLE_STATIONARY) || (summon.getMovementType() == SummonMovementType.自由移动)) {
                     ((List) toCancel).add(summon);
                 } else {
@@ -2796,6 +2801,7 @@ public final class MapleMap {
         } finally {
             chr.unlockSummonsReadLock();
         }
+        // @TODO 这里应该可以合并到上面去的
         for (MapleSummon summon : toCancel) {
             chr.removeSummon(summon.getSkillId());
             chr.dispelSkill(summon.getSkillId());

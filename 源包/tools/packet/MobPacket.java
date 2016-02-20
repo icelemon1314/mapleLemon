@@ -335,7 +335,7 @@ public class MobPacket {
         }
     }
 
-    public static byte[] applyMonsterStatus(int oid, MonsterStatus mse, int x, MobSkill skil) {
+    public static byte[] applyMonsterStatus(int oid, MonsterStatus mse, int x, MobSkill skil,long buffTime) {
         if (ServerProperties.ShowPacket()) {
             System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
         }
@@ -347,7 +347,7 @@ public class MobPacket {
         mplew.writeInt(x);
         mplew.writeShort(skil.getSkillId());
         mplew.writeShort(skil.getSkillLevel());
-        mplew.writeShort(0);
+        mplew.writeShort((int)buffTime);
         mplew.writeShort(0);
 
         mplew.write(1);
@@ -355,7 +355,7 @@ public class MobPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] applyMonsterStatus(MapleMonster mons, MonsterStatusEffect ms) {
+    public static byte[] applyMonsterStatus(MapleMonster mons, MonsterStatusEffect ms,long buffTime) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.APPLY_MONSTER_STATUS.getValue());
@@ -368,20 +368,32 @@ public class MobPacket {
         } else if (ms.getSkill() > 0) {
             mplew.writeInt(ms.getSkill());
         }
-        mplew.writeShort(100);
+        mplew.writeShort((int)(buffTime/100));
         mplew.writeShort(1); // delay in ms
         return mplew.getPacket();
     }
 
-    public static byte[] applyMonsterPoisonStatus(MapleMonster mons, List<MonsterStatusEffect> mse) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
+    public static byte[] applyMonsterPoisonStatus(MapleMonster mons, List<MonsterStatusEffect> mse,int buffTime) {
         if ((mse.size() <= 0) || (mse.get(0) == null)) {
             return MaplePacketCreator.enableActions();
         }
+
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
+        mplew.write(SendPacketOpcode.APPLY_MONSTER_STATUS.getValue());
+        mplew.writeInt(mons.getObjectId());
+        PacketHelper.writeMonsterStatusMask(mplew, MonsterStatus.中毒);
+
+        for (MonsterStatusEffect m : mse) {
+            mplew.writeShort(((Integer) m.getX())); // 效果值，减速多少，中毒扣血多少等
+            mplew.writeInt(m.getSkill());
+            mplew.writeShort((int)(buffTime/100)); // buffTime, this needs to be coded properly -- as a workaround, we'll use 100.
+        }
+        mplew.writeShort(1); // delay in ms
+
+
+
+/*
         mplew.write(SendPacketOpcode.APPLY_MONSTER_STATUS.getValue());
         mplew.writeInt(mons.getObjectId());
         MonsterStatusEffect ms = (MonsterStatusEffect) mse.get(0);
@@ -419,6 +431,7 @@ public class MobPacket {
             mplew.write(1);
             mplew.write(1);
         }
+        */
         return mplew.getPacket();
     }
 
@@ -430,7 +443,7 @@ public class MobPacket {
      * @param skil
      * @return
      */
-    public static byte[] applyMonsterStatus(int oid, Map<MonsterStatus, Integer> stati, List<Integer> reflection, MobSkill skil) {
+    public static byte[] applyMonsterStatus(int oid, Map<MonsterStatus, Integer> stati, List<Integer> reflection, MobSkill skil,long buffTime) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.APPLY_MONSTER_STATUS.getValue());
@@ -440,7 +453,7 @@ public class MobPacket {
         for (Map.Entry mse : stati.entrySet()) {
             mplew.writeShort(((Integer) mse.getValue())); // 效果值，减速多少，中毒扣血多少等
             mplew.writeInt(skil.getSkillId());
-            mplew.writeShort(100); // buffTime, this needs to be coded properly -- as a workaround, we'll use 100.
+            mplew.writeShort((int)(buffTime/100)); // buffTime, this needs to be coded properly -- as a workaround, we'll use 100.
         }
         mplew.writeShort(1); // delay in ms
         return mplew.getPacket();

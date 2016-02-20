@@ -140,7 +140,7 @@ public class Start {
         System.out.println("载入数据(因为数据量大可能比较久而且内存消耗会飙升)");
 
         System.out.println("加载等级经验数据");
-        GameConstants.LoadEXP();
+        GameConstants.LoadExp();
 
         System.out.println("加载排名信息数据");
         MapleGuildRanking.getInstance().load(reload);

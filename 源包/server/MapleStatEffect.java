@@ -504,7 +504,9 @@ public class MapleStatEffect implements Serializable {
                     ret.statups.add(new Pair(MapleBuffStat.神圣祈祷, ret.info.get(MapleStatInfo.x)));
                     break;
                 case 祭司.巫毒术:
-                    ret.monsterStatus.put(MonsterStatus.速度, 1);
+                    ret.monsterStatus.put(MonsterStatus.速度, -20);
+                    ret.monsterStatus.put(MonsterStatus.物攻, 1);
+                    ret.monsterStatus.put(MonsterStatus.魔攻, 1);
                     break;
 
 
