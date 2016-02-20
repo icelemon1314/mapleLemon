@@ -342,6 +342,7 @@ public class PlayerHandler {
     public static void SpecialSkill(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         // 31 CE CC 10 00 01 80 00 00
         // 31 2B 46 0F 00 14 00 00
+        // 31 BC BC 21 00 04 01 A6 86 01 00 58 02
         if ((chr == null) || (chr.hasBlockedInventory()) || (chr.getMap() == null)) {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
@@ -405,49 +406,26 @@ public class PlayerHandler {
                 c.getSession().write(MaplePacketCreator.enableActions());
                 return;
             }
-            if (skillid != 35111002) {
-                c.getSession().write(MaplePacketCreator.skillCooldown(skillid, effect.getCooldown(chr)));
-                chr.addCooldown(skillid, System.currentTimeMillis(), effect.getCooldown(chr) * 1000);
-            }
+            c.getSession().write(MaplePacketCreator.skillCooldown(skillid, effect.getCooldown(chr)));
+            chr.addCooldown(skillid, System.currentTimeMillis(), effect.getCooldown(chr) * 1000);
         }
         System.out.println("看是否有特需处理的BUFF");
-        switch (skillid) {
-            case 1221016:
-                Rectangle bounds = effect.calculateBoundingBox(chr.getOldPosition(), chr.isFacingLeft());
-                List<MapleCharacter> chrs = chr.getMap().getCharactersIntersect(bounds);
-                for (MapleCharacter obj : chrs) {
-                    if (obj.getParty().getId() == chr.getParty().getId() && !obj.isAlive() && obj.getId() != chr.getId()) {
-                        obj.getStat().setHp(obj.getStat().getCurrentMaxHp());
-                        obj.setStance(0);
-                        effect.applyTo(chr, obj, true, null, effect.getDuration());
-                        effect.applyTo(chr);
-                        return;
-                    }
-                }
-                chr.send(MaplePacketCreator.enableActions());
-                break;
-            case 4341003:
-                chr.setKeyDownSkill_Time(0L);
-                chr.getMap().broadcastMessage(chr, MaplePacketCreator.skillCancel(chr, skillid), false);
-                break;
-            default:
-                if (effect.is时空门()) {
-                    System.out.println("释放时空们");
-                    if (!FieldLimitType.MysticDoor.check(chr.getMap().getFieldLimit())) {
-                        effect.applyTo(c.getPlayer(), pos);
-                    } else {
-                        c.getSession().write(MaplePacketCreator.enableActions());
-                    }
-                } else {
-                    int mountid = MapleStatEffect.parseMountInfo(c.getPlayer(), skill.getId());
-                    if ((mountid != 0) && (mountid != GameConstants.getMountItem(skill.getId(), chr)) && (!chr.isIntern()) && (chr.getInventory(MapleInventoryType.EQUIPPED).getItem((short) -122) == null)
-                            && (!GameConstants.isMountItemAvailable(mountid, chr.getJob()))) {
-                        c.getSession().write(MaplePacketCreator.enableActions());
-                        return;
-                    }
-                    System.out.println("释放技能效果：");
-                    effect.applyTo(chr, pos);
-                }
+        if (effect.is时空门()) {
+            System.out.println("释放时空们");
+            if (!FieldLimitType.MysticDoor.check(chr.getMap().getFieldLimit())) {
+                effect.applyTo(c.getPlayer(), pos);
+            } else {
+                c.getSession().write(MaplePacketCreator.enableActions());
+            }
+        } else {
+            int mountid = MapleStatEffect.parseMountInfo(c.getPlayer(), skill.getId());
+            if ((mountid != 0) && (mountid != GameConstants.getMountItem(skill.getId(), chr)) && (!chr.isIntern()) && (chr.getInventory(MapleInventoryType.EQUIPPED).getItem((short) -122) == null)
+                    && (!GameConstants.isMountItemAvailable(mountid, chr.getJob()))) {
+                c.getSession().write(MaplePacketCreator.enableActions());
+                return;
+            }
+            System.out.println("释放技能效果：");
+            effect.applyTo(chr, pos);
         }
     }
 
@@ -1087,11 +1065,9 @@ public class PlayerHandler {
         }
         String msg = "欢迎来到#b蓝蜗牛区（仿官方）#k\r\n\r\n祝您玩的愉快！";
         c.getSession().write(MaplePacketCreator.sendHint(msg, 250, 5));
-        /*if (chr.getLevel() == 1) {
-         chr.dropMessage(1, "1 到 10级是35倍经验，10级以上100倍\r\n点击登陆器上的游戏快捷键\r\n查看可使用操作");
-         }*/
-        if (c.getChannelServer().getDoubleExp() == 2) {
-            chr.dropSpouseMessage(20, "[系统提示] 当前服务器处于双倍经验活动中，祝您玩的愉快！");
+        int exp = c.getChannelServer().getExpRate(c.getWorld());
+        if (exp > 1) {
+            chr.dropSpouseMessage(20, "[系统提示] 当前服务器处于"+exp+"倍经验活动中，祝您玩的愉快！");
         }
         if (c.getChannelServer().getAutoGain() >= 2) {
             chr.dropSpouseMessage(25, "[系统提示] 在线时间奖励双倍活动正在举行.");

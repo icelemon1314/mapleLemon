@@ -12,29 +12,28 @@ import java.io.Serializable;
  */
 public enum MonsterStatus implements Serializable, Buffstat {
 
-    物攻(0x1, 1),
-    物防(0x2, 1),
+    物攻(0x1, 1), // ok
+    物防(0x2, 1), // ok
     魔攻(0x4, 1),
     魔防(0x8, 1),
     命中(0x10, 1),
     回避(0x20, 1),
-    速度(0x40, 1),
+    速度(0x40, 1), // ok
     眩晕(0x80,1),
     结冰(0x100, 1),//麻痹
-    中毒(0x200, 1),
+    中毒(0x200, 1), // ok
     沉默(0x400, 1),
     挑衅(0x800, 1),
     恐慌(0x1000,1 ),
     物理防御无效(0x2000,1),
     魔法防御无效(0x4000,1),
-    封印(0x8000,1),
+    封印(0x8000,1), // ok
 
     影网(0x20000,1),
     物攻提升(0x10000,1),
     魔攻提升(0x20000,1),
     物防提升(0x40000,1),
-    魔防提升(0x80000,1 ),
-    持续掉血(0x1,1 );
+    魔防提升(0x80000,1 );
     static final long serialVersionUID = 0L;
     private final int i;
     private final int first;

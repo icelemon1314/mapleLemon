@@ -17,10 +17,7 @@ import client.inventory.ModifyInventory;
 import client.messages.PlayerGMRank;
 import client.status.MonsterStatus;
 import client.status.MonsterStatusEffect;
-import constants.BattleConstants;
-import constants.GameConstants;
-import constants.ItemConstants;
-import constants.SkillConstants;
+import constants.*;
 import database.DatabaseConnection;
 import database.DatabaseException;
 import handling.channel.ChannelServer;
@@ -2669,7 +2666,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void enforceMaxHpMp() {
         Map statups = new EnumMap(MapleStat.class);
-        if (this.stats.getMp() > this.stats.getCurrentMaxMp(getJob())) {
+        if (this.stats.getMp() > this.stats.getCurrentMaxMp()) {
             this.stats.setMp(this.stats.getMp());
             statups.put(MapleStat.MP, (long) this.stats.getMp());
         }
@@ -3821,7 +3818,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
      */
     public void addMPHP(int hpDiff, int mpDiff) {
         int alpha = Math.min(getStat().getCurrentMaxHp(), stats.getHp() + hpDiff);
-        int beta = Math.min(getStat().getCurrentMaxMp(getJob()), stats.getMp() + mpDiff);
+        int beta = Math.min(getStat().getCurrentMaxMp(), stats.getMp() + mpDiff);
         Map statups = new EnumMap(MapleStat.class);
         if (alpha < 0) {
             alpha = 0;
@@ -3918,6 +3915,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
         额外的经验值倍率 *= this.getStat().expBuff / 100;
         额外的经验值倍率 *= getEXPMod();
+        额外的经验值倍率 *= getClient().getChannelServer().getExpRate(getClient().getWorld());
         int 额外的经验值 = 额外的经验值倍率 > 1.0D ? (int) (gain * (额外的经验值倍率 - 1.0D)) : 0;
 
         long Sidekick_Bonus_EXP = 0L;
@@ -3991,11 +3989,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 familyRep((int) prevexp, (int) needed, leveled);
             }
         }
-        if (gain != 0L) {
+        if (total != 0L) {
             if (this.exp < 0L) {
-                if (gain > 0L) {
+                if (total > 0L) {
                     setExp(getExpNeededForLevel());
-                } else if (gain < 0L) {
+                } else if (total < 0L) {
                     setExp(0L);
                 }
             }
@@ -4008,7 +4006,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 if (结婚奖励经验 > 0) {
                     expStatup.put(MapleExpStat.结婚奖励经验, 结婚奖励经验);
                 }
-                this.client.getSession().write(MaplePacketCreator.GainEXP_Monster((int) gain, 最高伤害, expStatup));
+                this.client.getSession().write(MaplePacketCreator.GainEXP_Monster((int) total, 最高伤害, expStatup));
             }
         }
         killMonsterExps.add(gain);
@@ -5772,7 +5770,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public double hasEXPCard() {
         ArrayList<Integer> expCards = ItemConstants.get经验值卡();
-        MapleInventory iv = getInventory(MapleInventoryType.CASH);
+        MapleInventory iv = getInventory(MapleInventoryType.ETC);
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         double canuse = 1.0D;
         for (int i : expCards) {

@@ -2,14 +2,14 @@ package server.life;
 
 public enum Element {
 
-    NEUTRAL(0),
-    PHYSICAL(1),
-    FIRE(2, true),
-    ICE(3, true),
+    NEUTRAL(0), // 中立
+    PHYSICAL(1),  //物理
+    FIRE(2, true), // 火
+    ICE(3, true),  // 冰
     LIGHTING(4),
-    POISON(5),
-    HOLY(6, true),
-    DARKNESS(7);
+    POISON(5), // 毒
+    HOLY(6, true),  //神圣
+    DARKNESS(7);  // 黑暗
 
     private int value;
     private boolean special = false;

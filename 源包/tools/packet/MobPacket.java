@@ -386,7 +386,7 @@ public class MobPacket {
         mplew.writeInt(mons.getObjectId());
         MonsterStatusEffect ms = (MonsterStatusEffect) mse.get(0);
         if (ms.getStati() == MonsterStatus.中毒) {
-            PacketHelper.writeMonsterStatusMask(mplew, MonsterStatus.持续掉血);
+            PacketHelper.writeMonsterStatusMask(mplew, MonsterStatus.中毒);
             mplew.write(mse.size());
             for (MonsterStatusEffect m : mse) {
                 mplew.writeInt(m.getFromID());
@@ -422,10 +422,15 @@ public class MobPacket {
         return mplew.getPacket();
     }
 
+    /**
+     * 给怪物加buff
+     * @param oid
+     * @param stati
+     * @param reflection
+     * @param skil
+     * @return
+     */
     public static byte[] applyMonsterStatus(int oid, Map<MonsterStatus, Integer> stati, List<Integer> reflection, MobSkill skil) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.APPLY_MONSTER_STATUS.getValue());
@@ -433,83 +438,41 @@ public class MobPacket {
         PacketHelper.writeMonsterStatusMask(mplew, stati.keySet());
 
         for (Map.Entry mse : stati.entrySet()) {
-            mplew.writeShort(((Integer) mse.getValue()));
+            mplew.writeShort(((Integer) mse.getValue())); // 效果值，减速多少，中毒扣血多少等
             mplew.writeInt(skil.getSkillId());
             mplew.writeShort(100); // buffTime, this needs to be coded properly -- as a workaround, we'll use 100.
         }
-        mplew.write(1); // delay in ms
+        mplew.writeShort(1); // delay in ms
         return mplew.getPacket();
     }
 
+
+    /**
+     * 取消怪物buff
+     * @param oid
+     * @param stat
+     * @return
+     */
     public static byte[] cancelMonsterStatus(int oid, MonsterStatus stat) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CANCEL_MONSTER_STATUS.getValue());
         mplew.writeInt(oid);
         PacketHelper.writeMonsterStatusMask(mplew, stat);
-        mplew.write(1);
-        mplew.write(2);
 
         return mplew.getPacket();
     }
 
     public static byte[] cancelMonsterPoisonStatus(int oid, MonsterStatusEffect m) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CANCEL_MONSTER_STATUS.getValue());
         mplew.writeInt(oid);
-//        PacketHelper.writeMonsterStatusMask(mplew, MonsterStatus.持续掉血);
-        mplew.writeInt(0);
-        mplew.writeInt(1);
-        mplew.writeInt(m.getFromID());
-        if (m.isMonsterSkill()) {
-            mplew.writeShort(m.getMobSkill().getSkillId());
-            mplew.writeShort(m.getMobSkill().getSkillLevel());
-        } else if (m.getSkill() > 0) {
-            mplew.writeInt(m.getSkill());
-        }
-        mplew.write(3);
+        PacketHelper.writeMonsterStatusMask(mplew, MonsterStatus.中毒);
 
         return mplew.getPacket();
     }
 
-    public static byte[] talkMonster(int oid, int itemId, String msg) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.TALK_MONSTER.getValue());
-        mplew.writeInt(oid);
-        mplew.writeInt(500);
-        mplew.writeInt(itemId);
-        mplew.write(itemId <= 0 ? 0 : 1);
-        mplew.write((msg == null) || (msg.length() <= 0) ? 0 : 1);
-        if ((msg != null) && (msg.length() > 0)) {
-            mplew.writeMapleAsciiString(msg);
-        }
-        mplew.writeInt(1);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] removeTalkMonster(int oid) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.REMOVE_TALK_MONSTER.getValue());
-        mplew.writeInt(oid);
-
-        return mplew.getPacket();
-    }
 
     public static byte[] getNodeProperties(MapleMonster objectid, MapleMap map) {
         if (objectid.getNodePacket() != null) {

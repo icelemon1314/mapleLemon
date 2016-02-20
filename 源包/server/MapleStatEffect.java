@@ -385,7 +385,7 @@ public class MapleStatEffect implements Serializable {
             addBuffStatPairToListIfNotZero(ret.statups, MapleBuffStat.魔法防御力, ret.info.get(MapleStatInfo.mdd));
             addBuffStatPairToListIfNotZero(ret.statups, MapleBuffStat.命中率, ret.info.get(MapleStatInfo.acc));
             addBuffStatPairToListIfNotZero(ret.statups, MapleBuffStat.回避率, ret.info.get(MapleStatInfo.eva));
-            addBuffStatPairToListIfNotZero(ret.statups, MapleBuffStat.移动速度, (sourceid == 32120001) || (sourceid == 32101003) ? ret.info.get(MapleStatInfo.x) : ret.info.get(MapleStatInfo.speed));
+            addBuffStatPairToListIfNotZero(ret.statups, MapleBuffStat.移动速度, ret.info.get(MapleStatInfo.speed));
             addBuffStatPairToListIfNotZero(ret.statups, MapleBuffStat.跳跃力, ret.info.get(MapleStatInfo.jump));
             addBuffStatPairToListIfNotZero(ret.statups, MapleBuffStat.神圣之火_最大体力百分比, ret.info.get(MapleStatInfo.mhpR));
             addBuffStatPairToListIfNotZero(ret.statups, MapleBuffStat.神圣之火_最大魔力百分比, ret.info.get(MapleStatInfo.mmpR));
@@ -1397,18 +1397,21 @@ public class MapleStatEffect implements Serializable {
             if (applyfrom.isShowPacket()) {
                 applyfrom.dropMessage(-5, "HpMpChange => 默认: " + this.hpR + " - " + healHpRate);
             }
-            int maxChange = (hpchange ? healHpRate : this.mpR) < 1.0D ? Math.min(49999, (int) Math.floor(99999.0D * (hpchange ? healHpRate : this.mpR))) : 99999;
-            int current = hpchange ? applyfrom.getStat().getCurrentMaxHp() : applyfrom.getStat().getCurrentMaxMp(applyfrom.getJob());
+            int maxChange = this.mpR < 1.0D ? Math.min((int) Math.floor(GameConstants.MAX_HP/2), (int) Math.floor(GameConstants.MAX_HP * (hpchange ? healHpRate : this.mpR))) : GameConstants.MAX_HP;
+            int current = applyfrom.getStat().getCurrentMaxHp();
             change = (int) (current * (hpchange ? healHpRate : this.mpR)) > maxChange ? maxChange : (int) (current * (hpchange ? healHpRate : this.mpR));
         }
         return change;
     }
 
+    /**
+     * 计算血量变化
+     * @param applyfrom
+     * @param primary
+     * @return
+     */
     private int calcHPChange(MapleCharacter applyfrom, boolean primary) {
         int hpchange = 0;
-        if (this.sourceid == 9001000) {
-            hpchange = 500000;
-        }
         if ((this.info.get(MapleStatInfo.hp)) != 0) {
             if (!this.skill) {
                 if (primary) {
@@ -1421,7 +1424,7 @@ public class MapleStatEffect implements Serializable {
             }
         }
         if (this.hpR != 0.0D) {
-            hpchange += getHpMpChange(applyfrom, true);
+            hpchange += (int) (applyfrom.getStat().getCurrentMaxHp() * hpR);
         }
 
         if ((primary) && ((this.info.get(MapleStatInfo.hpCon)) != 0)) {
@@ -1448,7 +1451,7 @@ public class MapleStatEffect implements Serializable {
             }
         }
         if (this.mpR != 0.0D) {
-            mpchange += getHpMpChange(applyfrom, false);
+            mpchange += (int) (applyfrom.getStat().getCurrentMaxMp() * mpR);
         }
         if (primary) {
             if (((this.info.get(MapleStatInfo.mpCon)) != 0)) {

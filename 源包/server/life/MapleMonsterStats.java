@@ -329,7 +329,7 @@ public class MapleMonsterStats {
     }
 
     public ElementalEffectiveness getEffectiveness(Element e) {
-        ElementalEffectiveness elementalEffectiveness = (ElementalEffectiveness) this.resistance.get(e);
+        ElementalEffectiveness elementalEffectiveness = this.resistance.get(e);
         if (elementalEffectiveness == null) {
             return ElementalEffectiveness.NORMAL;
         }

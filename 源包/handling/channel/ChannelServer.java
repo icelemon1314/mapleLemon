@@ -78,7 +78,6 @@ public class ChannelServer {
     private final int channel;
     private int running_MerchantID = 0;
     private int flags = 0;
-    private int doubleExp = 1;
     private int sharePrice = 0;
     private String ip;
     private String serverName;
@@ -304,7 +303,7 @@ public class ChannelServer {
     }
 
     public int getExpRate(int world) {
-        return WorldConstants.getById(world).getExp() * getDoubleExp();
+        return WorldConstants.getById(world).getExp();
     }
 
     public void setExpRate(int expRate) {
@@ -320,7 +319,7 @@ public class ChannelServer {
     }
 
     public int getMesoRate(int world) {
-        return WorldConstants.getById(world).getMeso() * getDoubleExp();
+        return WorldConstants.getById(world).getMeso();
     }
 
     public void setMesoRate(int mesoRate) {
@@ -328,7 +327,7 @@ public class ChannelServer {
     }
 
     public int getDropRate(int world) {
-        return WorldConstants.getById(world).getDrop() * getDoubleExp();
+        return WorldConstants.getById(world).getDrop();
     }
 
     public void setDropRate(int dropRate) {
@@ -344,21 +343,6 @@ public class ChannelServer {
 
     public void setGlobalRate(int rate) {
         globalRate = rate;
-    }
-
-    public int getDoubleExp() {
-        if ((doubleExp < 0) || (doubleExp > 2)) {
-            return 1;
-        }
-        return doubleExp;
-    }
-
-    public void setDoubleExp(int doubleExp) {
-        if ((doubleExp < 0) || (doubleExp > 2)) {
-            this.doubleExp = 1;
-        } else {
-            this.doubleExp = doubleExp;
-        }
     }
 
     public int getStatLimit() {

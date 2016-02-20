@@ -112,41 +112,24 @@ public class GameConstants {
     public static final int 申请公ID = 26011;
     public static final int 申请公会名 = 26015;
 
-    private static final long[] exp = new long[251];
+    public static final int MAX_HP = 30000;
+    public static final int MAX_MP = 30000;
 
-    public static void LoadEXP() {
-        exp[1] = 15;
-        exp[2] = 34;
-        exp[3] = 57;
-        exp[4] = 92;
-        exp[5] = 135;
-        exp[6] = 372;
-        exp[7] = 560;
-        exp[8] = 840;
-        exp[9] = 1242;
-        for (int i = 10; i < 200; i++) {
-            if (i >= 10 && i < 15
-                    || i >= 30 && i < 35
-                    || i >= 60 && i < 65
-                    || i >= 100 && i < 105) {
-                exp[i] = exp[i - 1];
-                continue;
-            }
-            exp[i] = (long) ((double) exp[i - 1] * (i < 40 ? 1.2 : i < 75 ? 1.08 : i < 160 ? 1.07 : i < 200 ? 1.06 : 1));
-        } //ExtremeDevilz SUCKS
-        for (int i = 200; i < 250; i++) {
-            if (i % 10 == 0) {
-                exp[i] = exp[i - 1] * 2;
-                if (i != 200) {
-                    exp[i] = (long) ((double) exp[i] * (i == 210 ? 1.06 : i == 220 ? 1.04 : i == 230 ? 1.02 : i == 240 ? 1.01 : 1));
-                }
-                continue;
-            }
-            exp[i] = (long) ((double) exp[i - 1] * (i < 210 ? 1.2 : i < 220 ? 1.06 : i < 230 ? 1.04 : i < 240 ? 1.02 : i < 250 ? 1.01 : 1));
+	private static final long[] exp = new long[201];
+	
+	public static void LoadEXP() {
+		for (int i = 1; i<=50;i++) {
+			if (i <= 5) {
+				exp[i] = i*(i*i/2+15);
+			} else if (i > 5 && i <= 50) {
+				exp[i] = i*i/3*(i*i/3+19);
+			}
+		}
+        for (int i = 51; i<=200;i++) {
+            exp[i] = (long)((exp[i-1])*1.0548);
         }
-        exp[250] = 0;
     }
-
+	 
     public static long getExpNeededForLevel(final int level) {
         if (level < 1 || level >= exp.length) {
             return Long.MAX_VALUE;

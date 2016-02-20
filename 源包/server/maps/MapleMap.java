@@ -2201,14 +2201,6 @@ public final class MapleMap {
         spawnRandDrop();
     }
 
-    public void talkMonster(String msg, int itemId, int objectid) {
-        if (itemId > 0) {
-            startMapEffect(msg, itemId, false);
-        }
-        broadcastMessage(MobPacket.talkMonster(objectid, itemId, msg));
-        broadcastMessage(MobPacket.removeTalkMonster(objectid));
-    }
-
     public void startMapEffect(String msg, int itemId) {
         startMapEffect(msg, itemId, false);
     }
@@ -2923,6 +2915,12 @@ public final class MapleMap {
         return ret;
     }
 
+    /**
+     * 获取矩形中的怪物信息
+     * @param box
+     * @param MapObject_types
+     * @return
+     */
     public List<MapleMapObject> getMapObjectsInRect(Rectangle box, List<MapleMapObjectType> MapObject_types) {
         List ret = new ArrayList();
         for (MapleMapObjectType type : MapObject_types) {

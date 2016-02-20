@@ -1231,7 +1231,7 @@ public class InternCommand {
             builder.append(" || 蓝 : ");
             builder.append(other.getStat().getMp());
             builder.append(" /");
-            builder.append(other.getStat().getCurrentMaxMp(other.getJob()));
+            builder.append(other.getStat().getCurrentMaxMp());
 
             builder.append(" || 物理攻击力 : ");
             builder.append(other.getStat().getTotalWatk());

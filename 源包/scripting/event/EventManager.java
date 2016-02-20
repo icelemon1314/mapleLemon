@@ -488,7 +488,4 @@ public class EventManager {
         }
     }
 
-    public void DoubleRateEvent(boolean start) {
-        getChannelServer().setDoubleExp(start ? 2 : 1);
-    }
 }

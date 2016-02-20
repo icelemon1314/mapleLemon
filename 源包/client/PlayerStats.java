@@ -2508,13 +2508,13 @@ public class PlayerStats implements Serializable {
 
     public void heal_noUpdate(MapleCharacter chra) {
         setHp(getCurrentMaxHp());
-        setMp(getCurrentMaxMp(chra.getJob()));
+        setMp(getCurrentMaxMp());
     }
 
     public void heal(MapleCharacter chra) {
         heal_noUpdate(chra);
         chra.updateSingleStat(MapleStat.HP, getCurrentMaxHp());
-        chra.updateSingleStat(MapleStat.MP, getCurrentMaxMp(chra.getJob()));
+        chra.updateSingleStat(MapleStat.MP, getCurrentMaxMp());
     }
 
     public Pair<Integer, Integer> handleEquipAdditions(MapleItemInformationProvider ii, MapleCharacter chra, boolean first_login, Map<Skill, SkillEntry> sData, int itemId) {
@@ -2852,11 +2852,23 @@ public class PlayerStats implements Serializable {
     }
 
     public boolean setHp(int newhp) {
+        if (newhp < 0 ) {
+            newhp = 0;
+        }
+        if (newhp > getMaxHp()) {
+            newhp = getMaxHp();
+        }
         this.baseHp=newhp;
         return true;
     }
 
     public boolean setMp(int newmp) {
+        if (newmp < 0 ) {
+            newmp = 0;
+        }
+        if (newmp > getMaxMp()) {
+            newmp = getMaxMp();
+        }
         this.baseMp = newmp;
         return true;
     }
@@ -2930,7 +2942,7 @@ public class PlayerStats implements Serializable {
         return this.localmaxhp;
     }
 
-    public int getCurrentMaxMp(int job) {
+    public int getCurrentMaxMp() {
         return this.localmaxmp;
     }
 
