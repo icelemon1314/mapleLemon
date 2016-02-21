@@ -298,10 +298,6 @@ public class PacketHelper {
      * @param isCreateItem 是否从外部获取道具，也就是道具操作为0时要使用
      */
     public static void addItemInfo(MaplePacketLittleEndianWriter mplew, Item item,boolean isCreateItem) {
-        if (item == null) {
-            mplew.write(0);
-            return;
-        }
         if (!isCreateItem) {
             byte pos = item.getPosition();
             if (pos <= -1) { // 身上的装备
@@ -482,7 +478,7 @@ public class PacketHelper {
             mplew.writeInt(item.getItemId());
             mplew.writeInt(item.getPrice());
             if (ItemConstants.is飞镖道具(item.getItemId())) {
-                mplew.writeLong(5); //显示的购买数量
+                mplew.writeLong(1000); //显示的购买数量
             }
             mplew.writeShort(item.getBuyable());
         }

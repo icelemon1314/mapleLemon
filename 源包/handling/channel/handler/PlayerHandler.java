@@ -277,11 +277,12 @@ public class PlayerHandler {
     }
 
     public static void SkillEffect(SeekableLittleEndianAccessor slea, MapleCharacter chr) {
+        // 33 39 41 40 00 05 A9 06
         int skillId = slea.readInt();
         byte level = slea.readByte();
         byte display = slea.readByte();
         byte direction = slea.readByte();
-        byte speed = slea.readByte();
+//        byte speed = slea.readByte();
         Point position = null;
         if (slea.available() == 4L) {
             position = slea.readPos();
@@ -293,9 +294,9 @@ public class PlayerHandler {
             return;
         }
         int skilllevel_serv = chr.getTotalSkillLevel(skill);
-        if ((skilllevel_serv > 0) && (skilllevel_serv == level) && (skill.isChargeSkill()) || (skilllevel_serv == 3121013)) {
+        if ((skilllevel_serv > 0) && (skilllevel_serv == level) && (skill.isChargeSkill())) {
             chr.setKeyDownSkill_Time(System.currentTimeMillis());
-            chr.getMap().broadcastMessage(chr, MaplePacketCreator.skillEffect(chr.getId(), skillId, level, display, direction, speed, position), false);
+            chr.getMap().broadcastMessage(chr, MaplePacketCreator.skillEffect(chr.getId(), skillId, level, display, direction, (byte)1, position), false);
         }
     }
 
@@ -344,6 +345,7 @@ public class PlayerHandler {
         // 31 2B 46 0F 00 14 00 00
         // 31 BC BC 21 00 04 01 A6 86 01 00 58 02
         // 31 5A 43 23 00 14 49 FB 16 08  时空门
+        // 31 39 41 40 00 05 00 00
         if ((chr == null) || (chr.hasBlockedInventory()) || (chr.getMap() == null)) {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
@@ -564,6 +566,12 @@ public class PlayerHandler {
         DamageParse.applyAttack(attack, skill, c.getPlayer(), attackCount, maxdamage, effect, mirror ? AttackType.NON_RANGED_WITH_MIRROR : AttackType.NON_RANGED, 0);
     }
 
+    /**
+     * 远程攻击
+     * @param slea
+     * @param c
+     * @param chr
+     */
     public static void rangedAttack(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         AttackInfo attack = DamageParse.parseRangedAttack(slea, chr);
         if (attack == null) {
@@ -577,8 +585,8 @@ public class PlayerHandler {
         int skillLevel = 0;
         MapleStatEffect effect = null;
         Skill skill = null;
-        int surskill = attack.skillId;
-        boolean noBullet = (attack.starSlot == 0) || ((chr.getJob() >= 3500) && (chr.getJob() <= 3512));
+        boolean noBullet = GameConstants.isCastJob(chr.getJob());
+
         if (attack.skillId != 0) {
             skill = SkillFactory.getSkill(attack.skillId); //暂时这样修改
             if (skill == null) {
@@ -623,7 +631,7 @@ public class PlayerHandler {
         bulletCount *= (mirror ? 2 : 1);
         int projectile = 0;
         int visProjectile = 0;
-        if ((!noBullet) && (chr.getBuffedValue(MapleBuffStat.无形箭弩) == null)) {
+        if (noBullet && (chr.getBuffedValue(MapleBuffStat.无形箭弩) == null)) {
             Item item = chr.getInventory(MapleInventoryType.USE).getItem(attack.starSlot);
             if (item == null) {
                 return;
@@ -638,40 +646,40 @@ public class PlayerHandler {
                 visProjectile = projectile;
             }
 
-                int bulletConsume = bulletCount;
-                if ((effect != null) && (effect.getBulletConsume() != 0)) {
-                    bulletConsume = effect.getBulletConsume() * (mirror ? 2 : 1);
-                }
-                if ((chr.getJob() == 412) && (bulletConsume > 0) && (item.getQuantity() < MapleItemInformationProvider.getInstance().getSlotMax(projectile))) {
-                    Skill expert = SkillFactory.getSkill(4110012);
-                    if (chr.getTotalSkillLevel(expert) > 0) {
-                        MapleStatEffect eff = expert.getEffect(chr.getTotalSkillLevel(expert));
-                        if (eff.makeChanceResult()) {
-                            item.setQuantity((short) (item.getQuantity() + 1));
-                            c.getSession().write(InventoryPacket.modifyInventory(false, Collections.singletonList(new ModifyInventory(1, item))));
-                            bulletConsume = 0;
-                            c.getSession().write(InventoryPacket.getInventoryStatus());
-                        }
+            int bulletConsume = bulletCount;
+            if ((effect != null) && (effect.getBulletConsume() != 0)) {
+                bulletConsume = effect.getBulletConsume() * (mirror ? 2 : 1);
+            }
+            if ((chr.getJob() == 412) && (bulletConsume > 0) && (item.getQuantity() < MapleItemInformationProvider.getInstance().getSlotMax(projectile))) {
+                Skill expert = SkillFactory.getSkill(4110012);
+                if (chr.getTotalSkillLevel(expert) > 0) {
+                    MapleStatEffect eff = expert.getEffect(chr.getTotalSkillLevel(expert));
+                    if (eff.makeChanceResult()) {
+                        item.setQuantity((short) (item.getQuantity() + 1));
+                        c.getSession().write(InventoryPacket.modifyInventory(false, Collections.singletonList(new ModifyInventory(1, item))));
+                        bulletConsume = 0;
+                        c.getSession().write(InventoryPacket.getInventoryStatus());
                     }
                 }
-                if (bulletConsume > 0) {
-                    boolean useItem = true;
-                    if (chr.getBuffedValue(MapleBuffStat.子弹数量) != null) {
-                        int count = chr.getBuffedIntValue(MapleBuffStat.子弹数量) - bulletConsume;
-                        if (count >= 0) {
-                            chr.setBuffedValue(MapleBuffStat.子弹数量, count);
-                            useItem = false;
-                        } else {
-                            chr.cancelEffectFromBuffStat(MapleBuffStat.子弹数量);
-                            bulletConsume += count;
-                        }
+            }
+            if (bulletConsume > 0) {
+                boolean useItem = true;
+                if (chr.getBuffedValue(MapleBuffStat.子弹数量) != null) {
+                    int count = chr.getBuffedIntValue(MapleBuffStat.子弹数量) - bulletConsume;
+                    if (count >= 0) {
+                        chr.setBuffedValue(MapleBuffStat.子弹数量, count);
+                        useItem = false;
+                    } else {
+                        chr.cancelEffectFromBuffStat(MapleBuffStat.子弹数量);
+                        bulletConsume += count;
                     }
+                }
 
-                    if ((useItem) && (!MapleInventoryManipulator.removeById(c, MapleInventoryType.USE, projectile, bulletConsume, false, true))) {
-                        chr.dropMessage(5, "您的箭/子弹/飞镖不足。");
-                        return;
-                    }
+                if ((useItem) && (!MapleInventoryManipulator.removeById(c, MapleInventoryType.USE, projectile, bulletConsume, false, true))) {
+                    chr.dropMessage(5, "您的箭/子弹/飞镖不足。");
+                    return;
                 }
+            }
         }
 
         int projectileWatk = 0;

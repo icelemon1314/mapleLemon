@@ -187,9 +187,6 @@ public class DumpItems {
                 pEntry = MapleDataTool.getIntConvert(pData, -1);
             }
         }
-        if (id == 2070019 || id == 2330007) {
-            pEntry = 1.0;
-        }
         ps.setString(6, String.valueOf(pEntry));
         ps.setInt(7, MapleDataTool.getIntConvert("info/price", iz, -1));
         ps.setInt(8, MapleDataTool.getIntConvert("info/stateChangeItem", iz, 0));

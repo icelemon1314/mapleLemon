@@ -28,7 +28,7 @@ public enum MapleBuffStat implements Serializable, Buffstat {
     神圣祈祷(0x1000000, 1),
     聚财术(0x2000000, 1),
     影分身(0x4000000, 1),
-    金钱护盾(0x04000000, 1),
+    金钱护盾(0x8000000, 1),
     替身(0x8000000,1),
     敛财术(0x8000000, 1),
     STUN(0x00020000,1),

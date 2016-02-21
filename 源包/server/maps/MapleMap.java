@@ -560,7 +560,7 @@ public final class MapleMap {
             if (de.chance == 0) {
                 continue;
             }
-            if ((Randomizer.nextInt(99999) < de.chance * globalServerRate) && ((de.continent < 0) || ((de.continent < 10) && (this.mapid / 100000000 == de.continent)) || ((de.continent < 100) && (this.mapid / 10000000 == de.continent)) || ((de.continent < 1000) && (this.mapid / 1000000 == de.continent)))) {
+            if ((Randomizer.nextInt(GameConstants.DROP_ITEM_PER) < de.chance * globalServerRate) && ((de.continent < 0) || ((de.continent < 10) && (this.mapid / 100000000 == de.continent)) || ((de.continent < 100) && (this.mapid / 10000000 == de.continent)) || ((de.continent < 1000) && (this.mapid / 1000000 == de.continent)))) {
                 if ((de.itemId == 0) && (cashServerRate != 0)) {
                     int giveCash = Randomizer.nextInt(cashz) + cashz + cashModifier;
                     if (giveCash > 0) {

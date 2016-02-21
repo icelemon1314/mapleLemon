@@ -1412,6 +1412,10 @@ public class InventoryHandler {
                 c.getSession().write(MaplePacketCreator.enableActions());
                 return;
             }
+            // 飞镖类需要处理下数量问题
+            if (ItemConstants.is飞镖道具(mapitem.getItemId())) {
+                mapitem.getItem().setQuantity((short)0);
+            }
             double Distance = Client_Reportedpos.distanceSq(mapitem.getPosition());
             System.out.println("捡物品范围："+Distance);
             if ((Distance > 5000.0D) && ((mapitem.getMeso() > 0) || (mapitem.getItemId() != 4001025))) {
@@ -1439,7 +1443,7 @@ public class InventoryHandler {
                     chr.gainMeso(mapitem.getMeso(), true);
                 }
                 removeItem(chr, mapitem, ob);
-            } else if (MapleItemInformationProvider.getInstance().isPickupBlocked((int) mapitem.getItemId())) {
+            } else if (MapleItemInformationProvider.getInstance().isPickupBlocked(mapitem.getItemId())) {
                 System.out.println("拾取道具8");
                 chr.dropMessage(5, "这个道具无法捡取。");
                 c.getSession().write(MaplePacketCreator.enableActions());
@@ -1447,13 +1451,9 @@ public class InventoryHandler {
                 System.out.println("拾取道具10");
                 chr.dropMessage(5, "捡到立即使用的道具！");
                 removeItem(c.getPlayer(), mapitem, ob);
-                if (mapitem.getItemId() / 10000 == 291) {
-                    c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.getCapturePosition(c.getPlayer().getMap()));
-                    c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.resetCapture());
-                }
             } else if ((mapitem.getItemId() / 10000 != 291) && (MapleInventoryManipulator.checkSpace(c, (int) mapitem.getItemId(), mapitem.getItem().getQuantity(), mapitem.getItem().getOwner()))) {
                 System.out.println("拾取道具7");
-                MapleInventoryManipulator.addFromDrop(c, mapitem.getItem(), true/*, mapitem.getDropper() instanceof MapleMonster*/);
+                MapleInventoryManipulator.addFromDrop(c, mapitem.getItem(), true);
                 removeItem(chr, mapitem, ob);
             } else {
                 System.out.println("拾取道具11");

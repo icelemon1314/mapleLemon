@@ -568,7 +568,6 @@ public class MapleStatEffect implements Serializable {
                 case 独行客.金钱护盾:
                     ret.statups.add(new Pair(MapleBuffStat.金钱护盾, ret.info.get(MapleStatInfo.x)));
                     break;
-
             }
 
         } else {
@@ -857,7 +856,7 @@ public class MapleStatEffect implements Serializable {
             System.out.println("aasdss");
             if (((this.overTime) || (is群体治愈()))) {
                 System.out.println("nnnnnn");
-                applyBuff(applyfrom, newDuration);
+                applyBuff(applyfrom, newDuration); // 大部分走了这里
             }
             System.out.println("4444");
             if (isMonsterBuff()) {
@@ -1258,6 +1257,10 @@ public class MapleStatEffect implements Serializable {
             return;
         }
         int localDuration = newDuration;
+        if (localDuration == 1000) { // 如果持续时间为1s,那么表示需要服务端自动取消buff
+            newDuration = localDuration = 65535000;
+        }
+
         this.bufftime = newDuration;
         if (primary) {
             localDuration = Math.max(newDuration, alchemistModifyVal(applyfrom, localDuration, false));
@@ -1435,6 +1438,9 @@ public class MapleStatEffect implements Serializable {
 
         if ((applyfrom.getTotalSkillLevel(21120043) > 0)) {
             hpchange = 0;
+        }
+        if (this.sourceid == 独行客.转化术) {
+            hpchange += this.info.get(MapleStatInfo.y) * this.info.get(MapleStatInfo.mpCon);
         }
         return hpchange;
     }

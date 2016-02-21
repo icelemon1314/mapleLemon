@@ -35,6 +35,7 @@ import server.Timer.EtcTimer;
 import server.maps.MapleMap;
 import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
+import server.skill.冒险家.侠客;
 import server.skill.冒险家.冰雷巫师;
 import server.skill.冒险家.无影人;
 import server.skill.冒险家.火毒巫师;
@@ -1192,13 +1193,13 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
         this.stolen = s;
     }
 
+    /**
+     * 怪物被偷东西
+     * @param chr
+     */
     public void handleSteal(MapleCharacter chr) {
         double showdown = 100.0D;
-        MonsterStatusEffect mse = getBuff(MonsterStatus.挑衅);
-        if (mse != null) {
-            showdown += mse.getX();
-        }
-        Skill steal = SkillFactory.getSkill(4201004);
+        Skill steal = SkillFactory.getSkill(侠客.神通术);
         int level = chr.getTotalSkillLevel(steal);
         int chServerrate = ChannelServer.getInstance(chr.getClient().getChannel()).getDropRate(chr.getWorld());
         if ((level > 0) && (!getStats().isBoss()) && (this.stolen == -1) && (steal.getEffect(level).makeChanceResult())) {
@@ -1209,10 +1210,9 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
                 return;
             }
             List<MonsterDropEntry> dropEntry = new ArrayList(de);
-            Collections.shuffle(dropEntry);
 
             for (MonsterDropEntry d : dropEntry) {
-                if ((d.itemId > 0) && (d.questid == 0) && (d.itemId / 10000 != 238) && (Randomizer.nextInt(999999) < (int) (10 * d.chance * chServerrate * chr.getDropMod() * (chr.getStat().getDropBuff() / 100.0D) * (showdown / 100.0D)))) {
+                if ((d.itemId > 0) && (d.questid == 0) && (d.itemId / 10000 != 238) && (Randomizer.nextInt(GameConstants.DROP_ITEM_PER) < (int) (10 * d.chance * chServerrate * chr.getDropMod() * (chr.getStat().getDropBuff() / 100.0D) * (showdown / 100.0D)))) {
                     Item idrop;
                     if (ItemConstants.getInventoryType(d.itemId) == MapleInventoryType.EQUIP) {
                         Equip eq = (Equip) MapleItemInformationProvider.getInstance().getEquipById(d.itemId);
@@ -1225,8 +1225,6 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
                     break;
                 }
             }
-        } else {
-            this.stolen = 0;
         }
     }
 

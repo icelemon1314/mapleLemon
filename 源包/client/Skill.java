@@ -10,6 +10,7 @@ import server.Randomizer;
 import server.life.Element;
 import server.skill.冒险家.勇士;
 import server.skill.冒险家.牧师;
+import server.skill.冒险家.独行客;
 import tools.FileoutputUtil;
 import tools.Pair;
 
@@ -184,7 +185,7 @@ public class Skill {
                 case 3111011:
                 case 3201004:
                 case 3211012:
-                case 4211003:
+                case 独行客.敛财术:
                 case 4221013:
                 case 4330009:
                 case 4341002:
@@ -257,14 +258,14 @@ public class Skill {
     public MapleStatEffect getEffect(int level) {
         if (this.effects.size() < level) {
             if (this.effects.size() > 0) {
-                return (MapleStatEffect) this.effects.get(this.effects.size() - 1);
+                return this.effects.get(this.effects.size() - 1);
             }
             return null;
         }
         if (level <= 0) {
-            return (MapleStatEffect) this.effects.get(0);
+            return this.effects.get(0);
         }
-        return (MapleStatEffect) this.effects.get(level - 1);
+        return this.effects.get(level - 1);
     }
 
     public MapleStatEffect getPVPEffect(int level) {

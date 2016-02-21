@@ -320,7 +320,7 @@ public class BuffPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] giveBuff(int buffid, int bufflength, List<Pair<MapleBuffStat, Integer>> statups) {
+    public static byte[] giveBuff(int buffid, int duration, List<Pair<MapleBuffStat, Integer>> statups) {
         //TODO giveBuff 需要整理
         // 1A
         // 02 00 00 00
@@ -335,7 +335,7 @@ public class BuffPacket {
         for (Pair<MapleBuffStat, Integer> statup : statups) {
             mplew.writeShort(statup.getRight().shortValue());
             mplew.writeInt(buffid); // 技能ID
-            mplew.writeShort(bufflength);
+            mplew.writeShort(duration); // 持续时间
         }
         mplew.writeShort(0);
         int mask = 0x40020180;

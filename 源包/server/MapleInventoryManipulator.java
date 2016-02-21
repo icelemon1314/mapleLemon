@@ -447,6 +447,7 @@ public class MapleInventoryManipulator {
                     c.getSession().write(InventoryPacket.addItemToInventory(nItem));
                 }
             } else {
+                // 飞镖
                 Item nItem = new Item(item.getItemId(), (byte) 0, quantity, item.getFlag());
                 nItem.setExpiration(item.getExpiration());
                 nItem.setOwner(item.getOwner());

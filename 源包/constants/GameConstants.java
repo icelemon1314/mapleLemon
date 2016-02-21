@@ -115,6 +115,8 @@ public class GameConstants {
     public static final int MAX_HP = 30000;
     public static final int MAX_MP = 30000;
 
+    public static final int DROP_ITEM_PER = 99999; // 掉落比随机数控制
+
 	private static final long[] exp = new long[201];
 	
 	public static void LoadExp() {
@@ -855,6 +857,30 @@ public class GameConstants {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * 是否为投掷攻击类职业
+     * @param job
+     * @return
+     */
+    public static boolean isCastJob(int job){
+        switch (job) {
+            case 300: // 弓箭手
+            case 310:
+            case 311:
+            case 320:
+            case 321:
+            case 400:
+            case 410:
+            case 411:
+            case 420:
+            case 421:
+                return true;
+            default:
+                return false;
+
+        }
     }
 
     public static int getLinkedMountItem(int sourceid) {

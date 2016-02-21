@@ -105,12 +105,18 @@ public class TakeDamageHandler {
                     }
                     chr.addMPHP(-hploss, -mploss);
                 }
-            } else if (chr.getStat().mesoGuardMeso > 0.0D) {
+            } else if (chr.getBuffedValue(MapleBuffStat.金钱护盾) != null) {
                 if (chr.isShowPacket()) {
                     chr.dropMessage(5, "受到伤害: " + damage);
                 }
-                damage = (int) Math.ceil(damage * chr.getStat().mesoGuard / 100.0D);
-                long mesoloss = (int) (damage * (chr.getStat().mesoGuardMeso / 100.0D));
+                int mesoloss = (int) Math.ceil(damage * chr.getStat().mesoGuard / 100.0D);
+                if (chr.getStat().mesoGuardMeso >= mesoloss) {
+                    chr.getStat().mesoGuardMeso = chr.getStat().mesoGuardMeso - mesoloss;
+                } else {
+                    chr.getStat().mesoGuardMeso = 0;
+                    chr.cancelBuffStats(new MapleBuffStat[]{MapleBuffStat.金钱护盾});
+                }
+                damage = damage - mesoloss;
                 if (chr.isShowPacket()) {
                     chr.dropMessage(5, "金钱护盾 - 最终伤害: " + damage + " 减少金币: " + mesoloss);
                 }

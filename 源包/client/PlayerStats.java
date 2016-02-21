@@ -27,6 +27,7 @@ import server.StructItemOption;
 import server.StructSetItem;
 import server.StructSetItemStat;
 import server.life.Element;
+import server.skill.冒险家.侠客;
 import server.skill.冒险家.勇士;
 import tools.MaplePacketCreator;
 import tools.Pair;
@@ -237,8 +238,8 @@ public class PlayerStats implements Serializable {
         this.watk = 0; //物理攻击力
         this.dodgeChance = 0; //闪避
         this.pvpDamage = 0;
-        this.mesoGuard = 50.0D; //金钱盾
-        this.mesoGuardMeso = 0.0D;
+        this.mesoGuard = 50.0D; //金钱盾吸收伤害比例
+        this.mesoGuardMeso = 0.0D; // 金钱盾剩余金币
         this.percent_damage = 0.0D;  //百分比伤害
         this.expBuff = 100.0D; //经验BUFF
         this.cashBuff = 100.0D;
@@ -459,7 +460,7 @@ public class PlayerStats implements Serializable {
         System.out.println("计算角色属性7");
 //        handlePassiveSkills(chra);
         System.out.println("计算角色属性8");
-//        handleBuffStats(chra);
+        handleBuffStats(chra);
         System.out.println("计算角色属性9");
         Integer buff = chra.getBuffedValue(MapleBuffStat.最大体力);
         if (buff != null) {
@@ -1362,15 +1363,6 @@ public class PlayerStats implements Serializable {
                     this.percent_mdef += bx.getEffect(bof).getX();
                     this.dodgeChance += bx.getEffect(bof).getER();
                 }
-                bx = SkillFactory.getSkill(4210012);
-                bof = chra.getTotalSkillLevel(bx);
-                if (bof > 0) {
-                    this.mesoBuff *= (bx.getEffect(bof).getMesoRate() + 100.0D) / 100.0D;
-                    this.pickRate += bx.getEffect(bof).getU();
-                    this.mesoGuard -= bx.getEffect(bof).getV();
-                    this.mesoGuardMeso -= bx.getEffect(bof).getW();
-                    addDamageIncrease(4211006, bx.getEffect(bof).getX());
-                }
                 bx = SkillFactory.getSkill(4221013);
                 bof = chra.getTotalSkillLevel(bx);
                 if (bof > 0) {
@@ -1380,7 +1372,7 @@ public class PlayerStats implements Serializable {
                 bof = chra.getTotalSkillLevel(bx);
                 if (bof > 0) {
                     addDamageIncrease(4201012, bx.getEffect(bof).getDAMRate());
-                    addDamageIncrease(4201004, bx.getEffect(bof).getDAMRate());
+                    addDamageIncrease(侠客.神通术, bx.getEffect(bof).getDAMRate());
                     addDamageIncrease(4211002, bx.getEffect(bof).getDAMRate());
                     addDamageIncrease(4211011, bx.getEffect(bof).getDAMRate());
                 }
@@ -1793,8 +1785,7 @@ public class PlayerStats implements Serializable {
             }
         }
         effect = chra.getStatForBuff(MapleBuffStat.召唤兽);
-        if ((effect != null)
-                && (effect.getSourceId() == 35121010)) {
+        if ((effect != null)) {
             this.percent_damage_rate += effect.getX();
             this.percent_boss_damage_rate += effect.getX();
         }
@@ -1807,11 +1798,11 @@ public class PlayerStats implements Serializable {
         if (effect != null) {
             this.pickRate = effect.getProb();
         }
-        buff = chra.getBuffedValue(MapleBuffStat.金钱护盾);
-        if (buff != null) {
-            this.mesoGuardMeso += buff.doubleValue();
+        effect = chra.getStatForBuff(MapleBuffStat.金钱护盾);
+        if (effect != null) {
+            this.mesoGuard = (this.mesoGuard * effect.getX())/100.0D;
+            this.mesoGuardMeso = effect.getMoneyCon();
         }
-
 
         buff = chra.getBuffedValue(MapleBuffStat.神圣祈祷);
         if (buff != null) {
@@ -1828,17 +1819,12 @@ public class PlayerStats implements Serializable {
                 case 5120011:
                 case 5220012:
                 case 5720012:
-                case 51111003:
                     this.percent_damage_rate += effect.getIndieDamR();
                     this.percent_boss_damage_rate += effect.getIndieDamR();
                     break;
                 case 5121015:
                     this.percent_damage_rate += effect.getX();
                     this.percent_boss_damage_rate += effect.getX();
-                    break;
-                case 31121005:
-                    this.percent_damage_rate += effect.getDAMRate();
-                    this.percent_boss_damage_rate += effect.getDAMRate();
                     break;
                 default:
                     this.percent_damage_rate += effect.getDAMRate();
@@ -3141,4 +3127,13 @@ public class PlayerStats implements Serializable {
             this.add_skill_prop.put(skillId, val);
         }
     }
+
+    public int getMesoGuardMeso(){
+        return (int)this.mesoGuardMeso;
+    }
+
+    public void setMesoGuardMeso(int meso){
+        this.mesoGuardMeso = (double) meso;
+    }
+
 }

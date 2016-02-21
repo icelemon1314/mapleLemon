@@ -29,6 +29,8 @@ import server.maps.MapleMap;
 import server.maps.MapleMapItem;
 import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
+import server.skill.冒险家.侠客;
+import server.skill.冒险家.刺客;
 import server.skill.冒险家.牧师;
 import server.skill.冒险家.独行客;
 import tools.AttackPair;
@@ -151,6 +153,7 @@ public class DamageParse {
                 effect.getMonsterStati().put(MonsterStatus.中毒, 1);
             }
         }
+
         System.out.println("攻击7");
         int maxDamagePerHit = 0;
         int maxMaxDamageOver = 0;
@@ -211,40 +214,17 @@ public class DamageParse {
                 }
                 totDamage += totDamageToOneMonster;
                 player.checkMonsterAggro(monster);
-                if ((GameConstants.getAttackDelay(attack.skillId, theSkill) >= 50) && (!GameConstants.isNoDelaySkill(attack.skillId)) && (!GameConstants.is不检测范围(attack.skillId)) && (!monster.getStats().isBoss()) && (player.getTruePosition().distanceSq(monster.getTruePosition()) > GameConstants.getAttackRange(effect, player.getStat().defRange) * 3)
-                        && (player.getMapId() != 703002000)) {
-                    WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverMessageRedText("[GM 信息] " + player.getName() + " ID: " + player.getId() + " (等级 " + player.getLevel() + ") 攻击范围异常。职业: " + player.getJob() + " 技能: " + attack.skillId + " [范围: " + player.getTruePosition().distanceSq(monster.getTruePosition()) + " 预期: " + GameConstants.getAttackRange(effect, player.getStat().defRange) + "]"));
-                }
                 System.out.println("攻击9");
                 if (player.getBuffedValue(MapleBuffStat.敛财术) != null) {
-                    switch (attack.skillId) {
-                        case 0:
-                        case 4001334:
-                        case 4201012:
-                        case 4211002:
-                        case 4211011:
-                        case 4221007:
-                        case 4221010:
-                            handlePickPocket(player, monster, oned);
-                    }
+                    handlePickPocket(player, monster, oned);
                 }
 
-                if ((totDamageToOneMonster > 0) || (attack.skillId == 1221011) || (attack.skillId == 21120006)) {
-                    if ((player.getJob() == 3001) || (player.getJob() == 3100) || (player.getJob() == 3110) || (player.getJob() == 3111) || (player.getJob() == 3112)) {
-                        player.handleForceGain(monster.getObjectId(), attack.skillId);
-                    } else if ((player.getJob() == 410) || (player.getJob() == 411) || (player.getJob() == 412)) {
-                        //TODO 处理标记发射出的飞镖
-                        if (monster.getmark() && attack.skillId != 4100012 && attack.skillId != 4120019) {
-                            player.handleAssassinStack(monster, visProjectile);
-                        }
-                    } else if (player.getJob() == 422) {
-                        player.handleKillSpreeGain();
+                if (totDamageToOneMonster > 0) {
+                    if (attack.skillId == 刺客.生命吸收) {
+                        int rev = Math.round((effect.getX() * totDamage)/100);
+                        player.addHP(rev);
                     }
-                    if (attack.skillId != 1221011) {
-                        monster.damage(player, totDamageToOneMonster, true, attack.skillId);
-                    } else {
-                        monster.damage(player, monster.getStats().isBoss() ? 500000L : monster.getHp() - 1L, true, attack.skillId);
-                    }
+                    monster.damage(player, totDamageToOneMonster, true, attack.skillId);
 
                     //TODO 添加被动攻击技能处理  进阶攻击之类  召唤Mist之类的
                     player.handle被动触发技能(monster, attack.skillId);
@@ -289,7 +269,7 @@ public class DamageParse {
                                 }
                             }
                             break;
-                        case 4201004:
+                        case 侠客.神通术:
                             monster.handleSteal(player);
                             break;
                     }
@@ -579,6 +559,12 @@ public class DamageParse {
         return elemMaxDamagePerMob / 100.0D * (stats.def + stats.getElementBoost(elem));
     }
 
+    /**
+     * 处理敛财术
+     * @param player
+     * @param mob
+     * @param oned
+     */
     private static void handlePickPocket(MapleCharacter player, MapleMonster mob, AttackPair oned) {
         int maxmeso = player.getBuffedValue(MapleBuffStat.敛财术);
         for (Pair eachde : oned.attack) {
@@ -913,6 +899,14 @@ public class DamageParse {
 
     public static AttackInfo parseRangedAttack(SeekableLittleEndianAccessor lea, MapleCharacter chr) {
         // 1B 11 AC CA 2D 00 00 16 06 02 00 41 A1 86 01 00 06 80 00 00 4E FF F6 00 4E FF F6 00 44 02 39 00 00 00 B7 FE 13 01
+        // 1B
+        // 01
+        // 00 00 00 00
+        // 00
+        // 96 06
+        // 13 00 41 36 00 2F 00
+
+        // 1B 11 8D 93 3E 00 00 9A 06 02 00 41 A2 86 01 00 06 00 00 00 57 FF F6 00 52 FF F6 00 4A 02 80 00 00 00 F3 FF F6 00 生命吸收
         AttackInfo ret = new AttackInfo();
         ret.isRangedAttack = true;
         ret.numAttackedAndDamage = lea.readByte();
@@ -936,7 +930,7 @@ public class DamageParse {
             case 5311010:
                 lea.skip(4);
         }
-        lea.skip(2);
+        ret.starSlot = lea.readShort();
         lea.skip(1);
 
         ret.allDamage = new ArrayList();
