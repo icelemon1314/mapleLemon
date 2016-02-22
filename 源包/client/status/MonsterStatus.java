@@ -19,7 +19,7 @@ public enum MonsterStatus implements Serializable, Buffstat {
     命中(0x10, 1),
     回避(0x20, 1),
     速度(0x40, 1), // ok
-    眩晕(0x80,1),
+    眩晕(0x80,1), // ok
     结冰(0x100, 1),//麻痹
     中毒(0x200, 1), // ok
     沉默(0x400, 1),
@@ -33,6 +33,7 @@ public enum MonsterStatus implements Serializable, Buffstat {
     物攻提升(0x10000,1),
     魔攻提升(0x20000,1),
     物防提升(0x40000,1),
+    固定住不动(0x8000,1),
     魔防提升(0x80000,1 );
     static final long serialVersionUID = 0L;
     private final int i;

@@ -280,7 +280,7 @@ public class MapleShop {
     static {
 
         rechargeableItems.add(2070000);//海星镖
-        /*rechargeableItems.add(2070001);//回旋镖
+        rechargeableItems.add(2070001);//回旋镖
         rechargeableItems.add(2070002);//黑色利刃
         rechargeableItems.add(2070003);//雪花镖
         rechargeableItems.add(2070004);//黑色刺
@@ -293,24 +293,24 @@ public class MapleShop {
         rechargeableItems.add(2070011);//枫叶镖
         rechargeableItems.add(2070012);//纸飞机
         rechargeableItems.add(2070013);//橘子
-        rechargeableItems.add(2070015);//初学者标
-        rechargeableItems.add(2070016);//水晶飞镖
-        rechargeableItems.add(2070020);//鞭炮
-        rechargeableItems.add(2070021);//蛋糕镖
-        rechargeableItems.add(2070019);//高科技电光镖
-        rechargeableItems.add(2070023);//火焰飞镖
-        rechargeableItems.add(2070024);//无限飞镖
-        rechargeableItems.add(2070026);//白金飞镖
+//        rechargeableItems.add(2070015);//初学者标
+//        rechargeableItems.add(2070016);//水晶飞镖
+//        rechargeableItems.add(2070020);//鞭炮
+//        rechargeableItems.add(2070021);//蛋糕镖
+//        rechargeableItems.add(2070019);//高科技电光镖
+//        rechargeableItems.add(2070023);//火焰飞镖
+//        rechargeableItems.add(2070024);//无限飞镖
+//        rechargeableItems.add(2070026);//白金飞镖
 
 
-        blockedItems.add(4170023);
-        blockedItems.add(4170024);
-        blockedItems.add(4170025);
-        blockedItems.add(4170028);
-        blockedItems.add(4170029);
-        blockedItems.add(4170031);
-        blockedItems.add(4170032);
-        blockedItems.add(4170033);
-        */
+//        blockedItems.add(4170023);
+//        blockedItems.add(4170024);
+//        blockedItems.add(4170025);
+//        blockedItems.add(4170028);
+//        blockedItems.add(4170029);
+//        blockedItems.add(4170031);
+//        blockedItems.add(4170032);
+//        blockedItems.add(4170033);
+
     }
 }

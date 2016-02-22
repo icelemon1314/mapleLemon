@@ -371,7 +371,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.skills = new LinkedHashMap();
         this.stats = new PlayerStats();
         this.remainingSp = 0;
-        this.spawnPets = new MaplePet();
+        this.spawnPets = null;
         if (ChannelServer) {
             isSaveing = false;
             changed_achievements = false;

@@ -133,12 +133,12 @@ public class PetHandler {
      */
     public static void PetFood(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         // 2A 05 00 40 59 20 00
+        // 2A 19 00 40 59 20 00
         if ((chr == null) || (chr.getMap() == null)) {
             return;
         }
         int previousFullness = 100;
         MaplePet pet = chr.getSpawnPet();
-        chr.updateTick(slea.readInt());
         short slot = slea.readShort();
         int itemId = slea.readInt();
         Item petFood = chr.getInventory(MapleInventoryType.USE).getItem(slot);

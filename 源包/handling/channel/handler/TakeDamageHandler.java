@@ -106,9 +106,6 @@ public class TakeDamageHandler {
                     chr.addMPHP(-hploss, -mploss);
                 }
             } else if (chr.getBuffedValue(MapleBuffStat.金钱护盾) != null) {
-                if (chr.isShowPacket()) {
-                    chr.dropMessage(5, "受到伤害: " + damage);
-                }
                 int mesoloss = (int) Math.ceil(damage * chr.getStat().mesoGuard / 100.0D);
                 if (chr.getStat().mesoGuardMeso >= mesoloss) {
                     chr.getStat().mesoGuardMeso = chr.getStat().mesoGuardMeso - mesoloss;

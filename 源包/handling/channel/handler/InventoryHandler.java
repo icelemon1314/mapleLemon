@@ -1468,7 +1468,14 @@ public class InventoryHandler {
         }
     }
 
+    /**
+     * 宠物拾取道具
+     * @param slea
+     * @param c
+     * @param chr
+     */
     public static void Pickup_Pet(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) { //TODO 修复宠物捡物造成卡
+        // 4F 4C 00 F6 00 A3 86 01 00
         if (chr == null) {
             return;
         }
@@ -1477,8 +1484,6 @@ public class InventoryHandler {
         }
         c.getPlayer().setScrolledPosition((short) 0);
         MaplePet pet = chr.getSpawnPet();
-        slea.skip(1);
-        chr.updateTick(slea.readInt());
         Point Client_Reportedpos = slea.readPos();
         MapleMapObject ob = chr.getMap().getMapObject(slea.readInt(), MapleMapObjectType.ITEM);
         if ((ob == null) || (pet == null)) {
