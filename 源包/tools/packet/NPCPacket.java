@@ -327,24 +327,26 @@ public class NPCPacket {
      * @param talk
      * @return
      */
-    public static byte[] sendNPCAskPet(int npc,String talk) {
+    public static byte[] sendNPCAskAvatar(int npc,String talk,int styles[]) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         baseScriptMan(mplew,npc,(byte)5);
 
         mplew.writeMapleAsciiString(talk);
-        mplew.write(1); // 宠物个数
-        mplew.writeInt(5000000); // 宠物ID
+        mplew.write(styles.length);
+        for (int i = 0; i < styles.length; i++) {
+            mplew.writeInt(styles[i]);
+        }
 
         return mplew.getPacket();
     }
 
     /**
-     * NPC显示所有宠物
+     * NPC显示宠物信息
      * @param npc
      * @param talk
      * @return
      */
-    public static byte[] sendNPCAskPetAll(int npc,String talk) {
+    public static byte[] sendNPCAskPet(int npc,String talk) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         baseScriptMan(mplew,npc,(byte)6);
 

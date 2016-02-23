@@ -119,6 +119,13 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         c.getSession().write(NPCPacket.sendNPCAskMenu(id,sel));
     }
 
+    public void sendStyle(String text,int styles[]){
+        if (styles.length <= 0) {
+            return;
+        }
+        c.getSession().write(NPCPacket.sendNPCAskAvatar(id,text,styles));
+    }
+
     public void sendNext(String text) {
         sendNext(text, this.id);
     }
