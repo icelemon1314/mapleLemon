@@ -2325,10 +2325,6 @@ public final class MapleMap {
             System.out.println("召唤的宠物为空");
         else
             System.out.println("召唤的宠物不为空");
-        if (pets.getSummoned() == false)
-            System.out.println("宠物没有被召唤！");
-        else
-            System.out.println("宠物被召唤！");
         if ((pets != null) && (pets.getSummoned())) {
             System.out.println("召唤已经召唤的宠物出来");
             pets.setPos(chr.getTruePosition());

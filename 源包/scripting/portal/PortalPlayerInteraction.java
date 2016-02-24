@@ -29,18 +29,6 @@ public class PortalPlayerInteraction extends AbstractPlayerInteraction {
         }
     }
 
-    public void inArdentmill() {
-        if (getMapId() != 910001000) {
-            if (getPlayer().getLevel() >= 10) {
-                saveLocation("ARDENTMILL");
-                playPortalSE();
-                warp(910001000, "st00");
-            } else {
-                playerMessage(5, "你必须10级以上才能进入匠人街。");
-            }
-        }
-    }
-
     @Override
     public void spawnMonster(int id) {
         spawnMonster(id, 1, this.portal.getPosition());

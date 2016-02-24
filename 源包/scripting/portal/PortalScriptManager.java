@@ -32,7 +32,7 @@ public class PortalScriptManager {
 
     private PortalScript getPortalScript(String scriptName) {
         if (this.scripts.containsKey(scriptName)) {
-            return (PortalScript) this.scripts.get(scriptName);
+            return this.scripts.get(scriptName);
         }
         File scriptFile = new File("脚本/传送点/" + scriptName + ".js");
         if (!scriptFile.exists()) {
@@ -57,7 +57,7 @@ public class PortalScriptManager {
                 }
             }
         }
-        PortalScript script = (PortalScript) ((Invocable) portal).getInterface(PortalScript.class);
+        PortalScript script = ((Invocable) portal).getInterface(PortalScript.class);
         this.scripts.put(scriptName, script);
         return script;
     }
