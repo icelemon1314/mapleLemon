@@ -37,8 +37,8 @@ public class MapleMapEffect {
     }
 
     public byte[] makeDestroyData() {
-        return MaplePacketCreator.stopFullScreenBless();
-        //return this.jukebox ? MTSCSPacket.playCashSong(0, "") : MaplePacketCreator.removeMapEffect();
+        //return MaplePacketCreator.stopFullScreenBless();
+        return this.jukebox ? MTSCSPacket.playCashSong(0, "") : MaplePacketCreator.stopFullScreenBless();
     }
 
     public void sendStartData(MapleClient c) {
@@ -47,7 +47,7 @@ public class MapleMapEffect {
     }
 
     public byte[] makeStartData() {
-        return MaplePacketCreator.startFullScreenBless(this.itemId,this.msg);
-        //return this.jukebox ? MTSCSPacket.playCashSong(this.itemId, this.msg) : MaplePacketCreator.startMapEffect(this.msg, this.itemId, this.effectType, this.active);
+        //return MaplePacketCreator.startFullScreenBless(this.itemId,this.msg);
+        return this.jukebox ? MTSCSPacket.playCashSong(this.itemId, this.msg) : MaplePacketCreator.startFullScreenBless(this.itemId,this.msg);
     }
 }

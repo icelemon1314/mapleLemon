@@ -646,6 +646,16 @@ public class MapleStatEffect implements Serializable {
         return applyTo(applyfrom, applyto, primary, pos, newDuration, false);
     }
 
+    /**
+     * 处理技能的效果值
+     * @param applyfrom
+     * @param applyto
+     * @param primary
+     * @param pos
+     * @param newDuration
+     * @param passive
+     * @return
+     */
     public boolean applyTo(MapleCharacter applyfrom, MapleCharacter applyto, boolean primary, Point pos, int newDuration, boolean passive) {
         //TODO applyTo BUFF 写法不太理想 需要重新写算法
         if ((!applyfrom.isAdmin()) && (applyfrom.getMap().isMarketMap())) {
@@ -657,7 +667,7 @@ public class MapleStatEffect implements Serializable {
             return false;
         }
 
-        int hpchange = calcHPChange(applyfrom, primary);
+        int hpchange = calcHPChange(applyfrom, primary); // 计算消耗的值
         int mpchange = calcMPChange(applyfrom, primary);
         PlayerStats stat = applyto.getStat();
         if (primary) {
@@ -710,10 +720,10 @@ public class MapleStatEffect implements Serializable {
             stat.setMp(stat.getMp() + mpchange);
             hpmpupdate.put(MapleStat.MP, (long) stat.getMp());
         }
-        System.out.println("33333333333");
+        System.out.println("效果消耗的东西计算完毕！");// 消耗的处理完毕
         hpmpupdate.put(MapleStat.HP, (long) stat.getHp());
         applyto.getClient().getSession().write(MaplePacketCreator.updatePlayerStats(hpmpupdate, true, applyto));
-        System.out.println("ggggg");
+        System.out.println("开始各种特殊的属性和技能的处理，囧！");
         if ((this.useLevel > 0) && (!this.skill)) {
             applyto.setExtractor(new MapleExtractor(applyto, this.sourceid, this.useLevel * 50, 1440));
             applyto.getMap().spawnExtractor(applyto.getExtractor());
@@ -791,6 +801,15 @@ public class MapleStatEffect implements Serializable {
                 if (!itemz) {
                     return false;
                 }
+            } else if (is神圣之火()){
+                int localst = applyto.getStat().getMaxHp();
+                int maxst = localst + ((localst*this.info.get(MapleStatInfo.x))/100);
+                applyto.getStat().setCurrentMaxHp(maxst);
+
+                localst = applyto.getStat().getMaxMp();
+                maxst = localst + ((localst*this.info.get(MapleStatInfo.y))/100);
+                applyto.getStat().setCurrentMaxMp(maxst);
+
             } else {
                 System.out.println("qqqqqqqqqq");
                 MapleCarnivalFactory.MCSkill skil;
@@ -1278,10 +1297,8 @@ public class MapleStatEffect implements Serializable {
         byte[] foreignbuff = null;
         if (is神圣之火()) {
             localstatups = new ArrayList();
-            int addHp = applyfrom.getTotalSkillLevel(1320045) > 0 ? 20 : 0;
-            int addMp = applyfrom.getTotalSkillLevel(1320044) > 0 ? 20 : 0;
-            localstatups.add(new Pair(MapleBuffStat.神圣之火_最大体力百分比, (this.info.get(MapleStatInfo.x)) + addHp));
-            localstatups.add(new Pair(MapleBuffStat.神圣之火_最大魔力百分比, (this.info.get(MapleStatInfo.x)) + addMp));
+            localstatups.add(new Pair(MapleBuffStat.神圣之火_最大体力百分比, (this.info.get(MapleStatInfo.x))));
+            localstatups.add(new Pair(MapleBuffStat.神圣之火_最大魔力百分比, (this.info.get(MapleStatInfo.x))));
         } else if (is隐身术()) {
             List stat = Collections.singletonList(new Pair(MapleBuffStat.隐身术, 0));
             foreignbuff = BuffPacket.giveForeignBuff(applyto.getId(), stat, this);
@@ -1360,7 +1377,7 @@ public class MapleStatEffect implements Serializable {
         if (localDuration > 0) {
             CancelEffectAction cancelAction = new CancelEffectAction(applyto, this, startTime, localstatups);
             ScheduledFuture schedule = Timer.BuffTimer.getInstance().schedule(cancelAction, maskedDuration > 0 ? maskedDuration : localDuration);
-            applyto.registerEffect(this, startTime, schedule, localstatups, false, maskedDuration > 0 ? maskedDuration : localDuration, applyfrom.getId());
+            applyto.registerEffect(this, startTime, schedule, localstatups, true, maskedDuration > 0 ? maskedDuration : localDuration, applyfrom.getId());
         }
 
         int cooldown = getCooldown(applyto);

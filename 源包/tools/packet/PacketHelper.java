@@ -204,7 +204,6 @@ public class PacketHelper {
     public static void addCharStats(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
         mplew.writeInt(chr.getId());
         mplew.writeAsciiString(chr.getName(), 0x13);
-//        mplew.write(chr.getGender());
         mplew.write(chr.getClient().getGender()); // 帐号控制
         mplew.write(chr.getSkinColor()); // 肤色
         mplew.writeInt(chr.getFace());

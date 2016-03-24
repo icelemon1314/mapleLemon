@@ -131,7 +131,7 @@ public class PlayerCommand {
         }
     }
 
-    public static class 扔 extends CommandExecute {
+    public static class item extends CommandExecute {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
@@ -185,6 +185,19 @@ public class PlayerCommand {
             final int mapId = Integer.parseInt(splitted[1]);
             c.getPlayer().changeMap(mapId,0);
             return 0;
+        }
+    }
+
+
+    public static class help extends CommandExecute {
+
+        @Override
+        public int execute(MapleClient c, String[] splitted) {
+            c.getPlayer().dropMessage(6, "怀旧冒×岛所有内容还原GF设定，转职请找转职教官！");
+            c.getPlayer().dropMessage(6, "制作道具：@item 道具ID");
+            c.getPlayer().dropMessage(6, "传送到指定地图：@tomap 地图ID");
+            c.getPlayer().dropMessage(6, "快速转职：@job 职业ID");
+            return 1;
         }
     }
 

@@ -1134,7 +1134,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ps.setShort(14, chr.job);
             ps.setInt(15, chr.hair);
             ps.setInt(16, chr.face);
-            ps.setInt(17, 10000);
+            ps.setInt(17, chr.mapid);
             ps.setLong(18, chr.meso);
             ps.setInt(19, -1);
             ps.setByte(20, chr.buddylist.getCapacity());
@@ -5129,7 +5129,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
 
         if ((show) && (quantity != 0)) {
-            dropMessage(-1, new StringBuilder().append("你").append(quantity > 0 ? "获得了 " : "消耗了 ").append(Math.abs(quantity)).append(type == 1 ? " 点券。" : " 抵用券。").toString());
+            dropMessage(0, new StringBuilder().append("你").append(quantity > 0 ? "获得了 " : "消耗了 ").append(Math.abs(quantity)).append(type == 1 ? " 点券。" : " 抵用券。").toString());
         }
 
         this.client.getSession().write(MaplePacketCreator.showCharCash(this));

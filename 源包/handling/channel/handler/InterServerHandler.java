@@ -244,7 +244,7 @@ public class InterServerHandler {
                 }
             }
             System.out.println("玩家登录游戏16");
-            //player.getClient().getSession().write(MaplePacketCreator.serverMessage(channelServer.getServerMessage()));
+            player.getClient().getSession().write(MaplePacketCreator.serverMessageTop("欢迎来到怀旧冒×岛，希望你能找到儿时的感觉，如有bug可以加QQ群：479357604！dev by:icelemon1314"));
 //            player.showNote();
            // player.sendImp();
            // player.updatePartyMemberHP();

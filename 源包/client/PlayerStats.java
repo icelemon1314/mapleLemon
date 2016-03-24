@@ -47,13 +47,13 @@ public class PlayerStats implements Serializable {
     private final Map<Integer, Integer> damageIncrease = new HashMap();
     private final EnumMap<Element, Integer> elemBoosts = new EnumMap(Element.class);
     private final List<Equip> equipLevelHandling = new ArrayList();
-    private transient float shouldHealHP;
-    private transient float shouldHealMP;
+    private transient float shouldHealHP; // 每次自动回血数值
+    private transient float shouldHealMP; // 每次自动回蓝数值
     public short str;
     public short dex;
     public short luk;
     public short int_;
-    public int baseHp;
+    public int baseHp; // 客户端显示的HP
     public int baseMaxHp;
     public int baseMp;
     public int baseMaxMp;
@@ -1765,13 +1765,13 @@ public class PlayerStats implements Serializable {
             this.jump += buff;
         }
 
-        buff = chra.getBuffedValue(MapleBuffStat.神圣之火_最大体力百分比);
-        if (buff != null) {
-            this.percent_hp += buff;
+        effect = chra.getStatForBuff(MapleBuffStat.神圣之火_最大体力百分比);
+        if (effect != null) {
+            this.percent_hp += effect.getX();
         }
-        buff = chra.getBuffedValue(MapleBuffStat.神圣之火_最大魔力百分比);
-        if (buff != null) {
-            this.percent_mp += buff;
+        effect = chra.getStatForBuff(MapleBuffStat.神圣之火_最大魔力百分比);
+        if (effect != null) {
+            this.percent_mp += effect.getY();
         }
 
         buff = chra.getBuffedValue(MapleBuffStat.斗气集中);
@@ -2398,40 +2398,12 @@ public class PlayerStats implements Serializable {
 //         }
     }
 
-    public void connectData(MaplePacketLittleEndianWriter mplew) {
-        mplew.writeShort(str);
-        mplew.writeShort(dex);
-        mplew.writeShort(int_);
-        mplew.writeShort(luk);
-        mplew.writeShort(baseHp);
-        mplew.writeShort(baseMaxHp);
-        mplew.writeShort(baseMp);
-        mplew.writeShort(baseMaxMp);
-    }
-
-    public void zeroData(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
-        mplew.write(255);
-        mplew.write(255);
-        mplew.write(chr.isZeroSecondLook() ? 1 : 0);
-        mplew.writeInt(this.baseMaxHp);
-        mplew.writeInt(this.baseMaxMp);
-        mplew.write(0);
-        mplew.writeInt(chr.isZeroSecondLook() ? chr.getSecondHair() : chr.getHair());
-        mplew.writeInt(chr.isZeroSecondLook() ? chr.getSecondFace() : chr.getFace());
-        mplew.writeInt(this.baseMaxHp);
-        mplew.writeInt(this.baseMaxMp);
-        mplew.writeInt(0);
-    }
-
     public static int getSkillByJob(int skillId, int job) {
         return skillId;
     }
 
     public static int getHyperSkillByJob(int skillId, int job) {
         switch (job) {
-            case 2217:
-            case 2218:
-                return 22170000 + skillId;
             case 112:
             case 122:
             case 132:
@@ -2446,22 +2418,6 @@ public class PlayerStats implements Serializable {
             case 512:
             case 522:
             case 532:
-            case 1112:
-            case 1312:
-            case 1512:
-            case 2112:
-            case 2312:
-            case 2412:
-            case 2712:
-            case 3112:
-            case 3122:
-            case 3212:
-            case 3312:
-            case 3512:
-            case 3612:
-            case 5112:
-            case 6112:
-            case 6512:
                 return job * 10000 + skillId;
         }
         return skillId;
@@ -2841,8 +2797,8 @@ public class PlayerStats implements Serializable {
         if (newhp < 0 ) {
             newhp = 0;
         }
-        if (newhp > getMaxHp()) {
-            newhp = getMaxHp();
+        if (newhp > getCurrentMaxHp()) {
+            newhp = getCurrentMaxHp();
         }
         this.baseHp=newhp;
         return true;
@@ -2852,8 +2808,8 @@ public class PlayerStats implements Serializable {
         if (newmp < 0 ) {
             newmp = 0;
         }
-        if (newmp > getMaxMp()) {
-            newmp = getMaxMp();
+        if (newmp > getCurrentMaxMp()) {
+            newmp = getCurrentMaxMp();
         }
         this.baseMp = newmp;
         return true;
@@ -2868,12 +2824,12 @@ public class PlayerStats implements Serializable {
 
     public void setMaxHp(int hp, MapleCharacter chra) {
         this.baseMaxHp = hp;
-        recalcLocalStats(chra);
+//        recalcLocalStats(chra);
     }
 
     public void setMaxMp(int mp, MapleCharacter chra) {
         this.baseMaxMp = mp;
-        recalcLocalStats(chra);
+//        recalcLocalStats(chra);
     }
 
     public int getHp() {
@@ -2931,6 +2887,10 @@ public class PlayerStats implements Serializable {
     public int getCurrentMaxMp() {
         return this.localmaxmp;
     }
+
+    public void setCurrentMaxHp(int localMaxHp){ this.localmaxhp = localMaxHp;}
+
+    public void setCurrentMaxMp(int localMaxMp){ this.localmaxmp = localMaxMp;}
 
     public int getAsrR() {
         return this.ASR;

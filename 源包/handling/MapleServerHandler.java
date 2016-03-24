@@ -252,7 +252,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 }
                 break;
             case STRANGE_DATA:
-                //c.getSession().write(MaplePacketCreator.enableActions());
+                c.getSession().write(MaplePacketCreator.enableActions());
                 break;
             case PONG:
                 c.pongReceived();

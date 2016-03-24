@@ -29,3 +29,6 @@ http://pan.baidu.com/s/1c1ro4EG
 
 注意：
 1. 不要用bat登录，直接用解压好的exe登录
+
+如果我的努力带给你美好的回忆，可以打赏给我：
+![image](https://github.com/icelemon1314/mapleLemon/raw/master/icelemon1314_alipay.png)

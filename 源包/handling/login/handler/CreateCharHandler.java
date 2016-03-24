@@ -66,6 +66,7 @@ public class CreateCharHandler {
         newchar.setWorld((byte) c.getWorld());
         newchar.setFace(face);
         newchar.setHair(hair);
+        newchar.setMap(0);
 //        newchar.setGender(gender);
         newchar.setName(name);
 //        newchar.setSkinColor(skin);

@@ -366,7 +366,7 @@ public class PlayerHandler {
             return;
         }
         skillLevel = chr.getTotalSkillLevel(skillid);
-        MapleStatEffect effect = skill.getEffect(skillLevel);
+        MapleStatEffect effect = skill.getEffect(skillLevel); // 获取技能效果
         if ((effect.getCooldown(chr) > 0) && (!chr.isGM())) {
             if (chr.skillisCooling(skillid)) {//TODO 修复客户端冷却时间不一致
                 c.getSession().write(MaplePacketCreator.enableActions());
@@ -384,13 +384,13 @@ public class PlayerHandler {
                 c.getSession().write(MaplePacketCreator.enableActions());
             }
         } else {
-            int mountid = MapleStatEffect.parseMountInfo(c.getPlayer(), skill.getId());
-            if ((mountid != 0) && (mountid != GameConstants.getMountItem(skill.getId(), chr)) && (!chr.isIntern()) && (chr.getInventory(MapleInventoryType.EQUIPPED).getItem((short) -122) == null)
-                    && (!GameConstants.isMountItemAvailable(mountid, chr.getJob()))) {
-                c.getSession().write(MaplePacketCreator.enableActions());
-                return;
-            }
-            System.out.println("释放技能效果：");
+//            int mountid = MapleStatEffect.parseMountInfo(c.getPlayer(), skill.getId());
+//            if ((mountid != 0) && (mountid != GameConstants.getMountItem(skill.getId(), chr)) && (!chr.isIntern()) && (chr.getInventory(MapleInventoryType.EQUIPPED).getItem((short) -122) == null)
+//                    && (!GameConstants.isMountItemAvailable(mountid, chr.getJob()))) {
+//                c.getSession().write(MaplePacketCreator.enableActions());
+//                return;
+//            }
+            System.out.println("释放技能效果！");
             effect.applyTo(chr, pos);
         }
     }

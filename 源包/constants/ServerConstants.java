@@ -14,7 +14,6 @@ import server.ServerProperties;
 
 public class ServerConstants implements Runnable {
 
-    public static boolean 防万能登录器模式 = false;
     public static boolean 打怪获得点抵用卷 = false;
     public static boolean loadop = true;
     public static boolean TESPIA = false;//测试服
