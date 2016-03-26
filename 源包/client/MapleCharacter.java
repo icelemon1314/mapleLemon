@@ -913,7 +913,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 //                        continue;
 //                    }
                     if ((skl > skil.getMaxLevel())) {
-                        if ((!skil.isBeginnerSkill()) && (skil.canBeLearnedBy(ret.job)) && (!skil.isSpecialSkill()) && (!skil.isAdminSkill())) {
+                        if ((skil.canBeLearnedBy(ret.job)) && (!skil.isSpecialSkill()) && (!skil.isAdminSkill())) {
                             ret.remainingSp += skl - skil.getMaxLevel();
                         }
                         skl = (byte) skil.getMaxLevel();
@@ -4383,7 +4383,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public int getAllSkillLevels() {
         int rett = 0;
         for (Map.Entry ret : this.skills.entrySet()) {
-            if ((!((Skill) ret.getKey()).isBeginnerSkill()) && (!((Skill) ret.getKey()).isSpecialSkill()) && (((SkillEntry) ret.getValue()).skillLevel > 0)) {
+            if ((!((Skill) ret.getKey()).isSpecialSkill()) && (((SkillEntry) ret.getValue()).skillLevel > 0)) {
                 rett += ((SkillEntry) ret.getValue()).skillLevel;
             }
         }
@@ -4445,7 +4445,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         } else {
             skillLevel += ret.skillLevel;
         }
-        return Math.min(skill.getTrueMax(), skillLevel + (skill.isBeginnerSkill() ? 0 : this.stats.combatOrders + (skill.getMaxLevel() > 10 ? this.stats.incAllskill : 0) + this.stats.getSkillIncrement(skill.getId())));
+        return Math.min(skill.getTrueMax(), skillLevel + this.stats.combatOrders + (skill.getMaxLevel() > 10 ? this.stats.incAllskill : 0) + this.stats.getSkillIncrement(skill.getId()));
     }
 
     public byte getMasterLevel(int skillId) {
@@ -7693,7 +7693,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         Map<String, Integer> oldList = new HashMap(getSkills());
         Map newList = new HashMap();
         for (Map.Entry toRemove : oldList.entrySet()) {
-            if ((!((Skill) toRemove.getKey()).isBeginnerSkill()) && (!((Skill) toRemove.getKey()).isSpecialSkill())) {
+            if ( (!((Skill) toRemove.getKey()).isSpecialSkill())) {
                 int skillLevel = getSkillLevel((Skill) toRemove.getKey());
                 if (skillLevel > 0) {
                     if (((Skill) toRemove.getKey()).canBeLearnedBy(getJob())) {

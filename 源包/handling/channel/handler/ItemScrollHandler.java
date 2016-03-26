@@ -134,19 +134,16 @@ public class ItemScrollHandler {
         } else {
             c.getSession().write(InventoryPacket.updateInventorySlot(ItemConstants.getInventoryType(scroll.getItemId()), scroll, false));
         }
+        c.getSession().write(InventoryPacket.scrolledItem(scroll, toScroll, false));
+        chr.getMap().broadcastMessage(chr, InventoryPacket.getScrollEffect(chr.getId(), scrollSuccess), vegas == 0);
         if (scrollSuccess == Equip.ScrollResult.消失) {
-            c.getSession().write(InventoryPacket.scrolledItem(scroll, toScroll, true));
+            chr.dropMessage(1,"由于诅咒卷轴的力量，道具消失了！消失了！消失了！" );
+            c.getSession().write(InventoryPacket.clearInventoryItem(ItemConstants.getInventoryType(toScroll.getItemId()),toScroll.getPosition(), false));
             if (dst < 0) {
                 chr.getInventory(MapleInventoryType.EQUIPPED).removeItem(toScroll.getPosition());
             } else {
                 chr.getInventory(MapleInventoryType.EQUIP).removeItem(toScroll.getPosition());
             }
-        } else {
-            c.getSession().write(InventoryPacket.scrolledItem(scroll, scrolled, false));
-        }
-
-        chr.getMap().broadcastMessage(chr, InventoryPacket.getScrollEffect(chr.getId(), scrollSuccess), vegas == 0);
-        if ((scrollSuccess == Equip.ScrollResult.成功) || scrollSuccess == Equip.ScrollResult.消失) {
             chr.equipChanged();
         }
         return scrollSuccess == Equip.ScrollResult.成功;

@@ -276,6 +276,9 @@ public class InventoryPacket {
             case 成功:
                 mplew.write(1);
                 break;
+            case 消失:
+                mplew.write(0);
+                break;
             default:
                 mplew.write(0);
                 throw new IllegalArgumentException("effect in illegal range");

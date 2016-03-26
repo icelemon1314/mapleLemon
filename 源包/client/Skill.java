@@ -428,11 +428,6 @@ public class Skill {
         return this.isSummonSkill;
     }
 
-    public boolean isBeginnerSkill() {
-        int jobId = this.id / 10000;
-        return GameConstants.is新手职业(jobId);
-    }
-
     public boolean isAdminSkill() {
         int jobId = this.id / 10000;
         return (jobId == 800) || (jobId == 900);

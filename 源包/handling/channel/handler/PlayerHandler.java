@@ -78,7 +78,7 @@ public class PlayerHandler {
                 int action = slea.readInt();
                 if ((type == 1) && (action >= 1000)) {
                     Skill skil = SkillFactory.getSkill(action);
-                    if ((skil != null) && (((!skil.isBeginnerSkill()) && (skil.isInvisible()) && (chr.getSkillLevel(skil) <= 0)) || (action % 10000 < 1000))) {
+                    if ((skil != null) && (((skil.isInvisible()) && (chr.getSkillLevel(skil) <= 0)) || (action % 10000 < 1000))) {
                         continue;
                     }
                 }
@@ -119,14 +119,6 @@ public class PlayerHandler {
         if ((chr == null) || (chr.getMap() == null)) {
             return;
         }
-//        Item toUse = chr.getInventory(MapleInventoryType.SETUP).findById(itemId);
-//        if (toUse == null && itemId != 3010587) {
-//            return;
-//        }
-//        if ((GameConstants.isFishingMap(chr.getMapId())) && (itemId == 3011000)
-//                && (chr.getStat().canFish)) {
-//            chr.startFishingTask();
-//        }
 
         chr.setChair(itemId);
         c.getSession().write(MaplePacketCreator.showChair(c.getPlayer().getId(),itemId));

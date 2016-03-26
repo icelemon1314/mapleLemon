@@ -218,7 +218,7 @@ public class MapleQuestAction implements Serializable {
                             break;
                         }
                     }
-                    if ((skillObject.isBeginnerSkill()) || (found)) {
+                    if (found) {
                         list.put(skillObject, new SkillEntry((byte) Math.max(skillLevel, chr.getSkillLevel(skillObject)), (byte) Math.max(masterLevel, chr.getMasterLevel(skillObject)), SkillFactory.getDefaultSExpiry(skillObject)));
                     }
                 }
@@ -451,7 +451,7 @@ public class MapleQuestAction implements Serializable {
                             break;
                         }
                     }
-                    if ((skillObject.isBeginnerSkill()) || (found)) {
+                    if (found) {
                         list.put(skillObject, new SkillEntry((byte) Math.max(skillLevel, chr.getSkillLevel(skillObject)), (byte) Math.max(masterLevel, chr.getMasterLevel(skillObject)), SkillFactory.getDefaultSExpiry(skillObject)));
                     }
                 }

@@ -83,274 +83,253 @@ public class UseCashItemHandler {
             case 218: // 洗点卷
                 // 2B 10 00 A0 43 21 00 80 00 00 00 40 00 00 00 敏捷加力量
                 // 2B 10 00 A0 43 21 00 00 01 00 00 00 02 00 00 减运气加智力
+                // 2B 1B 00 A0 43 21 00 80 00 00 00 40 00 00 00 减力量加敏捷
                 if (itemId == 2180000) { // 洗能力点
-                        Map statupdate = new EnumMap(MapleStat.class);
-                        int apto = (int) slea.readLong();
-                        int apfrom = (int) slea.readLong();
-                        int statLimit = c.getChannelServer().getStatLimit();
-                        if (chr.isAdmin()) {
-                                chr.dropMessage(5, new StringBuilder().append("洗能力点 apto: ").append(apto).append(" apfrom: ").append(apfrom).toString());
-                            }
-                        if (apto == apfrom) {
+                    Map statupdate = new EnumMap(MapleStat.class);
+                    int apto = slea.readInt();
+                    int apfrom = slea.readInt();
+                    int statLimit = c.getChannelServer().getStatLimit();
+                    if (chr.isAdmin()) {
+                        chr.dropMessage(5, new StringBuilder().append("洗能力点 apto: ").append(apto).append(" apfrom: ").append(apfrom).toString());
+                    }
+                    if (apto == apfrom) {
+                        break;
+                    }
+                    int job = chr.getJob();
+                    PlayerStats playerst = chr.getStat();
+                    used = true;
+                    switch (apto) {
+                        case 0x40:
+                            if (playerst.getStr() < statLimit) {
+                                    break;
+                                }
+                            used = false;
+                            break;
+                        case 0x80:
+                            if (playerst.getDex() < statLimit) {
+                                    break;
+                                }
+                            used = false;
+                            break;
+                        case 0x100:
+                            if (playerst.getInt() < statLimit) {
+                                    break;
+                                }
+                            used = false;
+                            break;
+                        case 0x200:
+                            if (playerst.getLuk() < statLimit) {
+                                    break;
+                                }
+                            used = false;
+                            break;
+                        case 0x400:
+                            if (playerst.getMaxHp() < chr.getMaxHpForSever()) {
+                                    break;
+                                }
+                            used = false;
+                            break;
+                        case 0x800:
+                            if (playerst.getMaxMp() < chr.getMaxMpForSever()) {
+                                    break;
+                                }
+                            used = false;
+                            break;
+                        default:
+                            System.out.print("洗点未知的操作码："+apto);
+                            break;
+                    }
+
+                    switch (apfrom) {
+                    case 0x40:
+                        if (playerst.getStr() > 4) {
                                 break;
                             }
-                        int job = chr.getJob();
-                        PlayerStats playerst = chr.getStat();
-                        used = true;
-                        switch (apto) {
-                                case 64:
-                                        if (playerst.getStr() < statLimit) {
-                                                break;
-                                            }
-                                        used = false;
-                                        break;
-                                case 128:
-                                        if (playerst.getDex() < statLimit) {
-                                                break;
-                                            }
-                                        used = false;
-                                        break;
-                                case 256:
-                                        if (playerst.getInt() < statLimit) {
-                                                break;
-                                            }
-                                        used = false;
-                                        break;
-                                case 512:
-                                        if (playerst.getLuk() < statLimit) {
-                                                break;
-                                            }
-                                        used = false;
-                                        break;
-                                case 2048:
-                                        if (playerst.getMaxHp() < chr.getMaxHpForSever()) {
-                                                break;
-                                            }
-                                        used = false;
-                                        break;
-                                case 8192:
-                                        if (playerst.getMaxMp() < chr.getMaxMpForSever()) {
-                                                break;
-                                            }
-                                        used = false;
-                                }
-
-                                switch (apfrom) {
-                                case 64:
-                                        if (playerst.getStr() > 4) {
-                                                break;
-                                            }
-                                        used = false;
-                                        break;
-                                case 128:
-                                        if (playerst.getDex() > 4) {
-                                                break;
-                                            }
-                                        used = false;
-                                        break;
-                                case 256:
-                                        if (playerst.getInt() > 4) {
-                                                break;
-                                            }
-                                        used = false;
-                                        break;
-                                case 512:
-                                        if (playerst.getLuk() > 4) {
-                                                break;
-                                            }
-                                        used = false;
-                                        break;
-                                case 2048:
-                                        if ((chr.getHpApUsed() > 0) && (chr.getHpApUsed() < 10000)) {
-                                                break;
-                                            }
-                                        used = false;
-                                        break;
-                                case 8192:
-                                        if ((chr.getHpApUsed() > 0) && (chr.getHpApUsed() < 10000)) {
-                                                break;
-                                            }
-                                        used = false;
-                                }
-
-                                if (used) {
-                                switch (apto) {
-                                        case 64:
-                                                long toSet = playerst.getStr() + 1;
-                                                playerst.setStr((short) (int) toSet, chr);
-                                                statupdate.put(MapleStat.力量, toSet);
-                                                break;
-                                        case 128:
-                                                toSet = playerst.getDex() + 1;
-                                                playerst.setDex((short) (int) toSet, chr);
-                                                statupdate.put(MapleStat.敏捷, toSet);
-                                                break;
-                                        case 256:
-                                                toSet = playerst.getInt() + 1;
-                                                playerst.setInt((short) (int) toSet, chr);
-                                                statupdate.put(MapleStat.智力, toSet);
-                                                break;
-                                        case 512:
-                                                toSet = playerst.getLuk() + 1;
-                                                playerst.setLuk((short) (int) toSet, chr);
-                                                statupdate.put(MapleStat.运气, toSet);
-                                                break;
-                                        case 2048:
-                                                int maxhp = playerst.getMaxHp();
-                                                if (GameConstants.is新手职业(job)) {
-                                                        maxhp += Randomizer.rand(4, 8);
-                                                    }else if (((job >= 100) && (job <= 132)) ) {
-                                                        maxhp += Randomizer.rand(36, 42);
-                                                    } else if (((job >= 200) && (job <= 232)) ) {
-                                                        maxhp += Randomizer.rand(10, 12);
-                                                    } else if (((job >= 300) && (job <= 322)) || ((job >= 400) && (job <= 434)) ) {
-                                                        maxhp += Randomizer.rand(14, 18);
-                                                    } else if (((job >= 510) && (job <= 512)) || ((job >= 580) && (job <= 582))) {
-                                                        maxhp += Randomizer.rand(24, 28);
-                                                    } else if (((job >= 500) && (job <= 532)) || ((job >= 590) && (job <= 592))) {
-                                                        maxhp += Randomizer.rand(16, 20);
-                                                    } else if ((job >= 2000) && (job <= 2112)) {
-                                                        maxhp += Randomizer.rand(34, 38);
-                                                    } else {
-                                                        maxhp += Randomizer.rand(16, 20);
-                                                    }
-                                                maxhp = Math.min(chr.getMaxHpForSever(), Math.abs(maxhp));
-                                                chr.setHpApUsed((short) (chr.getHpApUsed() + 1));
-                                                playerst.setMaxHp(maxhp, chr);
-                                                statupdate.put(MapleStat.MAXHP, (long) maxhp);
-                                                break;
-                                        case 8192:
-                                                int maxmp = playerst.getMaxMp();
-                                                if (GameConstants.is新手职业(job)) {
-                                                        maxmp += Randomizer.rand(6, 8);
-                                                    } else {
-                                                        if (((job >= 100) && (job <= 132)) ) {
-                                                                maxmp += Randomizer.rand(4, 9);
-                                                            } else if (((job >= 200) && (job <= 232)) ) {
-                                                                maxmp += Randomizer.rand(32, 36);
-                                                            } else if (((job >= 300) && (job <= 322)) || ((job >= 400) && (job <= 434)) || ((job >= 500) && (job <= 592))) {
-                                                                maxmp += Randomizer.rand(8, 10);
-                                                            } else {
-                                                                maxmp += Randomizer.rand(6, 8);
-                                                            }
-                                                    }
-                                                maxmp = Math.min(chr.getMaxMpForSever(), Math.abs(maxmp));
-                                                chr.setHpApUsed((short) (chr.getHpApUsed() + 1));
-                                                playerst.setMaxMp(maxmp, chr);
-                                                statupdate.put(MapleStat.MAXMP, (long) maxmp);
-                                        }
-
-                                        switch (apfrom) {
-                                        case 64:
-                                                long toSet = playerst.getStr() - 1;
-                                                playerst.setStr((short) (int) toSet, chr);
-                                                statupdate.put(MapleStat.力量, toSet);
-                                                break;
-                                        case 128:
-                                                toSet = playerst.getDex() - 1;
-                                                playerst.setDex((short) (int) toSet, chr);
-                                                statupdate.put(MapleStat.敏捷, toSet);
-                                                break;
-                                        case 256:
-                                                toSet = playerst.getInt() - 1;
-                                                playerst.setInt((short) (int) toSet, chr);
-                                                statupdate.put(MapleStat.智力, toSet);
-                                                break;
-                                        case 512:
-                                                toSet = playerst.getLuk() - 1;
-                                                playerst.setLuk((short) (int) toSet, chr);
-                                                statupdate.put(MapleStat.运气, toSet);
-                                                break;
-                                        case 2048:
-                                                int maxhp = playerst.getMaxHp();
-                                                if (GameConstants.is新手职业(job)) {
-                                                        maxhp -= 12;
-                                                    }else if (((job >= 200) && (job <= 232))) {
-                                                        maxhp -= 10;
-                                                    } else if (((job >= 300) && (job <= 322)) || ((job >= 400) && (job <= 434))) {
-                                                        maxhp -= 15;
-                                                    } else if (((job >= 500) && (job <= 592))) {
-                                                        maxhp -= 22;
-                                                    } else if (((job >= 100) && (job <= 132))) {
-                                                        maxhp -= 32;
-                                                    }else {
-                                                        maxhp -= 20;
-                                                    }
-                                                chr.setHpApUsed((short) (chr.getHpApUsed() - 1));
-                                                playerst.setMaxHp(maxhp, chr);
-                                                statupdate.put(MapleStat.MAXHP, (long) maxhp);
-                                                break;
-                                        case 8192:
-                                                int maxmp = playerst.getMaxMp();
-                                                if (GameConstants.is新手职业(job)) {
-                                                        maxmp -= 8;
-                                                    } else {
-                                                        if (((job >= 100) && (job <= 132)) || ((job >= 1100) && (job <= 1112)) || ((job >= 5100) && (job <= 5112))) {
-                                                                maxmp -= 4;
-                                                            } else if (((job >= 200) && (job <= 232)) || ((job >= 1200) && (job <= 1212)) || ((job >= 2700) && (job <= 2712))) {
-                                                                maxmp -= 30;
-                                                            } else if (((job >= 500) && (job <= 592)) || ((job >= 300) && (job <= 322)) || ((job >= 400) && (job <= 434)) || ((job >= 1300) && (job <= 1312)) || ((job >= 1400) && (job <= 1412)) || ((job >= 1500) && (job <= 1512)) || ((job >= 3300) && (job <= 3312)) || ((job >= 3500) && (job <= 3512)) || ((job >= 2300) && (job <= 2312)) || ((job >= 2400) && (job <= 2412))) {
-                                                                maxmp -= 10;
-                                                            } else if ((job >= 2000) && (job <= 2112)) {
-                                                                maxmp -= 5;
-                                                            } else {
-                                                                maxmp -= 20;
-                                                            }
-                                                    }
-                                                chr.setHpApUsed((short) (chr.getHpApUsed() - 1));
-                                                playerst.setMaxMp(maxmp, chr);
-                                                statupdate.put(MapleStat.MAXMP, (long) maxmp);
-                                        }
-
-                                        c.getSession().write(MaplePacketCreator.updatePlayerStats(statupdate, true, chr));
+                        used = false;
+                        break;
+                    case 0x80:
+                        if (playerst.getDex() > 4) {
+                                break;
                             }
-                    }else {
-                        // 洗技能点
-                        int skill1 = slea.readInt();
-                        int skill2 = slea.readInt();
-                        Skill skillSPTo = SkillFactory.getSkill(skill1);
-                        Skill skillSPFrom = SkillFactory.getSkill(skill2);
-                        if ((skillSPTo.isBeginnerSkill()) || (skillSPFrom.isBeginnerSkill())) {
-                                chr.dropMessage(1, "无法对新手技能使用。");
-                            } else if (GameConstants.getSkillBookBySkill(skill1) != GameConstants.getSkillBookBySkill(skill2)) {
-                                chr.dropMessage(1, "只能选择同一职业下的技能。");
-                            } else if ((chr.getSkillLevel(skillSPTo) + 1 <= skillSPTo.getMaxLevel()) && (chr.getSkillLevel(skillSPFrom) > 0) && (skillSPTo.canBeLearnedBy(chr.getJob()))) {
-                                if ((chr.getSkillLevel(skillSPTo) + 1 > chr.getMasterLevel(skillSPTo))) {
-                                        chr.dropMessage(1, "You will exceed the master level。");
-                                        break;
-                                    }
-                                if (itemId >= 5050005) {
-                                        if ((GameConstants.getSkillBookBySkill(skill1) != (itemId - 5050005) * 2) && (GameConstants.getSkillBookBySkill(skill1) != (itemId - 5050005) * 2 + 1)) {
-                                                chr.dropMessage(1, "You may not add this job SP using this reset。");
-                                                break;
-                                            }
-                                    } else {
-                                        int theJob = GameConstants.getJobNumber(skill2 / 10000);
-                                        switch (skill2 / 10000) {
-                                                case 430:
-                                                        theJob = 1;
-                                                        break;
-                                                case 431:
-                                                    case 432:
-                                                        theJob = 2;
-                                                        break;
-                                                case 433:
-                                                        theJob = 3;
-                                                        break;
-                                                case 434:
-                                                        theJob = 4;
-                                                }
-
-                                                if (theJob != itemId - 5050000) {
-                                                chr.dropMessage(1, "You may not subtract from this skill. Use the appropriate SP reset。");
-                                                break;
-                                            }
-                                    }
-                                chr.changeSingleSkillLevel(skillSPFrom, (byte) (chr.getSkillLevel(skillSPFrom) - 1), chr.getMasterLevel(skillSPFrom));
-                                chr.changeSingleSkillLevel(skillSPTo, (byte) (chr.getSkillLevel(skillSPTo) + 1), chr.getMasterLevel(skillSPTo));
-                                used = true;
+                        used = false;
+                        break;
+                    case 0x100:
+                        if (playerst.getInt() > 4) {
+                                break;
                             }
+                        used = false;
+                        break;
+                    case 0x200:
+                        if (playerst.getLuk() > 4) {
+                                break;
+                            }
+                        used = false;
+                        break;
+                    case 0x400:
+                        if ((chr.getHpApUsed() > 0) && (chr.getHpApUsed() < 10000)) {
+                                break;
+                            }
+                        used = false;
+                        break;
+                    case 0x800:
+                        if ((chr.getHpApUsed() > 0) && (chr.getHpApUsed() < 10000)) {
+                                break;
+                            }
+                        used = false;
                     }
+
+                    if (used) {
+                    switch (apto) {
+                        case 0x40:
+                                long toSet = playerst.getStr() + 1;
+                                playerst.setStr((short) (int) toSet, chr);
+                                statupdate.put(MapleStat.力量, toSet);
+                                break;
+                        case 0x80:
+                                toSet = playerst.getDex() + 1;
+                                playerst.setDex((short) (int) toSet, chr);
+                                statupdate.put(MapleStat.敏捷, toSet);
+                                break;
+                        case 0x100:
+                                toSet = playerst.getInt() + 1;
+                                playerst.setInt((short) (int) toSet, chr);
+                                statupdate.put(MapleStat.智力, toSet);
+                                break;
+                        case 0x200:
+                                toSet = playerst.getLuk() + 1;
+                                playerst.setLuk((short) (int) toSet, chr);
+                                statupdate.put(MapleStat.运气, toSet);
+                                break;
+                        case 0x400:
+                                int maxhp = playerst.getMaxHp();
+                                if (GameConstants.is新手职业(job)) {
+                                        maxhp += Randomizer.rand(4, 8);
+                                    }else if (((job >= 100) && (job <= 132)) ) {
+                                        maxhp += Randomizer.rand(36, 42);
+                                    } else if (((job >= 200) && (job <= 232)) ) {
+                                        maxhp += Randomizer.rand(10, 12);
+                                    } else if (((job >= 300) && (job <= 322)) || ((job >= 400) && (job <= 434)) ) {
+                                        maxhp += Randomizer.rand(14, 18);
+                                    } else if (((job >= 510) && (job <= 512)) || ((job >= 580) && (job <= 582))) {
+                                        maxhp += Randomizer.rand(24, 28);
+                                    } else if (((job >= 500) && (job <= 532)) || ((job >= 590) && (job <= 592))) {
+                                        maxhp += Randomizer.rand(16, 20);
+                                    }else {
+                                        maxhp += Randomizer.rand(16, 20);
+                                    }
+                                maxhp = Math.min(chr.getMaxHpForSever(), Math.abs(maxhp));
+                                chr.setHpApUsed((short) (chr.getHpApUsed() + 1));
+                                playerst.setMaxHp(maxhp, chr);
+                                statupdate.put(MapleStat.MAXHP, (long) maxhp);
+                                break;
+                        case 0x800:
+                                int maxmp = playerst.getMaxMp();
+                                if (GameConstants.is新手职业(job)) {
+                                        maxmp += Randomizer.rand(6, 8);
+                                    } else {
+                                        if (((job >= 100) && (job <= 132)) ) {
+                                                maxmp += Randomizer.rand(4, 9);
+                                            } else if (((job >= 200) && (job <= 232)) ) {
+                                                maxmp += Randomizer.rand(32, 36);
+                                            } else if (((job >= 300) && (job <= 322)) || ((job >= 400) && (job <= 434)) || ((job >= 500) && (job <= 592))) {
+                                                maxmp += Randomizer.rand(8, 10);
+                                            } else {
+                                                maxmp += Randomizer.rand(6, 8);
+                                            }
+                                    }
+                                maxmp = Math.min(chr.getMaxMpForSever(), Math.abs(maxmp));
+                                chr.setHpApUsed((short) (chr.getHpApUsed() + 1));
+                                playerst.setMaxMp(maxmp, chr);
+                                statupdate.put(MapleStat.MAXMP, (long) maxmp);
+                    }
+
+                    switch (apfrom) {
+                        case 0x40:
+                                long toSet = playerst.getStr() - 1;
+                                playerst.setStr((short) (int) toSet, chr);
+                                statupdate.put(MapleStat.力量, toSet);
+                                break;
+                        case 0x80:
+                                toSet = playerst.getDex() - 1;
+                                playerst.setDex((short) (int) toSet, chr);
+                                statupdate.put(MapleStat.敏捷, toSet);
+                                break;
+                        case 0x100:
+                                toSet = playerst.getInt() - 1;
+                                playerst.setInt((short) (int) toSet, chr);
+                                statupdate.put(MapleStat.智力, toSet);
+                                break;
+                        case 0x200:
+                                toSet = playerst.getLuk() - 1;
+                                playerst.setLuk((short) (int) toSet, chr);
+                                statupdate.put(MapleStat.运气, toSet);
+                                break;
+                        case 0x400:
+                                int maxhp = playerst.getMaxHp();
+                                if (GameConstants.is新手职业(job)) {
+                                        maxhp -= 12;
+                                    }else if (((job >= 200) && (job <= 232))) {
+                                        maxhp -= 10;
+                                    } else if (((job >= 300) && (job <= 322)) || ((job >= 400) && (job <= 434))) {
+                                        maxhp -= 15;
+                                    } else if (((job >= 500) && (job <= 592))) {
+                                        maxhp -= 22;
+                                    } else if (((job >= 100) && (job <= 132))) {
+                                        maxhp -= 32;
+                                    }else {
+                                        maxhp -= 20;
+                                    }
+                                chr.setHpApUsed((short) (chr.getHpApUsed() - 1));
+                                playerst.setMaxHp(maxhp, chr);
+                                statupdate.put(MapleStat.MAXHP, (long) maxhp);
+                                break;
+                        case 0x800:
+                                int maxmp = playerst.getMaxMp();
+                                if (GameConstants.is新手职业(job)) {
+                                    maxmp -= 8;
+                                } else {
+                                    if (((job >= 100) && (job <= 132)) || ((job >= 1100) && (job <= 1112)) || ((job >= 5100) && (job <= 5112))) {
+                                        maxmp -= 4;
+                                    } else if (((job >= 200) && (job <= 232)) || ((job >= 1200) && (job <= 1212)) || ((job >= 2700) && (job <= 2712))) {
+                                        maxmp -= 30;
+                                    } else if (((job >= 500) && (job <= 592)) || ((job >= 300) && (job <= 322)) || ((job >= 400) && (job <= 434)) || ((job >= 1300) && (job <= 1312)) || ((job >= 1400) && (job <= 1412)) || ((job >= 1500) && (job <= 1512)) || ((job >= 3300) && (job <= 3312)) || ((job >= 3500) && (job <= 3512)) || ((job >= 2300) && (job <= 2312)) || ((job >= 2400) && (job <= 2412))) {
+                                        maxmp -= 10;
+                                    } else if ((job >= 2000) && (job <= 2112)) {
+                                        maxmp -= 5;
+                                    } else {
+                                        maxmp -= 20;
+                                    }
+                                }
+                                chr.setHpApUsed((short) (chr.getHpApUsed() - 1));
+                                playerst.setMaxMp(maxmp, chr);
+                                statupdate.put(MapleStat.MAXMP, (long) maxmp);
+                        }
+
+                        c.getSession().write(MaplePacketCreator.updatePlayerStats(statupdate, true, chr));
+                    }
+                }else {
+                    // 洗技能点
+                    // 2B 0B 00 A1 43 21 00 40 42 0F 00 41 42 0F 00
+                    used = false;
+                    int skillTo = slea.readInt();
+                    int skillFrom = slea.readInt();
+                    Skill skillSPTo = SkillFactory.getSkill(skillTo);
+                    Skill skillSPFrom = SkillFactory.getSkill(skillFrom);
+                    if ((itemId == 2180001 && (skillTo/10000)%100 == 0 && (skillFrom/10000)%100 == 0)
+                         || (itemId == 2180002 && ((skillTo/10000)%100 == 10 || (skillTo/10000)%100 == 20 || (skillTo/10000)%100 == 30) && ((skillFrom/10000)%100 != 10 || (skillFrom/10000)%100 != 20 || (skillFrom/10000)%100 != 30))
+                         || (itemId == 2180003 && ((skillTo/10000)%100 == 11 || (skillTo/10000)%100 == 21 || (skillTo/10000)%100 == 31) && ((skillFrom/10000)%100 != 11 || (skillFrom/10000)%100 != 21 || (skillFrom/10000)%100 != 31))
+                            ) {
+                        if (GameConstants.getSkillBookBySkill(skillTo) != GameConstants.getSkillBookBySkill(skillFrom)) {
+                            chr.dropMessage(1, "只能选择同一职业下的技能。");
+                        } else if ((chr.getSkillLevel(skillSPTo) + 1 <= skillSPTo.getMaxLevel()) && (chr.getSkillLevel(skillSPFrom) > 0) && (skillSPTo.canBeLearnedBy(chr.getJob()))) {
+                            chr.changeSingleSkillLevel(skillSPFrom, (byte) (chr.getSkillLevel(skillSPFrom) - 1), chr.getMasterLevel(skillSPFrom));
+                            chr.changeSingleSkillLevel(skillSPTo, (byte) (chr.getSkillLevel(skillSPTo) + 1), chr.getMasterLevel(skillSPTo));
+                            used = true;
+                        }
+                    } else {
+                        chr.dropMessage(1, "请使用相应的洗点技能卡，不要作弊！");
+                    }
+                }
                 break;
             case 208: // 喇叭
                 // 2B 08 00 E8 C0 1F 00 0A 00 BA EC C0 AE B0 C8 B2 E2 CA D4
@@ -389,7 +368,7 @@ public class UseCashItemHandler {
                 used = true;
                 break;
             case 215: // 音乐盒
-                chr.getMap().startJukebox(chr.getName(), itemId);
+                chr.getMap().startJukebox(chr.getName()+"演奏了祝贺曲！", itemId);
                 used = true;
                 break;
             case 209: // 地图祝福

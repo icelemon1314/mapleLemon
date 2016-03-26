@@ -1369,36 +1369,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         skillIds.clear();
     }
 
-    public void maxBeginnerSkills() {
-        List skillIds = new ArrayList();
-        HashMap<Skill, SkillEntry> sDate = new HashMap();
-        for (Skill skil : SkillFactory.getAllSkills()) {
-            if ((skil.canBeLearnedBy(getPlayer().getJob())) && (skil.isBeginnerSkill()) && (!skil.isSpecialSkill())) {
-                sDate.put(skil, new SkillEntry((byte) skil.getMaxLevel(), (byte) skil.getMaxLevel(), SkillFactory.getDefaultSExpiry(skil)));
-                skillIds.add(skil.getId());
-            }
-        }
-        getPlayer().changeSkillsLevel(sDate);
-        Collections.sort(skillIds);
-        String job;
-        Iterator i$;
-        if (getPlayer().isShowPacket()) {
-            job = new StringBuilder().append("Skill\\").append(MapleCarnivalChallenge.getJobNameById(getPlayer().getJob())).append("_新手技能.txt").toString();
-            for (i$ = skillIds.iterator(); i$.hasNext();) {
-                Integer skillId = (Integer) i$.next();
-                for (Map.Entry data : sDate.entrySet()) {
-                    if (((Skill) data.getKey()).getId() == skillId) {
-                        String txt = new StringBuilder().append("public static final int ").append(((Skill) data.getKey()).getName()).append(" = ").append(((Skill) data.getKey()).getId()).append("; //技能最大等级").append(((Skill) data.getKey()).getMaxLevel()).toString();
-                        FileoutputUtil.log(job, txt, true);
-                    }
-                }
-            }
-        }
-        Integer skillId;
-        sDate.clear();
-        skillIds.clear();
-    }
-
     public void resetStats(int str, int dex, int z, int luk) {
         this.c.getPlayer().resetStats(str, dex, z, luk);
     }
