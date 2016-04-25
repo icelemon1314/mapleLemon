@@ -20,6 +20,12 @@ http://pan.baidu.com/s/1c1ro4EG
 
 本项目仅供学习和研究使用。如有侵犯版权，请联系：icelemon1024@gmail.com
 
+转载请注明出处，严禁用于商业，严禁拿去卖：
+强烈抵制：
+拿去卖：https://item.taobao.com/item.htm?id=530571604453&qq-pf-to=pcqq.group&wwlight=cntaobao%E5%85%AB%E9%9B%B6%E7%BD%91%E7%BB%9C%E7%BD%91%E5%8D%95-%7B530571604453%7D&qq-pf-to=pcqq.group
+
+转帖不注明出处：http://www.youxiahz.com/forum.php?mod=viewthread&tid=688
+
 架设端步骤：
 
 1. 安装JDK7，mysql5.5
