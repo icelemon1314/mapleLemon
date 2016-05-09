@@ -1181,19 +1181,6 @@ public class PlayerHandler {
         }
     }
 
-    public static void changeZeroLook(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr, boolean end) {
-        if ((chr == null) || (chr.getMap() == null)) {
-            c.getSession().write(MaplePacketCreator.enableActions());
-            return;
-        }
-
-        if (end) {
-            chr.getMap().broadcastMessage(chr, MaplePacketCreator.removeZeroFromMap(chr.getId()), false);
-        } else {
-            chr.changeZeroLook();
-        }
-    }
-
     public static void GUIDE_TRANSFER(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         slea.skip(2);
         int mapid = slea.readInt();

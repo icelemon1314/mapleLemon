@@ -824,14 +824,8 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 NPCScriptManager.getInstance().dispose(c);
 //                NPCScriptManager.getInstance().start(c, 1064026, 1);
                 break;
-            case CHANGE_ZERO_LOOK:
-                PlayerHandler.changeZeroLook(slea, c, c.getPlayer(), false);
-                break;
             case GUIDE_TRANSFER:
                 PlayerHandler.GUIDE_TRANSFER(slea, c, c.getPlayer());//游戏向导
-                break;
-            case CHANGE_ZERO_LOOK_END:
-                PlayerHandler.changeZeroLook(slea, c, c.getPlayer(), true);
                 break;
             case EXIT_GAME:
                 c.getSession().write(MaplePacketCreator.exitGame());

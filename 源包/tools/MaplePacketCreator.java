@@ -486,7 +486,6 @@ public class MaplePacketCreator {
      * @param gain
      * @param 白色
      * @param expStats
-     * @param 召回戒指经验
      * @return
      */
     public static byte[] GainEXP_Monster(int gain, boolean 白色, Map<MapleExpStat, Integer> expStats) {
@@ -893,19 +892,6 @@ public class MaplePacketCreator {
 
         Triple rings = chr.getRings(false);
         addMRingInfo(mplew, (List) rings.getRight(), chr);
-        return mplew.getPacket();
-    }
-
-    public static byte[] updateZeroLook(MapleCharacter chr) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.UPDATE_ZERO_LOOK.getValue());
-        mplew.writeInt(chr.getId());
-        PacketHelper.addCharLook(mplew, chr, false, chr.isZeroSecondLook());
-
         return mplew.getPacket();
     }
 
