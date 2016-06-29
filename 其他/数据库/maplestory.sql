@@ -199,7 +199,7 @@ CREATE TABLE `auth_server_channel_ip` (
   `value` tinytext NOT NULL,
   PRIMARY KEY (`channelconfigid`),
   KEY `channelid` (`channelid`)
-) ENGINE=MyISAM DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of auth_server_channel_ip
@@ -479,7 +479,7 @@ CREATE TABLE `character_cards` (
   KEY `accid` (`accid`),
   KEY `character_cards_ibfk_1` (`characterid`),
   CONSTRAINT `character_cards_ibfk_1` FOREIGN KEY (`characterid`) REFERENCES `characters` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of character_cards
@@ -521,7 +521,7 @@ CREATE TABLE `character_keyvalue` (
   PRIMARY KEY (`id`),
   KEY `characterid` (`characterid`),
   CONSTRAINT `character_keyvalue_ibfk_1` FOREIGN KEY (`characterid`) REFERENCES `characters` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of character_keyvalue
@@ -588,7 +588,7 @@ CREATE TABLE `character_work` (
   KEY `accid` (`accid`) USING BTREE,
   KEY `characterid` (`characterid`) USING BTREE,
   CONSTRAINT `characterid` FOREIGN KEY (`characterid`) REFERENCES `characters` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of character_work
@@ -607,7 +607,7 @@ CREATE TABLE `cheatlog` (
   `param` tinytext NOT NULL,
   PRIMARY KEY (`id`),
   KEY `cid` (`characterid`) USING BTREE
-) ENGINE=MyISAM DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of cheatlog
@@ -8259,7 +8259,7 @@ CREATE TABLE `dueypackages` (
   `Checked` tinyint(1) unsigned DEFAULT '1',
   `Type` tinyint(1) unsigned NOT NULL,
   PRIMARY KEY (`PackageId`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of dueypackages
@@ -8419,7 +8419,7 @@ CREATE TABLE `guilds` (
   UNIQUE KEY `name` (`name`),
   KEY `guildid` (`guildid`),
   KEY `leader` (`leader`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of guilds
@@ -8611,7 +8611,7 @@ CREATE TABLE `inventoryequipment` (
   PRIMARY KEY (`inventoryequipmentid`),
   KEY `inventoryitemid` (`inventoryitemid`),
   CONSTRAINT `inventoryequipment_ibfk_2` FOREIGN KEY (`inventoryitemid`) REFERENCES `inventoryitems` (`inventoryitemid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10277 DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB AUTO_INCREMENT=10277 DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of inventoryequipment
@@ -8711,7 +8711,7 @@ CREATE TABLE `inventoryitems` (
   KEY `FK_inventoryitems_2` (`accountid`),
   KEY `FK_inventoryitems_3` (`uniqueid`) USING BTREE,
   KEY `FK_inventoryitems_4` (`equipOnlyId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=20925 DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB AUTO_INCREMENT=20925 DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of inventoryitems
@@ -8896,7 +8896,7 @@ CREATE TABLE `ipbans` (
   `ipbanid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `ip` varchar(40) NOT NULL DEFAULT '',
   PRIMARY KEY (`ipbanid`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of ipbans
@@ -8950,7 +8950,7 @@ CREATE TABLE `keymap` (
   PRIMARY KEY (`id`),
   KEY `keymap_ibfk_1` (`characterid`),
   CONSTRAINT `keymap_ibfk_1` FOREIGN KEY (`characterid`) REFERENCES `characters` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9339 DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB AUTO_INCREMENT=9339 DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of keymap
@@ -9214,7 +9214,7 @@ CREATE TABLE `monsterbook` (
   PRIMARY KEY (`id`),
   KEY `id` (`id`),
   KEY `charid` (`charid`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of monsterbook
@@ -9255,7 +9255,7 @@ CREATE TABLE `mts_cart` (
   PRIMARY KEY (`id`),
   KEY `characterid` (`characterid`),
   KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of mts_cart
@@ -9273,7 +9273,7 @@ CREATE TABLE `mts_items` (
   `seller` varchar(13) NOT NULL DEFAULT '',
   `expiration` bigint(20) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of mts_items
@@ -9497,7 +9497,7 @@ CREATE TABLE `questinfo` (
   PRIMARY KEY (`questinfoid`),
   KEY `characterid` (`characterid`),
   CONSTRAINT `questsinfo_ibfk_1` FOREIGN KEY (`characterid`) REFERENCES `characters` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of questinfo
@@ -9516,7 +9516,7 @@ CREATE TABLE `questscripts` (
   PRIMARY KEY (`id`),
   KEY `characterid` (`characterid`),
   KEY `queststatusid` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of questscripts
@@ -9538,7 +9538,7 @@ CREATE TABLE `queststatus` (
   KEY `characterid` (`characterid`),
   KEY `queststatusid` (`queststatusid`),
   CONSTRAINT `queststatus_ibfk_1` FOREIGN KEY (`characterid`) REFERENCES `characters` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3004 DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB AUTO_INCREMENT=3004 DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of queststatus
@@ -9584,7 +9584,7 @@ CREATE TABLE `quickslot` (
   PRIMARY KEY (`id`),
   KEY `quickslot_ibfk_1` (`characterid`),
   CONSTRAINT `quickslot_ibfk_1` FOREIGN KEY (`characterid`) REFERENCES `characters` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of quickslot
@@ -9659,7 +9659,7 @@ CREATE TABLE `rings` (
   KEY `ringid` (`ringid`),
   KEY `partnerChrId` (`partnerChrId`),
   KEY `partnerRingId` (`partnerRingId`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of rings
@@ -9776,7 +9776,7 @@ CREATE TABLE `shops` (
   `npcid` int(11) DEFAULT '0',
   `shopname` text,
   PRIMARY KEY (`shopid`)
-) ENGINE=MyISAM DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of shops
@@ -10062,7 +10062,7 @@ CREATE TABLE `storages` (
   PRIMARY KEY (`storageid`),
   KEY `accountid` (`accountid`),
   CONSTRAINT `storages_ibfk_1` FOREIGN KEY (`accountid`) REFERENCES `accounts` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of storages
@@ -10152,7 +10152,7 @@ CREATE TABLE `wishlist` (
   `sn` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `characterid` (`characterid`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=gbk ;
 
 -- ----------------------------
 -- Records of wishlist
@@ -25657,7 +25657,7 @@ CREATE TABLE `wz_questcompletedata` (
   `num` int(12) DEFAULT '0',
   `quest_status` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=290 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM AUTO_INCREMENT=290 DEFAULT CHARSET=utf8 ;
 
 -- ----------------------------
 -- Records of wz_questcompletedata
@@ -26085,7 +26085,7 @@ CREATE TABLE `wz_questrewarddata` (
   `reward_rand` int(12) NOT NULL DEFAULT '100' COMMENT '获奖概率',
   `quest_status` varchar(12) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=12270 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM AUTO_INCREMENT=12270 DEFAULT CHARSET=utf8 ;
 
 -- ----------------------------
 -- Records of wz_questrewarddata

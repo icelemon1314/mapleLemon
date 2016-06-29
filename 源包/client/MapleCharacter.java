@@ -2797,12 +2797,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return Byte.parseByte(getKeyValue("Zero_Look"));
     }
 
-    public void changeZeroLook() {
-        setKeyValue("Zero_Look", isZeroSecondLook() ? "0" : "1");
-        this.map.broadcastMessage(this, MaplePacketCreator.updateZeroLook(this), false);
-        this.stats.recalcLocalStats(this);
-    }
-
     public boolean isZeroSecondLook() {
         return getZeroLook() == 1;
     }

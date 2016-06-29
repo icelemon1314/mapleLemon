@@ -40,10 +40,6 @@
 ---------------------------------------------------------------------------------------------------
 **/
 
-importPackage(Packages.client);
-importPackage(Packages.tools);
-importPackage(Packages.server.life);
-
 //Time Setting is in millisecond
 // 15分钟一趟 登船4分钟 等待1分钟 航行10分钟
 var closeTime = 240000; //The time to close the gate
