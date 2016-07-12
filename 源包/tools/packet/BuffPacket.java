@@ -338,10 +338,10 @@ public class BuffPacket {
             mplew.writeShort(duration); // 持续时间
         }
         mplew.writeShort(0);
-        int mask = 0x40020180;
-        if (( mask & 0x40020180) == 1){
+        //int mask = 0x40020180;
+        //if (( mask & 0x40020180) == 1){
             mplew.write(0);
-        }
+        //}
 
         return mplew.getPacket();
     }

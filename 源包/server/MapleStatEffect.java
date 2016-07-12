@@ -682,7 +682,6 @@ public class MapleStatEffect implements Serializable {
             hpchange = stat.getMaxHp();
             applyto.setStance(0);
         }
-        System.out.println("11111111111");
         if ((is净化()) && (makeChanceResult())) {
             if (applyto.dispelDebuffs()) {
                 if (sourceid == 祭司.净化 && applyfrom.getParty() != null) {
@@ -729,7 +728,6 @@ public class MapleStatEffect implements Serializable {
             applyto.getMap().spawnExtractor(applyto.getExtractor());
         } else {
             int i;
-            System.out.println("4444444");
             if (is迷雾爆发()) {
                 i = (this.info.get(MapleStatInfo.y));
                 for (MapleDefender mist : applyto.getMap().getAllMistsThreadsafe()) {

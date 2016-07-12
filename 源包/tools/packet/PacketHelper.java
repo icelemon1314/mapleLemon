@@ -533,6 +533,7 @@ public class PacketHelper {
         for (int i = mask.length; i >= 1; i--) {
             mplew.writeInt(mask[(i - 1)]);
         }
+
     }
 
     public static <E extends Buffstat> void writeBuffMask(MaplePacketLittleEndianWriter mplew, Map<E, Integer> statups) {

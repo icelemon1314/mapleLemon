@@ -1323,12 +1323,18 @@ public class InventoryHandler {
         c.getSession().write(MaplePacketCreator.enableActions());
     }
 
+    /**
+     * 使用召唤包
+     * # 29 0B 00 08 0F 20 00
+     * @param slea
+     * @param c
+     * @param chr
+     */
     public static void UseSummonBag(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         if ((!chr.isAlive()) || (chr.hasBlockedInventory())) {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
-        c.getPlayer().updateTick(slea.readInt());
         byte slot = (byte) slea.readShort();
         int itemId = slea.readInt();
         Item toUse = chr.getInventory(MapleInventoryType.USE).getItem((short) slot);
@@ -1343,8 +1349,8 @@ public class InventoryHandler {
 
             for (Entry<String, Integer> i : toSpawn.entrySet()) {
                 // for (Map.Entry i : toSpawn.entrySet()) {
-                if ((((String) i.getKey()).startsWith("mob")) && (Randomizer.nextInt(99) <= (i.getValue()))) {
-                    ht = MapleLifeFactory.getMonster(Integer.parseInt(((String) i.getKey()).substring(3)));
+                if (((i.getKey()).startsWith("mob")) && (Randomizer.nextInt(99) <= (i.getValue()))) {
+                    ht = MapleLifeFactory.getMonster(Integer.parseInt(( i.getKey()).substring(3)));
                     chr.getMap().spawnMonster_sSack(ht, chr.getPosition(), type);
                 }
             }
