@@ -49,9 +49,6 @@ public class PartyPacket {
     }
 
     public static byte[] partyRequestInvite(MapleCharacter from) {//邀请反馈
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.PARTY_OPERATION.getValue());
@@ -150,9 +147,6 @@ public class PartyPacket {
     }
 
     public static byte[] updateParty(int forChannel, MapleParty party, PartyOperation op, MaplePartyCharacter target) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.PARTY_OPERATION.getValue());
@@ -223,9 +217,6 @@ public class PartyPacket {
     }
 
     public static byte[] getPartyListing(PartySearchType pst) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.PARTY_OPERATION.getValue());
         mplew.write(108);
@@ -263,9 +254,6 @@ public class PartyPacket {
     }
 
     public static byte[] partyListingAdded(PartySearch ps) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.PARTY_OPERATION.getValue());
         mplew.write(106);
@@ -299,9 +287,6 @@ public class PartyPacket {
     }
 
     public static byte[] removePartySearch(PartySearch ps) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.PARTY_OPERATION.getValue());
         mplew.write(107);
@@ -312,134 +297,7 @@ public class PartyPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] expeditionStatus(MapleExpedition me, boolean created) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.write(SendPacketOpcode.EXPEDITION_OPERATION.getValue());
-        mplew.write(created ? 86 : 88);
-        mplew.writeInt(me.getType().exped);
-        mplew.writeInt(0);
-        for (int i = 0; i < 5; i++) {
-            if (i < me.getParties().size()) {
-                MapleParty party = WrodlPartyService.getInstance().getParty((me.getParties().get(i)).intValue());
-                if (party != null) {
-                    addPartyStatus(-1, party, mplew, false, true);
-                } else {
-                    mplew.writeZero(226);
-                }
-            } else {
-                mplew.writeZero(226);
-            }
-        }
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] expeditionInviteMessage(int code, String name) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.EXPEDITION_OPERATION.getValue());
-        mplew.write(100);
-
-        mplew.writeInt(code);
-        mplew.writeMapleAsciiString(name);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] expeditionJoined(String name) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.write(SendPacketOpcode.EXPEDITION_OPERATION.getValue());
-        mplew.write(87);
-        mplew.writeMapleAsciiString(name);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] expeditionLeft(boolean left, String name) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.write(SendPacketOpcode.EXPEDITION_OPERATION.getValue());
-
-        mplew.write(left ? 91 : 93);
-        mplew.writeMapleAsciiString(name);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] expeditionMessage(boolean disbanded) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.write(SendPacketOpcode.EXPEDITION_OPERATION.getValue());
-
-        mplew.write(disbanded ? 95 : 94);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] expeditionLeaderChanged(int newLeader) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.write(SendPacketOpcode.EXPEDITION_OPERATION.getValue());
-        mplew.write(96);
-        mplew.writeInt(newLeader);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] expeditionUpdate(int partyIndex, MapleParty party) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.write(SendPacketOpcode.EXPEDITION_OPERATION.getValue());
-        mplew.write(97);
-        mplew.writeInt(0);
-        mplew.writeInt(partyIndex);
-        if (party == null) {
-            mplew.writeZero(226);
-        } else {
-            addPartyStatus(-1, party, mplew, false, true);
-        }
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] expeditionInvite(MapleCharacter from, int exped) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.EXPEDITION_OPERATION.getValue());
-        mplew.write(99);
-        mplew.writeInt(from.getLevel());
-        mplew.writeInt(from.getJob());
-        mplew.writeInt(0);
-        mplew.writeMapleAsciiString(from.getName());
-        mplew.writeInt(exped);
-
-        return mplew.getPacket();
-    }
-
     public static byte[] showMemberSearch(List<MapleCharacter> players) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.MEMBER_SEARCH.getValue());
         mplew.write(players.size());
@@ -454,9 +312,6 @@ public class PartyPacket {
     }
 
     public static byte[] showPartySearch(List<MapleParty> partylist) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.PARTY_SEARCH.getValue());
         mplew.write(partylist.size());
@@ -480,9 +335,6 @@ public class PartyPacket {
     }
 
     public static byte[] sidekickInvite(MapleCharacter from) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SIDEKICK_OPERATION.getValue());
@@ -498,9 +350,6 @@ public class PartyPacket {
     }
 
     public static byte[] disbandSidekick(MapleSidekick s) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SIDEKICK_OPERATION.getValue());
@@ -514,9 +363,6 @@ public class PartyPacket {
     }
 
     public static byte[] updateSidekick(MapleCharacter first, MapleSidekick s, boolean f) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SIDEKICK_OPERATION.getValue());

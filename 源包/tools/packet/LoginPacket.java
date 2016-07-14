@@ -297,9 +297,6 @@ public class LoginPacket {
     // 获取服务器状态
     public static byte[] getServerStatus(int status) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         mplew.write(SendPacketOpcode.SERVERSTATUS.getValue());
         mplew.write(status);
         if (status == 1) {
@@ -434,9 +431,6 @@ public class LoginPacket {
     }
 
     public static byte[] showAllCharacter(int chars) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.ALL_CHARLIST.getValue());
@@ -448,9 +442,6 @@ public class LoginPacket {
     }
 
     public static byte[] showAllCharacterInfo(int worldid, List<MapleCharacter> chars, String pic) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.ALL_CHARLIST.getValue());
@@ -466,9 +457,6 @@ public class LoginPacket {
     }
 
     public static byte[] ShowAccCash(int ACash, int mPoints) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SHOW_ACC_CASH.getValue());
@@ -479,7 +467,6 @@ public class LoginPacket {
     }
 
     public static byte[] RegisterInfo(boolean isAllow){
-        System.out.println("注册帐号3");
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.REGISTER_INFO.getValue());
         if (isAllow == true) {

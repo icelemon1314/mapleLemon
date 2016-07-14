@@ -15,9 +15,6 @@ public class TradePacket {
     private static final Logger log = Logger.getLogger(TradePacket.class);
 
     public static byte[] getTradeInvite(MapleCharacter chr) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.PLAYER_INTERACTION.getValue());
@@ -30,9 +27,6 @@ public class TradePacket {
     }
 
     public static byte[] getTradeMesoSet(byte number, int meso) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.PLAYER_INTERACTION.getValue());
@@ -44,9 +38,6 @@ public class TradePacket {
     }
 
     public static byte[] getTradeItemAdd(byte number, Item item) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.PLAYER_INTERACTION.getValue());
@@ -59,9 +50,6 @@ public class TradePacket {
     }
 
     public static byte[] getTradeStart(MapleClient c, MapleTrade trade, byte number) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.PLAYER_INTERACTION.getValue());
@@ -85,9 +73,6 @@ public class TradePacket {
     }
 
     public static byte[] getTradeConfirmation() {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.PLAYER_INTERACTION.getValue());
@@ -97,9 +82,6 @@ public class TradePacket {
     }
 
     public static byte[] TradeMessage(byte number, byte message) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.PLAYER_INTERACTION.getValue());
@@ -112,9 +94,6 @@ public class TradePacket {
     }
 
     public static byte[] getTradeCancel(byte number, int message) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.PLAYER_INTERACTION.getValue());

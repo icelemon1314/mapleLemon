@@ -274,7 +274,6 @@ public final class MobHandler {
     }
 
     public static void SpawnFamiliar(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        c.getPlayer().updateTick(slea.readInt());
         int mId = slea.readInt();
         c.getSession().write(MaplePacketCreator.enableActions());
         c.getPlayer().removeFamiliar();
@@ -381,7 +380,6 @@ public final class MobHandler {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
-        c.getPlayer().updateTick(slea.readInt());
         short slot = slea.readShort();
         int itemId = slea.readInt();
         Item toUse = chr.getInventory(MapleInventoryType.USE).getItem(slot);

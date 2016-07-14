@@ -186,7 +186,6 @@ public class PlayerInteractionHandler {
                 }
                 break;
             case 聊天:
-                chr.updateTick(slea.readInt());
                 String message = slea.readMapleAsciiString();
                 if (chr.getTrade() != null) {
                     chr.getTrade().chat(message);

@@ -708,7 +708,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 ps.close();
                 throw new RuntimeException("加载角色失败原因(角色没有找到).");
             }
-            System.out.println("加载角色信息1");
             ret.name = rs.getString("name");
             ret.level = rs.getShort("level");
             ret.fame = rs.getInt("fame");
@@ -730,7 +729,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             if (ret.meso < 0) {
                 ret.meso = 0;
             }
-            System.out.println("加载角色信息2");
             ret.skinColor = rs.getByte("skincolor");
             ret.gender = rs.getByte("gender");
             ret.hair = rs.getInt("hair");
@@ -763,7 +761,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ret.jobRankMove = rs.getInt("jobRankMove");
             ret.marriageId = rs.getInt("marriageId");
             ret.fatigue = rs.getShort("fatigue");
-            System.out.println("加载角色信息3");
             ret.apstorage = rs.getInt("apstorage");
             if ((channelserver) && (client != null)) {
                 MapleMapFactory mapFactory = ChannelServer.getInstance(client.getChannel()).getMapFactory();

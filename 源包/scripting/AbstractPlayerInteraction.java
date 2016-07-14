@@ -1415,18 +1415,6 @@ public abstract class AbstractPlayerInteraction {
         this.c.getSession().write(UIPacket.getDirectionInfo(1, 2000));
     }
 
-    public int getProfessions() {
-        int ii = 0;
-
-        for (int i = 0; i < 5; i++) {
-            int skillId = 92000000 + i * 10000;
-            if (this.c.getPlayer().getProfessionLevel(skillId) > 0) {
-                ii++;
-            }
-        }
-        return ii;
-    }
-
     public int getPQLog(String pqName) {
         return this.c.getPlayer().getPQLog(pqName);
     }

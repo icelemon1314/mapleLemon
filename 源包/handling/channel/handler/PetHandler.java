@@ -32,7 +32,6 @@ public class PetHandler {
 
     public static void Pet_AutoPotion(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         slea.skip(1);
-        chr.updateTick(slea.readInt());
         short slot = slea.readShort();
         if ((!chr.isAlive()) || (chr.getMapId() == 749040100) || (chr.getMap() == null)) {
             c.getSession().write(MaplePacketCreator.enableActions());
@@ -81,7 +80,6 @@ public class PetHandler {
             return;
         }
         int petid = slea.readInt();
-        c.getPlayer().updateTick(slea.readInt());
         if ((chr == null) || (chr.getMap() == null) || (chr.getSpawnPet() == null)) {
             return;
         }

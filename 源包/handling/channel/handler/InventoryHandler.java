@@ -105,7 +105,6 @@ public class InventoryHandler {
             return;
         }
         c.getPlayer().setScrolledPosition((short) 0);
-        c.getPlayer().updateTick(slea.readInt());
         short src = (short) slea.readInt();
         short dst = (short) slea.readInt();
         if ((src < 100) || (dst < 100)) {
@@ -119,7 +118,6 @@ public class InventoryHandler {
             return;
         }
         c.getPlayer().setScrolledPosition((short) 0);
-        c.getPlayer().updateTick(slea.readInt());
         boolean srcFirst = slea.readInt() > 0;
         if (slea.readByte() != 4) {
             c.getSession().write(MaplePacketCreator.enableActions());
@@ -322,51 +320,7 @@ public class InventoryHandler {
         }
     }
 
-    public static boolean UseSkillBook(byte slot, int itemId, MapleClient c, MapleCharacter chr) {
-        Item toUse = chr.getInventory(ItemConstants.getInventoryType(itemId)).getItem((short) slot);
-        if ((toUse == null) || (toUse.getQuantity() < 1) || (toUse.getItemId() != itemId) || (chr.hasBlockedInventory())) {
-            return false;
-        }
-        Map skilldata = MapleItemInformationProvider.getInstance().getEquipStats(toUse.getItemId());
-        if (skilldata == null) {
-            return false;
-        }
-        boolean canuse = false;
-        boolean success = false;
-        int skill = 0;
-        int maxlevel = 0;
-
-        Integer SuccessRate = (Integer) skilldata.get("success");
-        Integer ReqSkillLevel = (Integer) skilldata.get("reqSkillLevel");
-        Byte MasterLevel = (Byte) skilldata.get("masterLevel");
-
-        byte i = 0;
-        while (true) {
-            Integer CurrentLoopedSkillId = (Integer) skilldata.get("skillid" + i);
-            i = (byte) (i + 1);
-            if ((CurrentLoopedSkillId == null) || (MasterLevel == null)) {
-                break;
-            }
-            Skill CurrSkillData = SkillFactory.getSkill(CurrentLoopedSkillId.intValue());
-            if ((CurrSkillData != null) && (CurrSkillData.canBeLearnedBy(chr.getJob())) && ((ReqSkillLevel == null) || (chr.getSkillLevel(CurrSkillData) >= ReqSkillLevel)) && (chr.getMasterLevel(CurrSkillData) < MasterLevel)) {
-                canuse = true;
-                if ((SuccessRate == null) || (Randomizer.nextInt(100) <= SuccessRate)) {
-                    success = true;
-                    chr.changeSingleSkillLevel(CurrSkillData, chr.getSkillLevel(CurrSkillData), MasterLevel);
-                } else {
-                    success = false;
-                }
-                MapleInventoryManipulator.removeFromSlot(c, ItemConstants.getInventoryType(itemId), (short) slot, (byte) 1, false);
-                break;
-            }
-        }
-        c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.useSkillBook(chr, skill, maxlevel, canuse, success));
-        c.getSession().write(MaplePacketCreator.enableActions());
-        return canuse;
-    }
-
     public static void UseCatchItem(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        c.getPlayer().updateTick(slea.readInt());
         c.getPlayer().setScrolledPosition((short) 0);
         byte slot = (byte) slea.readShort();
         int itemid = slea.readInt();
@@ -390,7 +344,6 @@ public class InventoryHandler {
     }
 
     public static void UseMountFood(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        c.getPlayer().updateTick(slea.readInt());
         byte slot = (byte) slea.readShort();
         int itemid = slea.readInt();
         Item toUse = chr.getInventory(MapleInventoryType.USE).getItem((short) slot);
@@ -414,7 +367,6 @@ public class InventoryHandler {
     }
 
     public static void UseScriptedNPCItem(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        c.getPlayer().updateTick(slea.readInt());
         byte slot = (byte) slea.readShort();
         int itemId = slea.readInt();
         Item toUse = chr.getInventory(ItemConstants.getInventoryType(itemId)).getItem((short) slot);
@@ -1842,7 +1794,6 @@ public class InventoryHandler {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
-        chr.updateTick(slea.readInt());
         byte slot = (byte) slea.readShort();
         byte toSlot = (byte) slea.readShort();
         Item scroll = chr.getInventory(MapleInventoryType.USE).getItem((short) slot);
@@ -1870,7 +1821,6 @@ public class InventoryHandler {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
-        chr.updateTick(slea.readInt());
         byte slot = (byte) slea.readShort();
         byte toSlot = (byte) slea.readShort();
         Item scroll = chr.getInventory(MapleInventoryType.USE).getItem((short) slot);
@@ -1890,7 +1840,7 @@ public class InventoryHandler {
             chr.dropSpouseMessage(11, "卷轴道具: " + scroll.getItemId() + " - " + ii.getName(scroll.getItemId()) + " 成功几率为: " + successRate + "%");
         }
 
-            c.getSession().write(MaplePacketCreator.enableActions());
+        c.getSession().write(MaplePacketCreator.enableActions());
     }
 
 }

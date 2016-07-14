@@ -501,7 +501,6 @@ public class PlayersHandler {
 
     public static void Solomon(SeekableLittleEndianAccessor slea, MapleClient c) {
         c.getSession().write(MaplePacketCreator.enableActions());
-        c.getPlayer().updateTick(slea.readInt());
         Item item = c.getPlayer().getInventory(MapleInventoryType.USE).getItem(slea.readShort());
         if ((item == null) || (item.getItemId() != slea.readInt()) || (item.getQuantity() <= 0) || (c.getPlayer().getGachExp() > 0) || (c.getPlayer().getLevel() > 50) || (MapleItemInformationProvider.getInstance().getItemEffect(item.getItemId()).getEXP() <= 0)) {
             return;

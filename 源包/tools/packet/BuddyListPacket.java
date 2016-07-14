@@ -21,9 +21,6 @@ public class BuddyListPacket {
     }
 
     public static byte[] buddylistPrompt(int mode, String nameFrom) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.BUDDYLIST.getValue());
@@ -37,9 +34,6 @@ public class BuddyListPacket {
     }
 
     public static byte[] updateBuddylist(int mode) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         //1F 00 00 00 00
         mplew.write(SendPacketOpcode.BUDDYLIST.getValue());
@@ -88,9 +82,6 @@ public class BuddyListPacket {
     }
 
     public static byte[] requestBuddylistAdd(int chrIdFrom, String nameFrom, int channel) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.BUDDYLIST.getValue());

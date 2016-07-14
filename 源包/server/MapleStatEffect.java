@@ -775,13 +775,11 @@ public class MapleStatEffect implements Serializable {
                 applyto.getClient().getSession().write(MaplePacketCreator.getPVPIceGage(x - (this.info.get(MapleStatInfo.iceGageCon))));
                 applyto.applyIceGage(x - (this.info.get(MapleStatInfo.iceGageCon)));
             } else if (this.recipe > 0) {
-                System.out.println("rrrrrrrrr");
-                if ((applyto.getSkillLevel(this.recipe) > 0) || (applyto.getProfessionLevel(this.recipe / 10000 * 10000) < this.reqSkillLevel)) {
+                if ((applyto.getSkillLevel(this.recipe) > 0)) {
                     return false;
                 }
                 applyto.changeSingleSkillLevel(SkillFactory.getCraft(this.recipe), 2147483647, this.recipeUseCount, this.recipeValidDay > 0 ? System.currentTimeMillis() + this.recipeValidDay * 24L * 60L * 60L * 1000L : -1L);
             }else if (is暗器伤人()) {
-                System.out.println("aaaaaaaaaaaa");
                 MapleInventory use = applyto.getInventory(MapleInventoryType.USE);
                 boolean itemz = false;
                 int bulletConsume = (this.info.get(MapleStatInfo.bulletConsume));

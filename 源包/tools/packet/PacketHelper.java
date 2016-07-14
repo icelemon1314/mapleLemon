@@ -66,7 +66,6 @@ public class PacketHelper {
 
     public static void addQuestInfo(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
         List<MapleQuestStatus> started = chr.getStartedQuests();
-        System.out.println("任务个数："+started.size());
         /*
         mplew.writeShort(4);
         mplew.writeInt(100);
@@ -78,7 +77,6 @@ public class PacketHelper {
         mplew.writeInt(1001800);
         mplew.writeMapleAsciiString("2s");
         */
-
         mplew.writeShort(started.size());
         for (MapleQuestStatus q : started) {
             mplew.writeInt(q.getQuest().getId());
@@ -97,8 +95,8 @@ public class PacketHelper {
             mplew.writeShort(skills.size());
             for (Entry<Skill, SkillEntry> skill : skills.entrySet()) {
                 System.out.println("发送角色技能："+skill.getKey().getId()+",技能等级："+skill.getValue().skillLevel);
-                mplew.writeInt(((Skill) skill.getKey()).getId());
-                mplew.writeInt(((SkillEntry) skill.getValue()).skillLevel);
+                mplew.writeInt((skill.getKey()).getId());
+                mplew.writeInt((skill.getValue()).skillLevel);
             }
         } else {
             mplew.writeShort(0);
@@ -130,7 +128,6 @@ public class PacketHelper {
      * @param chr
      */
     public static void addInventoryInfo(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
-        System.out.println("添加背包信息发包1");
         MapleInventory iv = chr.getInventory(MapleInventoryType.EQUIPPED);
         List<Item> equippedList = iv.newList();
         Collections.sort(equippedList);
@@ -143,11 +140,9 @@ public class PacketHelper {
                 equippedCash.add(item);
             }
         }
-        System.out.println("添加背包信息发包2");
         for (Item item : equipped) {
             addItemInfo(mplew, item);
         }
-        System.out.println("添加背包信息发包3");
         mplew.write(0);
 
         for (Item item : equippedCash) {
@@ -155,13 +150,11 @@ public class PacketHelper {
         }
         mplew.write(0);
 
-        System.out.println("添加背包信息发包4");
         iv = chr.getInventory(MapleInventoryType.EQUIP);
         mplew.write(chr.getInventory(MapleInventoryType.EQUIP).getSlotLimit());
         for (Item item : iv.list()) {
             addItemInfo(mplew, item);
         }
-        System.out.println("添加背包信息发包5");
         mplew.write(0);
 
         iv = chr.getInventory(MapleInventoryType.USE);
@@ -169,14 +162,12 @@ public class PacketHelper {
         for (Item item : iv.list()) {
             addItemInfo(mplew, item);
         }
-        System.out.println("添加背包信息发包6");
         mplew.write(0);
         iv = chr.getInventory(MapleInventoryType.SETUP);
         mplew.write(chr.getInventory(MapleInventoryType.SETUP).getSlotLimit());
         for (Item item : iv.list()) {
             addItemInfo(mplew, item);
         }
-        System.out.println("添加背包信息发包7");
         mplew.write(0);
         iv = chr.getInventory(MapleInventoryType.ETC);
         mplew.write(chr.getInventory(MapleInventoryType.ETC).getSlotLimit());
@@ -185,7 +176,6 @@ public class PacketHelper {
                 addItemInfo(mplew, item);
             }
         }
-        System.out.println("添加背包信息发包8");
         mplew.write(0);
         iv = chr.getInventory(MapleInventoryType.CASH);
         mplew.write(chr.getInventory(MapleInventoryType.CASH).getSlotLimit());
@@ -483,14 +473,6 @@ public class PacketHelper {
         }
     }
 
-    public static void addJaguarInfo(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
-        if ((chr.getJob() >= 3300) && (chr.getJob() <= 3312)) {
-            mplew.write(chr.getIntNoRecord(111112));
-            for (int i = 0; i < 5; i++) {
-                mplew.writeInt(0);
-            }
-        }
-    }
 
     public static <E extends Buffstat> void writeSingleMask(MaplePacketLittleEndianWriter mplew, E statup) {
         for (int i = GameConstants.MAX_BUFFSTAT; i >= 1; i--) {

@@ -17,7 +17,6 @@ public class ItemMakerHandler {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
-        chr.updateTick(slea.readInt());
         byte slot = (byte) slea.readShort();
         int itemId = slea.readInt();
         Item toUse = chr.getInventory(MapleInventoryType.USE).getItem((short) slot);

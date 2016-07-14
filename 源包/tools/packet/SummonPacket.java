@@ -115,9 +115,6 @@ public class SummonPacket {
     }
 
     public static byte[] summonSkill(int chrId, int summonSkillId, int newStance) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SUMMON_SKILL.getValue());

@@ -322,9 +322,6 @@ public class InventoryPacket {
     }
 
     public static byte[] explodeDrop(int oid) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.REMOVE_ITEM_FROM_MAP.getValue());

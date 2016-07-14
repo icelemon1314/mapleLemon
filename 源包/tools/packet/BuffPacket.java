@@ -23,9 +23,6 @@ public class BuffPacket {
     private static final Logger log = Logger.getLogger(BuffPacket.class);
 
     public static byte[] giveDice(int buffid, int skillid, int duration, List<Pair<MapleBuffStat, Integer>> statups, MapleCharacter chr) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         int value = 0;
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -58,9 +55,6 @@ public class BuffPacket {
     }
 
     public static byte[] showMonsterRiding(int chrId, List<Pair<MapleBuffStat, Integer>> statups, int itemId, int skillId) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GIVE_FOREIGN_BUFF.getValue());
@@ -78,9 +72,6 @@ public class BuffPacket {
     public static byte[] givePirateBuff(List<Pair<MapleBuffStat, Integer>> statups, int duration, int skillid, MapleCharacter chr) {
         boolean infusion = (skillid == 5121009) || (skillid == 15121005) || (skillid % 10000 == 8006);
         int value = 0;
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GIVE_BUFF.getValue());
@@ -106,9 +97,6 @@ public class BuffPacket {
 
     public static byte[] giveForeignDash(List<Pair<MapleBuffStat, Integer>> statups, int duration, int chrId, int skillid) {
         boolean infusion = (skillid == 5121009) || (skillid == 15121005) || (skillid % 10000 == 8006);
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GIVE_FOREIGN_BUFF.getValue());
@@ -130,9 +118,6 @@ public class BuffPacket {
     }
 
     public static byte[] give无敌(int skillId, int duration) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.GIVE_BUFF.getValue());
         mplew.writeShort(1);
@@ -143,9 +128,6 @@ public class BuffPacket {
     }
 
     public static byte[] give神秘瞄准术(int x, int skillId, int duration) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GIVE_BUFF.getValue());
@@ -158,9 +140,6 @@ public class BuffPacket {
     }
 
     public static byte[] giveEnergyCharge(int bar, int buffId, boolean fullbar, boolean consume) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GIVE_BUFF.getValue());
@@ -177,9 +156,6 @@ public class BuffPacket {
     }
 
     public static byte[] showEnergyCharge(int chrId, int bar, int buffId, boolean fullbar, boolean consume) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GIVE_FOREIGN_BUFF.getValue());
@@ -205,53 +181,9 @@ public class BuffPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] giveLuminousState(int buffid, int bufflength, MapleCharacter chr) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-        mplew.write(SendPacketOpcode.GIVE_BUFF.getValue());
-        mplew.writeShort(1);
-        mplew.writeInt(buffid);
-        mplew.writeInt(bufflength);
-        mplew.writeZero(5);
-        mplew.writeInt(buffid);
-        mplew.write(new byte[]{79, -39, -127, -101});
-        mplew.writeZero(8);
-        mplew.writeInt(chr.getDarkTotal());
-        mplew.writeInt(chr.getLightTotal());
-        mplew.writeInt(chr.getDarkType()); //个数
-        mplew.writeInt(chr.getLightType()); //个数
-        mplew.write(new byte[]{79, 23, -106, -113});
-        mplew.writeZero(8);
-        mplew.write(0);
-        mplew.writeInt(0);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] giveDarkCrescendo(int buffid, int bufflength, int count) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.GIVE_BUFF.getValue());
-        mplew.writeShort(count);
-        mplew.writeInt(buffid);
-        mplew.writeInt(bufflength);
-        mplew.writeZero(5);
-        mplew.write(count);
-        mplew.writeZero(13);
-
-        return mplew.getPacket();
-    }
 
     public static byte[] startPower(boolean start, int time) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GIVE_BUFF.getValue());
@@ -265,9 +197,6 @@ public class BuffPacket {
     }
 
     public static byte[] showstartPower(int chrId, boolean start) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GIVE_FOREIGN_BUFF.getValue());
@@ -347,9 +276,6 @@ public class BuffPacket {
     }
 
     public static byte[] giveDebuff(MapleDisease statups, int x, int skillid, int level, int duration) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GIVE_BUFF.getValue());
@@ -365,9 +291,6 @@ public class BuffPacket {
     }
 
     public static byte[] giveForeignDebuff(int chrId, MapleDisease statups, int skillid, int level, int x) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GIVE_FOREIGN_BUFF.getValue());
@@ -389,9 +312,6 @@ public class BuffPacket {
     }
 
     public static byte[] cancelForeignDebuff(int chrId, MapleDisease mask) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CANCEL_FOREIGN_BUFF.getValue());
@@ -404,9 +324,6 @@ public class BuffPacket {
     }
 
     public static byte[] cancelForeignBuff(int chrId, List<MapleBuffStat> statups) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CANCEL_FOREIGN_BUFF.getValue());
@@ -419,9 +336,6 @@ public class BuffPacket {
     }
 
     public static byte[] cancelForeignBuff(int chrId, MapleBuffStat buffstat) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CANCEL_FOREIGN_BUFF.getValue());
@@ -434,9 +348,6 @@ public class BuffPacket {
     }
 
     public static byte[] giveForeignBuff(int chrId, List<Pair<MapleBuffStat, Integer>> statups, MapleStatEffect effect) {//TODO 给其他玩家BUFF 效果
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GIVE_FOREIGN_BUFF.getValue());
@@ -465,9 +376,6 @@ public class BuffPacket {
     }
 
     public static byte[] cancelBuff(List<MapleBuffStat> statups, MapleCharacter chr) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CANCEL_BUFF.getValue());
@@ -497,9 +405,6 @@ public class BuffPacket {
     }
 
     public static byte[] cancelBuff(MapleBuffStat buffstat) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CANCEL_BUFF.getValue());
@@ -510,9 +415,6 @@ public class BuffPacket {
     }
 
     public static byte[] cancelDebuff(MapleDisease mask) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CANCEL_BUFF.getValue());
@@ -524,24 +426,4 @@ public class BuffPacket {
         return mplew.getPacket();
     }
 
-
-
-    public static byte[] DoubleDefense(int buffid, List<Pair<MapleBuffStat, Integer>> statups, MapleCharacter chr, int x) {//双重防御
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.GIVE_BUFF.getValue());
-        PacketHelper.writeBuffMask(mplew, statups);
-
-        for (Pair stat : statups) {
-            mplew.writeShort(((Integer) stat.getRight()));
-            mplew.writeInt(buffid);
-            mplew.writeInt(2100000000);
-        }
-        mplew.writeZero(5);
-        mplew.write(x);
-        mplew.writeLong(0);
-        mplew.write(1);
-        mplew.writeInt(0);
-        return mplew.getPacket();
-    }
 }

@@ -10,9 +10,6 @@ public class WhisperPacket {
     private static final Logger log = Logger.getLogger(WhisperPacket.class);
 
     public static byte[] getWhisper(String sender, int channel, String text) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.WHISPER.getValue());
@@ -25,9 +22,6 @@ public class WhisperPacket {
     }
 
     public static byte[] getWhisperReply(String target, byte reply) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.WHISPER.getValue());
         mplew.write(10);
@@ -38,9 +32,6 @@ public class WhisperPacket {
     }
 
     public static byte[] getFindReplyWithMap(String target, int mapid, boolean buddy) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.WHISPER.getValue());
@@ -53,9 +44,6 @@ public class WhisperPacket {
     }
 
     public static byte[] getFindReply(String target, int channel, boolean buddy) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.WHISPER.getValue());
@@ -68,9 +56,6 @@ public class WhisperPacket {
     }
 
     public static byte[] getFindReplyWithCS(String target, boolean buddy) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.WHISPER.getValue());
@@ -83,9 +68,6 @@ public class WhisperPacket {
     }
 
     public static byte[] getFindReplyWithMTS(String target, boolean buddy) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.WHISPER.getValue());

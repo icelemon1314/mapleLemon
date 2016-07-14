@@ -15,9 +15,6 @@ public class MessengerPacket {
     private static final Logger log = Logger.getLogger(MessengerPacket.class);
 
     public static byte[] addMessengerPlayer(String from, MapleCharacter chr, int position, int channel) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MESSENGER.getValue());
@@ -33,9 +30,6 @@ public class MessengerPacket {
     }
 
     public static byte[] joinMessenger(int position) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MESSENGER.getValue());
@@ -46,9 +40,6 @@ public class MessengerPacket {
     }
 
     public static byte[] removeMessengerPlayer(int position) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MESSENGER.getValue());
@@ -59,9 +50,6 @@ public class MessengerPacket {
     }
 
     public static byte[] messengerInvite(String from, int messengerId, int channel) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MESSENGER.getValue());
@@ -75,9 +63,6 @@ public class MessengerPacket {
     }
 
     public static byte[] messengerChat(String text, String postxt) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MESSENGER.getValue());
@@ -91,9 +76,6 @@ public class MessengerPacket {
     }
 
     public static byte[] updateMessengerPlayer(String from, MapleCharacter chr, int position, int channel) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MESSENGER.getValue());
@@ -105,9 +87,6 @@ public class MessengerPacket {
     }
 
     public static byte[] giveLoveResponse(int mode, String charname, String targetname) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MESSENGER.getValue());
@@ -121,9 +100,6 @@ public class MessengerPacket {
     }
 
     public static byte[] messengerPlayerInfo(MapleCharacter chr) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MESSENGER.getValue());
@@ -152,9 +128,6 @@ public class MessengerPacket {
     }
 
     public static byte[] messengerWhisper(String namefrom, String chatText) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MESSENGER.getValue());
@@ -166,9 +139,6 @@ public class MessengerPacket {
     }
 
     public static byte[] messengerNote(String text, int mode, int mode2) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MESSENGER.getValue());
@@ -180,9 +150,6 @@ public class MessengerPacket {
     }
 
     public static byte[] updateLove(int love) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.LOVE_OPERATION.getValue());
@@ -195,9 +162,6 @@ public class MessengerPacket {
     }
 
     public static byte[] showLoveRank(int mode) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.LOVE_OPERATION.getValue());
@@ -219,9 +183,6 @@ public class MessengerPacket {
     }
 
     public static byte[] Runemessenger(int type, String mesg) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.TOP_MSG_WHITE.getValue());

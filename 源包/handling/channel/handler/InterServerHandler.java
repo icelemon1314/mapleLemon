@@ -110,13 +110,11 @@ public class InterServerHandler {
      */
     public static void Loggedin(final int playerid, final MapleClient c) {
         try {
-            System.out.println("玩家登录游戏1");
             CharacterTransfer transfer = CashShopServer.getPlayerStorage().getPendingCharacter(playerid);
             if (transfer != null) {
                 CashShopOperation.EnterCS(transfer, c);
                 return;
             }
-            System.out.println("玩家登录游戏2");
             for (ChannelServer cserv : ChannelServer.getAllInstances()) {
                 transfer = cserv.getPlayerStorage().getPendingCharacter(playerid);
                 if (transfer != null) {
@@ -124,7 +122,6 @@ public class InterServerHandler {
                     break;
                 }
             }
-            System.out.println("玩家登录游戏3");
             MapleCharacter player;
             if (transfer == null) {
                 Triple ip = LoginServer.getLoginAuth(playerid);
@@ -133,18 +130,15 @@ public class InterServerHandler {
                     if (ip != null) {
                         LoginServer.putLoginAuth(playerid, (String) ip.left, (String) ip.mid, (Integer) ip.right);
                     }
-                    System.out.println("登录游戏3");
                     c.getSession().close(true);
                     return;
                 }
-                System.out.println("登录游戏3");
                 c.setTempIP((String) ip.mid);
                 c.setChannel((Integer) ip.right);
                 player = MapleCharacter.loadCharFromDB(playerid, c, true);
             } else {
                 player = MapleCharacter.ReconstructChr(transfer, c, true);
             }
-            System.out.println("玩家登录游戏4");
             ChannelServer channelServer = c.getChannelServer();
             c.setPlayer(player);
             c.setAccID(player.getAccountID());
@@ -153,42 +147,35 @@ public class InterServerHandler {
                 System.out.println(new StringBuilder().append("检测连接地址 - 2 ").append(!c.CheckIPAddress()).toString());
                 return;
             }
-            System.out.println("玩家登录游戏5");
             int state = c.getLoginState();
             boolean allowLogin = false;
             if ((state == 1) || (state == 3) || (state == 0)) {
                 allowLogin = !World.isCharacterListConnected(c.loadCharacterNames(c.getWorld()));
             }
-            System.out.println("玩家登录游戏6");
             if (!allowLogin) {
                 c.setPlayer(null);
                 c.getSession().close(true);
                 System.out.println(new StringBuilder().append("检测连接地址 - 3 ").append(!allowLogin).toString());
                 return;
             }
-            System.out.println("玩家登录游戏7");
             c.updateLoginState(MapleClient.LOGIN_LOGGEDIN, c.getSessionIPAddress());
             channelServer.addPlayer(player);
             player.setlogintime(System.currentTimeMillis());
             player.giveCoolDowns(PlayerBuffStorage.getCooldownsFromStorage(player.getId()));
             player.silentGiveBuffs(PlayerBuffStorage.getBuffsFromStorage(player.getId()));
             player.giveSilentDebuff(PlayerBuffStorage.getDiseaseFromStorage(player.getId()));
-            System.out.println("玩家登录游戏8");
 //            c.getSession().write(MaplePacketCreator.cancelTitleEffect(new int[]{-1, -1, -1, -1, -1}));
             c.getSession().write(MaplePacketCreator.getCharInfo(player));
-            System.out.println("玩家登录游戏9");
 //            c.getSession().write(MTSCSPacket.enableCSUse(0));
 //            c.getSession().write(MaplePacketCreator.sendloginSuccess());
             player.getMap().addPlayer(player);
             if (player.getMount() != null) {
                 //c.getSession().write(MaplePacketCreator.updateMount(player, false));
             }
-            System.out.println("玩家登录游戏10");
             //c.getSession().write(MaplePacketCreator.getKeymap(player));
             //c.getSession().write(MaplePacketCreator.getQuickSlot(player.getQuickSlot()));
 //            player.updatePetAuto();
 //            player.sendMacros();
-            System.out.println("玩家登录游戏11");
             //c.getSession().write(MaplePacketCreator.showCharCash(player));
             //c.getSession().write(MaplePacketCreator.reportResponse(0, 0));
             //c.getSession().write(MaplePacketCreator.enableReport());
@@ -198,18 +185,10 @@ public class InterServerHandler {
             WorldBuddyService.getInstance().loggedOn(player.getName(), player.getId(), c.getChannel(), buddyIds);
             //c.getSession().write(MaplePacketCreator.pendantSlot((stat != null) && (stat.getCustomData() != null) && (Long.parseLong(stat.getCustomData()) > System.currentTimeMillis())));
             //c.getSession().write(InventoryPacket.updateInventory());
-            System.out.println("玩家登录游戏12");
             MapleParty party = player.getParty();
             if (party != null) {
                 WrodlPartyService.getInstance().updateParty(party.getId(), PartyOperation.LOG_ONOFF, new MaplePartyCharacter(player));
-                if (party.getExpeditionId() > 0) {
-                    MapleExpedition me = WrodlPartyService.getInstance().getExped(party.getExpeditionId());
-                    if (me != null) {
-                        c.getSession().write(PartyPacket.expeditionStatus(me, false));
-                    }
-                }
             }
-            System.out.println("玩家登录游戏13");
             if (player.getSidekick() == null) {
                 player.setSidekick(WorldSidekickService.getInstance().getSidekickByChr(player.getId()));
             }
@@ -220,7 +199,6 @@ public class InterServerHandler {
             for (CharacterIdChannelPair onlineBuddy : onlineBuddies) {
                 player.getBuddylist().get(onlineBuddy.getCharacterId()).setChannel(onlineBuddy.getChannel());
             }
-            System.out.println("玩家登录游戏14");
             //c.getSession().write(BuddyListPacket.updateBuddylist(player.getBuddylist().getBuddies(), player.getId()));
             //c.getSession().write(BuddyListPacket.updateBuddylist(0x1F));
             MapleMessenger messenger = player.getMessenger();
@@ -228,7 +206,6 @@ public class InterServerHandler {
                 WorldMessengerService.getInstance().silentJoinMessenger(messenger.getId(), new MapleMessengerCharacter(player));
                 WorldMessengerService.getInstance().updateMessenger(messenger.getId(), player.getName(), c.getChannel());
             }
-            System.out.println("玩家登录游戏15");
             if (player.getGuildId() > 0) {
                 WorldGuildService.getInstance().setGuildMemberOnline(player.getMGC(), true, c.getChannel());
                 c.getSession().write(GuildPacket.showGuildInfo(player));
@@ -243,7 +220,6 @@ public class InterServerHandler {
                     player.saveGuildStatus();
                 }
             }
-            System.out.println("玩家登录游戏16");
             player.getClient().getSession().write(MaplePacketCreator.serverMessageTop("欢迎来到怀旧冒×岛，希望你能找到儿时的感觉，如有bug可以加QQ群：479357604！dev by:icelemon1314"));
 //            player.showNote();
            // player.sendImp();
@@ -258,7 +234,6 @@ public class InterServerHandler {
 //                    skill.getEffect(1).applyTo(player);
 //                }
 //            }
-            System.out.println("玩家登录游戏17");
 //           if (player.isIntern()) {
 //                SkillFactory.getSkill(9001004).getEffect(1).applyTo(player);
 //                SkillFactory.getSkill(1010).getEffect(1).applyTo(player);

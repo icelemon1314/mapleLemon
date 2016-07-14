@@ -82,7 +82,6 @@ public enum SendPacketOpcode implements WritableIntValueHolder {
     MEMBER_SEARCH,
     PARTY_SEARCH,
     BOOK_INFO,
-    EXPEDITION_OPERATION,
     BUDDYLIST,
     GUILD_OPERATION,
     GUILD_SEARCH,

@@ -547,10 +547,6 @@ public class MapleServerHandler extends IoHandlerAdapter {
             case USE_SUMMON_BAG:
                 InventoryHandler.UseSummonBag(slea, c, c.getPlayer());
                 break;
-            case USE_SKILL_BOOK:
-                c.getPlayer().updateTick(slea.readInt());
-                InventoryHandler.UseSkillBook((byte) slea.readShort(), slea.readInt(), c, c.getPlayer());
-                break;
             case USE_CATCH_ITEM:
                 InventoryHandler.UseCatchItem(slea, c, c.getPlayer());
                 break;
@@ -791,12 +787,6 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 break;
             case PARTY_SEARCH:
                 PartyHandler.PartySearch(slea, c);
-                break;
-            case EXPEDITION_LISTING:
-                PartyHandler.PartyListing(slea, c);
-                break;
-            case EXPEDITION_OPERATION:
-                PartyHandler.Expedition(slea, c);
                 break;
             case USE_TELE_ROCK:
                 InventoryHandler.TeleRock(slea, c);

@@ -32,9 +32,6 @@ import tools.data.output.MaplePacketLittleEndianWriter;
 public class SkillPacket {
 
     public static byte[] sendEngagementRequest(String name, int chrId) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.ENGAGE_REQUEST.getValue());
@@ -46,9 +43,6 @@ public class SkillPacket {
     }
 
     public static byte[] sendEngagement(byte msg, int item, MapleCharacter male, MapleCharacter female) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.ENGAGE_RESULT.getValue());
@@ -72,22 +66,8 @@ public class SkillPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] updateJaguar(MapleCharacter from) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.UPDATE_JAGUAR.getValue());
-        PacketHelper.addJaguarInfo(mplew, from);
-
-        return mplew.getPacket();
-    }
 
     public static byte[] teslaTriangle(int chrId, int sum1, int sum2, int sum3) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.TESLA_TRIANGLE.getValue());
@@ -100,9 +80,6 @@ public class SkillPacket {
     }
 
     public static byte[] mechPortal(Point pos) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MECH_PORTAL.getValue());
@@ -112,9 +89,6 @@ public class SkillPacket {
     }
 
     public static byte[] spawnMechDoor(MechDoor md, boolean animated) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MECH_DOOR_SPAWN.getValue());
@@ -128,9 +102,6 @@ public class SkillPacket {
     }
 
     public static byte[] removeMechDoor(MechDoor md, boolean animated) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MECH_DOOR_REMOVE.getValue());
@@ -342,9 +313,6 @@ public class SkillPacket {
     }
 
     public static byte[] ShowQuiverKartrigeEffect(int chrid, int mode, int totle, boolean other) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         if (other) {
             mplew.write(SendPacketOpcode.SHOW_FOREIGN_EFFECT.getValue());

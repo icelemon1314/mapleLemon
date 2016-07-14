@@ -11,9 +11,6 @@ public class UIPacket {
     private static final Logger log = Logger.getLogger(UIPacket.class);
 
     public static byte[] EarnTitleMsg(String msg) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.EARN_TITLE_MSG.getValue());
@@ -58,14 +55,7 @@ public class UIPacket {
         return MaplePacketCreator.environmentChange("maplemap/enter/" + mapid, 4);
     }
 
-    public static byte[] Aran_Start() {
-        return MaplePacketCreator.environmentChange("Aran/balloon", 5);
-    }
-
     public static byte[] TutInstructionalBalloon(String data) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SHOW_SPECIAL_EFFECT.getValue());
@@ -91,9 +81,6 @@ public class UIPacket {
     }
 
     public static byte[] playMovie(String data, boolean show) {
-        if (show) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.PLAY_MOVIE.getValue());
@@ -104,9 +91,6 @@ public class UIPacket {
     }
 
     public static byte[] summonHelper(boolean summon) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SUMMON_HINT.getValue());
@@ -116,9 +100,6 @@ public class UIPacket {
     }
 
     public static byte[] summonMessage(int type) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SUMMON_HINT_MSG.getValue());
@@ -130,9 +111,6 @@ public class UIPacket {
     }
 
     public static byte[] summonMessage(String message) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SUMMON_HINT_MSG.getValue());
@@ -145,9 +123,6 @@ public class UIPacket {
     }
 
     public static byte[] IntroLock(boolean enable) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.INTRO_LOCK.getValue());
@@ -157,9 +132,6 @@ public class UIPacket {
     }
 
     public static byte[] getDirectionStatus(boolean enable) {
-//        if (ServerProperties.ShowPacket()) {
-//            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-//        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.DIRECTION_STATUS.getValue());
@@ -330,9 +302,6 @@ public class UIPacket {
     }
 
     public static byte[] IntroEnableUI(int enable) {
-//        if (ServerProperties.ShowPacket()) {
-//            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-//        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.INTRO_ENABLE_UI.getValue());
@@ -348,9 +317,6 @@ public class UIPacket {
     }
 
     public static byte[] IntroDisableUI(boolean enable) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.INTRO_DISABLE_UI.getValue());
@@ -360,9 +326,6 @@ public class UIPacket {
     }
 
     public static byte[] fishingUpdate(byte type, int id) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.FISHING_BOARD_UPDATE.getValue());
@@ -373,9 +336,6 @@ public class UIPacket {
     }
 
     public static byte[] fishingCaught(int chrid) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.FISHING_CAUGHT.getValue());

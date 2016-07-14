@@ -202,9 +202,6 @@ public class WrodlPartyService {
                 MapleCharacter player = getStorage(chz).getCharacterByName(target.getName());
                 if (player != null) {
                     player.setParty(null);
-                    if (oldExped > 0) {
-                        player.getClient().getSession().write(PartyPacket.expeditionMessage(false));
-                    }
                     player.getClient().getSession().write(PartyPacket.updateParty(player.getClient().getChannel(), party, operation, target));
                 }
             }
@@ -233,18 +230,12 @@ public class WrodlPartyService {
                 if (chr != null) {
                     if (operation == PartyOperation.解散队伍) {
                         chr.setParty(null);
-                        if (oldExped > 0) {
-                            chr.getClient().getSession().write(PartyPacket.expeditionMessage(true));
-                        }
                     } else {
                         chr.setParty(party);
                     }
                     chr.getClient().getSession().write(PartyPacket.updateParty(chr.getClient().getChannel(), party, operation, target));
                 }
             }
-        }
-        if (oldExped > 0) {
-            sendExpedPacket(oldExped, PartyPacket.expeditionUpdate(oldIndex, party), (operation == PartyOperation.LOG_ONOFF) || (operation == PartyOperation.更新队伍) ? target : null);
         }
     }
 
@@ -317,16 +308,6 @@ public class WrodlPartyService {
         MapleParty ret = (MapleParty) this.partyList.remove(Integer.valueOf(partyId));
         if (ret == null) {
             return null;
-        }
-        if (ret.getExpeditionId() > 0) {
-            MapleExpedition expedition = getExped(ret.getExpeditionId());
-            if (expedition != null) {
-                int index = expedition.getIndex(partyId);
-                if (index >= 0) {
-                    expedition.getParties().remove(index);
-                    sendExpedPacket(expedition.getId(), PartyPacket.expeditionUpdate(index, null), null);
-                }
-            }
         }
         ret.disband();
         return ret;

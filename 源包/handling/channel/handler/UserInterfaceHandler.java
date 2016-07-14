@@ -20,7 +20,6 @@ public class UserInterfaceHandler {
 
     public static void InGame_Poll(SeekableLittleEndianAccessor slea, MapleClient c) {
         if (ServerConstants.PollEnabled) {
-            c.getPlayer().updateTick(slea.readInt());
             int selection = slea.readInt();
             if ((selection >= 0) && (selection <= ServerConstants.Poll_Answers.length)
                     && (MapleCharacterUtil.SetPoll(c.getAccID(), selection))) {

@@ -133,9 +133,6 @@ public class NPCPacket {
     }
 
     public static byte[] spawnPlayerNPC(PlayerNPC npc) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.PLAYER_NPC.getValue());
         mplew.write(npc.getF() == 1 ? 0 : 1);
@@ -188,9 +185,6 @@ public class NPCPacket {
     }
 
     public static byte[] setNPCScriptable(List<Pair<Integer, String>> npcs) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.NPC_SCRIPTABLE.getValue());
         mplew.write(npcs.size());

@@ -36,9 +36,6 @@ public class MobPacket {
     }
 
     public static byte[] damageFriendlyMob(MapleMonster mob, long damage, boolean display) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.DAMAGE_MONSTER.getValue());
@@ -91,9 +88,6 @@ public class MobPacket {
     }
 
     public static byte[] healMonster(int oid, int heal) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.DAMAGE_MONSTER.getValue());
@@ -491,9 +485,6 @@ public class MobPacket {
         if (objectid.getNodePacket() != null) {
             return objectid.getNodePacket();
         }
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MONSTER_PROPERTIES.getValue());
@@ -515,24 +506,7 @@ public class MobPacket {
         return objectid.getNodePacket();
     }
 
-    public static byte[] showMagnet(int mobid, byte success, int skillId) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SHOW_MAGNET.getValue());
-        mplew.writeInt(mobid);
-        mplew.write(success);
-        mplew.write(0);
-
-        return mplew.getPacket();
-    }
-
     public static byte[] catchMonster(int mobid, int itemid, byte success) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CATCH_MONSTER.getValue());
@@ -544,9 +518,6 @@ public class MobPacket {
     }
 
     public static byte[] catchMob(int mobid, int itemid, byte success) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CATCH_MOB.getValue());
