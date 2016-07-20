@@ -32,7 +32,7 @@ function action(mode, type, selection) {
 		cm.sendSimple("你是第一次到这里来吗？你可能不太熟悉这里，你可以问我有关这里的信息。\r\n#L0##b在金银岛有什么样的村落？#l\r\n#L1#请你把我送到别的地方。#k#l");
 	} else if (status == 2) {
 		if (selection == 0) {
-			cm.sendSimple("在金银岛有7个大村庄。\r\n#L0##b明珠港#l\r\n#L1#勇士部落#l\r\n#L2#魔法密林#l\r\n#L3#射手村#l\r\n#L4#废弃都市#l\r\n#L5#诺特勒斯号码头#k#l");
+			cm.sendSimple("在金银岛有7个大村庄。\r\n#L0##b明珠港#l\r\n#L1#勇士部落#l\r\n#L2#魔法密林#l\r\n#L3#射手村#l\r\n#L4#废弃都市#l");
 		} else if (selection == 1) {
 			status = 23;
 			if (cm.isBeginner()) {

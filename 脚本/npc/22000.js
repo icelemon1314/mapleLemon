@@ -45,7 +45,7 @@ function action(mode, type, selection) {
 		else
 			status--;
 		if (status == 0) {
-			cm.sendNext("看上去你很强大了！");
+			cm.sendNext("看上去你很强大了！（PS:点击NPC会自动接任务，可以做的任务在任务列表中，达到完成条件后，找NPC领奖，周知！！！）");
 		} else if (status == 1) {
 			cm.sendNextPrev("如果你达到了10级，那么我就可以送你去#m104000000#，在那里你可以遇见更强大的冒险家！")
 		} else if (status == 2) {

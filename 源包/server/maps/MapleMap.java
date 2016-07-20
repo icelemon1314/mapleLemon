@@ -544,9 +544,10 @@ public final class MapleMap {
                 d++;
             }
         }
+        d++;
         // @TODO 掉落道具的位置会和金币的重复
         pos.x = Math.min(Math.max(mobpos - 25 * (d / 2), footholds.getMinDropX() + 25),footholds.getMaxDropX() - d * 25);
-        int mesos = Randomizer.nextInt(mob.getMobLevel()) + mob.getMobLevel();
+        int mesos = Randomizer.nextInt(mob.getMobLevel() * 10) + mob.getMobLevel();
         if (mesos > 0) {
             spawnMobMesoDrop((int) (mesos * (chr.getStat().mesoBuff / 100.0D) * chr.getDropMod() * mesoServerRate), calcDropPos(pos, mob.getTruePosition()), mob, chr, false, droptype);
         }

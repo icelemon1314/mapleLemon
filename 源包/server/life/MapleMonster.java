@@ -277,11 +277,9 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
         attacker.addDamage(from, rDamage, updateAttackTime);
 
         if (this.stats.getSelfD() != -1) {
-            System.out.println("怪物伤害1");
             this.hp -= rDamage;
             if (this.hp > 0L) {
                 if (this.hp < this.stats.getSelfDHp()) {
-                    System.out.println("怪物伤害2");
                     this.map.killMonster(this, from, false, false, this.stats.getSelfD(), lastSkill);
                 } else {
                     for (AttackerEntry mattacker : getAttackers()) {
@@ -294,7 +292,6 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
                     }
                 }
             } else {
-                System.out.println("怪物伤害3");
                 this.map.killMonster(this, from, true, false, (byte) 1, lastSkill);
             }
         } else {
@@ -302,7 +299,6 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
                 if (((MapleMonster) this.sponge.get()).hp > 0L) {
                     ((MapleMonster) this.sponge.get()).hp -= rDamage;
                     if (((MapleMonster) this.sponge.get()).hp <= 0L) {
-                        System.out.println("怪物伤害4");
                         this.map.broadcastMessage(MobPacket.showBossHP(((MapleMonster) this.sponge.get()).getId(), -1L, ((MapleMonster) this.sponge.get()).getMobMaxHp()));
                         this.map.killMonster((MapleMonster) this.sponge.get(), from, true, false, (byte) 1, lastSkill);
                     } else {
@@ -351,7 +347,6 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
                     if (this.stats.getHPDisplayType() == 0) {
                         this.map.broadcastMessage(MobPacket.showBossHP(getId(), -1L, getMobMaxHp()), getTruePosition());
                     }
-                    System.out.println("怪物伤害5");
                     this.map.killMonster(this, from, true, false, (byte) 1, lastSkill);
                 }
             }
