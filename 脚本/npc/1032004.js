@@ -19,7 +19,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/* Shane 1032004
+ * By Moogra
+*/
+
 function start() {
-    cm.sendOk("我们商店什么都卖哦，赶紧过来看看吧！");
-    cm.dispose();
+    cm.sendYesNo("你想回到魔法密林么？");
 }
+
+function action(mode, type, selection) {
+    if (mode > 0)
+        cm.warp(101000000,0);
+    cm.dispose();
+}	

@@ -20,7 +20,7 @@
 */
 
 /* 
-	长老斯坦
+	休咪
 */
 
 var status = 0;
@@ -39,9 +39,9 @@ function action(mode, type, selection) {
 		else
 			status--;
 		if (status == 0) {
-			cm.sendNext("冒险小鲜肉，你好呀！");
+			cm.sendNext("你找我有事么？如果你足够强大的话，可以看看任务面板！");
 		} else if (status == 1) {
-			cm.sendOk("别看我老...你有事的话可以来找我！");
+			cm.sendOk("任务面板没有任务的话，那赶紧去升级吧！");
 			cm.dispose();
 		}
 	}

@@ -19,7 +19,37 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/**
+-- Odin JavaScript --------------------------------------------------------------------------------
+	Pison - Florina Beach(110000000)
+-- By ---------------------------------------------------------------------------------------------
+	Information & Xterminator
+-- Version Info -----------------------------------------------------------------------------------
+        1.2 - Fixed and cleanup [Shootsource]
+	1.1 - Add null map check [Xterminator]
+	1.0 - First Version
+---------------------------------------------------------------------------------------------------
+ **/
+var status = 0;
+
 function start() {
-    cm.sendOk("我们商店什么都卖哦，赶紧过来看看吧！");
-    cm.dispose();
+	status = -1;
+	action(1, 0, 0);
+}
+
+function action(mode, type, selection) {
+	if (mode == -1) {
+		cm.dispose();
+	} else {
+		if (mode == 1)
+			status++;
+		else
+			status--;
+		if (status == 0) {
+			cm.sendNext("这里景色很不错吧！");
+		} else if (status == 1) {
+			cm.sendOk("你可以去周围走走，说不定会好惊喜发现！");
+			cm.dispose();
+		}
+	}
 }

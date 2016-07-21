@@ -24,31 +24,37 @@
 	Map(s): 		Victoria Road : Lith Harbour (104000000)
 	Description:		Extends Buddy List
 */
-var status = -1;
+var status = 0;
 
 function start() {
-    cm.sendYesNo("I hope I can make as much as yesterday... well, hello! Don't you want to extend your buddy list? You look like someone who'd have a whole lot of friends... well, what do you think? With some money I can make it happen for you. Remember, though, it only applies to one character at a time, so it won't affect any of your other characters on your account. Do you want to extend your buddy list?");
+    cm.sendNext("我希望今天能像昨天那个生意好！你想增加好友上限么？看上去你的好友列表要爆仓了。你给我一点小费的话，我就可以帮你实现愿望。需要提醒的是，这个增加只会对这个角色起作用。你想增加好友上限么？");
 }
 
 function action(mode, type, selection) {
-    status++;
     if (mode == -1) {
-        if(mode == 0)
-            cm.sendNext(status == 0 ? "I see... you don't have as many friends as I thought you would. Hahaha, just kidding! Anyway if you feel like changing your mind, please feel free to come back and we'll talk business. If you make a lot of friends, then you know ... hehe ..." : "I see... I don't think you don't have as many friends as I thought you would. If not, you just don't have 250,000 mesos with you right this minute? Anyway, if you ever change your mind, come back and we'll talk business. That is, of course, once you have get some financial relief... hehe ...");
         cm.dispose();
-        return;
-    }
-    if (status == 0)          
-        cm.sendYesNo("Alright, good call! It's not that expensive actually. #b250,000 mesos and I'll add 5 more slots to your buddy list#k. And no, I won't be selling them individually. Once you buy it, it's going to be permanently on your buddy list. So if you're one of those that needs more space there, then you might as well do it. What do you think? Will you spend 250,000 mesos for it?");
-    else if (status == 1) {
-        var capacity = cm.getPlayer().getBuddylist().getCapacity();
-        if (capacity >= 50 || cm.getMeso() < 250000) {
-            cm.sendNext("Hey... are you sure you have #b250,000 mesos#k? If so, then check and see if you have extended your buddy list to the max. Even if you pay up, the most you can have on your buddy list is #b50#k.");
-        } else {
-            cm.gainMeso(-250000);
-            cm.getPlayer().setBuddyCapacity(capacity + 5);
-            cm.sendOk("Alright! Your buddy list will have 5 extra slots by now. Check and see for it yourself. And if you still need more room on your buddy list, you know who to find. Of course, it isn't going to be for free ... well, so long ...");
-        }
-        cm.dispose();
-    }
+    } else {
+        if (status == 1 && mode == 0) {
+            cm.sendOk("是吗……看来我的预感是错的，你好像没什么朋友啊？哈哈哈～玩笑，玩笑～如果你改变了主意，可以再来找我。等朋友多一点的时候……呵呵……");
+			cm.dispose();
+			return;
+		}
+		if (mode == 1)
+            status++;
+        else
+            status--;
+		if (status == 1)          
+			cm.sendYesNo("好的！明智的决定。价格不贵，因为我下定决心，给你打了个#r大折扣#k。#b好友目录添加5名一共是25万金币#k。当然，绝不零售。只要购买一次，目录就可以永久增加。对好友目录不足的人来说，这个买卖应该不坏。怎么样？你愿意支付25万金币吗？");
+		else if (status == 2) {
+			var capacity = cm.getPlayer().getBuddylist().getCapacity();
+			if (capacity >= 50 || cm.getMeso() < 250000) {
+				cm.sendNext("你……确定自己有#b5万金币#k吗？如果有的话，请你确认一下好友目录是否已经增加到最大了。即使钱再多，好友目录的人数也无法增加到#b50个以上#k。");
+			} else {
+				cm.gainMeso(-250000);
+				cm.getPlayer().setBuddyCapacity(capacity + 5);
+				cm.sendOk("好的！你的好友目录已经增加了5个。你可以确认一下。如果好友目录还是不够的话，可以随时来找我。我可以随时帮你增加，不管多少次都行。当然不是免费的……那么再见~");
+			}
+			cm.dispose();
+		}
+	}
 }

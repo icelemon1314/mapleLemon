@@ -27,7 +27,7 @@
 var status = 0;
 
 function start() {
-    cm.sendSimple("Have you heard of the beach with a spectacular view of the ocean called #bFlorina Beach#k, located near Lith Harbor? I can take you there right now for either #b1500 mesos#k, or if you have a #bVIP Ticket to Florina Beach#k with you, in which case you'll be there for free.\r\n\r\n#L0##b I'll pay 1500 mesos.#l\r\n#L1# I have a VIP Ticket to Florina Beach.#l\r\n#L2# What is a VIP Ticket to Florina Beach#k?#l");
+    cm.sendSimple("你听说过一个叫#b黄金海岸#k的地方么？如果你给我#b1500#k金币我就可以送你过去。\r\n\r\n#L0##b 我支付1500金币#l\r\n");
 }
 
 function action(mode, type, selection) {
@@ -35,7 +35,7 @@ function action(mode, type, selection) {
     if (mode != 1)
         if((mode == 0 && type == 1) || mode == -1 || (mode == 0 && status == 1)){
             if(type == 1)
-                cm.sendNext("You must have some business to take care of here. You must be tired from all that traveling and hunting. Go take some rest, and if you feel like changing your mind, then come talk to me.");
+                cm.sendNext("看来你在这里还有事情，如果你想放松一下，那就再来找我吧！");
             cm.dispose();
             return;
         } else
@@ -52,7 +52,7 @@ function action(mode, type, selection) {
             cm.sendNextPrev("I came back without it, and it just feels awful not having it. Hopefully someone picked it up and put it somewhere safe. Anyway, this is my story and who knows, you may be able to pick it up and put it to good use. If you have any questions, feel free to ask.");
         else{
             if (cm.getMeso() < 1500 && selection == 0)
-                cm.sendNext("I think you're lacking mesos. There are many ways to gather up some money, you know, like... selling your armor... defeating monsters... doing quests... you know what I'm talking about.");
+                cm.sendNext("看上去你的钱不够哦，在这里有很多赚钱的方式，例如出售装备，狩猎怪物，完成任务等等。");
             else if(cm.haveItem(4031134) && selection != 0){
                 cm.sendNext("Hmmm, so where exactly is your #bVIP Ticket to Florina\r\nBeach#k? Are you sure you have one? Please double-check.");
             }else{

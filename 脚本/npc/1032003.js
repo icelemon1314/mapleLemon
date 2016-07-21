@@ -1,8 +1,8 @@
 /*
 	This file is part of the OdinMS Maple Story Server
     Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
-		       Matthias Butz <matze@odinms.de>
-		       Jan Christian Meyer <vimes@odinms.de>
+					   Matthias Butz <matze@odinms.de>
+					   Jan Christian Meyer <vimes@odinms.de>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -19,47 +19,63 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 /**
 -- Odin JavaScript --------------------------------------------------------------------------------
-	VIP Cab - Victoria Road : Lith Harbor (104000000)
+	Shane - Ellinia (101000000)
 -- By ---------------------------------------------------------------------------------------------
-	Xterminator
+	Unknown
 -- Version Info -----------------------------------------------------------------------------------
-	1.0 - First Version by Xterminator
+	1.1 - Statement fix [Information]
+	1.0 - First Version by Unknown
 ---------------------------------------------------------------------------------------------------
 **/
 
 var status = 0;
-var cost = 1000;
+var check = 0;
 
 function start() {
-    cm.sendNext("Hi，你好。我是专门为VIP客户服务的专车。我们不像普通的出租车一样送你们穿梭在各个城市之间，我们可以送你去很偏远又美丽的地方。过去#b蚂蚁广场#k需要花费10000金币。虽然有点小贵，但总体来说还是很超值。");
+    if (cm.getLevel() < 25) {
+        cm.sendOk("你的等级还不够进入忍苦森林！至少需要25级以上！");
+        cm.dispose();
+        check = 1;
+    }
+    else
+        cm.sendYesNo("你好，我是赛恩。我可以让你进入到忍苦森林。你想花费#b5000#k金币，现在就进去么？");
 }
 
 function action(mode, type, selection) {
-	if (mode == -1) {
+    if (mode == -1) {
         cm.dispose();
     } else {
-		if (status == 1 && mode == 0) {
-            cm.sendOk("这个小镇还有很多有趣的地方，如果你想去蚂蚁广场就来找我吧！");
+        if (mode == 0) {
+            cm.sendOk("好吧，那我们下次再见！");
             cm.dispose();
             return;
         }
-		if (mode == 1)
+        if (mode == 1)
             status++;
         else
             status--;
-		if (status == 1) {
-			cm.sendYesNo(cm.getJobId() == 0 ? "我们给新手打1折。蚂蚁广场位于林中之城的深处。那里有24小时便利店。你想花费#b1,000 金币#k去那里么？" : "蚂蚁广场位于林中之城的深处。那里有24小时便利店。你想花费 #b10,000 金币#k去到哪里么?");
-			cost *= cm.getJobId() == 0 ? 10 : 1;
-		} else if (status == 2) {
-			if (cm.getMeso() < cost)
-				cm.sendNext("看上去你没有这么多金币。所以我不能送你过去。")
-			else {
-				cm.gainMeso(-cost);
-				cm.warp(105070001);
-			}
-			cm.dispose();
-		}
-	}
+        if (status == 1) {
+            if (check != 1) {
+                if (cm.getPlayer().getMeso() < 5000) {
+                    cm.sendOk("看上去你没有足够的金币！")
+                    cm.dispose();
+                }
+                else {
+					cm.gainMeso(-5000);
+                    if (cm.isQuestStarted(2050))
+                        cm.warp(101000100, 0);
+                    else if (cm.isQuestStarted(2051))
+                        cm.warp(101000102, 0);
+                    else if (cm.getLevel() >= 25 && cm.getLevel() < 50)
+                        cm.warp(101000100, 0);
+                    else if (cm.getLevel() >= 50)
+                        cm.warp(101000102, 0);
+                    cm.dispose();
+                }
+            }
+        }
+    }
 }

@@ -19,7 +19,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/* Author:   Xterminator, Moogra
+   NPC Name: Vikin
+   Map(s): 	 Victoria Road: Lith Harbor (104000000)
+*/
+
 function start() {
-    cm.sendOk("我们商店什么都卖哦，赶紧过来看看吧！");
+    cm.sendOk("嘿嘿！！！帮我找到我的宝藏图！我不知道放哪里去了，没有他我不能出海了！");
     cm.dispose();
 }

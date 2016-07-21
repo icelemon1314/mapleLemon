@@ -4197,6 +4197,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public int[] getSavedLocations() {
         return this.savedLocations;
     }
+	
+	public int getSavedLocation(String type) {
+        return this.savedLocations[SavedLocationType.fromString(type).getValue()];
+    }
 
     public int getSavedLocation(SavedLocationType type) {
         return this.savedLocations[type.getValue()];

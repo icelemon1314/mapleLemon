@@ -20,6 +20,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 function start() {
-    cm.getPlayer().getStorage().sendStorage(cm.getClient(), 1002005);
+    cm.sendOk("你找我有事的么？");
     cm.dispose();
 }
