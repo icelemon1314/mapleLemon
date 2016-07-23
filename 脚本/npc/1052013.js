@@ -14,14 +14,14 @@ function action(mode, type, selection) {
         status++;
         if (status == 0) {
             if (battlers.size() <= 0) {
-                cm.sendOk("You have no monsters stored away.");
+                cm.sendOk("你还没有击败怪物！");
                 cm.dispose();
                 return;
             }
-            var selStr = "Check the stats of which?\r\n\r\n#b";
+            var selStr = "你想查看哪个状态？\r\n\r\n#b";
             for (var i = 0; i < battlers.size(); i++) {
                 if (battlers.get(i) != null) {
-                    selStr += "#L" + i + "#" + battlers.get(i).getName() + " (#o" + battlers.get(i).getMonsterId() + "#) Level " + battlers.get(i).getLevel() + " " + battlers.get(i).getGenderString() + "#l\r\n";
+                    selStr += "#L" + i + "#" + battlers.get(i).getName() + " (#o" + battlers.get(i).getMonsterId() + "#) 等级 " + battlers.get(i).getLevel() + " " + battlers.get(i).getGenderString() + "#l\r\n";
                 }
             }
             cm.sendSimple(selStr);
@@ -32,8 +32,8 @@ function action(mode, type, selection) {
             }
             sel = selection;
             var info = "#e" + battlers.get(selection).getName() + "#n (#o" + battlers.get(selection).getMonsterId() + "#)\r\n";
-            info += "Level " + battlers.get(selection).getLevel() + " " + battlers.get(selection).getGenderString() + "\r\n";
-            info += "EXP " + battlers.get(selection).getExp() + "/" + battlers.get(selection).getNextExp() + "\r\n";
+            info += "等级 " + battlers.get(selection).getLevel() + " " + battlers.get(selection).getGenderString() + "\r\n";
+            info += "经验 " + battlers.get(selection).getExp() + "/" + battlers.get(selection).getNextExp() + "\r\n";
             info += "HP " + battlers.get(selection).calcHP() + "\r\n";
             info += "ATK: " + battlers.get(selection).getATK(0) + ", DEF: " + battlers.get(selection).getDEF() + "%\r\n";
             info += "Sp.ATK: " + battlers.get(selection).getSpATK(0) + ", Sp.DEF: " + battlers.get(selection).getSpDEF() + "%\r\n";

@@ -56,7 +56,6 @@ public class LoginPasswordHandler {
             c.getSession().write(LoginPacket.getLoginFailed(16));
         } else {
             c.loginAttempt = 0;
-            System.out.println("登录成功！！！！");
             LoginWorker.registerClient(c);
             return;
         }

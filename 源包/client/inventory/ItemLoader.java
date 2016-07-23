@@ -70,7 +70,6 @@ public enum ItemLoader {
                 MapleInventoryType mit = MapleInventoryType.getByType(rs.getByte("inventorytype"));
 
                 if ((mit.equals(MapleInventoryType.EQUIP)) || (mit.equals(MapleInventoryType.EQUIPPED))) {
-                    System.out.println("FUCK!!!!");
                     Equip equip = new Equip(rs.getInt("itemid"), rs.getShort("position"), rs.getInt("uniqueid"), rs.getShort("flag"));
                         equip.setQuantity((byte) 1);
                         equip.setInventoryId(rs.getLong("inventoryitemid"));

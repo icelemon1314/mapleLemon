@@ -377,7 +377,6 @@ public class MapleClient implements Serializable {
                                 }
                             } else if (pwd.equals(passhash)) {
                                 loginok = 0;
-                                System.out.println("密码校验OK！");
                             } else {
                                 loggedIn = false;
                                 loginok = 4;

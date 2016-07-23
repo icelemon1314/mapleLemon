@@ -769,13 +769,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     System.out.println("不存在的地图："+ret.mapid);
                     ret.map = mapFactory.getMap(101000000);
                 }
-                System.out.println("加载角色信息31");
                 MaplePortal portal = ret.map.getPortal(ret.initialSpawnPoint);
                 if (portal == null) {
                     portal = ret.map.getPortal(0);
                     ret.initialSpawnPoint = 0;
                 }
-                System.out.println("加载角色信息32");
                 ret.setPosition(portal.getPosition());
                 int partyid = rs.getInt("party");
                 if (partyid >= 0) {
@@ -784,23 +782,18 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                         ret.party = party;
                     }
                 }
-                System.out.println("加载角色信息33");
                 String pets = rs.getString("pets");
                 ret.petStore = Byte.parseByte(pets);
-                System.out.println("加载角色信息34");
                 psd = con.prepareStatement("SELECT * FROM achievements WHERE accountid = ?");
                 psd.setInt(1, ret.accountid);
                 rsd = psd.executeQuery();
-                System.out.println("加载角色信息35");
                 while (rsd.next()) {
                     ret.finishedAchievements.add(rsd.getInt("achievementid"));
                 }
-                System.out.println("加载角色信息36");
                 psd.close();
 
             }
             ps.close();
-            System.out.println("加载角色信息4");
             ps = con.prepareStatement("SELECT * FROM character_keyvalue WHERE characterid = ?");
             ps.setInt(1, charid);
             rs = ps.executeQuery();
@@ -820,21 +813,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 ret.questinfo.put(rs.getInt("quest"), rs.getString("customData"));
             }
             ps.close();
-            System.out.println("加载角色信息5");
             ps = con.prepareStatement("SELECT * FROM queststatus WHERE characterid = ?");
             ps.setInt(1, charid);
             rs = ps.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt("quest");
-                System.out.println("加载任务信息ID："+id);
                 MapleQuest q = MapleQuest.getInstance(id);
-                System.out.println("加载任务信息ID2："+id);
                 byte stat = rs.getByte("status");
 //                if ((stat == 1 || stat == 2) && ((channelserver && (q == null || q.isBlocked())) || (stat == 1 && channelserver && (!q.canStart(ret, null))))) {
 //                    System.out.println("已经完成的任务ID"+id);
 //                    continue;
 //                }
-                System.out.println("任务ID："+id+"；任务状态："+stat);
                 MapleQuestStatus status = new MapleQuestStatus(q, stat);
                 long cTime = rs.getLong("time");
                 if (cTime > -1L) {
@@ -843,9 +832,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 status.setForfeited(rs.getInt("forfeited"));
                 status.setCustomData(rs.getString("customData"));
                 ret.quests.put(q, status);
-                System.out.println("加载任务信息："+id);
             }
-            System.out.println("加载角色信息6");
             ps.close();
 
             if (channelserver) {
@@ -863,7 +850,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 ret.getInventory(MapleInventoryType.ETC).setSlotLimit(rs.getByte("etc"));
                 ret.getInventory(MapleInventoryType.CASH).setSlotLimit(rs.getByte("cash"));
                 ps.close();
-                System.out.println("加载角色信息7");
                 for (Pair mit : ItemLoader.装备道具.loadItems(false, charid).values()) {
                     ret.getInventory((MapleInventoryType) mit.getRight()).addFromDB((Item) mit.getLeft());
                 }
@@ -893,7 +879,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     psd.executeUpdate();
                 }
                 ps.close();
-                System.out.println("加载角色信息8");
                 ps = con.prepareStatement("SELECT skillid, skilllevel, masterlevel, expiration, teachId, position FROM skills WHERE characterid = ?");
                 ps.setInt(1, charid);
                 rs = ps.executeQuery();
@@ -918,7 +903,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     if (msl > skil.getMaxLevel()) {
                         msl = (byte) skil.getMaxLevel();
                     }
-                    System.out.println("加载技能："+skid);
                     ret.skills.put(skil, new SkillEntry(skl, msl, rs.getLong("expiration"), teachId));
                 }
                 ps.close();
@@ -932,7 +916,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     byte position = rs.getByte("position");
                     byte rank = rs.getByte("rank");
                 }
-                System.out.println("加载角色信息9");
                 ps = con.prepareStatement("SELECT * FROM characters WHERE accountid = ? ORDER BY level DESC");
                 ps.setInt(1, ret.accountid);
                 rs = ps.executeQuery();
@@ -950,7 +933,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                         }
                     }
                 }
-                System.out.println("加载角色信息10");
                 if (ret.BlessOfFairy_Origin == null) {
                     ret.BlessOfFairy_Origin = ret.name;
                 }
@@ -997,7 +979,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     ret.savedLocations[rs.getInt("locationtype")] = rs.getInt("map");
                 }
                 ps.close();
-                System.out.println("加载角色信息11");
                 ps = con.prepareStatement("SELECT `characterid_to`,`when` FROM famelog WHERE characterid = ? AND DATEDIFF(NOW(),`when`) < 30");
                 ps.setInt(1, charid);
                 rs = ps.executeQuery();
@@ -1018,7 +999,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     ret.lastdayloveids.put(rs.getInt("characterid_to"), rs.getTimestamp("when").getTime());
                 }
                 ps.close();
-                System.out.println("加载角色信息12");
                 ret.buddylist.loadFromDb(charid);
                 ret.storage = MapleStorage.loadOrCreateFromDB(ret.accountid);
                 ret.cs = new CashShop(ret.accountid, charid, ret.getJob());
@@ -1035,7 +1015,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     i++;
                 }
                 ps.close();
-                System.out.println("加载角色信息13");
                 ps = con.prepareStatement("SELECT mapid,vip FROM trocklocations WHERE characterid = ? LIMIT 28");
                 ps.setInt(1, charid);
                 rs = ps.executeQuery();
@@ -1056,7 +1035,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
 
                 ps.close();
-                System.out.println("加载角色信息14");
                 ps = con.prepareStatement("SELECT * FROM imps WHERE characterid = ?");
                 ps.setInt(1, charid);
                 rs = ps.executeQuery();
@@ -1070,7 +1048,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     r++;
                 }
                 ps.close();
-                System.out.println("加载角色信息15");
                 ps = con.prepareStatement("SELECT * FROM mountdata WHERE characterid = ?");
                 ps.setInt(1, charid);
                 rs = ps.executeQuery();
@@ -1080,13 +1057,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 Item mount = ret.getInventory(MapleInventoryType.EQUIPPED).getItem((short) -18);
                 ret.mount = new MapleMount(ret, mount != null ? mount.getItemId() : 0, 80001000, rs.getByte("Fatigue"), rs.getByte("Level"), rs.getInt("Exp"));
                 ps.close();
-                System.out.println("加载角色信息16");
                 ps = con.prepareStatement("SELECT * FROM character_potionpots WHERE characterid = ?");
                 ps.setInt(1, charid);
                 rs = ps.executeQuery();
                 ps.close();
                 if (client != null && client.getSendCrypto() != null) {
-                    System.out.println("加载角色信息17");
                     ret.stats.recalcLocalStats(true, ret);
                 }
             } else {             // 角色列表
@@ -1482,7 +1457,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             ps.close();
 
-            System.out.println("保存玩家技能！"+this.skills.size() );
             if (this.skills.size() >= 0) {
                 deleteWhereCharacterId(con, "DELETE FROM skills WHERE characterid = ?");
                 ps = con.prepareStatement("INSERT INTO skills (characterid, skillid, skilllevel, masterlevel, expiration, teachId, position) VALUES (?, ?, ?, ?, ?, ?, ?)");
@@ -1797,7 +1771,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
      */
     public MapleQuestStatus getQuest(MapleQuest quest) {
         if (!this.quests.containsKey(quest)) {
-            System.out.println("在玩家的任务列表中找不到这个任务："+quest.getId());
             this.setQuestAdd(quest,(byte)0,""); // 一般是脚本任务
         }
         return this.quests.get(quest);
@@ -2197,9 +2170,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
         if (ServerProperties.ShowPacket()) {
             System.out.println(new StringBuilder().append("取消技能BUFF: - buffstats.size() ").append(buffstats.size()).toString());
-        }
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("开始取消技能BUFF: - 1");
         }
         deregisterBuffStats(buffstats, effect, overwrite);
         if (effect.is时空门()) {
@@ -3790,7 +3760,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void addMP(int delta) {
         if (this.stats.setMp(this.stats.getMp() + delta)) {
-            System.out.println("恢复MP4"+this.stats.getMp());
             // @TODO 这里有BUG
             updateSingleStat(MapleStat.MP, this.stats.getMp());
         }
@@ -3834,7 +3803,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void updateSingleStat(MapleStat stat, long newval, boolean itemReaction) {
         Map statup = new EnumMap(MapleStat.class);
-        System.out.println("更新人物状态："+stat.toString()+newval);
         statup.put(stat, newval);
         this.client.getSession().write(MaplePacketCreator.updatePlayerStats(statup, itemReaction, this));
     }
@@ -4302,7 +4270,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         List ret = new LinkedList();
         for (MapleQuestStatus q : this.quests.values()) {
             if ((q.getStatus() == MapleQuestStatus.QUEST_STARTED) && (!q.getQuest().isBlocked())) {
-                System.out.println("已经开始的任务："+q.getQuest().getId());
                 ret.add(q);
             }
         }
@@ -4580,7 +4547,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         for (MapleQuest info : allQuestInfo) {
             if (!this.quests.containsKey(info.getId())) {
                 if (info.canStart(this,info.getNpcId())) {
-                    System.out.println("升级后自动开始任务："+info.getId());
                     MapleQuest.getInstance(info.getId()).forceStart(this,info.getNpcId(),info.getStartStatus());
                 }
             }
@@ -4661,9 +4627,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     @Override
     public void sendSpawnData(MapleClient client) {
-        System.out.println("召唤玩家0");
         if (client.getPlayer().allowedToTarget(this)) {
-            System.out.println("召唤玩家1");
             client.getSession().write(MaplePacketCreator.spawnPlayerMapobject(this));
         }
     }
@@ -6137,7 +6101,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.client.updateLoginState(3, this.client.getSessionIPAddress());
         String s = this.client.getSessionIPAddress();
         LoginServer.addIPAuth(s.substring(s.indexOf(47) + 1, s.length()));
-        System.out.println("更换频道："+channel);
         this.client.getSession().write(MaplePacketCreator.getChannelChange(this.client, Integer.parseInt(toch.getIP().split(":")[1])));
         saveToDB(false, false);
         getMap().removePlayer(this);
@@ -7011,7 +6974,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     if (!ServerProperties.ShowPacket()) {
                         break;
                     }
-                    System.out.println("神秘瞄准术: 开始加BUFF");
                     break;
                 }
             }

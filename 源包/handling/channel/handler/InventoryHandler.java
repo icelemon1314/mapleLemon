@@ -1342,7 +1342,6 @@ public class InventoryHandler {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
-        System.out.println("拾取道具1");
         MapleMapItem mapitem = (MapleMapItem) ob;
         Lock lock = mapitem.getLock();
         lock.lock();
@@ -1352,19 +1351,16 @@ public class InventoryHandler {
                 c.getSession().write(MaplePacketCreator.enableActions());
                 return;
             }
-            System.out.println("拾取道具2");
             if ((mapitem.getQuest() > 0) && (chr.getQuestStatus(mapitem.getQuest()) != 1)) {
                 chr.dropMessage(5, "地图上的道具为任务道具");
                 c.getSession().write(MaplePacketCreator.enableActions());
                 return;
             }
-            System.out.println("拾取道具3");
             if ((mapitem.getOwner() != chr.getId()) && (((!mapitem.isPlayerDrop()) && (mapitem.getDropType() == 0)) || ((mapitem.isPlayerDrop()) && (chr.getMap().getEverlast())))) {
                 chr.dropMessage(5, "这个道具不属于你，等会再捡！");
                 c.getSession().write(MaplePacketCreator.enableActions());
                 return;
             }
-            System.out.println("拾取道具4");
             if ((!mapitem.isPlayerDrop()) && (mapitem.getDropType() == 1) && (mapitem.getOwner() != chr.getId()) && ((chr.getParty() == null) || (chr.getParty().getMemberById(mapitem.getOwner()) == null))) {
                 chr.dropMessage(5, "这个道具不属于你，等会再捡啊！");
                 c.getSession().write(MaplePacketCreator.enableActions());
@@ -1375,15 +1371,12 @@ public class InventoryHandler {
                 mapitem.getItem().setQuantity((short)0);
             }
             double Distance = Client_Reportedpos.distanceSq(mapitem.getPosition());
-            System.out.println("捡物品范围："+Distance);
             if ((Distance > 5000.0D) && ((mapitem.getMeso() > 0) || (mapitem.getItemId() != 4001025))) {
                 WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverMessageRedText("[GM 信息] " + chr.getName() + " ID: " + chr.getId() + " (等级 " + chr.getLevel() + ") 全屏捡物。地图ID: " + chr.getMapId() + " 范围: " + Distance));
             } else if (chr.getPosition().distanceSq(mapitem.getPosition()) > 640000.0D) {
                 WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverMessageRedText("[GM 信息] " + chr.getName() + " ID: " + chr.getId() + " (等级 " + chr.getLevel() + ") 全屏捡物。地图ID: " + chr.getMapId() + " 范围: " + Distance));
             }
-            System.out.println("拾取道具5");
             if (mapitem.getMeso() > 0) { // 捡RMB
-                System.out.println("拾取道具6");
                 if ((chr.getParty() != null) && (mapitem.getOwner() != chr.getId())) {
                     List<MapleCharacter> toGive = new LinkedList();
                     long splitMeso = mapitem.getMeso() * 40 / 100;
@@ -1402,26 +1395,20 @@ public class InventoryHandler {
                 }
                 removeItem(chr, mapitem, ob);
             } else if (MapleItemInformationProvider.getInstance().isPickupBlocked(mapitem.getItemId())) {
-                System.out.println("拾取道具8");
                 chr.dropMessage(5, "这个道具无法捡取。");
                 c.getSession().write(MaplePacketCreator.enableActions());
             } else if (useItem(c, (int) mapitem.getItemId())) {
-                System.out.println("拾取道具10");
                 chr.dropMessage(5, "捡到立即使用的道具！");
                 removeItem(c.getPlayer(), mapitem, ob);
             } else if ((mapitem.getItemId() / 10000 != 291) && (MapleInventoryManipulator.checkSpace(c, (int) mapitem.getItemId(), mapitem.getItem().getQuantity(), mapitem.getItem().getOwner()))) {
-                System.out.println("拾取道具7");
                 MapleInventoryManipulator.addFromDrop(c, mapitem.getItem(), true);
                 removeItem(chr, mapitem, ob);
             } else {
-                System.out.println("拾取道具11");
-                System.out.println("异常的道具获取封包："+mapitem.getItemId());
                 c.getSession().write(InventoryPacket.getInventoryFull());
                 c.getSession().write(InventoryPacket.getShowInventoryFull());
                 c.getSession().write(MaplePacketCreator.enableActions());
             }
         } finally {
-            System.out.println("拾取道具12");
             lock.unlock();
         }
     }

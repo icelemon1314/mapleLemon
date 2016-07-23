@@ -45,11 +45,11 @@ function action(mode, type, selection) {
                 var intPoints = cm.getPlayer().getMeso();
                 if (intPoints < 5000000) {
                     cm.sendOk("You need at least 5 000 000 meso.");
-                } else if (!cm.canHold(4140102, 1)) {
+                } else if (!cm.canHold(4000000, 1)) {
                     cm.sendOk("Please make space.");
                 } else {
                     cm.gainMeso( - 5000000);
-                    cm.gainItem(4140102, 1);
+                    cm.gainItem(4000000, 1);
                 }
                 cm.dispose();
                 break;
@@ -57,11 +57,11 @@ function action(mode, type, selection) {
                 var intPoints = cm.getPlayer().getMeso();
                 if (intPoints < 10000000) {
                     cm.sendOk("You need at least 10 000 000 meso.");
-                } else if (!cm.canHold(4140101, 1)) {
+                } else if (!cm.canHold(4000000, 1)) {
                     cm.sendOk("Please make space.");
                 } else {
                     cm.gainMeso( - 10000000);
-                    cm.gainItem(4140101, 1);
+                    cm.gainItem(4000000, 1);
                 }
                 cm.dispose();
                 break;
@@ -69,11 +69,11 @@ function action(mode, type, selection) {
                 var intPoints = cm.getPlayer().getMeso();
                 if (intPoints < 15000000) {
                     cm.sendOk("You need at least 15 000 000 meso.");
-                } else if (!cm.canHold(4032444, 1)) {
+                } else if (!cm.canHold(4000000, 1)) {
                     cm.sendOk("Please make space.");
                 } else {
                     cm.gainMeso( - 15000000);
-                    cm.gainItem(4032444, 1);
+                    cm.gainItem(4000000, 1);
                 }
                 cm.dispose();
                 break;
@@ -81,11 +81,11 @@ function action(mode, type, selection) {
                 var intPoints = cm.getPlayer().getMeso();
                 if (intPoints < 15000000) {
                     cm.sendOk("You need at least 15 000 000 meso.");
-                } else if (!cm.canHold(4032445, 1)) {
+                } else if (!cm.canHold(4000000, 1)) {
                     cm.sendOk("Please make space.");
                 } else {
                     cm.gainMeso( - 15000000);
-                    cm.gainItem(4032445, 1);
+                    cm.gainItem(4000000, 1);
                 }
                 cm.dispose();
                 break;
@@ -93,11 +93,11 @@ function action(mode, type, selection) {
                 var intPoints = cm.getPlayer().getMeso();
                 if (intPoints < 15000000) {
                     cm.sendOk("You need at least 15 000 000 meso.");
-                } else if (!cm.canHold(4032446, 1)) {
+                } else if (!cm.canHold(4000000, 1)) {
                     cm.sendOk("Please make space.");
                 } else {
                     cm.gainMeso( - 15000000);
-                    cm.gainItem(4032446, 1);
+                    cm.gainItem(4000000, 1);
                 }
                 cm.dispose();
                 break;
@@ -105,11 +105,11 @@ function action(mode, type, selection) {
                 var intPoints = cm.getPlayer().getMeso();
                 if (intPoints < 20000000) {
                     cm.sendOk("You need at least 20 000 000 meso.");
-                } else if (!cm.canHold(4031110, 1)) {
+                } else if (!cm.canHold(4000000, 1)) {
                     cm.sendOk("Please make space.");
                 } else {
                     cm.gainMeso( - 20000000);
-                    cm.gainItem(4031110, 1);
+                    cm.gainItem(4000000, 1);
                 }
                 cm.dispose();
                 break;
@@ -117,11 +117,11 @@ function action(mode, type, selection) {
                 var intPoints = cm.getPlayer().getMeso();
                 if (intPoints < 20000000) {
                     cm.sendOk("You need at least 20 000 000 meso.");
-                } else if (!cm.canHold(4031109, 1)) {
+                } else if (!cm.canHold(4000000, 1)) {
                     cm.sendOk("Please make space.");
                 } else {
                     cm.gainMeso( - 20000000);
-                    cm.gainItem(4031109, 1);
+                    cm.gainItem(4000000, 1);
                 }
                 cm.dispose();
                 break;
@@ -129,11 +129,11 @@ function action(mode, type, selection) {
                 var intPoints = cm.getPlayer().getMeso();
                 if (intPoints < 75000000) {
                     cm.sendOk("You need at least 75 000 000 meso.");
-                } else if (!cm.canHold(3994185, 1)) {
+                } else if (!cm.canHold(4000000, 1)) {
                     cm.sendOk("Please make space.");
                 } else {
                     cm.gainMeso( - 75000000);
-                    cm.gainItem(3994185, 1);
+                    cm.gainItem(4000000, 1);
                 }
                 cm.dispose();
                 break;
@@ -141,11 +141,11 @@ function action(mode, type, selection) {
                 var intPoints = cm.getPlayer().getMeso();
                 if (intPoints < 25000000) {
                     cm.sendOk("You need at least 25 000 000 meso.");
-                } else if (!cm.canHold(3800088, 1)) {
+                } else if (!cm.canHold(4000000, 1)) {
                     cm.sendOk("Please make space.");
                 } else {
                     cm.gainMeso( - 25000000);
-                    cm.gainItem(3800088, 1);
+                    cm.gainItem(4000000, 1);
                 }
                 cm.dispose();
                 break;
@@ -156,10 +156,10 @@ function action(mode, type, selection) {
                 if (selection >= 1 && selection <= (intPoints / 300000)) {
                     if (selection > (intPoints / 300000)) {
                         cm.sendOk("You can only get max " + (intPoints / 300000) + ". 1 Ball = 300000 meso.");
-                    } else if (!cm.canHold(3992017, selection)) {
+                    } else if (!cm.canHold(4000000, selection)) {
                         cm.sendOk("Please make space in SETUP tab.");
                     } else {
-                        cm.gainItem(3992017, selection);
+                        cm.gainItem(4000000, selection);
                         cm.gainMeso( - 300000 * selection);
                     }
                 }
@@ -168,10 +168,10 @@ function action(mode, type, selection) {
                 if (selection >= 1 && selection <= (intPoints / 600000)) {
                     if (selection > (intPoints / 600000)) {
                         cm.sendOk("You can only get max " + (intPoints / 600000) + ". 1 Ball = 600000 meso.");
-                    } else if (!cm.canHold(3992018, selection)) {
+                    } else if (!cm.canHold(4000000, selection)) {
                         cm.sendOk("Please make space in SETUP tab.");
                     } else {
-                        cm.gainItem(3992018, selection);
+                        cm.gainItem(4000000, selection);
                         cm.gainMeso( - 600000 * selection);
                     }
                 }
@@ -180,10 +180,10 @@ function action(mode, type, selection) {
                 if (selection >= 1 && selection <= (intPoints / 1200000)) {
                     if (selection > (intPoints / 1200000)) {
                         cm.sendOk("You can only get max " + (intPoints / 1200000) + ". 1 Ball = 1200000 meso.");
-                    } else if (!cm.canHold(3992019, selection)) {
+                    } else if (!cm.canHold(4000000, selection)) {
                         cm.sendOk("Please make space in SETUP tab.");
                     } else {
-                        cm.gainItem(3992019, selection);
+                        cm.gainItem(4000000, selection);
                         cm.gainMeso( - 1200000 * selection);
                     }
                 }

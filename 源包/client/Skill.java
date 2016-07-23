@@ -73,7 +73,6 @@ public class Skill {
     public static Skill loadFromData(int id, MapleData data, MapleData delayData) {
         boolean showSkill = false;
         if (showSkill) {
-            System.out.println("正在解析技能id: " + id + " 名字: " + SkillFactory.getSkillName(id));
             FileoutputUtil.log(FileoutputUtil.SkillsLog, "正在解析技能id: " + id + " 名字: " + SkillFactory.getSkillName(id), true);
         }
         Skill ret = new Skill(id);

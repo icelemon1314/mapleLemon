@@ -117,10 +117,8 @@ public class NPCHandler {
             chr.setConversation(1);
             npc.sendShop(c);
         } else if (npc.isStorage()) {
-            System.out.println("NPC Storage");
             c.getPlayer().getStorage().sendStorage(c, npc.getId());
         } else if (npc.hasQuest(chr)) { // 检查是否有任务可以开始
-            System.out.println("NPC TALK Q");
             MapleQuest quest = MapleQuest.getInstance(npc.getQuestId());
             if (quest == null) {
                 chr.dropMessage(0,"未知的任务："+npc.getQuestId()+"！");

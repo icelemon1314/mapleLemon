@@ -444,7 +444,6 @@ public class PlayerHandler {
         }
         boolean mirror = chr.getBuffedValue(MapleBuffStat.影分身) != null;
         double maxdamage = chr.getStat().getCurrentMaxBaseDamage();
-        System.out.println("可能的最大伤害："+maxdamage);
         // 盾牌
         Item shield = c.getPlayer().getInventory(MapleInventoryType.EQUIPPED).getItem((short) -10);
         int attackCount = (shield != null) && (shield.getItemId() / 10000 == 134) ? 2 : 1;
@@ -498,7 +497,6 @@ public class PlayerHandler {
 //            }
 
             if (attack.skillId == 独行客.金钱炸弹) {
-                System.out.println("金钱炸弹来咯！");
                 chr.handleMesosbomb(attack, 0);
             }
 
@@ -823,13 +821,11 @@ public class PlayerHandler {
 //            }
             chr.addHP(healHP);
         }
-        System.out.println("恢复MP1");
         if ((healMP != 0) && (chr.canMP(now + 1000L))) {
             // @TODO 限制每次恢复的MP
 //            if (healMP > stats.getHealMP()) {
 //                healMP = (int) stats.getHealMP();
 //            }
-            System.out.println("恢复MP3"+healMP);
             chr.addMP(healMP);
         }
     }

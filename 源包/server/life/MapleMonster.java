@@ -299,10 +299,10 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
                 if (((MapleMonster) this.sponge.get()).hp > 0L) {
                     ((MapleMonster) this.sponge.get()).hp -= rDamage;
                     if (((MapleMonster) this.sponge.get()).hp <= 0L) {
-                        this.map.broadcastMessage(MobPacket.showBossHP(((MapleMonster) this.sponge.get()).getId(), -1L, ((MapleMonster) this.sponge.get()).getMobMaxHp()));
+                        this.map.broadcastMessage(MobPacket.showBossHP((this.sponge.get()).getId(), -1L, ((MapleMonster) this.sponge.get()).getMobMaxHp()));
                         this.map.killMonster((MapleMonster) this.sponge.get(), from, true, false, (byte) 1, lastSkill);
                     } else {
-                        this.map.broadcastMessage(MobPacket.showBossHP((MapleMonster) this.sponge.get()));
+                        this.map.broadcastMessage(MobPacket.showBossHP( this.sponge.get()));
                     }
                 }
             }

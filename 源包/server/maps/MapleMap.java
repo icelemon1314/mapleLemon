@@ -517,7 +517,7 @@ public final class MapleMap {
             if (de.itemId == mob.getStolen()) {
                 continue;
             }
-            if (Randomizer.nextInt(79999) < (int) (de.chance * dropServerRate * chr.getDropMod() * (chr.getStat().getDropBuff() / 100.0D))) {
+            if (Randomizer.nextInt(100000) < (int) (de.chance * dropServerRate * chr.getDropMod() * (chr.getStat().getDropBuff() / 100.0D))) {
                 if (((droptype != 3) && (de.itemId == 0))) {
                     continue;
                 }
@@ -545,7 +545,6 @@ public final class MapleMap {
             }
         }
         d++;
-        // @TODO 掉落道具的位置会和金币的重复
         pos.x = Math.min(Math.max(mobpos - 25 * (d / 2), footholds.getMinDropX() + 25),footholds.getMaxDropX() - d * 25);
         int mesos = Randomizer.nextInt(mob.getMobLevel() * 10) + mob.getMobLevel();
         if (mesos > 0) {
@@ -644,29 +643,22 @@ public final class MapleMap {
      * @param lastSkill
      */
     public void killMonster(final MapleMonster monster, final MapleCharacter chr, boolean withDrops, boolean second, byte animation, int lastSkill) {
-        if (((monster.getId() == 8810122) || (monster.getId() == 8810018)) && (!second)) {
-            MapTimer.getInstance().schedule(new Runnable() {
-                @Override
-                public void run() {
-                    MapleMap.this.killMonster(monster, chr, true, true, (byte) 1);
-                    MapleMap.this.killAllMonsters(true);
-                }
-            }, 3000);
-            return;
-        }
+//        if (((monster.getId() == 8810122) || (monster.getId() == 8810018)) && (!second)) {
+//            MapTimer.getInstance().schedule(new Runnable() {
+//                @Override
+//                public void run() {
+//                    MapleMap.this.killMonster(monster, chr, true, true, (byte) 1);
+//                    MapleMap.this.killAllMonsters(true);
+//                }
+//            }, 3000);
+//            return;
+//        }
 //        if (monster.getStatusSourceID(MonsterStatus.持续掉血) == 2111010) { //TODO 处理绿水灵病毒
 //            Skill skills = SkillFactory.getSkill(2111010);
 //            int skilllevel = chr.getSkillLevel(2111010);
 //            MapleStatEffect infoEffect = skills.getEffect(skilllevel);
 //            infoEffect.applyBuffEffect(chr, monster.getBuff(MonsterStatus.持续掉血).getPoisonSchedule());
 //        }
-        if (monster.getId() == 8820014) {
-            killMonster(8820000);
-        } else if (monster.getId() == 8820212) {
-            killMonster(8820100);
-        } else if (monster.getId() == 9300166) {
-            animation = 2;
-        }
         this.spawnedMonstersOnMap.decrementAndGet();
         removeMapObject(monster);
         monster.killed();
@@ -680,64 +672,13 @@ public final class MapleMap {
             monster.killGainExp(lastSkill);
         }
 
-        if (monster.getBuffToGive() > -1) {
-            int buffid = monster.getBuffToGive();
-            MapleStatEffect buff = MapleItemInformationProvider.getInstance().getItemEffect(buffid);
-            this.charactersLock.readLock().lock();
-            try {
-                for (MapleCharacter mc : this.characters) {
-                    if (mc.isAlive()) {
-                        buff.applyTo(mc);
-                        switch (monster.getId()) {
-                            case 8810018:
-                            case 8810122:
-                            case 8820001:
-                            case 8820212:
-                                mc.getClient().getSession().write(MaplePacketCreator.showOwnBuffEffect(buffid, 0xE, mc.getLevel(), 1));//0xD+1 119
-                                broadcastMessage(mc, MaplePacketCreator.showBuffeffect(mc, buffid, 0xE, mc.getLevel(), 1), false);//0xD+1 119
-                        }
-                    }
-                }
-            } finally {
-                this.charactersLock.readLock().unlock();
-            }
-        }
         int mobid = monster.getId();
         ExpeditionType type = null;
-        if ((mobid == 8830000) && (this.mapid == 105100300)) {
-            if (this.speedRunStart > 0L) {
-                type = ExpeditionType.Normal_Balrog;
-            }
-        } else if ((mobid == 8800002) && ((this.mapid == 280030000) || (this.mapid == 280030100))) {
+        if ((mobid == 8800002) && ((this.mapid == 280030000))) {
             this.charactersLock.readLock().lock();
 
             if (this.speedRunStart > 0L) {
                 type = ExpeditionType.Zakum;
-            }
-            doShrine(true);
-        } else if ((mobid == 8800102) && (this.mapid == 280030001)) {
-            this.charactersLock.readLock().lock();
-
-            if (this.speedRunStart > 0L) {
-                type = ExpeditionType.Chaos_Zakum;
-            }
-            doShrine(true);
-        } else if ((mobid == 8870000) && (this.mapid == 262031300)) {
-            this.charactersLock.readLock().lock();
-            if (this.speedRunStart > 0L) {
-                type = ExpeditionType.Hillah;
-            }
-            doShrine(true);
-        } else if ((mobid == 8870100) && (this.mapid == 262031300)) {
-            this.charactersLock.readLock().lock();
-            if (this.speedRunStart > 0L) {
-                type = ExpeditionType.Hillah;
-            }
-            doShrine(true);
-        } else if ((mobid == 8860000) && (this.mapid == 272030400)) {
-            this.charactersLock.readLock().lock();
-            if (this.speedRunStart > 0L) {
-                type = ExpeditionType.Akyrum;
             }
             doShrine(true);
         } else if ((mobid >= 8800003) && (mobid <= 8800010)) {
@@ -818,21 +759,7 @@ public final class MapleMap {
                     }
                 }
             }
-        } else if (mobid == 8820008) {
-            for (MapleMapObject mmo : getAllMonstersThreadsafe()) {
-                MapleMonster mons = (MapleMonster) mmo;
-                if (mons.getLinkOid() != monster.getObjectId()) {
-                    killMonster(mons, chr, false, false, animation);
-                }
-            }
-        }else if (mobid == 8820108) {
-            for (MapleMapObject mmo : getAllMonstersThreadsafe()) {
-                MapleMonster mons = (MapleMonster) mmo;
-                if (mons.getLinkOid() != monster.getObjectId()) {
-                    killMonster(mons, chr, false, false, animation);
-                }
-            }
-        }else if ((mobid / 100000 == 98) && (chr.getMapId() / 10000000 == 95) && (getAllMonstersThreadsafe().isEmpty())) {
+        } else if ((mobid / 100000 == 98) && (chr.getMapId() / 10000000 == 95) && (getAllMonstersThreadsafe().isEmpty())) {
             switch (chr.getMapId() % 1000 / 100) {
                 case 0:
                 case 1:
@@ -2294,7 +2221,6 @@ public final class MapleMap {
         if ((GameConstants.isTeamMap(this.mapid))) {
             chr.setTeam(getAndSwitchTeam() ? 0 : 1);
         }
-        System.out.println("添加角色1");
         byte[] packet = MaplePacketCreator.spawnPlayerMapobject(chr); //封包在这
         if (!chr.isHidden()) {
             broadcastMessage(chr, packet, false);
@@ -2305,7 +2231,6 @@ public final class MapleMap {
         } else {
             broadcastGMMessage(chr, packet, false);
         }
-        System.out.println("添加角色2");
         if (!onFirstUserEnter.equals("")) {
             if (getCharactersSize() == 1) {
                 MapScriptMethods.startScript_FirstUser(chr.getClient(), onFirstUserEnter);
@@ -2314,7 +2239,6 @@ public final class MapleMap {
         if (!onUserEnter.equals("")) {
             MapScriptMethods.startScript_User(chr.getClient(), onUserEnter);
         }
-        System.out.println("添加角色3");
         sendObjectPlacement(chr);
 //        GameConstants.achievementRatio(chr.getClient());
         if ((GameConstants.isTeamMap(this.mapid)) ) {
@@ -2322,18 +2246,12 @@ public final class MapleMap {
         }
 
         MaplePet pets = chr.getSpawnPets(); //宠物发的包
-        if (pets == null)
-            System.out.println("召唤的宠物为空");
-        else
-            System.out.println("召唤的宠物不为空");
         if ((pets != null) && (pets.getSummoned())) {
-            System.out.println("召唤已经召唤的宠物出来");
             pets.setPos(chr.getTruePosition());
 //            chr.getClient().getSession().write(PetPacket.updatePet(pets, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pets.getInventoryPosition()), false));
             chr.getClient().getSession().write(PetPacket.showPet(chr, pets, false, false, true));
 //            chr.getClient().getSession().write(PetPacket.loadExceptionList(chr, pets));
         }
-        System.out.println("添加角色4");
         if (chr.getSummonedFamiliar() != null) {
 //            chr.spawnFamiliar(chr.getSummonedFamiliar());
         }
@@ -2343,7 +2261,6 @@ public final class MapleMap {
 //            chr.updatePartyMemberHP();
 //            chr.receivePartyMemberHP();
         }
-        System.out.println("添加角色5");
         boolean quickMove = false;
         if ((!chr.isInBlockedMap()) && (chr.getLevel() >= 10)) {
             for (MapleQuickMove qm : MapleQuickMove.values()) {
@@ -2361,7 +2278,6 @@ public final class MapleMap {
                 }
             }
         }
-        System.out.println("添加角色6");
         if (!quickMove) {
 //            chr.getClient().getSession().write(MaplePacketCreator.getQuickMoveInfo(false, new LinkedList()));
         }
@@ -2376,14 +2292,12 @@ public final class MapleMap {
         } finally {
             chr.unlockSummonsReadLock();
         }
-        System.out.println("添加角色7");
 //        if (this.mapEffect != null) {
 //            this.mapEffect.sendStartData(chr.getClient());
 //        }
         if ((this.timeLimit > 0) && (getForcedReturnMap() != null)) {
             chr.startMapTimeLimitTask(this.timeLimit, getForcedReturnMap());
         }
-        System.out.println("添加角色8");
 //        if ((chr.getBuffedValue(MapleBuffStat.骑兽技能) != null) && (!GameConstants.is反抗者(chr.getJob()))
 //                && (FieldLimitType.Mount.check(this.fieldLimit))) {
 //            chr.cancelEffectFromBuffStat(MapleBuffStat.骑兽技能);
@@ -2396,11 +2310,9 @@ public final class MapleMap {
                 chr.getSidekick().applyBuff(chr);
             }
         }
-        System.out.println("添加角色9");
         if ((chr.getEventInstance() != null) && (chr.getEventInstance().isTimerStarted())) {
                 chr.getClient().getSession().write(MaplePacketCreator.getClock((int) (chr.getEventInstance().getTimeLeft() / 1000L)));
         }
-        System.out.println("添加角色10");
         if (hasClock()) {
             Calendar cal = Calendar.getInstance();
             chr.getClient().getSession().write(MaplePacketCreator.getClockTime(cal.get(11), cal.get(12), cal.get(13)));
@@ -2409,16 +2321,13 @@ public final class MapleMap {
             chr.getClient().getSession().write(MaplePacketCreator.boatPacket(true));
         }
 
-        System.out.println("添加角色11");
         if ((chr.getCarnivalParty() != null) && (chr.getEventInstance() != null)) {
             chr.getEventInstance().onMapLoad(chr);
         }
-        System.out.println("添加角色12");
         MapleEvent.mapLoad(chr, this.channel);
         if ((getSquadBegin() != null) && (getSquadBegin().getTimeLeft() > 0L) && (getSquadBegin().getStatus() == 1)) {
             chr.getClient().getSession().write(MaplePacketCreator.getClock((int) (getSquadBegin().getTimeLeft() / 1000L)));
         }
-        System.out.println("添加角色13");
         if ((this.mapid / 1000 != 105100) && (this.mapid / 100 != 8020003) && (this.mapid / 100 != 8020008) && (this.mapid != 271040100)) {
             MapleSquad sqd = getSquadByMap();
             EventManager em = getEMByMap();
@@ -2427,7 +2336,6 @@ public final class MapleMap {
                 this.squadTimer = true;
             }
         }
-        System.out.println("添加角色14");
         if ((getNumMonsters() > 0) && ((this.mapid == 280030001) || (this.mapid == 240060201) || (this.mapid == 280030000) || (this.mapid == 280030100) || (this.mapid == 240060200) || (this.mapid == 220080001) || (this.mapid == 541020800) || (this.mapid == 541010100))) {
             String music = "Bgm09/TimeAttack";
             switch (this.mapid) {
@@ -2443,19 +2351,15 @@ public final class MapleMap {
 
             chr.getClient().getSession().write(MaplePacketCreator.musicChange(music));
         }
-        System.out.println("添加角色15");
         if (this.permanentWeather > 0) {
             chr.getClient().getSession().write(MaplePacketCreator.startMapEffect("", this.permanentWeather, false));
         }
-        System.out.println("添加角色16");
         if (getPlatforms().size() > 0) {
             chr.getClient().getSession().write(MaplePacketCreator.getMovingPlatforms(this));
         }
-        System.out.println("添加角色17");
         if (this.environment.size() > 0) {
             chr.getClient().getSession().write(MaplePacketCreator.getUpdateEnvironment(this));
         }
-        System.out.println("添加角色18");
     }
 
     public int getNumItems() {

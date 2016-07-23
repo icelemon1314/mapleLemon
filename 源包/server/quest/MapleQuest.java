@@ -292,14 +292,12 @@ public class MapleQuest implements Serializable {
         Map<Integer,MapleQuestStatus> questComplete = chr.getCompletedQuests();
         boolean isCanStart = false;
         for (Integer r : getQuestIdByNpcId(npcid)) {
-            System.out.println("NPC拥有的任务："+r);
             if (questComplete.containsKey(r)) {
                 continue;
             }
             // 检查其它要求
 
             if (this.startReqs.size() == 0) { // 没有条件要求
-                System.out.println("可以开始的任务1："+r);
                 isCanStart = true;
                 break;
             } else {
@@ -310,7 +308,6 @@ public class MapleQuest implements Serializable {
                         break;
                     }
                 }
-                System.out.println("可以开始的任务2："+r);
                 isCanStart = isOk;
             }
             break;
@@ -319,10 +316,8 @@ public class MapleQuest implements Serializable {
         // 检查已经开始的任务
         MapleQuest tmp = chr.getQuestInfoById(getId());
         if (tmp != null) {
-            System.out.println("任务已经开始了："+getId());
             return false;
         }
-        System.out.println("可以开始的任务3："+isCanStart);
         return isCanStart;
     }
 
@@ -347,34 +342,26 @@ public class MapleQuest implements Serializable {
      * @return
      */
     public boolean canComplete(MapleCharacter chr) {
-        System.out.println("FUCK 1");
         if (chr.getQuest(this).getStatus() != 1) {
             return false;
         }
-        System.out.println("FUCK 2");
         if ((this.blocked) && (!chr.isGM())) {
             return false;
         }
-        System.out.println("FUCK 3");
 //        if ((this.autoComplete) && (npcid != null) && (this.viewMedalItem <= 0)) {
 //            forceComplete(chr, npcid);
 //            return false;
 //        }
         String queststatus = chr.getQuest(this).getCustomData();
-        System.out.println("FUCK 7"+queststatus);
         List <MapleQuestComplete> com = this.completeReqs.get(queststatus);
         if (com == null) {
-            System.out.println("FUCK 6");
             return false;
         }
         for (MapleQuestComplete r : com) {
-            System.out.println("FUCK 4");
             if (!r.check(chr)) {
-                System.out.println("FUCK 5");
                 return false;
             }
         }
-        System.out.println("FUCK 14");
         return true;
     }
 

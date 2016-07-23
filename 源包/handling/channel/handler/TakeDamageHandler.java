@@ -130,7 +130,6 @@ public class TakeDamageHandler {
             } else if (isDeadlyAttack) {
                 chr.addMPHP(stats.getHp() > 1 ? -(stats.getHp() - 1) : 0, (stats.getMp() > 1) && (!mpAttack) ? -(stats.getMp() - 1) : 0);
             } else {
-                System.out.println("扣血了："+damage);
                 chr.addMPHP(-damage, mpAttack ? 0 : -mpattack);
             }
         }

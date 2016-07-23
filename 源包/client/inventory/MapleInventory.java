@@ -270,7 +270,6 @@ public class MapleInventory implements Iterable<Item>, Serializable {
         for (Item item : this.inventory.values()) {
             //System.out.println("返回itemID："+item.getPosition()+"realpos："+position);
             if (item.getPosition() == position) {
-                System.out.println("返回item位置" + position);
                 return item;
             }
         }
@@ -281,7 +280,6 @@ public class MapleInventory implements Iterable<Item>, Serializable {
         for (Item item : this.inventory.values()) {
             //System.out.println("返回itemID："+item.getPosition()+"realpos："+position);
             if (item.getESPos() == position) {
-                System.out.println("返回item位置" + position);
                 return item;
             }
         }
@@ -300,7 +298,6 @@ public class MapleInventory implements Iterable<Item>, Serializable {
     public int findESCount() {
         int i = 0;
         for (Item item : this.inventory.values()) {
-            System.out.println("返回itemID：" + item.getItemId() + "Epos：" + item.getESPos());
             if (item.getESPos() > 0) {
                 i++;
             }

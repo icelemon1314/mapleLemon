@@ -28,7 +28,7 @@ var status = -1;
 var sel;
 
 function start() {
-    cm.sendNext("Hmm... are you raising one of my kids by any chance? I perfected a spell that uses Water of Life to blow life into a doll. People call it the #bPet#k. If you have one with you, feel free to ask me questions.");
+    cm.sendNext("你……是在饲养我的孩子吗？我成功地利用#t5180000#，开发出了给玩偶注入生命的魔法。人们将像这样获得生命的孩子们叫做#b宠物#k。如果你有和宠物有关的问题，可以尽管问我。");
 }
 
 function action(mode, type, selection) {

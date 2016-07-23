@@ -66,7 +66,6 @@ public enum CashShopOpcode implements WritableIntValueHolder {
     public static void reloadValues() {
         try {
             if (ServerConstants.loadop) {
-                System.out.println("加载cashops文件！");
                 Properties props = new Properties();
                 props.load(CashShopOpcode.class.getClassLoader().getResourceAsStream("cashops.ini"));
                 ExternalCodeTableGetter.populateValues(props, values());

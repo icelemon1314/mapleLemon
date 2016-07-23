@@ -51,9 +51,7 @@ public class DamageParse {
             player.dropMessage(5, "你升天了还想打我？");
             return;
         }
-        System.out.println("攻击1");
         if (attack.skillId != 0) {
-            System.out.println("攻击2");
             if (player.isAdmin()) {
                 player.dropMessage(5, "[技能攻击] 使用技能[" + attack.skillId + "]进行攻击");
             }
@@ -84,7 +82,6 @@ public class DamageParse {
                 return;
             }
         }
-        System.out.println("攻击3");
         if (player.isShowPacket()) {
             player.dropMessage(0, "攻击动作: " + Integer.toHexString(attack.display));
         }
@@ -100,7 +97,6 @@ public class DamageParse {
 //            MaplePvp.doGuildPvP(player, map, attack, effect);
 //        }
         if (attack.skillId == 独行客.金钱炸弹) {
-            System.out.println("攻击4");
             for (AttackPair oned : attack.allDamage) {
                 if (oned.attack != null) {
                     continue;
@@ -131,7 +127,6 @@ public class DamageParse {
         int totDamageToOneMonster = 0;
         long hpMob = 0L;
         PlayerStats stats = player.getStat();
-        System.out.println("攻击5");
         int criticalDamage = stats.passive_sharpeye_percent();
         int shdowPartnerAttackPercentage = 0;
         if ((attack_type == AttackType.RANGED_WITH_SHADOWPARTNER) || (attack_type == AttackType.NON_RANGED_WITH_MIRROR)) {
@@ -141,7 +136,6 @@ public class DamageParse {
             }
             attackCount /= 2;
         }
-        System.out.println("攻击6");
         shdowPartnerAttackPercentage *= (criticalDamage + 100) / 100;
         if ((attack.skillId == 4221014) || (attack.skillId == 4221016)) {
             shdowPartnerAttackPercentage *= 30;
@@ -154,7 +148,6 @@ public class DamageParse {
             }
         }
 
-        System.out.println("攻击7");
         int maxDamagePerHit = 0;
         int maxMaxDamageOver = 0;
 
@@ -171,7 +164,6 @@ public class DamageParse {
                     maxDamagePerHit = CalculateMaxWeaponDamagePerHit(player, monster, attack, theSkill, effect, maxDamagePerMonster, criticalDamage);
                 }
                 byte overallAttackCount = 0;
-                System.out.println("攻击8");
                 for (Pair eachde : oned.attack) {
                     Integer eachd = (Integer) eachde.left;
                     overallAttackCount = (byte) (overallAttackCount + 1);
@@ -214,7 +206,6 @@ public class DamageParse {
                 }
                 totDamage += totDamageToOneMonster;
                 player.checkMonsterAggro(monster);
-                System.out.println("攻击9");
                 if (player.getBuffedValue(MapleBuffStat.敛财术) != null) {
                     handlePickPocket(player, monster, oned);
                 }
@@ -228,7 +219,6 @@ public class DamageParse {
 
                     //TODO 添加被动攻击技能处理  进阶攻击之类  召唤Mist之类的
                     player.handle被动触发技能(monster, attack.skillId);
-                    System.out.println("攻击13");
                     //TODO 攻击前技能处理
                     player.onAttack(monster.getMobMaxHp(), monster.getMobMaxMp(), attack.skillId, monster.getObjectId(), totDamage);
                     //处理被动技能效果
@@ -273,7 +263,6 @@ public class DamageParse {
                             monster.handleSteal(player);
                             break;
                     }
-                    System.out.println("攻击14");
                     if (totDamageToOneMonster > 0) {
                         Item weapon_ = player.getInventory(MapleInventoryType.EQUIPPED).getItem((short) -11);
                         if (weapon_ != null) {
@@ -292,7 +281,6 @@ public class DamageParse {
                             }
                         }
                     }
-                    System.out.println("攻击15");
                     if (effect != null) {
                         if (effect.getMonsterStati().size() > 0 && effect.makeChanceResult()) {
                             for (Map.Entry z : effect.getMonsterStati().entrySet()) {
@@ -303,12 +291,10 @@ public class DamageParse {
                 }
             }
         }
-        System.out.println("攻击10");
         if (totDamageToOneMonster > 0) {
             //TODO 攻击后技能处理
             player.afterAttack(attack.numAttacked, attack.numDamage, attack.skillId);
         }
-        System.out.println("攻击11");
         if (effect != null && ((attack.skillId != 0) && ((attack.numAttacked > 0) || (attack.skillId != 4341002)) && (!GameConstants.isNoDelaySkill(attack.skillId)))) {
             if (NotEffectforAttack(attack.skillId)) {//TODO BUFF类技能攻击不应该再给与BUFF状态
                 effect.applyTo(player, attack.position);

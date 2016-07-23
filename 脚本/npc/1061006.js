@@ -26,12 +26,12 @@ var maps = Array(105040310, 105040312, 105040314);
 var selectedMap = -1;
 
 function start() {
-    cm.sendNext("你觉得周围的这尊雕像散发着神秘力量。");
-    if (cm.isQuestStarted(2054))
+    cm.sendNext("把手放在石像上，也没有任何变化。");
+    if (cm.isQuestStarted(1000902))
         zones = 3;
-    else if (cm.isQuestStarted(2053))
+    else if (cm.isQuestStarted(1000901))
         zones = 2;
-    else if (cm.isQuestStarted(2052))
+    else if (cm.isQuestStarted(1000900))
         zones = 1;
     else
         zones = 0;

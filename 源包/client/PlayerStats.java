@@ -325,7 +325,6 @@ public class PlayerStats implements Serializable {
         int localmaxhp_ = getMaxHp();
         int localmaxmp_ = getMaxMp();
         resetLocalStats(chra.getJob());
-        System.out.println("计算角色属性1");
         Map sData = new HashMap();
         Iterator itera = chra.getInventory(MapleInventoryType.EQUIPPED).newList().iterator();
         while (itera.hasNext()) {
@@ -396,7 +395,6 @@ public class PlayerStats implements Serializable {
                 this.equipLevelHandling.add(equip);
             }
         }
-        System.out.println("计算角色属性2");
         Iterator iter = this.setHandling.entrySet().iterator();
         Map.Entry entry;
         while (iter.hasNext()) {
@@ -425,7 +423,6 @@ public class PlayerStats implements Serializable {
                 }
             }
         }
-        System.out.println("计算角色属性4");
         int hour = Calendar.getInstance().get(11);
         for (Item item : chra.getInventory(MapleInventoryType.CASH).newList()) {
             if (item.getItemId() / 100000 == 52) {
@@ -457,11 +454,8 @@ public class PlayerStats implements Serializable {
                 this.canFishVIP = true;
             }
         }
-        System.out.println("计算角色属性7");
 //        handlePassiveSkills(chra);
-        System.out.println("计算角色属性8");
         handleBuffStats(chra);
-        System.out.println("计算角色属性9");
         Integer buff = chra.getBuffedValue(MapleBuffStat.最大体力);
         if (buff != null) {
             localmaxhp_ += buff;
@@ -471,7 +465,6 @@ public class PlayerStats implements Serializable {
             localmaxmp_ += buff;
         }
         long now;
-        System.out.println("计算角色属性10");
 
         this.localstr = (int) (this.localstr + (Math.floor(this.localstr * this.percent_str / 100.0F) + this.IndieStrFX));
         this.localdex = (int) (this.localdex + (Math.floor(this.localdex * this.percent_dex / 100.0F) + this.IndieDexFX));
@@ -503,7 +496,6 @@ public class PlayerStats implements Serializable {
         this.localmaxmp = Math.min(chra.getMaxMpForSever(), Math.abs(Math.max(-chra.getMaxMpForSever(), localmaxmp_)));
 
         chra.changeSkillLevel_Skip(sData, false);
-        System.out.println("计算角色属性11");
 //        CalcPassive_SharpEye(chra);
         CalcPassive_Mastery(chra);
         if (first_login) {
@@ -512,7 +504,6 @@ public class PlayerStats implements Serializable {
         } else {
             chra.enforceMaxHpMp();
         }
-        System.out.println("计算角色属性12");
         calculateMaxBaseDamage(Math.max(this.magic, this.watk), this.damX, this.pvpDamage, chra);
         this.trueMastery = Math.min(100, this.trueMastery);
         this.passive_sharpeye_min_percent = (short) Math.min(this.passive_sharpeye_min_percent, this.passive_sharpeye_max_percent);
