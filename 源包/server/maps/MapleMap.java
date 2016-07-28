@@ -2753,16 +2753,12 @@ public final class MapleMap {
         if (chr == null) {
             return;
         }
-        System.out.println("载入地图1");
         for (MapleMapObject o : getMapObjectsInRange(chr.getTruePosition(), chr.getRange(), GameConstants.rangedMapobjectTypes)) {
             if ((o.getType() == MapleMapObjectType.REACTOR) && (!((MapleReactor) o).isAlive())) {
                 continue;
             }
-            System.out.println("载入地图2");
             o.sendSpawnData(chr.getClient());
-            System.out.println("载入地图3");
             chr.addVisibleMapObject(o);
-            System.out.println("载入地图4");
         }
     }
 

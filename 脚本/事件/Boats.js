@@ -18,7 +18,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+ 
 /**
 -- Odin JavaScript --------------------------------------------------------------------------------
 	Boats Between Ellinia and Orbis
@@ -80,8 +80,7 @@ function init() {
 function getNextTime(){
 	// 每隔15分钟一班 前4分钟登船，1分钟关门，10分钟航行
 	// 秒数的控制不精确
-	//var curTime = em.getCurentMin();
-	var curTime = 9
+	var curTime = em.getCurentMin();
 	if ( 0 <= curTime && curTime <10) {
 		return 10-curTime;
 	} else if (14<=curTime && curTime <25) {
@@ -101,8 +100,8 @@ function scheduleNew() {
 	em.log("船来了！");
     Ellinia_docked.setDocked(true);
     Orbis_Station.setDocked(true);
-    Ellinia_docked.broadcastMessage(MaplePacketCreator.boatPacket(true));
-    Orbis_Station.broadcastMessage(MaplePacketCreator.boatPacket(true));
+    Ellinia_docked.broadcastMessage(em.sendBoat(true));
+    Orbis_Station.broadcastMessage(em.sendBoat(true));
     em.setProperty("docked", "true");
     em.setProperty("entry", "true");
     em.setProperty("haveBalrog","false");
@@ -130,8 +129,8 @@ function takeoff() {
     }
     Ellinia_docked.setDocked(false);
     Orbis_Station.setDocked(false);
-    Ellinia_docked.broadcastMessage(MaplePacketCreator.boatPacket(false));
-    Orbis_Station.broadcastMessage(MaplePacketCreator.boatPacket(false));
+    Ellinia_docked.broadcastMessage(em.sendBoat(false));
+    Orbis_Station.broadcastMessage(em.sendBoat(false));
     em.schedule("invasion", invasionTime);
     em.schedule("arrived", rideTime);
 }
@@ -174,10 +173,10 @@ function invasion() {
         }
         //Boat_to_Orbis.setDocked(true);
         //Boat_to_Ellinia.setDocked(true);
-        //Boat_to_Orbis.broadcastMessage(MaplePacketCreator.boatPacket(true));
-        //Boat_to_Ellinia.broadcastMessage(MaplePacketCreator.boatPacket(true));
-        Boat_to_Orbis.broadcastMessage(MaplePacketCreator.musicChange("Bgm04/ArabPirate"));
-        Boat_to_Ellinia.broadcastMessage(MaplePacketCreator.musicChange("Bgm04/ArabPirate"));
+        Boat_to_Orbis.broadcastMessage(em.sendBoat(true));
+        Boat_to_Ellinia.broadcastMessage(em.sendBoat(true));
+        Boat_to_Orbis.broadcastMessage(em.musicChange("Bgm04/ArabPirate"));
+        Boat_to_Ellinia.broadcastMessage(em.musicChange("Bgm04/ArabPirate"));
         em.setProperty("haveBalrog","true");
     }
 }

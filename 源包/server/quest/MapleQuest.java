@@ -293,10 +293,9 @@ public class MapleQuest implements Serializable {
         boolean isCanStart = false;
         for (Integer r : getQuestIdByNpcId(npcid)) {
             if (questComplete.containsKey(r)) {
-                continue;
+                break;
             }
             // 检查其它要求
-
             if (this.startReqs.size() == 0) { // 没有条件要求
                 isCanStart = true;
                 break;
@@ -329,7 +328,6 @@ public class MapleQuest implements Serializable {
     public List <Integer> getQuestIdByNpcId(int npcId) {
         List <Integer> questList = this.npcQuest.get(npcId);
         if (questList == null) {
-            System.out.println("NPC没有对应的任务："+npcId);
             return new ArrayList<Integer>();
         } else {
             return questList;
@@ -429,16 +427,14 @@ public class MapleQuest implements Serializable {
 
             if (removeItem == true) {
                 // 更新玩家任务状态
-                System.out.println("更新玩家任务状态！");
                 forceComplete(chr, npc);
 
                 // 发送奖励
-                System.out.println("发送奖励");
                 String curStatus = chr.getQuest(this).getCustomData();
                 List <MapleQuestReward> rewardData = this.rewards.get(curStatus);
                 // 通用奖励，金币和经验
                 if (rewardData == null) {
-                    System.out.println("奖励数据为空！");
+                    System.out.println("奖励数据为空");
                     return ;
                 }
                 for (MapleQuestReward reward : rewardData) {

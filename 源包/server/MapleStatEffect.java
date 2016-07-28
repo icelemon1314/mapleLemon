@@ -702,7 +702,6 @@ public class MapleStatEffect implements Serializable {
                 applyto.getClient().getSession().write(MaplePacketCreator.skillCooldown(1321013, 0));
             }
         }
-        System.out.println("2222222");
         Map hpmpupdate = new EnumMap(MapleStat.class);
         if (hpchange != 0) {
             if ((hpchange < 0) && (-hpchange > stat.getHp())) {
@@ -719,10 +718,9 @@ public class MapleStatEffect implements Serializable {
             stat.setMp(stat.getMp() + mpchange);
             hpmpupdate.put(MapleStat.MP, (long) stat.getMp());
         }
-        System.out.println("效果消耗的东西计算完毕！");// 消耗的处理完毕
+        // 消耗的处理完毕
         hpmpupdate.put(MapleStat.HP, (long) stat.getHp());
         applyto.getClient().getSession().write(MaplePacketCreator.updatePlayerStats(hpmpupdate, true, applyto));
-        System.out.println("开始各种特殊的属性和技能的处理，囧！");
         if ((this.useLevel > 0) && (!this.skill)) {
             applyto.setExtractor(new MapleExtractor(applyto, this.sourceid, this.useLevel * 50, 1440));
             applyto.getMap().spawnExtractor(applyto.getExtractor());
@@ -761,12 +759,10 @@ public class MapleStatEffect implements Serializable {
                 }
                 applyto.equipChanged();
             } else if (this.bs > 0) {
-                System.out.println("bbbbbbbbbbbbbb");
                 int xx = Integer.parseInt(applyto.getEventInstance().getProperty(String.valueOf(applyto.getId())));
                 applyto.getEventInstance().setProperty(String.valueOf(applyto.getId()), String.valueOf(xx + this.bs));
                 applyto.getClient().getSession().write(MaplePacketCreator.getPVPScore(xx + this.bs, false));
             } else if ((this.info.get(MapleStatInfo.iceGageCon)) > 0) {
-                System.out.println("iiiiiiiiiiiii");
                 int x = Integer.parseInt(applyto.getEventInstance().getProperty("icegage"));
                 if (x < (this.info.get(MapleStatInfo.iceGageCon))) {
                     return false;
@@ -807,7 +803,6 @@ public class MapleStatEffect implements Serializable {
                 applyto.getStat().setCurrentMaxMp(maxst);
 
             } else {
-                System.out.println("qqqqqqqqqq");
                 MapleCarnivalFactory.MCSkill skil;
                 MapleDisease dis;
                 if ((this.nuffSkill != 0) && (applyto.getParty() != null)) {
@@ -846,7 +841,6 @@ public class MapleStatEffect implements Serializable {
                 }
             }
         }
-        System.out.println("vvvvvvvvv");
         if ((primary) && (this.availableMap != null)) {
             for (Pair e : this.availableMap) {
                 if ((applyto.getMapId() < ((Integer) e.left)) || (applyto.getMapId() > ((Integer) e.right))) {
@@ -860,7 +854,6 @@ public class MapleStatEffect implements Serializable {
             if ((getSummonMovementType() != null)) {
                 applySummonEffect(applyfrom, primary, pos, newDuration, 0);
             } else {
-                System.out.println("bgbgbgbg");
                 applyBuffEffect(applyfrom, applyto, primary, newDuration, passive);
             }
         }
@@ -868,12 +861,9 @@ public class MapleStatEffect implements Serializable {
             //removeMonsterBuff(applyfrom);
         }
         if (primary) {
-            System.out.println("aasdss");
             if (((this.overTime) || (is群体治愈()))) {
-                System.out.println("nnnnnn");
                 applyBuff(applyfrom, newDuration); // 大部分走了这里
             }
-            System.out.println("4444");
             if (isMonsterBuff()) {
                 applyMonsterBuff(applyfrom);
             }
@@ -1114,36 +1104,6 @@ public class MapleStatEffect implements Serializable {
         }
     }
 
-//    public static void apply祈祷众生(MapleCharacter applyfrom) {
-//        int skillLevel = applyfrom.getSkillLevel(祭司.祈祷众生);
-//        if (skillLevel > 0) {
-//            int buffToNumber = 1;
-//            if (applyfrom.getParty() != null) {
-//                buffToNumber = applyfrom.getParty().getPartyBuffs(applyfrom.getId());
-//            }
-//            Skill skil = SkillFactory.getSkill(祭司.祈祷众生);
-//            if (skil == null) {
-//                return;
-//            }
-//            MapleStatEffect eff = skil.getEffect(skillLevel);
-//            int gain = eff.getX();
-//            skillLevel = applyfrom.getSkillLevel(祭司.祈祷和音);
-//            if (skillLevel > 0) {
-//                skil = SkillFactory.getSkill(祭司.祈祷和音);
-//                if (skil != null) {
-//                    MapleStatEffect infoEffect = skil.getEffect(skillLevel);
-//                    gain = infoEffect.getX();
-//                }
-//            }
-//            eff.getStatups().clear();
-////            eff.getStatups().add(new Pair(MapleBuffStat.祈祷众生, gain * buffToNumber));
-//            if (applyfrom.isAdmin() && ServerProperties.ShowPacket()) {
-//                applyfrom.dropSpouseMessage(10, "发送主教特性增益技能, 增益基础：" + gain + " 人数：" + buffToNumber + " 总增益：" + gain * buffToNumber);
-//            }
-//            eff.applyBuffEffect(applyfrom, 2100000000);
-//        }
-//    }
-
     private void removeMonsterBuff(MapleCharacter applyfrom) {
         List<MonsterStatus> cancel = new ArrayList();
         switch (this.sourceid) {
@@ -1322,7 +1282,6 @@ public class MapleStatEffect implements Serializable {
             List stat = Collections.singletonList(new Pair(MapleBuffStat.变身术, Integer.valueOf(getMorph(applyto))));
             foreignbuff = BuffPacket.giveForeignBuff(applyto.getId(), stat, this);
         } else if (isInflation()) {
-            applyfrom.dropMessage(5,"发送技能：isInflation");
             List stat = Collections.singletonList(new Pair(MapleBuffStat.GIANT_POTION, Integer.valueOf(this.inflation)));
             foreignbuff = BuffPacket.giveForeignBuff(applyto.getId(), stat, this);
         } else if (is骑兽技能()) {

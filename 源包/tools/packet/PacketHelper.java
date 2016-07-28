@@ -94,7 +94,6 @@ public class PacketHelper {
         if (skills != null) {
             mplew.writeShort(skills.size());
             for (Entry<Skill, SkillEntry> skill : skills.entrySet()) {
-                System.out.println("发送角色技能："+skill.getKey().getId()+",技能等级："+skill.getValue().skillLevel);
                 mplew.writeInt((skill.getKey()).getId());
                 mplew.writeInt((skill.getValue()).skillLevel);
             }

@@ -42,7 +42,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             NPCConversationManager cm = new NPCConversationManager(c, npcId, npcMode, ScriptType.NPC, iv);
             if ((iv == null) || (getInstance() == null)) {
                 if (iv == null) {
-                    System.out.println("找不到NPC脚本(ID:" + npcId + "), 特殊模式(" + npcMode + "),所在地图(ID:" + c.getPlayer().getMapId() + ")");
+                    c.getPlayer().dropMessage(5,"找不到NPC脚本(ID:" + npcId + "), 特殊模式(" + npcMode + "),所在地图(ID:" + c.getPlayer().getMapId() + ")");
                 }
                 dispose(c);
                 return;
@@ -66,7 +66,7 @@ public class NPCScriptManager extends AbstractScriptManager {
 
     public void action(MapleClient c, byte mode, byte type, int selection) {
         if (mode != -1) {
-            NPCConversationManager cm = (NPCConversationManager) this.cms.get(c);
+            NPCConversationManager cm = this.cms.get(c);
             if (cm == null) {
                 return;
             }

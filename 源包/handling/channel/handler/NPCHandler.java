@@ -126,9 +126,6 @@ public class NPCHandler {
                 chr.addQuest(quest);
                 chr.dropMessage(0,"恭喜开始任务："+quest.getName()+"！赶紧打开任务面板查看任务信息吧！");
             }
-
-//            quest.start(chr,npc.getId());
-//            MapleQuest.getInstance(npc.getQuestId()).start(chr,npc.getId());
         } else if (npc.hasCompleteQuest(chr)) {
 
         } else {

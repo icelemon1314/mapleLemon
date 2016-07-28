@@ -97,7 +97,6 @@ public class CharacterTransfer implements Externalizable {
     public Object battlers;
     public Object anticheat;
     public Object antiMacro;
-    public Object innerSkills;
     public int[] savedlocation;
     public int[] wishlist;
     public int[] rocks;
@@ -358,7 +357,6 @@ public class CharacterTransfer implements Externalizable {
         } else {
             this.chalkboard = null;
         }
-        this.innerSkills = in.readObject();
         this.skillmacro = in.readObject();
         this.lastfametime = in.readLong();
         this.storage = in.readObject();
@@ -570,7 +568,6 @@ public class CharacterTransfer implements Externalizable {
         if (this.chalkboard != null) {
             out.writeUTF(this.chalkboard);
         }
-        out.writeObject(this.innerSkills);
         out.writeObject(this.skillmacro);
         out.writeLong(this.lastfametime);
         out.writeObject(this.storage);

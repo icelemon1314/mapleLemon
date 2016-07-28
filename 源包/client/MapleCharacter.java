@@ -866,7 +866,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     if (rs.getTimestamp("lastlogon") != null) {
                         Calendar cal = Calendar.getInstance();
                         cal.setTimeInMillis(rs.getTimestamp("lastlogon").getTime());
-//                                if (cal.get(7) + 1 != Calendar.getInstance().get(7));
                     }
                     if (rs.getInt("banned") > 0) {
                         rs.close();
@@ -906,16 +905,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     ret.skills.put(skil, new SkillEntry(skl, msl, rs.getLong("expiration"), teachId));
                 }
                 ps.close();
-                ps = con.prepareStatement("SELECT skillid, skilllevel, position, rank FROM innerskills WHERE characterid = ? LIMIT 3");
-                ps.setInt(1, charid);
-                rs = ps.executeQuery();
-                while (rs.next()) {
-                    int skid = rs.getInt("skillid");
-                    Skill skil = SkillFactory.getSkill(skid);
-                    int skl = rs.getInt("skilllevel");
-                    byte position = rs.getByte("position");
-                    byte rank = rs.getByte("rank");
-                }
                 ps = con.prepareStatement("SELECT * FROM characters WHERE accountid = ? ORDER BY level DESC");
                 ps.setInt(1, ret.accountid);
                 rs = ps.executeQuery();

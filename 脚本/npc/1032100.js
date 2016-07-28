@@ -53,7 +53,7 @@ function action(mode, type, selection) {
                 cm.gainItem(4011005, -1);
                 cm.gainItem(4011006, -1);
                 cm.gainItem(4011007, 1);
-                cm.sendNext("Ok here, take " + item + ". It's well-made, probably because I'm using good materials. If you need my help down the road, feel free to come back.");
+                cm.sendNext("拿着" + item + "。 看上去非常的棒。看来你的材料还是挺不错的。欢迎下次光临。");
             } else {
                 cm.sendNext("你是不是钱不够？还是你没有冶炼的#b#t4011000#, #t4011001#, #t4011002#, #t4011003#, #t4011004#, #t4011005#, #t4011006##k各一个？");
             }
@@ -70,7 +70,7 @@ function action(mode, type, selection) {
                 cm.gainItem(4021007, -1);
                 cm.gainItem(4021008, -1);
                 cm.gainItem(4021009, 1);
-                cm.sendNext("Ok here, take " + item + ". It's well-made, probably because I'm using good materials. If you need my help down the road, feel free to come back.");
+                cm.sendNext("拿着" + item + "。 看上去非常的棒。看来你的材料还是挺不错的。欢迎下次光临。");
             } else {
                 cm.sendNext("你是不是钱不够？还是你没有冶炼的各1个#b#t4021000#, #t4021001#, #t4021002#, #t4021003#, #t4021004#, #t4021005#, #t4021006#, #t4021007#, #t4021008##k？");
             }
@@ -81,7 +81,7 @@ function action(mode, type, selection) {
                 cm.gainItem(4011007, -1);
                 cm.gainItem(4021008, -1);
                 cm.gainItem(4031042, 1);
-                cm.sendNext("Ok here, take " + item + ". It's well-made, probably because I'm using good materials. If you need my help down the road, feel free to come back.");
+                cm.sendNext("拿着" + item + "。 看上去非常的棒。看来你的材料还是挺不错的。欢迎下次光临。");
             } else {
                 cm.sendNext("你是不是钱不够？还是你没有1个#b#t4001006#和1个#t4021007##k和1个#t4021008##k吗？");
             }

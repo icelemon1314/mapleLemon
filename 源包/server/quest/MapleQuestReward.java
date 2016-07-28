@@ -8,6 +8,7 @@ import client.inventory.Item;
 import client.inventory.MapleInventoryType;
 import client.inventory.MaplePet;
 import constants.ItemConstants;
+import provider.MapleDataProvider;
 import server.MapleItemInformationProvider;
 import tools.Pair;
 
@@ -46,15 +47,14 @@ public class MapleQuestReward implements Serializable {
      * @return
      */
     public boolean getRewardToChr(MapleCharacter chr){
-        System.out.println("发送奖励："+type.toString());
         switch (type) {
             case item:
                 for (Pair a : this.dataStore) {
                     int itemId = ((Integer) a.getLeft());
                     int count = ((Integer) a.getRight());
-                    System.out.println("发送奖励：："+itemId+"|"+count);
                     chr.gainItem(itemId,count,"任务获得道具！");
-                    chr.dropMessage(0,"任务奖励："+ itemId + " "+count+"个！");
+                    String itemName = MapleItemInformationProvider.getInstance().getName(itemId);
+                    chr.dropMessage(0,"任务奖励："+ itemName + " "+count+"个！");
                 }
                 break;
             case exp:

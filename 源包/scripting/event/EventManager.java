@@ -423,6 +423,14 @@ public class EventManager {
         return new MapleReactor(MapleReactorFactory.getReactor(id), id);
     }
 
+    public byte[] sendBoat(boolean isEnter){
+        return MaplePacketCreator.boatPacket(isEnter);
+    }
+
+    public byte[] musicChange(String name){
+        return MaplePacketCreator.musicChange(name);
+    }
+
     public void broadcastYellowMsg(String msg) {
         getChannelServer().broadcastPacket(MaplePacketCreator.yellowChat(msg));
     }
