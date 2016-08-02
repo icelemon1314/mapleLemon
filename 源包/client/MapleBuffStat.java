@@ -23,7 +23,11 @@ public enum MapleBuffStat implements Serializable, Buffstat {
     神之保护(0x8000, 1),
     无形箭弩(0x10000, 1),
     召唤兽(0x20000, 1),
+    POISON(0x00040000,1),
+    SEAL(0x00080000,1),
+    DARKNESS(0x00100000,1),
     斗气集中(0x200000, 1), // ok
+    HP减少无效(0x400000,1), // 地图减少HP无效
     龙之力(0x800000,1),    // ok
     神圣祈祷(0x1000000, 1),
     聚财术(0x2000000, 1),
@@ -32,14 +36,10 @@ public enum MapleBuffStat implements Serializable, Buffstat {
     替身(0x8000000,1),
     敛财术(0x8000000, 1),
     STUN(0x00020000,1),
-    POISON(0x00040000,1),
-    SEAL(0x00080000,1),
-    DARKNESS(0x00100000,1),
     WEAKNESS(0x40000000,1),
     WK_CHARGE(0x00400000,1),
 
     // ==========================
-
 
     冰骑士(0x10000, 1),
     压制术(0x20000, 1),

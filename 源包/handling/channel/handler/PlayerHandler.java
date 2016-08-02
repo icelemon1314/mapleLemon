@@ -128,7 +128,6 @@ public class PlayerHandler {
 
     public static void CancelChair(short id, MapleClient c, MapleCharacter chr) {
         if (id == -1) {
-            chr.cancelFishingTask();
             chr.setChair(0);
             c.getSession().write(MaplePacketCreator.cancelChair(-1, chr.getId()));
             if (chr.getMap() != null) {

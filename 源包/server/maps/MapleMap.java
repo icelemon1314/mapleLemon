@@ -97,7 +97,8 @@ public final class MapleMap {
     private float recoveryRate;
     private MapleMapEffect mapEffect;
     private final int channel;
-    private short decHP = 0;
+    private short decHP = 0; // 地图自动掉血值
+    private int decHPInterval = 10000; // 地图自动掉血间隔
     private short createMobInterval = 9000;
     private short top = 0;
     private short bottom = 0;
@@ -105,7 +106,6 @@ public final class MapleMap {
     private short right = 0;
     private int consumeItemCoolTime = 0;
     private int protectItem = 0;
-    private int decHPInterval = 10000;
     private final int mapid;
     private int returnMapId;
     private int timeLimit;

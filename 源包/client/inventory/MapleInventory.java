@@ -199,7 +199,7 @@ public class MapleInventory implements Iterable<Item>, Serializable {
     }
 
     public Item getItem(short slot) {
-        return (Item) this.inventory.get(slot);
+        return this.inventory.get(slot);
     }
 
     public void removeItem(short slot) {

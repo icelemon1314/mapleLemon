@@ -50,10 +50,11 @@ function action(mode, type, selection) {
             } else if (!cm.haveItem(4070000, 1)) {
                 cm.sendOk("您好像还没有 #b#i4070000# #t4070000##k 吧.");
             } else {
+				// 1463241600907
+				cm.gainItem(4070000, -1);
                 theitems[selection].setExpiration(cm.getCurrentTime() + (45 * 24 * 60 * 60 * 1000));
-                cm.getPlayer().fakeRelog();
+                cm.getPlayer().refreshItem(theitems[selection]);
                 cm.sendOk("恭喜您复活宠物成功，宠物使用时间延长45天。");
-                cm.gainItem(4070000, -1);
             }
             cm.dispose();
         }

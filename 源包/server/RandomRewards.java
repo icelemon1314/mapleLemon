@@ -8,9 +8,18 @@ import constants.BattleConstants;
   
   public class RandomRewards
   {
-    private static List<Integer> compiledGold = null; private static List<Integer> compiledSilver = null; private static List<Integer> compiledFishing = null; private static List<Integer> compiledPeanut = null;
-    private static List<Integer> compiledEvent = null; private static List<Integer> compiledEventC = null; private static List<Integer> compiledEventB = null; private static List<Integer> compiledEventA = null; private static List<Integer> compiledPokemon = null;
-    private static List<Integer> compiledDrops = null; private static List<Integer> compiledDropsB = null; private static List<Integer> compiledDropsA = null; private static List<Integer> tenPercent = null;
+    private static List<Integer> compiledGold = null;
+    private static List<Integer> compiledSilver = null;
+    private static List<Integer> compiledPeanut = null;
+    private static List<Integer> compiledEvent = null;
+    private static List<Integer> compiledEventC = null;
+    private static List<Integer> compiledEventB = null;
+    private static List<Integer> compiledEventA = null;
+    private static List<Integer> compiledPokemon = null;
+    private static List<Integer> compiledDrops = null;
+    private static List<Integer> compiledDropsB = null;
+    private static List<Integer> compiledDropsA = null;
+    private static List<Integer> tenPercent = null;
   
     private static void processRewards(List<Integer> returnArray, int[] list)
     {
@@ -49,10 +58,6 @@ import constants.BattleConstants;
   
     public static int getSilverBoxReward() {
       return (compiledSilver.get(Randomizer.nextInt(compiledSilver.size())));
-    }
-  
-    public static int getFishingReward() {
-      return (compiledFishing.get(Randomizer.nextInt(compiledFishing.size())));
     }
   
     public static int getPeanutReward() {
@@ -115,8 +120,6 @@ import constants.BattleConstants;
       returnArray = new ArrayList();
   
       processRewards(returnArray, GameConstants.fishingReward);
-  
-      compiledFishing = returnArray;
   
       returnArray = new ArrayList();
   

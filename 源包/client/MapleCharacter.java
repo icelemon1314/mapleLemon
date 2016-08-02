@@ -1823,54 +1823,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return this.quests;
     }
 
-    public void startFishingTask() {
-        cancelFishingTask();
-        this.lastFishingTime = System.currentTimeMillis();
-    }
-
-    public boolean canFish(long now) {
-        return (this.lastFishingTime > 0L) && (this.lastFishingTime + GameConstants.getFishingTime(this.stats.canFishVIP, isGM()) < now);
-    }
-
-    public void doFish(long now) {
-        this.lastFishingTime = now;
-        boolean expMulti = haveItem(2300001, 1, false, true);
-        if ((this.client == null) || (this.client.getPlayer() == null) || (!this.client.isReceiving()) || ((!expMulti) && (!haveItem(2300000, 1, false, true))) || (!GameConstants.isFishingMap(getMapId())) || (!this.stats.canFish) || (this.chair <= 0)) {
-            cancelFishingTask();
-            return;
-        }
-        MapleInventoryManipulator.removeById(this.client, MapleInventoryType.USE, expMulti ? 2300001 : 2300000, 1, false, false);
-        boolean passed = false;
-        while (!passed) {
-            int randval = RandomRewards.getFishingReward();
-            switch (randval) {
-                case 0:
-                    int money = Randomizer.rand(expMulti ? 15 : 10, expMulti ? 75000 : 50000);
-                    gainMeso(money, true);
-                    passed = true;
-                    break;
-                case 1:
-                    int experi = Math.min(Randomizer.nextInt((int) Math.abs(getExpNeededForLevel() / 200L) + 1), 500000);
-                    gainExp(expMulti ? experi * 3 / 2 : experi, true, false, true);
-                    passed = true;
-                    break;
-                default:
-                    if (!MapleItemInformationProvider.getInstance().itemExists(randval)) {
-                        break;
-                    }
-                    MapleInventoryManipulator.addById(this.client, randval, (short) 1, new StringBuilder().append("钓鱼 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                    passed = true;
-            }
-
-        }
-
-        this.map.broadcastMessage(UIPacket.fishingCaught(this.id));
-    }
-
-    public void cancelFishingTask() {
-        this.lastFishingTime = 0L;
-    }
-
     public ArrayList<Pair<MapleBuffStat, MapleBuffStatValueHolder>> getAllEffects() {
         return new ArrayList(this.effects);
     }
@@ -2958,7 +2910,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (this.chair != 0) {
             this.chair = 0;
         }
-        cancelFishingTask();
         cancelChallenge();
         if (!getMechDoors().isEmpty()) {
             removeMechDoor();
@@ -6584,6 +6535,15 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void setFatigue(int j) {
         this.fatigue = (short) Math.min(Math.max(0, j), 200);
+    }
+
+    /**
+     * 复活宠物刷新下背包数据就行了
+     * @param item
+     */
+    public void refreshItem(Item item) {
+        MapleInventoryType type = ItemConstants.getInventoryType(item.getItemId());
+        client.getSession().write(InventoryPacket.addItemToInventory(item));
     }
 
     public void fakeRelog() {

@@ -1146,7 +1146,7 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
         }
         long damage = status.getPoisonSchedule();
         boolean shadowWeb = (status.getSkill() == 无影人.影网术);
-        MapleCharacter chr = (MapleCharacter) weakChr.get();
+        MapleCharacter chr = weakChr.get();
         boolean cancel = (damage <= 0L) || (chr == null) || (chr.getMapId() != this.map.getId());
         if (damage >= this.hp) {
             damage = this.hp - 1L;

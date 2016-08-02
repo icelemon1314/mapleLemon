@@ -470,6 +470,7 @@ public class MapleStatEffect implements Serializable {
                     ret.monsterStatus.put(MonsterStatus.速度, ret.info.get(MapleStatInfo.x));
                     break;
                 case 火毒魔法师.毒雾术:
+                case 火毒巫师.火毒合击:
                     ret.monsterStatus.put(MonsterStatus.中毒, ret.info.get(MapleStatInfo.mad));
                     break;
                 case 牧师.神之保护:
@@ -493,6 +494,7 @@ public class MapleStatEffect implements Serializable {
                 case 冰雷巫师.魔法狂暴:
                     ret.statups.add(new Pair(MapleBuffStat.攻击加速, ret.info.get(MapleStatInfo.x)));
                     break;
+                case 冰雷魔法师.冰冻术:
                 case 冰雷巫师.冰咆哮:
                 case 冰雷巫师.冰雷合击:
                     ret.monsterStatus.put(MonsterStatus.结冰, 1);

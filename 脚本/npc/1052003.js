@@ -30,8 +30,6 @@
 	* Claws
 */
 
-importPackage(net.sf.odinms.client);
-
 var status = 0;
 var selectedType = -1;
 var selectedItem = -1;

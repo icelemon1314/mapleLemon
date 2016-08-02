@@ -30,9 +30,7 @@ public class WorldRespawnService {
         Integer[] chs = (Integer[]) ChannelServer.getAllInstance().toArray(new Integer[0]);
         for (int i = 0; i < chs.length; i += 3) {
             WorldTimer.getInstance().register(new Respawn(chs, i), 4000);
-//             System.out.println(i);
         }
-//        System.out.println("[WorldRespawnService] 已经启动");
     }
 
     public static void handleMap(MapleMap map, int numTimes, int size, long now) {
@@ -118,9 +116,6 @@ public class WorldRespawnService {
             if (chr.canFairy(now)) {
                 chr.doFairy();
             }
-            if (chr.canFish(now)) {
-                chr.doFish(now);
-            }
             if (chr.canDOT(now)) {
                 chr.doDOT();
             }
@@ -137,7 +132,6 @@ public class WorldRespawnService {
                 }
 
             }
-
         }
 
         if ((numTimes % 7 == 0) && (chr.getMount() != null) && (chr.getMount().canTire(now))) {
@@ -165,11 +159,15 @@ public class WorldRespawnService {
         }
         if ((hurt) && (chr.isAlive())) {
             if (chr.getInventory(MapleInventoryType.EQUIPPED).findById(chr.getMap().getHPDecProtect()) == null) {
-                if ((chr.getMapId() == 749040100) && (chr.getInventory(MapleInventoryType.CASH).findById(5451000) == null)) {
-                    chr.addHP(-chr.getMap().getHPDec());
-                } else if (chr.getMapId() != 749040100) {
+                // 雪域自动扣血
+                if (chr.getMapId() >= 211000000 && chr.getMapId()<=211999999) {
+                    if (chr.getBuffedValue(MapleBuffStat.HP减少无效) == null) {
+                        chr.addHP(-(chr.getMap().getHPDec()));
+                    }
+                } else {
                     chr.addHP(-(chr.getMap().getHPDec()));
                 }
+
             }
         }
     }

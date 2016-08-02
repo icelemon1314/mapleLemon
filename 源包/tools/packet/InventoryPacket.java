@@ -217,9 +217,6 @@ public class InventoryPacket {
     }
 
     public static byte[] getShowInventoryStatus(int mode) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
