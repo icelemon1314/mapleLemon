@@ -1151,9 +1151,6 @@ public class MaplePacketCreator {
     }
 
     public static byte[] showBuffeffect(MapleCharacter chr, int skillid, int effectid, int playerLevel, int skillLevel, byte direction) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SHOW_FOREIGN_EFFECT.getValue());

@@ -942,7 +942,7 @@ public class MapleItemInformationProvider {
     }
 
     public MapleStatEffect getItemEffect(int itemId) {
-        MapleStatEffect ret = (MapleStatEffect) this.itemEffects.get(Integer.valueOf(itemId));
+        MapleStatEffect ret = this.itemEffects.get(Integer.valueOf(itemId));
         if (ret == null) {
             MapleData item = getItemData(itemId);
             if ((item == null) || (item.getChildByPath("spec") == null)) {

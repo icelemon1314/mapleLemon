@@ -397,8 +397,9 @@ public class MapleStatEffect implements Serializable {
             addBuffStatPairToListIfNotZero(ret.statups, MapleBuffStat.最大体力, ret.info.get(MapleStatInfo.indieMhp));
             addBuffStatPairToListIfNotZero(ret.statups, MapleBuffStat.最大魔力, ret.info.get(MapleStatInfo.indieMmp));
             addBuffStatPairToListIfNotZero(ret.statups, MapleBuffStat.命中值增加, ret.info.get(MapleStatInfo.indieAcc));
+            addBuffStatPairToListIfNotZero(ret.statups, MapleBuffStat.HP减少无效, ret.info.get(MapleStatInfo.thaw));
         }
-        if (ret.skill) {
+            if (ret.skill) {
             switch (sourceid) {
                 // 战士
                 case 战士.圣甲术:
@@ -1317,7 +1318,6 @@ public class MapleStatEffect implements Serializable {
         if ((showEffect) && (!applyto.isHidden())) { // TODO 发送 [SHOW_FOREIGN_EFFECT]
             applyto.getMap().broadcastMessage(applyto, MaplePacketCreator.showBuffeffect(applyto, this.sourceid, 1, applyto.getLevel(), this.level), false);
         }
-
         if (buff != null) { // TODO 发送 [GIVE_BUFF]
             applyfrom.dropMessage(5,"发送技能：GIVE_BUFF");
             applyto.getClient().getSession().write(buff);

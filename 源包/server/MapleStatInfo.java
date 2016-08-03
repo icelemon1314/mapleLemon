@@ -171,6 +171,7 @@ public enum MapleStatInfo {
     reqGuildLevel(0),
     selfDestruction(0),
     speed(0), // 移动速度
+    thaw(0), // 抵消掉血值
     speedMax(0),
     str(0),
     str2dex(0),

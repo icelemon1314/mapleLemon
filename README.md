@@ -18,11 +18,16 @@ for chinese maplestory V027, for any question pls contact:icelemon1024@gmail.com
 客户端下载【国内地址】：
 http://pan.baidu.com/s/1c1ro4EG
 
+一键端下载：
+http://shang.qq.com/wpa/qunwpa?idkey=f218ba73982086e31adcc410eeaa72543f476069b043748b489e8743ffdc1475
+
+感谢以下岛民的赞助：
+atom
+TY老后生
+
 本项目仅供学习和研究使用。如有侵犯版权，请联系：icelemon1024@gmail.com
 
-转载请注明出处，严禁用于商业，严禁拿去卖：
-强烈抵制：
-拿去卖：https://item.taobao.com/item.htm?id=530571604453&qq-pf-to=pcqq.group&wwlight=cntaobao%E5%85%AB%E9%9B%B6%E7%BD%91%E7%BB%9C%E7%BD%91%E5%8D%95-%7B530571604453%7D&qq-pf-to=pcqq.group
+转载请注明出处，严禁用于商业，严禁拿去卖。
 
 架设端步骤：
 
