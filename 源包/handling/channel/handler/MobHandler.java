@@ -52,42 +52,9 @@ public final class MobHandler {
         int skillLevel = 0;
         int start_x = slea.readShort(); // hmm.. startpos?
         int start_y = slea.readShort(); // hmm...
-        Point startPos = new Point(start_x, start_y);
         slea.readShort();
         slea.readShort();
 
-        /*
-        int realskill = 0;
-        int level = 0;
-        if (useSkill) {
-            byte size = monster.getNoSkills();
-            boolean used = false;
-            if (size > 0) {
-                Pair skillToUse = (Pair) monster.getSkills().get((byte) Randomizer.nextInt(size));
-                realskill = ((Integer) skillToUse.getLeft());
-                level = ((Integer) skillToUse.getRight());
-
-                MobSkill mobSkill = MobSkillFactory.getInstance().getMobSkill(realskill, level);
-                if ((mobSkill != null) && (!mobSkill.checkCurrentBuff(chr, monster))) {
-                    long now = System.currentTimeMillis();
-                    long ls = monster.getLastSkillUsed(realskill);
-                    if ((ls == 0L) || ((now - ls > mobSkill.getCoolTime()) && (!mobSkill.onlyOnce()))) {
-                        monster.setLastSkillUsed(realskill, now, mobSkill.getCoolTime());
-                        int reqHp = (int) ((float) monster.getHp() / (float) monster.getMobMaxHp() * 100.0F);
-                        if (reqHp <= mobSkill.getHP()) {
-                            used = true;
-                            mobSkill.applyEffect(chr, monster, true);
-                        }
-                    }
-                }
-            }
-            if (!used) {
-                realskill = 0;
-                level = 0;
-            }
-
-        }
-        */
         final List<LifeMovementFragment> res;
         try {
             res = MovementParse.parseMovement(slea, 2);
@@ -98,19 +65,7 @@ public final class MobHandler {
         }
         if ((res != null) && (res.size() > 0)) {
             MapleMap map = chr.getMap();
-//            for (LifeMovementFragment move : res) {
-//                if ((move instanceof AbsoluteLifeMovement)) {
-//                    Point endPos = ((LifeMovement) move).getPosition();
-//                    if ((endPos.x < map.getLeft() - 250) || (endPos.y < map.getTop() - 250) || (endPos.x > map.getRight() + 250) || (endPos.y > map.getBottom() + 250)) {
-//                        chr.getCheatTracker().checkMoveMonster(endPos);
-//                        return;
-//                    }
-//                }
-//            }
-            //slea.skip(4);
-            //slea.skip(4);
             c.getSession().write(MobPacket.moveMonsterResponse(monster.getObjectId(), moveid, monster.getMp(), monster.isControllerHasAggro(), skillId, skillLevel));
-            //if ((slea.available() < 9L) || (slea.available() > 30L)) {
             if (slea.available() != 1) {
                 System.out.println("slea.available != 1 (怪物移动错误) 剩余封包长度: " + slea.available());
                 FileoutputUtil.log(FileoutputUtil.Movement_Mob, "slea.available != 36 (怪物移动错误)\r\n怪物ID: " + monster.getId() + "\r\n" + slea.toString(true));
@@ -120,10 +75,6 @@ public final class MobHandler {
             Point endPos = monster.getTruePosition();
             map.moveMonster(monster, endPos);
             map.broadcastMessage(chr, MobPacket.moveMonster(useSkill, slea, skillId, skillLevel, monster.getObjectId()), endPos);
-            /*if ((!monster.getStats().isBoss()) && (!map.isBossMap()) && (chr.getMapId() != 703002000)) {
-             chr.getCheatTracker().checkMoveMonster(endPos);
-             map.checkMoveMonster(endPos, monster.getStats().isFly(), chr);
-             }*/
         }
     }
 

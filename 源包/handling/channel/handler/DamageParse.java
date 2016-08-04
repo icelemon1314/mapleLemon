@@ -334,9 +334,6 @@ public class DamageParse {
         }
         int mobCount = effect.getMobCount(player);
         int attackCount = effect.getAttackCount(player);
-        if (player.isAdmin()) {
-            player.dropMessage(5, "[技能攻击] 使用技能[" + attack.skillId + "]进行攻击");
-        }
 
         if (GameConstants.isMulungSkill(attack.skillId)) {
             if (player.getMapId() / 10000 != 92502) {
@@ -355,7 +352,7 @@ public class DamageParse {
             return;
         }
 
-        if ((player.getClient().getChannelServer().isAdminOnly()) && (player.isAdmin())) {
+        if (player.isAdmin()) {
             player.dropMessage(-1, "攻击动作: " + Integer.toHexString(attack.display));
         }
         PlayerStats stats = player.getStat();
@@ -388,7 +385,7 @@ public class DamageParse {
                     if (fixeddmg != -1) {
                         eachd = monsterstats.getOnlyNoramlAttack() ? 0 : fixeddmg;
                     } else {
-                        if ((player.isShowPacket()) && (eachd > 0)) {
+                        if (player.isAdmin()) {
                             player.dropMessage(0, new StringBuilder().append("魔法攻击打怪伤害 : ").append(eachd).append(" 服务端预计伤害 : ").append(maxDamagePerHit).append(" 是否超过 : ").append(eachd > maxDamagePerHit).toString());
                         }
                         if (monsterstats.getOnlyNoramlAttack()) {

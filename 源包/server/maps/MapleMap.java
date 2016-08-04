@@ -1544,20 +1544,27 @@ public final class MapleMap {
             MapTimer.getInstance().schedule(new Runnable() {
                 @Override
                 public void run() {
+
                     MapleMap.this.broadcastMessage(MobPacket.killMonster(monster.getObjectId(), 2));
                 }
             }, 3000L);
         }
 
         monster.setLinkOid(oid);
-        spawnAndAddRangedMapObject(monster, new DelayedPacketCreation() {
+        MapTimer.getInstance().schedule(new Runnable() {
             @Override
-            public void sendPackets(MapleClient c) {
-                c.getSession().write(MobPacket.spawnMonster(monster, monster.getStats().getSummonType() <= 1 ? -3 : monster.getStats().getSummonType(), oid));
+            public void run() {
+                spawnAndAddRangedMapObject(monster, new DelayedPacketCreation() {
+                    @Override
+                    public void sendPackets(MapleClient c) {
+                        c.getSession().write(MobPacket.spawnMonster(monster, monster.getStats().getSummonType() <= 1 ? -3 : monster.getStats().getSummonType(), oid));
+                    }
+                });
+                updateMonsterController(monster);
             }
-        });
-        updateMonsterController(monster);
+        },2800L);
         this.spawnedMonstersOnMap.incrementAndGet();
+
     }
 
     public void spawnMonster(MapleMonster monster, int spawnType) {

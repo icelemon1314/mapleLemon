@@ -300,7 +300,7 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
                     ((MapleMonster) this.sponge.get()).hp -= rDamage;
                     if (((MapleMonster) this.sponge.get()).hp <= 0L) {
                         this.map.broadcastMessage(MobPacket.showBossHP((this.sponge.get()).getId(), -1L, ((MapleMonster) this.sponge.get()).getMobMaxHp()));
-                        this.map.killMonster((MapleMonster) this.sponge.get(), from, true, false, (byte) 1, lastSkill);
+                        this.map.killMonster(this.sponge.get(), from, true, false, (byte) 1, lastSkill);
                     } else {
                         this.map.broadcastMessage(MobPacket.showBossHP( this.sponge.get()));
                     }
@@ -518,154 +518,17 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
         if ((toSpawn == null) || (getLinkCID() > 0)) {
             return;
         }
-        MapleMonster spongy = null;
-        long spongyHp = 0L;
-        switch (getId()) {
+        for (final int i : toSpawn) {
+            final MapleMonster mob = MapleLifeFactory.getMonster(i);
 
-            case 8820108:
-            case 8820109:
-                List<MapleMonster> cs_mobs = new ArrayList();
-                for (final int i : toSpawn) {
-                    final MapleMonster mob = MapleLifeFactory.getMonster(i);
-                    mob.setPosition(getTruePosition());
-                    if (this.eventInstance != null) {
-                        this.eventInstance.registerMonster(mob);
-                    }
-                    if (dropsDisabled()) {
-                        mob.disableDrops();
-                    }
-                    switch (mob.getId()) {
-                        case 8820109:
-                        case 8820300://混沌品克缤1阶段
-                        case 8820301:
-                        case 8820302:
-                        case 8820303:
-                        case 8820304:
-                            spongy = mob;
-
-                            break;
-                        default:
-                            if (mob.isFirstAttack()) {
-                                spongyHp += mob.getMobMaxHp();
-                            }
-                            cs_mobs.add(mob);
-                    }
-
-                }
-
-                if ((spongy == null) || (map.getMonsterById(spongy.getId()) != null)) {
-                    return;
-                }
-                if (spongyHp > 0L) {
-                    spongy.setHp(spongyHp);
-                    spongy.getStats().setHp(spongyHp);
-                }
-
-                map.spawnMonster(spongy, -2);
-                for (MapleMonster i : cs_mobs) {
-                    map.spawnMonster(i, -2);
-                    i.setSponge(spongy);
-                }
-                break;
-            case 8810026://召唤暗黑龙王
-            case 8810130:
-            case 8820008://PB
-            case 8820009:
-            case 8820010:
-            case 8820011:
-            case 8820012:
-            case 8820013: {
-                final List<MapleMonster> mobs = new ArrayList<>();
-
-                for (final int i : toSpawn) {
-                    final MapleMonster mob = MapleLifeFactory.getMonster(i);
-
-                    mob.setPosition(getTruePosition());
-                    if (eventInstance != null) {
-                        eventInstance.registerMonster(mob);
-                    }
-                    if (dropsDisabled()) {
-                        mob.disableDrops();
-                    }
-                    switch (mob.getId()) {
-                        case 8810018: // 暗黑龙王的灵魂
-                        case 8810118: // 进阶暗黑龙王
-                        case 8820009: // 召唤品克缤
-                        case 8820010: // PinkBeanSponge1
-                        case 8820011: // PinkBeanSponge2
-                        case 8820012: // PinkBeanSponge3
-                        case 8820013: // PinkBeanSponge4
-                        case 8820014: // PinkBeanSponge5
-                            spongy = mob;
-                            break;
-                        default:
-                            mobs.add(mob);
-                            break;
-                    }
-                }
-                if (spongy != null && map.getMonsterById(spongy.getId()) == null) {
-                    map.spawnMonster(spongy, -2);
-
-                    for (final MapleMonster i : mobs) {
-                        map.spawnMonster(i, -2);
-                        i.setSponge(spongy);
-                    }
-                }
-                break;
+            if (eventInstance != null) {
+                eventInstance.registerMonster(mob);
             }
-            case 8820304:
-                MapleMonster linkMob_1 = MapleLifeFactory.getMonster(getId() - 190);
-                if (linkMob_1 != null) {
-                    toSpawn = linkMob_1.getStats().getRevives();
-                }
-            case 8820014:
-            case 8820101:
-            case 8820200:
-            case 8820201:
-            case 8820202:
-            case 8820203:
-            case 8820204:
-            case 8820205:
-            case 8820206:
-            case 8820207:
-            case 8820208:
-            case 8820209:
-            case 8820210:
-            case 8820211: {
-                for (final int i : toSpawn) {
-                    final MapleMonster mob = MapleLifeFactory.getMonster(i);
-
-                    if (eventInstance != null) {
-                        eventInstance.registerMonster(mob);
-                    }
-                    mob.setPosition(getTruePosition());
-                    if (dropsDisabled()) {
-                        mob.disableDrops();
-                    }
-                    map.spawnMonster(mob, -2);
-                }
-                break;
+            mob.setPosition(getTruePosition());
+            if (dropsDisabled()) {
+                mob.disableDrops();
             }
-            default: {
-                for (final int i : toSpawn) {
-                    final MapleMonster mob = MapleLifeFactory.getMonster(i);
-
-                    if (eventInstance != null) {
-                        eventInstance.registerMonster(mob);
-                    }
-                    mob.setPosition(getTruePosition());
-                    if (dropsDisabled()) {
-                        mob.disableDrops();
-                    }
-                    map.spawnRevives(mob, this.getObjectId());
-
-                    if (mob.getId() == 9300216) {
-                        map.broadcastMessage(MaplePacketCreator.environmentChange("Dojang/clear", 5));//was4
-                        map.broadcastMessage(MaplePacketCreator.environmentChange("dojang/end/clear", 12));//was3
-                    }
-                }
-                break;
-            }
+            map.spawnRevives(mob, this.getObjectId());
         }
     }
 

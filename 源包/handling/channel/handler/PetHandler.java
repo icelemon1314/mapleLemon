@@ -209,6 +209,7 @@ public class PetHandler {
                 return;
             }
             chr.getSpawnPet().updatePosition(res);
+//            chr.getClient().getSession().write(PetPacket.movePet(chr.getId(),1,startPos,res));
             chr.getMap().broadcastMessage(chr, PetPacket.movePet(chr.getId(), (byte)1, startPos, res), false);
         }
     }
