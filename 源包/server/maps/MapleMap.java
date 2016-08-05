@@ -457,10 +457,8 @@ public final class MapleMap {
     public Point calcDropPos(Point initial, Point fallback) {
         Point ret = calcPointBelow(new Point(initial.x, initial.y - 99));
         if (ret == null) {
-            System.out.println("掉落物位置："+fallback.toString());
             return fallback;
         }
-        System.out.println("掉落物位置："+ret.toString());
         return ret;
     }
 
@@ -517,7 +515,7 @@ public final class MapleMap {
             if (de.itemId == mob.getStolen()) {
                 continue;
             }
-            if (Randomizer.nextInt(100000) < (int) (de.chance * dropServerRate * chr.getDropMod() * (chr.getStat().getDropBuff() / 100.0D))) {
+            if (Randomizer.nextInt(10000) < (int) (de.chance * dropServerRate * chr.getDropMod() * (chr.getStat().getDropBuff() / 100.0D))) {
                 if (((droptype != 3) && (de.itemId == 0))) {
                     continue;
                 }

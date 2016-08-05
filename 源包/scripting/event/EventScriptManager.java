@@ -31,7 +31,7 @@ public class EventScriptManager extends AbstractScriptManager {
     }
 
     public EventManager getEventManager(String event) {
-        EventEntry entry = (EventEntry) this.events.get(event);
+        EventEntry entry = this.events.get(event);
         if (entry == null) {
             return null;
         }

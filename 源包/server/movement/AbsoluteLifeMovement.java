@@ -58,7 +58,9 @@ public class AbsoluteLifeMovement extends AbstractLifeMovement {
         lew.writePos(getPosition());
         lew.writePos(this.pixelsPerSecond);
 
-        lew.write(getNewstate());
         lew.writeShort(getDuration());
+        lew.write(getNewstate());
+        lew.writeShort(getNewFH());
+
     }
 }

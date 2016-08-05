@@ -217,7 +217,6 @@ public class MapleQuest implements Serializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("共加载 " + quests.size() + " 个任务信息.");
     }
 
     public static MapleQuest getInstance(int id) {
@@ -262,7 +261,6 @@ public class MapleQuest implements Serializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("共加载 " + quests.size() + " 个任务信息.");
         return false;
     }
 
@@ -434,7 +432,6 @@ public class MapleQuest implements Serializable {
                 List <MapleQuestReward> rewardData = this.rewards.get(curStatus);
                 // 通用奖励，金币和经验
                 if (rewardData == null) {
-                    System.out.println("奖励数据为空");
                     return ;
                 }
                 for (MapleQuestReward reward : rewardData) {

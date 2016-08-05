@@ -97,7 +97,6 @@ function getNextTime(){
 }
 
 function scheduleNew() {
-	em.log("船来了！");
     Ellinia_docked.setDocked(true);
     Orbis_Station.setDocked(true);
     Ellinia_docked.broadcastMessage(em.sendBoat(true));
@@ -110,14 +109,12 @@ function scheduleNew() {
 }
 
 function stopentry() {
-	em.log("关闭舱门");
     em.setProperty("entry","false");
     Orbis_Boat_Cabin.resetReactors();
     Ellinia_Boat_Cabin.resetReactors();
 }
 
 function takeoff() {
-	em.log("开船了！");
     em.setProperty("docked","false");
     var temp1 = Orbis_btf.getCharacters().iterator();
     while(temp1.hasNext()) {
@@ -136,7 +133,6 @@ function takeoff() {
 }
 
 function arrived() {
-	em.log("飞船到了！");
     var temp1 = Boat_to_Orbis.getCharacters().iterator();
     while(temp1.hasNext()) {
         temp1.next().changeMap(Orbis_docked, Orbis_docked.getPortal(0));
@@ -159,7 +155,6 @@ function arrived() {
 }
 
 function invasion() {
-	em.log("怪物来了！");
     var numspawn;
     var chance = Math.floor(Math.random() * 10);
     //if(chance <= 2)
@@ -173,8 +168,8 @@ function invasion() {
         }
         //Boat_to_Orbis.setDocked(true);
         //Boat_to_Ellinia.setDocked(true);
-        Boat_to_Orbis.broadcastMessage(em.sendBoat(true));
-        Boat_to_Ellinia.broadcastMessage(em.sendBoat(true));
+        Boat_to_Orbis.broadcastMessage(em.sendMonsterBoat(true));
+        Boat_to_Ellinia.broadcastMessage(em.sendMonsterBoat(true));
         Boat_to_Orbis.broadcastMessage(em.musicChange("Bgm04/ArabPirate"));
         Boat_to_Ellinia.broadcastMessage(em.musicChange("Bgm04/ArabPirate"));
         em.setProperty("haveBalrog","true");
@@ -192,4 +187,11 @@ function EBoatsetup() {
 }
 
 function cancelSchedule() {
+}
+
+function allMonstersDead(){
+	Boat_to_Orbis.broadcastMessage(em.sendMonsterBoat(false));
+    Boat_to_Ellinia.broadcastMessage(em.sendMonsterBoat(false));
+    Boat_to_Orbis.broadcastMessage(em.musicChange("Bgm04/UponTheSky"));
+    Boat_to_Ellinia.broadcastMessage(em.musicChange("Bgm04/UponTheSky"));
 }

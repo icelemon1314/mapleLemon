@@ -52,9 +52,10 @@ public class MovementParse {
                     short ywobble = lea.readShort();
                     duration = lea.readShort();
                     newstate = lea.readByte();
-                    lea.skip(2);
+                    short newfh=lea.readShort();
                     final AbsoluteLifeMovement alm = new AbsoluteLifeMovement(command, new Point(xpos, ypos), duration, newstate);
                     alm.setPixelsPerSecond(new Point(xwobble, ywobble));
+                    alm.setNewFH(newfh);
                     res.add(alm);
                     break;
                 case 1:

@@ -229,7 +229,7 @@ public class EventManager {
 
     public void startInstance(MapleCharacter character, String leader) {
         try {
-            EventInstanceManager eim = (EventInstanceManager) (EventInstanceManager) this.iv.invokeFunction("setup", new Object[]{(Object) null});
+            EventInstanceManager eim = (EventInstanceManager) this.iv.invokeFunction("setup", new Object[]{(Object) null});
             eim.registerPlayer(character);
             eim.setProperty("leader", leader);
             eim.setProperty("guildid", String.valueOf(character.getGuildId()));
@@ -242,7 +242,7 @@ public class EventManager {
 
     public void startInstance_CharID(MapleCharacter character) {
         try {
-            EventInstanceManager eim = (EventInstanceManager) (EventInstanceManager) this.iv.invokeFunction("setup", new Object[]{character.getId()});
+            EventInstanceManager eim = (EventInstanceManager) this.iv.invokeFunction("setup", new Object[]{character.getId()});
             eim.registerPlayer(character);
         } catch (ScriptException | NoSuchMethodException ex) {
             log.error(new StringBuilder().append("Event name : ").append(this.name).append(", method Name : setup-CharID:\r\n").append(ex).toString());
@@ -252,7 +252,7 @@ public class EventManager {
 
     public void startInstance_CharMapID(MapleCharacter character) {
         try {
-            EventInstanceManager eim = (EventInstanceManager) (EventInstanceManager) this.iv.invokeFunction("setup", new Object[]{character.getId(), character.getMapId()});
+            EventInstanceManager eim = (EventInstanceManager) this.iv.invokeFunction("setup", new Object[]{character.getId(), character.getMapId()});
             eim.registerPlayer(character);
         } catch (ScriptException | NoSuchMethodException ex) {
             log.error(new StringBuilder().append("Event name : ").append(this.name).append(", method Name : setup-CharID:\r\n").append(ex).toString());
@@ -262,7 +262,7 @@ public class EventManager {
 
     public void startInstance(MapleCharacter character) {
         try {
-            EventInstanceManager eim = (EventInstanceManager) (EventInstanceManager) this.iv.invokeFunction("setup", new Object[]{(Object) null});
+            EventInstanceManager eim = (EventInstanceManager)  this.iv.invokeFunction("setup", new Object[]{(Object) null});
             eim.registerPlayer(character);
         } catch (ScriptException | NoSuchMethodException ex) {
             log.error(new StringBuilder().append("Event name : ").append(this.name).append(", method Name : setup-character:\r\n").append(ex).toString());
@@ -304,7 +304,7 @@ public class EventManager {
 
     public void startInstance_NoID(MapleParty party, MapleMap map, Exception old) {
         try {
-            EventInstanceManager eim = (EventInstanceManager) (EventInstanceManager) this.iv.invokeFunction("setup", new Object[]{(Object) null});
+            EventInstanceManager eim = (EventInstanceManager) this.iv.invokeFunction("setup", new Object[]{(Object) null});
             eim.registerParty(party, map);
         } catch (ScriptException | NoSuchMethodException ex) {
             log.error(new StringBuilder().append("Event name : ").append(this.name).append(", method Name : setup-party:\r\n").append(ex).toString());
@@ -426,6 +426,8 @@ public class EventManager {
     public byte[] sendBoat(boolean isEnter){
         return MaplePacketCreator.boatPacket(isEnter);
     }
+
+    public byte[] sendMonsterBoat(boolean isEnter){return MaplePacketCreator.MonsterBoat(isEnter);}
 
     public byte[] musicChange(String name){
         return MaplePacketCreator.musicChange(name);

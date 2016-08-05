@@ -47,7 +47,6 @@ function action(mode, type, selection) {
                 cm.sendNext("看来你已经收集到30个黑珠了，很好，干得不错！接下来就请带上这个#t4031012#去找赫丽娜吧，赫丽娜将会因此认可你的实力。");
             }else{
                 cm.sendOk("别忘了你需要收集#b30个#k击退怪物后从怪物身上掉落的#b#t4031013##k来通过我的考验，祝你好运！")
-                cm.gainItem(4031013,30);
                 cm.dispose();   
            }    
         }else if(status==1){

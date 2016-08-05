@@ -2054,6 +2054,27 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
+    /**
+     * 蝙蝠魔的船
+     * @param isEnter
+     * @return
+     */
+    public static byte[] MonsterBoat(boolean isEnter){
+        // 3C 0B 05 // 蝙蝠魔的船来了
+        // 3C 0B 06 // 蝙蝠魔的船走了
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+        mplew.write(SendPacketOpcode.BOAT_EFFECT.getValue());
+        if (isEnter == true) {
+            mplew.write(0x0B);
+            mplew.write(0x05);
+        } else {
+            mplew.write(0x0B);
+            mplew.write(0x06);
+        }
+        return mplew.getPacket();
+    }
+
     public static byte[] boatEffect(int effect) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 

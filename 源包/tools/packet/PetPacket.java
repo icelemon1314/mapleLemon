@@ -117,6 +117,8 @@ public class PetPacket {
         mplew.writeInt(chrId);
         PacketHelper.serializeMovementList(mplew, moves);
 
+        mplew.write(0); // 防止38，囧
+
         return mplew.getPacket();
     }
 

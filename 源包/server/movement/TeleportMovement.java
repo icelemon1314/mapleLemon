@@ -15,6 +15,5 @@ public class TeleportMovement extends AbsoluteLifeMovement {
         lew.writePos(getPosition());
         lew.writePos(getPixelsPerSecond());
         lew.write(getNewstate());
-        lew.writeShort(getDuration());
     }
 }

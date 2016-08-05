@@ -47,7 +47,6 @@ function action(mode, type, selection) {
                 cm.sendNext("看来你已经收集到30个黑珠了，嗯..不错，作为对你实力的认可我将给予你#b#t4031012##k，带着它回勇士部落去吧，#p1022000#会因此给你进入下一个职业阶段的资格。");
             }else{
                 cm.sendOk("你要收集#b30个#k怪物掉落的#b#t4031013##k才能通过测试，看上去你还没有收集够吧。祝你好运。")
-                cm.gainItem(4031013,30);
                 cm.dispose();   
            }    
         }else if(status==1){

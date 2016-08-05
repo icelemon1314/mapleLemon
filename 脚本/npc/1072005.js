@@ -24,7 +24,6 @@ function start() {
     if (cm.haveItem(4031013,30)) {
         cm.sendNext("你收集了30个黑珠了？那好吧，你通过了我的测试，拿着#t4031012#去找汉斯吧！");
     } else {
-		cm.gainItem(4031013,30);
         cm.sendOk("你需要收集 #b30个#t4031013##k。祝你好运！")
         cm.dispose();
     }

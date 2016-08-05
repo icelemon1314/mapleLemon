@@ -36,7 +36,9 @@ public class MapleQuestReward implements Serializable {
         this.type = type;
         if (type == MapleQuestRewardType.item) {
             this.dataStore.add(new Pair(rse.getInt("itemId"),rse.getInt("num")));
-        } else {
+        } else if (type == MapleQuestRewardType.exp){
+			this.dataStore.add(new Pair(rse.getInt("itemId"),rse.getInt("num")));
+		} else {
             System.out.println("暂时不支持的奖励类型："+type.toString());
         }
     }

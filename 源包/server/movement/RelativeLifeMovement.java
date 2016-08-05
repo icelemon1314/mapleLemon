@@ -32,10 +32,6 @@ public class RelativeLifeMovement extends AbstractLifeMovement {
     public void serialize(MaplePacketLittleEndianWriter lew) {
         lew.write(getType());
         lew.writePos(getPosition());
-        //lew.writePos(this.pixelsPerSecond);
-        if (getType() == 20 || getType() == 21) {
-            lew.writeShort(this.fh);
-        }
         lew.write(getNewstate());
         lew.writeShort(getDuration());
     }

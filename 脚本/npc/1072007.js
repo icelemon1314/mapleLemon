@@ -47,7 +47,6 @@ function action(mode, type, selection) {
                 cm.sendNext("你已经收集到30个黑珠了么，嗯，很好！作为测试通过的证明我将给你#b#t4031012##k，带着它回去找#p1052001#，#p1052001#会允许你进入下一个职业阶段。");
             }else{
                 cm.sendOk("记住你需要收集到#b30个#k从怪物身上掉落的#b#t4031013##k才能通过考核，再去加油吧，祝你好运！")
-                cm.gainItem(4031013,30);
                 cm.dispose();   
            }    
         }else if(status==1){
