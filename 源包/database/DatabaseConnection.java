@@ -1,6 +1,8 @@
 package database;
 
 import constants.ServerConstants;
+import tools.FileoutputUtil;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -25,7 +27,7 @@ public class DatabaseConnection {
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            System.out.println("[数据库信息] 找不到JDBC驱动.");
+            FileoutputUtil.log("[数据库信息] 找不到JDBC驱动.");
             System.exit(0);
         }
     }
@@ -81,10 +83,10 @@ public class DatabaseConnection {
                     ServerConstants.SQL_USER, ServerConstants.SQL_PASSWORD);
             long timeout = getWaitTimeout(con);
             if (timeout == -1L) {
-                System.out.println("[数据库信息] 无法读取超时时间, using " + ServerConstants.SQL_TIMEOUT + " instead.");
+                FileoutputUtil.log("[数据库信息] 无法读取超时时间, using " + ServerConstants.SQL_TIMEOUT + " instead.");
             } else {
                 ServerConstants.SQL_TIMEOUT = timeout;
-                System.out.println("[数据库信息] 连接超时时间为: " + (ServerConstants.SQL_TIMEOUT / 1000 / 60) + " 分钟.");
+                FileoutputUtil.log("[数据库信息] 连接超时时间为: " + (ServerConstants.SQL_TIMEOUT / 1000 / 60) + " 分钟.");
             }
             return con;
         } catch (SQLException e) {
@@ -106,7 +108,7 @@ public class DatabaseConnection {
             Map.Entry<Integer, ConWrapper> temp = con.next();
             if (temp.getValue().expiredConnection()) {
                 toclose.put(temp.getKey(), temp.getValue());
-                System.out.println("过时连接已经被清理...");
+                FileoutputUtil.log("过时连接已经被清理...");
             }
         }
         for (Map.Entry<Integer, ConWrapper> t : toclose.entrySet()) {

@@ -5,6 +5,7 @@ import handling.channel.ChannelServer;
 import java.awt.Point;
 import scripting.portal.PortalScriptManager;
 import server.maps.MapleMap;
+import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 
 public class MaplePortal {
@@ -87,15 +88,15 @@ public class MaplePortal {
 
     public void enterPortal(MapleClient c) {
         if ((getPosition().distanceSq(c.getPlayer().getPosition()) > 40000.0D) && (!c.getPlayer().isGM()) && c.getPlayer().getMapId() != 4000010) {
-            System.out.println("玩家离传送口过远，传送口位置："+getPosition().getX()+","+getPosition().getY()+"。玩家位置："+c.getPlayer().getPosition().toString());
+            FileoutputUtil.log("玩家离传送口过远，传送口位置："+getPosition().getX()+","+getPosition().getY()+"。玩家位置："+c.getPlayer().getPosition().toString());
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
         MapleMap currentmap = c.getPlayer().getMap();
-        System.out.println("传送地图："+getTargetMapId());
+        FileoutputUtil.log("传送地图："+getTargetMapId());
         if ((!c.getPlayer().hasBlockedInventory()) && ((this.portalState) || (c.getPlayer().isGM()))) {
             if (getScriptName() != null) {
-                System.out.println("传送地图脚本："+getTargetMapId());
+                FileoutputUtil.log("传送地图脚本："+getTargetMapId());
                 try {
                     PortalScriptManager.getInstance().executePortalScript(this, c);
                 } catch (Exception e) {
@@ -104,7 +105,7 @@ public class MaplePortal {
             } else if (getTargetMapId() != 999999999) {
                 MapleMap to = ChannelServer.getInstance(c.getChannel()).getMapFactory().getMap(getTargetMapId());
                 if (to == null) {
-                    System.out.println("找不到地图："+getTargetMapId());
+                    FileoutputUtil.log("找不到地图："+getTargetMapId());
                     c.getPlayer().dropMessage(-1, "找不到地图："+getTargetMapId());
                     c.getSession().write(MaplePacketCreator.enableActions());
                     return;
@@ -114,7 +115,7 @@ public class MaplePortal {
                     c.getSession().write(MaplePacketCreator.enableActions());
                     return;
                 }
-                System.out.println("传送地图正常："+getTarget());
+                FileoutputUtil.log("传送地图正常："+getTarget());
                 c.getPlayer().changeMapPortal(to, to.getPortal(getTarget()) == null ? to.getPortal(0) : to.getPortal(getTarget()));
             }
         }

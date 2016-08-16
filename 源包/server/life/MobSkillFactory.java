@@ -65,7 +65,7 @@ public class MobSkillFactory {
             }
         }
         MapleData skillData;
-//      System.out.println("共加载 " + this.mobSkill.size() + " 个怪物技能信息...");
+//      FileoutputUtil.log("共加载 " + this.mobSkill.size() + " 个怪物技能信息...");
     }
 
     public MobSkill getMobSkill(int skillId, int level) {

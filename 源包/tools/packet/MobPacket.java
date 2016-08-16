@@ -330,9 +330,6 @@ public class MobPacket {
     }
 
     public static byte[] applyMonsterStatus(int oid, MonsterStatus mse, int x, MobSkill skil,long buffTime) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.APPLY_MONSTER_STATUS.getValue());

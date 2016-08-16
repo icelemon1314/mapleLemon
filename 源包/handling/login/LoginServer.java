@@ -15,6 +15,7 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketSessionConfig;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import server.ServerProperties;
+import tools.FileoutputUtil;
 import tools.Triple;
 
 public class LoginServer {
@@ -88,10 +89,8 @@ public class LoginServer {
             acceptor.bind(new InetSocketAddress(port));
             ((SocketSessionConfig) acceptor.getSessionConfig()).setTcpNoDelay(true);
 
-            System.out.println("完成!");
-            System.out.println("\"登入\"伺服器正在监听" + port + "端口\r\n");
+            FileoutputUtil.log("\"登入\"伺服器正在监听" + port + "端口\r\n");
         } catch (IOException e) {
-            System.out.println("失败!");
             System.err.println("无法绑定" + port + "端口: " + e);
         }
     }
@@ -100,7 +99,7 @@ public class LoginServer {
         if (finishedShutdown) {
             return;
         }
-        System.out.println("正在关闭登录服务器...");
+        FileoutputUtil.log("正在关闭登录服务器...");
         acceptor.unbind();
         finishedShutdown = true;
     }

@@ -185,7 +185,7 @@ public class MaplePacketCreator {
                     mplew.writeLong(statupdate.getValue().longValue());
                     break;
                 default:
-                    System.out.println("未知的类型："+statupdate.getKey().getWriteByte());
+                    FileoutputUtil.log("未知的类型："+statupdate.getKey().getWriteByte());
                     break;
             }
         }
@@ -215,7 +215,7 @@ public class MaplePacketCreator {
 
     public static byte[] instantMapWarp(byte portal) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -259,7 +259,7 @@ public class MaplePacketCreator {
      */
     public static byte[] spawnDoor(int ownerId, int skillId, Point pos, boolean animation) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -284,7 +284,7 @@ public class MaplePacketCreator {
      */
     public static byte[] removeDoor(int ownerId, boolean animation) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.REMOVE_DOOR.getValue());
@@ -296,7 +296,7 @@ public class MaplePacketCreator {
 
     public static byte[] resetScreen() {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -307,7 +307,7 @@ public class MaplePacketCreator {
 
     public static byte[] mapBlocked(int type) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -319,7 +319,7 @@ public class MaplePacketCreator {
 
     public static byte[] serverBlocked(int type) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -331,7 +331,7 @@ public class MaplePacketCreator {
 
     public static byte[] partyBlocked(int type) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -447,7 +447,7 @@ public class MaplePacketCreator {
 
     public static byte[] GameMaster_Func(int value) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -541,7 +541,7 @@ public class MaplePacketCreator {
 
     public static byte[] getShowItemGain(Map<Integer, Integer> showItems) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -557,7 +557,7 @@ public class MaplePacketCreator {
 
     public static byte[] getShowItemGain(List<Pair<Integer, Integer>> showItems) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -604,7 +604,7 @@ public class MaplePacketCreator {
 
     public static byte[] showRewardItemAnimation(int itemId, String effect) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -621,7 +621,7 @@ public class MaplePacketCreator {
 
     public static byte[] showRewardItemAnimation(int itemId, String effect, int from_playerid) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -735,7 +735,7 @@ public class MaplePacketCreator {
 
     public static byte[] facialExpression(MapleCharacter from, int expression) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -781,7 +781,7 @@ public class MaplePacketCreator {
 
     public static byte[] rangedAttack(MapleCharacter chr, int skilllevel, int itemId, AttackInfo attackInfo) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -853,7 +853,7 @@ public class MaplePacketCreator {
 
     public static byte[] showSpecialAttack(int chrId, int tickCount, int pot_x, int pot_y, int display, int skillId, int skilllevel, boolean isLeft, int speed) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -897,7 +897,7 @@ public class MaplePacketCreator {
 
     public static byte[] removeZeroFromMap(int chrId) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -996,7 +996,7 @@ public class MaplePacketCreator {
      */
     public static byte[] updateQuest(MapleQuestStatus quest) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1015,7 +1015,7 @@ public class MaplePacketCreator {
 
     public static byte[] updateQuestInfo(int quest, int npc, boolean updata) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1031,7 +1031,7 @@ public class MaplePacketCreator {
 
     public static byte[] updateQuestFinish(int quest, int npc, int nextquest) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1047,7 +1047,7 @@ public class MaplePacketCreator {
 
     public static byte[] updateMedalQuestInfo(byte op, int itemId) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1121,7 +1121,7 @@ public class MaplePacketCreator {
 
     public static byte[] mountInfo(MapleCharacter chr) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1209,7 +1209,7 @@ public class MaplePacketCreator {
 
     public static byte[] showOwnDiceEffect(int skillid, int effectid, int effectid2, int level, int rand) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1226,7 +1226,7 @@ public class MaplePacketCreator {
 
     public static byte[] showDiceEffect(int chrId, int skillid, int effectid, int effectid2, int level) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1261,7 +1261,7 @@ public class MaplePacketCreator {
 
     public static byte[] showSpecialEffect(int chrId, int effect) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1330,7 +1330,7 @@ public class MaplePacketCreator {
 
     public static byte[] getShowQuestCompletion(int id) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1342,7 +1342,7 @@ public class MaplePacketCreator {
 
     public static byte[] getKeymap(MapleCharacter chr) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1395,7 +1395,7 @@ public class MaplePacketCreator {
 
     public static byte[] fairyPendantMessage(int position, int percent) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1589,7 +1589,7 @@ public class MaplePacketCreator {
 
     public static byte[] itemEffect(int chrId, int itemid) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1602,7 +1602,7 @@ public class MaplePacketCreator {
 
     public static byte[] showTitleEffect(int chrId, int itemid) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1615,7 +1615,7 @@ public class MaplePacketCreator {
 
     public static byte[] showUnkEffect(int chrId, int itemid) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1740,7 +1740,7 @@ public class MaplePacketCreator {
 
     public static byte[] environmentMove(String env, int mode) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1881,7 +1881,7 @@ public class MaplePacketCreator {
 
     public static byte[] showPredictCard(String name, String otherName, int love, int cardId, int commentId) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1897,7 +1897,7 @@ public class MaplePacketCreator {
 
     public static byte[] skillEffect(int fromId, int skillId, byte level, byte display, byte direction, byte speed, Point position) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1917,7 +1917,7 @@ public class MaplePacketCreator {
 
     public static byte[] skillCancel(MapleCharacter from, int skillId) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1930,7 +1930,7 @@ public class MaplePacketCreator {
 
     public static byte[] sendHint(String hint, int width, int height) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1954,7 +1954,7 @@ public class MaplePacketCreator {
 
     public static byte[] showEquipEffect() {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1965,7 +1965,7 @@ public class MaplePacketCreator {
 
     public static byte[] showEquipEffect(int team) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1977,7 +1977,7 @@ public class MaplePacketCreator {
 
     public static byte[] skillCooldown(int skillId, int time) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -1990,7 +1990,7 @@ public class MaplePacketCreator {
 
     public static byte[] useSkillBook(MapleCharacter chr, int skillid, int maxlevel, boolean canuse, boolean success) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2008,7 +2008,7 @@ public class MaplePacketCreator {
 
     public static byte[] updateAriantPQRanking(String name, int score, boolean empty) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2024,7 +2024,7 @@ public class MaplePacketCreator {
 
     public static byte[] showAriantScoreBoard() {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2087,7 +2087,7 @@ public class MaplePacketCreator {
 
     public static byte[] removeItemFromDuey(boolean remove, int Package) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2101,7 +2101,7 @@ public class MaplePacketCreator {
 
     public static byte[] sendDuey(byte operation, List<MapleDueyActions> packages) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2183,7 +2183,7 @@ public class MaplePacketCreator {
 
     public static byte[] Mulung_DojoUp2() {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2203,7 +2203,7 @@ public class MaplePacketCreator {
 
     public static byte[] showOXQuiz(int questionSet, int questionId, boolean askQuestion) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2217,7 +2217,7 @@ public class MaplePacketCreator {
 
     public static byte[] leftKnockBack() {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2228,7 +2228,7 @@ public class MaplePacketCreator {
 
     public static byte[] rollSnowball(int type, MapleSnowball.MapleSnowballs ball1, MapleSnowball.MapleSnowballs ball2) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2250,7 +2250,7 @@ public class MaplePacketCreator {
 
     public static byte[] hitSnowBall(int team, int damage, int distance, int delay) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2265,7 +2265,7 @@ public class MaplePacketCreator {
 
     public static byte[] snowballMessage(int team, int message) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2278,7 +2278,7 @@ public class MaplePacketCreator {
 
     public static byte[] finishedSort(int type) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
 
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
@@ -2302,7 +2302,7 @@ public class MaplePacketCreator {
 
     public static byte[] hitCoconut(boolean spawn, int id, int type) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2320,7 +2320,7 @@ public class MaplePacketCreator {
 
     public static byte[] finishedGather(int type) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
 
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
@@ -2344,7 +2344,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPeanutResult(int itemId, short quantity, int itemId2, short quantity2, int ourItem) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2360,7 +2360,7 @@ public class MaplePacketCreator {
 
     public static byte[] sendLevelup(boolean family, int level, String name) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2374,7 +2374,7 @@ public class MaplePacketCreator {
 
     public static byte[] sendMarriage(boolean family, String name) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2387,7 +2387,7 @@ public class MaplePacketCreator {
 
     public static byte[] sendJobup(boolean family, int jobid, String name) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2401,7 +2401,7 @@ public class MaplePacketCreator {
 
     public static byte[] showHorntailShrine(boolean spawned, int time) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2414,7 +2414,7 @@ public class MaplePacketCreator {
 
     public static byte[] showChaosZakumShrine(boolean spawned, int time) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2427,7 +2427,7 @@ public class MaplePacketCreator {
 
     public static byte[] showChaosHorntailShrine(boolean spawned, int time) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2468,7 +2468,7 @@ public class MaplePacketCreator {
 
     public static byte[] temporaryStats(Map<MapleStat.Temp, Integer> mystats) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2504,7 +2504,7 @@ public class MaplePacketCreator {
 
     public static byte[] showHpHealed(int chrId, int amount) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2518,7 +2518,7 @@ public class MaplePacketCreator {
 
     public static byte[] showOwnHpHealed(int amount) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2531,7 +2531,7 @@ public class MaplePacketCreator {
 
     public static byte[] showBlessOfDarkness(int skillId) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2544,7 +2544,7 @@ public class MaplePacketCreator {
 
     public static byte[] showHolyFountain(int skillId) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2574,7 +2574,7 @@ public class MaplePacketCreator {
 
     public static byte[] sendUIWindow(int op, int npc) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2589,7 +2589,7 @@ public class MaplePacketCreator {
 
     public static byte[] sendPVPWindow(int npc) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2604,7 +2604,7 @@ public class MaplePacketCreator {
 
     public static byte[] sendEventWindow(int npc) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2618,7 +2618,7 @@ public class MaplePacketCreator {
 
     public static byte[] sendPVPMaps() {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2648,7 +2648,7 @@ public class MaplePacketCreator {
 
     public static byte[] sendPyramidUpdate(int amount) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2660,7 +2660,7 @@ public class MaplePacketCreator {
 
     public static byte[] sendPyramidResult(byte rank, int amount) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2677,7 +2677,7 @@ public class MaplePacketCreator {
 
     public static byte[] sendString(int type, String object, String amount) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2712,7 +2712,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPollQuestion() {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2730,7 +2730,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPollReply(String message) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2742,7 +2742,7 @@ public class MaplePacketCreator {
 
     public static byte[] showEventInstructions() {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2768,7 +2768,7 @@ public class MaplePacketCreator {
 
     public static byte[] getOwlSearched(int itemSearch, List<HiredMerchant> hms) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2815,7 +2815,7 @@ public class MaplePacketCreator {
 
     public static byte[] getRPSMode(byte mode, int mesos, int selection, int answer) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2841,7 +2841,7 @@ public class MaplePacketCreator {
 
     public static byte[] followRequest(int chrid) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2853,7 +2853,7 @@ public class MaplePacketCreator {
 
     public static byte[] followEffect(int initiator, int replier, Point toMap) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2872,7 +2872,7 @@ public class MaplePacketCreator {
 
     public static byte[] getFollowMsg(int opcode) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2885,7 +2885,7 @@ public class MaplePacketCreator {
 
     public static byte[] moveFollow(Point otherStart, Point myStart, Point otherEnd, List<LifeMovementFragment> moves) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2907,7 +2907,7 @@ public class MaplePacketCreator {
 
     public static byte[] getFollowMessage(String msg) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2920,7 +2920,7 @@ public class MaplePacketCreator {
 
     public static byte[] getMovingPlatforms(MapleMap map) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2947,7 +2947,7 @@ public class MaplePacketCreator {
 
     public static byte[] getUpdateEnvironment(MapleMap map) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2962,7 +2962,7 @@ public class MaplePacketCreator {
 
     public static byte[] trembleEffect(int type, int delay) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2985,7 +2985,7 @@ public class MaplePacketCreator {
 
     public static byte[] useSPReset(int chrId) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -2999,7 +2999,7 @@ public class MaplePacketCreator {
 
     public static byte[] useAPReset(int chrId) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3013,7 +3013,7 @@ public class MaplePacketCreator {
 
     public static byte[] playerDamaged(int chrId, int dmg) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3026,7 +3026,7 @@ public class MaplePacketCreator {
 
     public static byte[] pamsSongEffect(int chrId) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3038,7 +3038,7 @@ public class MaplePacketCreator {
 
     public static byte[] pamsSongUI() {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3050,7 +3050,7 @@ public class MaplePacketCreator {
 
     public static byte[] englishQuizMsg(String msg) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3063,7 +3063,7 @@ public class MaplePacketCreator {
 
     public static byte[] report(int err) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3078,7 +3078,7 @@ public class MaplePacketCreator {
 
     public static byte[] sendLieDetector(byte[] image, int attempt, int refresh) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).append(" 测谎仪图片大小: ").append(image.length).append(" 换图次数: ").append(attempt - 1).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).append(" 测谎仪图片大小: ").append(image.length).append(" 换图次数: ").append(attempt - 1).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3125,7 +3125,7 @@ public class MaplePacketCreator {
 
     public static byte[] enableReport() {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(3);
 
@@ -3150,7 +3150,7 @@ public class MaplePacketCreator {
 
     public static byte[] ultimateExplorer() {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3161,7 +3161,7 @@ public class MaplePacketCreator {
 
     public static byte[] GMPoliceMessage() {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3173,7 +3173,7 @@ public class MaplePacketCreator {
 
     public static byte[] pamSongUI() {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3184,7 +3184,7 @@ public class MaplePacketCreator {
 
     public static byte[] dragonBlink(int portalId) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3196,7 +3196,7 @@ public class MaplePacketCreator {
 
     public static byte[] harvestMessage(int oid, int msg) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3209,7 +3209,7 @@ public class MaplePacketCreator {
 
     public static byte[] harvestResult(int chrId, boolean success) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3222,7 +3222,7 @@ public class MaplePacketCreator {
 
     public static byte[] showHarvesting(int chrId, int tool) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3239,7 +3239,7 @@ public class MaplePacketCreator {
 
     public static byte[] makeExtractor(int chrId, String cname, Point pos, int timeLeft, int itemId, int fee) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3257,7 +3257,7 @@ public class MaplePacketCreator {
 
     public static byte[] removeExtractor(int chrId) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3291,7 +3291,7 @@ public class MaplePacketCreator {
 
     public static byte[] openBag(int index, int itemId, boolean firstTime) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3305,7 +3305,7 @@ public class MaplePacketCreator {
 
     public static byte[] showOwnCraftingEffect(String effect, int time, int mode) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3321,7 +3321,7 @@ public class MaplePacketCreator {
 
     public static byte[] showCraftingEffect(int chrId, String effect, int time, int mode) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3338,7 +3338,7 @@ public class MaplePacketCreator {
 
     public static byte[] craftMake(int chrId, int something, int time) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3352,7 +3352,7 @@ public class MaplePacketCreator {
 
     public static byte[] craftFinished(int chrId, int craftID, int ranking, int itemId, int quantity, int exp) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3372,7 +3372,7 @@ public class MaplePacketCreator {
 
     public static byte[] craftMessage(String msg) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3394,7 +3394,7 @@ public class MaplePacketCreator {
 
     public static byte[] changeCardSet(int set) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3406,7 +3406,7 @@ public class MaplePacketCreator {
 
     public static byte[] getCard(int itemid, int level) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3422,7 +3422,7 @@ public class MaplePacketCreator {
 
     public static byte[] upgradeBook(Item book, MapleCharacter chr) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3435,7 +3435,7 @@ public class MaplePacketCreator {
 
     public static byte[] pendantSlot(boolean p) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3447,7 +3447,7 @@ public class MaplePacketCreator {
 
     public static byte[] getBuffBar(long millis) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3470,7 +3470,7 @@ public class MaplePacketCreator {
 
     public static byte[] showBackgroundEffect(String eff, int value) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3483,7 +3483,7 @@ public class MaplePacketCreator {
 
     public static byte[] updateGender(MapleCharacter chr) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3495,7 +3495,7 @@ public class MaplePacketCreator {
 
     public static byte[] registerFamiliar(MonsterFamiliar mf) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3509,7 +3509,7 @@ public class MaplePacketCreator {
 
     public static byte[] touchFamiliar(int chrId, byte unk, int objectid, int type, int delay, int damage) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3527,7 +3527,7 @@ public class MaplePacketCreator {
 
     public static byte[] familiarAttack(int chrId, byte unk, List<Triple<Integer, Integer, List<Integer>>> attackPair) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3551,7 +3551,7 @@ public class MaplePacketCreator {
 
     public static byte[] updateFamiliar(MonsterFamiliar mf) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3566,7 +3566,7 @@ public class MaplePacketCreator {
 
     public static byte[] removeFamiliar(int chrId) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3580,7 +3580,7 @@ public class MaplePacketCreator {
 
     public static byte[] spawnFamiliar(MonsterFamiliar mf, boolean spawn) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3602,7 +3602,7 @@ public class MaplePacketCreator {
 
     public static byte[] moveFamiliar(int chrId, Point startPos, List<LifeMovementFragment> moves) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3618,7 +3618,7 @@ public class MaplePacketCreator {
 
     public static byte[] achievementRatio(int amount) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3630,7 +3630,7 @@ public class MaplePacketCreator {
 
     public static byte[] createUltimate(int amount) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3642,7 +3642,7 @@ public class MaplePacketCreator {
 
     public static byte[] updateSpecialStat(String stat, int array, int mode, boolean unk, int chance) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3668,7 +3668,7 @@ public class MaplePacketCreator {
 
     public static byte[] getFamiliarInfo(MapleCharacter chr) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3699,7 +3699,7 @@ public class MaplePacketCreator {
 
     public static byte[] updateImp(MapleImp imp, int mask, int index, boolean login) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3785,7 +3785,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPVPScoreboard(List<Pair<Integer, MapleCharacter>> flags, int type) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3803,7 +3803,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPVPResult(List<Pair<Integer, MapleCharacter>> flags, int exp, int winningTeam, int playerTeam) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3833,7 +3833,7 @@ public class MaplePacketCreator {
 
     public static byte[] showOwnChampionEffect() {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3846,7 +3846,7 @@ public class MaplePacketCreator {
 
     public static byte[] showChampionEffect(int from_playerid) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3860,7 +3860,7 @@ public class MaplePacketCreator {
 
     public static byte[] enablePVP(boolean enabled) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3872,7 +3872,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPVPMode(int mode) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3884,7 +3884,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPVPType(int type, List<Pair<Integer, String>> players1, int team, boolean enabled, int lvl) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3907,7 +3907,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPVPTeam(List<Pair<Integer, String>> players) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3924,7 +3924,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPVPScore(int score, boolean kill) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3937,7 +3937,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPVPIceGage(int score) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3949,7 +3949,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPVPKilled(String lastWords) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3961,7 +3961,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPVPPoints(int p1, int p2) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3975,7 +3975,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPVPHPBar(int cid, int hp, int maxHp) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -3990,7 +3990,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPVPIceHPBar(int hp, int maxHp) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -4004,7 +4004,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPVPMist(int cid, int mistSkill, int mistLevel, int damage) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -4022,7 +4022,7 @@ public class MaplePacketCreator {
 
     public static byte[] getCaptureFlags(MapleMap map) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -4038,7 +4038,7 @@ public class MaplePacketCreator {
 
     public static byte[] getCapturePosition(MapleMap map) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         Point p1 = map.getPointOfItem(2910000);
@@ -4060,7 +4060,7 @@ public class MaplePacketCreator {
 
     public static byte[] resetCapture() {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -4071,7 +4071,7 @@ public class MaplePacketCreator {
 
     public static byte[] pvpAttack(int cid, int playerLevel, int skill, int skillLevel, int speed, int mastery, int projectile, int attackCount, int chargeTime, int stance, int direction, int range, int linkSkill, int linkSkillLevel, boolean movementSkill, boolean pushTarget, boolean pullTarget, List<AttackPair> attack) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -4121,7 +4121,7 @@ public class MaplePacketCreator {
 
     public static byte[] pvpCool(int cid, List<Integer> attack) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -4137,7 +4137,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPVPClock(int type, int time) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -4151,7 +4151,7 @@ public class MaplePacketCreator {
 
     public static byte[] getPVPTransform(int type) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -4163,7 +4163,7 @@ public class MaplePacketCreator {
 
     public static byte[] changeTeam(int cid, int type) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -4321,7 +4321,7 @@ public class MaplePacketCreator {
 
     public static byte[] showOwnJobChangedElf(String effect, int time, int itemId) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -4338,7 +4338,7 @@ public class MaplePacketCreator {
 
     public static byte[] showJobChangedElf(int chrId, String effect, int time, int itemId) {
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
+            FileoutputUtil.log(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 

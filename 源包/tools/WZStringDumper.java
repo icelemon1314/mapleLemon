@@ -58,7 +58,7 @@ public class WZStringDumper {
         skillTxt.createNewFile();
         npcTxt.createNewFile();
 
-        System.out.println("提取 Cash.img 数据...");
+        FileoutputUtil.log("提取 Cash.img 数据...");
         PrintWriter writer = new PrintWriter(new FileOutputStream(cashTxt));
         for (MapleData child : cash.getChildren()) {
             MapleData nameData = child.getChildByPath("name");
@@ -75,9 +75,9 @@ public class WZStringDumper {
         }
         writer.flush();
         writer.close();
-        System.out.println("Cash.img 提取完成.");
+        FileoutputUtil.log("Cash.img 提取完成.");
 
-        System.out.println("提取 Consume.img 数据...");
+        FileoutputUtil.log("提取 Consume.img 数据...");
         writer = new PrintWriter(new FileOutputStream(useTxt));
         for (MapleData child : consume.getChildren()) {
             MapleData nameData = child.getChildByPath("name");
@@ -94,11 +94,11 @@ public class WZStringDumper {
         }
         writer.flush();
         writer.close();
-        System.out.println("Consume.img 提取完成.");
+        FileoutputUtil.log("Consume.img 提取完成.");
 
-        System.out.println("提取 Eqp.img 数据...");
+        FileoutputUtil.log("提取 Eqp.img 数据...");
         for (MapleData child : eqp.getChildren()) {
-            System.out.println("提取 " + child.getName() + " 数据...");
+            FileoutputUtil.log("提取 " + child.getName() + " 数据...");
             File eqpFile = new File(output + "\\Equip\\" + child.getName() + ".txt");
             eqpFile.createNewFile();
             PrintWriter eqpWriter = new PrintWriter(new FileOutputStream(eqpFile));
@@ -117,11 +117,11 @@ public class WZStringDumper {
             }
             eqpWriter.flush();
             eqpWriter.close();
-            System.out.println(child.getName() + " 提取完成.");
+            FileoutputUtil.log(child.getName() + " 提取完成.");
         }
-        System.out.println("Eqp.img 提取完成.");
+        FileoutputUtil.log("Eqp.img 提取完成.");
 
-        System.out.println("提取 Etc.img 数据...");
+        FileoutputUtil.log("提取 Etc.img 数据...");
         writer = new PrintWriter(new FileOutputStream(etcTxt));
         for (MapleData child : etc.getChildren()) {
             MapleData nameData = child.getChildByPath("name");
@@ -138,9 +138,9 @@ public class WZStringDumper {
         }
         writer.flush();
         writer.close();
-        System.out.println("Etc.img 提取完成.");
+        FileoutputUtil.log("Etc.img 提取完成.");
 
-        System.out.println("提取 Ins.img 数据...");
+        FileoutputUtil.log("提取 Ins.img 数据...");
         writer = new PrintWriter(new FileOutputStream(insTxt));
         for (MapleData child : ins.getChildren()) {
             MapleData nameData = child.getChildByPath("name");
@@ -157,9 +157,9 @@ public class WZStringDumper {
         }
         writer.flush();
         writer.close();
-        System.out.println("Ins.img 提取完成.");
+        FileoutputUtil.log("Ins.img 提取完成.");
 
-        System.out.println("提取 Pet.img 数据...");
+        FileoutputUtil.log("提取 Pet.img 数据...");
         writer = new PrintWriter(new FileOutputStream(petTxt));
         for (MapleData child : pet.getChildren()) {
             MapleData nameData = child.getChildByPath("name");
@@ -176,9 +176,9 @@ public class WZStringDumper {
         }
         writer.flush();
         writer.close();
-        System.out.println("Pet.img 提取完成.");
+        FileoutputUtil.log("Pet.img 提取完成.");
 
-        System.out.println("提取 Map.img 数据...");
+        FileoutputUtil.log("提取 Map.img 数据...");
         writer = new PrintWriter(new FileOutputStream(mapTxt));
         for (MapleData child : map.getChildren()) {
             writer.println(child.getName());
@@ -200,9 +200,9 @@ public class WZStringDumper {
         }
         writer.flush();
         writer.close();
-        System.out.println("Map.img 提取完成.");
+        FileoutputUtil.log("Map.img 提取完成.");
 
-        System.out.println("提取 Mob.img 数据...");
+        FileoutputUtil.log("提取 Mob.img 数据...");
         writer = new PrintWriter(new FileOutputStream(mobTxt));
         for (MapleData child : mob.getChildren()) {
             MapleData nameData = child.getChildByPath("name");
@@ -214,9 +214,9 @@ public class WZStringDumper {
         }
         writer.flush();
         writer.close();
-        System.out.println("Mob.img 提取完成.");
+        FileoutputUtil.log("Mob.img 提取完成.");
 
-        System.out.println("提取 Skill.img 数据...");
+        FileoutputUtil.log("提取 Skill.img 数据...");
         writer = new PrintWriter(new FileOutputStream(skillTxt));
         for (MapleData child : skill.getChildren()) {
             MapleData nameData = child.getChildByPath("name");
@@ -244,9 +244,9 @@ public class WZStringDumper {
         }
         writer.flush();
         writer.close();
-        System.out.println("Skill.img 提取完成.");
+        FileoutputUtil.log("Skill.img 提取完成.");
 
-        System.out.println("提取 Npc.img 数据...");
+        FileoutputUtil.log("提取 Npc.img 数据...");
         writer = new PrintWriter(new FileOutputStream(npcTxt));
         for (MapleData child : npc.getChildren()) {
             MapleData nameData = child.getChildByPath("name");
@@ -258,6 +258,6 @@ public class WZStringDumper {
         }
         writer.flush();
         writer.close();
-        System.out.println("Npc.img 提取完成.");
+        FileoutputUtil.log("Npc.img 提取完成.");
     }
 }

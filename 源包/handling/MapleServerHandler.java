@@ -79,7 +79,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
     public void sessionOpened(IoSession session) throws Exception {
         // 起始 IP 检查
         String address = session.getRemoteAddress().toString().split(":")[0];
-        System.out.println("[登陆服务] " + address + " 已连接");
+        FileoutputUtil.log("[登陆服务] " + address + " 已连接");
 
         if (BlockIPList.contains(address)) {
             session.close(true);
@@ -130,7 +130,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 return;
             }
         } else {
-            System.out.println("[連結錯誤] 未知類型: " + channel);
+            FileoutputUtil.log("[連結錯誤] 未知類型: " + channel);
             session.close(true);
             return;
         }
@@ -157,7 +157,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
             hp[i] = handShakePacket[i - 2];
         }
 
-        System.out.println("[登陆服务] " + address + ", 发送握手包成功！");
+        FileoutputUtil.log("[登陆服务] " + address + ", 发送握手包成功！");
         Random r = new Random();
         client.setSessionId(r.nextLong()); // Generates a random session id.  
         session.setAttribute(MapleClient.CLIENT_KEY, client);
@@ -209,7 +209,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
         }
         SeekableLittleEndianAccessor slea = new GenericSeekableLittleEndianAccessor(new ByteArrayByteStream((byte[]) message));
         if (slea.available() < 1) {
-            System.out.println("数据包长度异常：" + slea.toString());
+            FileoutputUtil.log("数据包长度异常：" + slea.toString());
             return;
         }
         MapleClient client = (MapleClient) session.getAttribute(MapleClient.CLIENT_KEY);
@@ -220,7 +220,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
         for (RecvPacketOpcode recv : RecvPacketOpcode.values()) {
             if (recv.getValue() == packetId) {
                 if (recv.NeedsChecking() && !client.isLoggedIn()) {
-                    System.out.println("客户端没有登录，丢弃包！");
+                    FileoutputUtil.log("客户端没有登录，丢弃包！");
                     return;
                 }
                 try {
@@ -836,7 +836,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 c.getSession().write(UIPacket.openMap());
                 break;
             default:
-                System.out.println(new StringBuilder().append("[未处理封包] Recv ").append(header.toString()).append(" [").append(HexTool.getOpcodeToString(header.getValue())).append("]").toString());
+                FileoutputUtil.log(new StringBuilder().append("[未处理封包] Recv ").append(header.toString()).append(" [").append(HexTool.getOpcodeToString(header.getValue())).append("]").toString());
                 break;
         }
     }

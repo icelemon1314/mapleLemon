@@ -125,7 +125,7 @@ public class StatsHandling {
         }
         Skill skill = SkillFactory.getSkill(skillid);
         if (skill == null) {
-            if (chr.isAdmin()) {
+            if (chr.isShowPacket()) {
                 chr.dropMessage(5, "加技能点错误 - 技能为空 当前技能ID: " + skillid);
             }
             c.getSession().write(MaplePacketCreator.enableActions());
@@ -135,7 +135,7 @@ public class StatsHandling {
             switch (ski.left) {
                 case "level":
                     if (chr.getLevel() < ski.right) {
-                        if (chr.isAdmin()) {
+                        if (chr.isShowPacket()) {
                             chr.dropMessage(5, "加技能点错误 - 技能要求等级: " + ski.right + " 当前角色等级: " + chr.getLevel());
                         }
                         c.getSession().write(MaplePacketCreator.enableActions());
@@ -145,7 +145,7 @@ public class StatsHandling {
                 default:
                     int left = Integer.parseInt(ski.left);
                     if (chr.getSkillLevel(SkillFactory.getSkill(left)) < ski.right) {
-                        if (chr.isAdmin()) {
+                        if (chr.isShowPacket()) {
                             chr.dropMessage(5, "加技能点错误 - 前置技能: " + left + " - " + SkillFactory.getSkillName(left) + " 的技能等级不足.");
                         }
                         c.getSession().write(MaplePacketCreator.enableActions());
@@ -158,13 +158,13 @@ public class StatsHandling {
             int curLevel = chr.getSkillLevel(skill);
 
             if ((skill.isInvisible()) && (curLevel == 0) && (((maxlevel < 10) && (!isBeginnerSkill)))) {
-                if (chr.isAdmin()) {
+                if (chr.isShowPacket()) {
                     chr.dropMessage(5, "加技能点错误 - 3");
                 }
                 c.getSession().write(MaplePacketCreator.enableActions());
                 return;
             }
-            if (chr.isAdmin()) {
+            if (chr.isShowPacket()) {
                 chr.dropMessage(5, "开始加技能点 - 技能ID: " + skillid + "当前技能等级: " + curLevel + " 该技能最大等级: " + maxlevel);
             }
             if ((remainingSp >= 0) && (curLevel + 1 <= maxlevel) && (skill.canBeLearnedBy(chr.getJob()))) {
@@ -176,7 +176,7 @@ public class StatsHandling {
                 c.getSession().write(MaplePacketCreator.updatePlayerStats(statup, true, chr));
                 chr.changeSingleSkillLevel(skill, (byte) (curLevel + 1), chr.getMasterLevel(skill));
             } else {
-                if (chr.isAdmin()) {
+                if (chr.isShowPacket()) {
                     chr.dropMessage(5, "加技能点错误 - SP点数不足够或者技能不是改角色的技能.");
                 }
                 c.getSession().write(MaplePacketCreator.enableActions());

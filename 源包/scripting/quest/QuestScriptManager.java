@@ -23,22 +23,22 @@ public class QuestScriptManager extends AbstractScriptManager {
     public void startQuest(MapleClient c, int npcId, int questId) {
         try {
             if (this.qms.containsKey(c)) {
-                System.out.println("脚本任务挂了！！！！");
+                FileoutputUtil.log("脚本任务挂了！！！！");
                 dispose(c);
                 return;
             }
             Invocable iv = getInvocable("任务/" + questId + ".js", c, true);
-            System.out.println("读取脚本任务完成！！！");
+            FileoutputUtil.log("读取脚本任务完成！！！");
             if (iv == null) {
                 //c.getPlayer().forceCompleteQuest(questId);
-                if (c.getPlayer().isAdmin()) {
+                if (c.getPlayer().isShowPacket()) {
                     c.getPlayer().dropMessage(5, "开始任务脚本不存在 NPC：" + npcId + " Quest：" + questId);
                 }
                 dispose(c);
                 FileoutputUtil.log(FileoutputUtil.Quest_ScriptEx_Log, "开始任务脚本不存在 NPC：" + npcId + " Quest：" + questId);
                 return;
             }
-            if (c.getPlayer().isAdmin()) {
+            if (c.getPlayer().isShowPacket()) {
                 c.getPlayer().dropMessage(5, "开始脚本任务 NPC：" + npcId + " Quest：" + questId);
             }
             ScriptEngine scriptengine = (ScriptEngine) iv;
@@ -80,7 +80,7 @@ public class QuestScriptManager extends AbstractScriptManager {
 
     public void endQuest(MapleClient c, int npcId, int questId, boolean customEnd) {
         if ((!customEnd) && (!MapleQuest.getInstance(questId).canComplete(c.getPlayer()))) {
-            if (c.getPlayer().isAdmin()) {
+            if (c.getPlayer().isShowPacket()) {
                 c.getPlayer().dropMessage(6, "不能完成这个任务 NPC：" + npcId + " Quest：" + questId);
             }
             return;

@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import server.Randomizer;
 import server.ServerProperties;
 import server.maps.MapleMapItem;
+import tools.FileoutputUtil;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class InventoryPacket {
@@ -163,7 +164,6 @@ public class InventoryPacket {
 
             mplew.write(mod.getMode());
             mplew.write(mod.getInventoryType());
-            System.out.println("道具模式："+mod.getMode());
             switch (mod.getMode()) { // @TODO 这个地方真恶心
                 case 1: // 拾取道具
                     mplew.writeShort(mod.getPosition());
@@ -184,7 +184,7 @@ public class InventoryPacket {
                     }
                     break;
                 default:
-                    System.out.println("未知的模式："+mod.getMode());
+                    FileoutputUtil.log("未知的模式："+mod.getMode());
             }
             mod.clear();
         }

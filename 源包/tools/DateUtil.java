@@ -152,7 +152,7 @@ public class DateUtil {
             Date date = df.parse(dateString);
             return date.getTime();
         } catch (ParseException ex) {
-            System.out.println(ex.getMessage());
+            FileoutputUtil.log(ex.getMessage());
         }
         return -1L;
     }

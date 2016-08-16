@@ -27,7 +27,7 @@ public final class MaplePacketDecoder extends CumulativeProtocolDecoder {
                 int packetHeader = in.getInt(); // 另外一种方式，getShort() xor getShort()
                 decoderState.packetlength = MapleAESOFB.getPacketLength(packetHeader);
             } else {
-                System.out.println("没有足够的数据来解密封包.");
+                FileoutputUtil.log("没有足够的数据来解密封包.");
                 return false;
             }
         }
@@ -73,7 +73,7 @@ public final class MaplePacketDecoder extends CumulativeProtocolDecoder {
                         }
                     }
                 } else {
-                    System.out.println(Send + HexTool.toString(new byte[]{decryptedPacket[0], decryptedPacket[1]}) + "...\r\n");
+                    FileoutputUtil.log(Send + HexTool.toString(new byte[]{decryptedPacket[0], decryptedPacket[1]}) + "...\r\n");
                 }
             }
             return true;

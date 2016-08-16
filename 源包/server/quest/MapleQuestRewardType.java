@@ -1,5 +1,7 @@
 package server.quest;
 
+import tools.FileoutputUtil;
+
 public enum MapleQuestRewardType {
 
     UNDEFINED(-1),
@@ -62,7 +64,7 @@ public enum MapleQuestRewardType {
             return valueOf(name);
         } catch (IllegalArgumentException ex) {
         }
-        System.out.println("不支持的奖励类型："+name);
+        FileoutputUtil.log("不支持的奖励类型："+name);
         return UNDEFINED;
     }
 }

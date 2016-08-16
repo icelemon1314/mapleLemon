@@ -30,7 +30,7 @@ public class ReactorScriptManager extends AbstractScriptManager {
         try {
             Invocable iv = getInvocable("反应堆/" + reactor.getReactorId() + ".js", c);
             if (iv == null) {
-                if (c.getPlayer().isAdmin()) {
+                if (c.getPlayer().isShowPacket()) {
                     c.getPlayer().dropMessage(5, "未找到 反应堆 文件中的 " + reactor.getReactorId() + ".js 文件.");
                 }
                 FileoutputUtil.log(FileoutputUtil.Reactor_ScriptEx_Log, "未找到 反应堆 文件中的 " + reactor.getReactorId() + ".js 文件.");

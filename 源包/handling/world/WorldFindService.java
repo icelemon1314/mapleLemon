@@ -38,13 +38,13 @@ public class WorldFindService {
             this.lock.writeLock().unlock();
         }
         if (channel == -10) {
-            System.out.println("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 名字: " + chrName + " 进入商城");
+            FileoutputUtil.log("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 名字: " + chrName + " 进入商城");
         } else if (channel == -20) {
-            System.out.println("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 名字: " + chrName + " 进入拍卖");
+            FileoutputUtil.log("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 名字: " + chrName + " 进入拍卖");
         } else if (channel > -1) {
-            System.out.println("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 名字: " + chrName + " 频道: " + channel);
+            FileoutputUtil.log("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 名字: " + chrName + " 频道: " + channel);
         } else {
-            System.out.println("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 未处理的频道...");
+            FileoutputUtil.log("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 未处理的频道...");
         }
         try {
             int countRows = ManagerSin.jTable1.getRowCount();//获取当前表格总行数
@@ -63,7 +63,7 @@ public class WorldFindService {
         } finally {
             this.lock.writeLock().unlock();
         }
-        System.out.println("[玩家离开] 角色ID: " + chrId);
+        FileoutputUtil.log("[玩家离开] 角色ID: " + chrId);
     }
 
     public void forceDeregister(String chrName) {
@@ -73,7 +73,7 @@ public class WorldFindService {
         } finally {
             this.lock.writeLock().unlock();
         }
-        System.out.println("[玩家离开] 角色名字: " + chrName);
+        FileoutputUtil.log("[玩家离开] 角色名字: " + chrName);
     }
 
     public void forceDeregister(int chrId, String chrName) {
@@ -84,7 +84,7 @@ public class WorldFindService {
         } finally {
             this.lock.writeLock().unlock();
         }
-        System.out.println("[玩家离开] 角色ID: " + chrId + " 名字: " + chrName);
+        FileoutputUtil.log("[玩家离开] 角色ID: " + chrId + " 名字: " + chrName);
     }
 
     public int findChannel(int chrId) {

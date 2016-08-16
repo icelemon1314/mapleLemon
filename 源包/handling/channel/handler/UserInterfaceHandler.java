@@ -5,6 +5,7 @@ import client.MapleClient;
 import constants.ServerConstants;
 import scripting.event.EventManager;
 import scripting.npc.NPCScriptManager;
+import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 
@@ -74,7 +75,7 @@ public class UserInterfaceHandler {
                 }
 
             default:
-                System.out.println("Unhandled ship object, MapID : " + mapid);
+                FileoutputUtil.log("Unhandled ship object, MapID : " + mapid);
         }
 
         c.getSession().write(MaplePacketCreator.boatPacket(effect==1?true:false));

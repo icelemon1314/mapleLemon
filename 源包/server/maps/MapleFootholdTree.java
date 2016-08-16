@@ -1,5 +1,7 @@
 package server.maps;
 
+import tools.FileoutputUtil;
+
 import java.awt.Point;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -157,7 +159,7 @@ public class MapleFootholdTree {
         for (MapleFoothold fh2 : this.footholds) {
             if ((fh2.getX1() <= tox) && (fh2.getX2() >= tox) && (fh2.getY1() <= toy) && (fh2.getY2() >= toy)) {
                 if (fhdata != null && (fhdata.getId() != fh2.getId()) && (fh2.getId() != fhdata.getNext()) && (fh2.getId() != fhdata.getPrev())) {
-                    System.out.println("Couldn't find the correct pos for next/prev");
+                    FileoutputUtil.log("Couldn't find the correct pos for next/prev");
                     return false;
                 }
                 return true;

@@ -27,7 +27,7 @@ public class LoginWorker {
             c.getSession().write(LoginPacket.getLoginFailed(7));
             return;
         }
-        System.out.println("登录成功，准备通知客户端！！！！");
+        FileoutputUtil.log("登录成功，准备通知客户端！！！！");
         c.getSession().write(LoginPacket.getAuthSuccessRequest(c));
 //        c.getSession().write(LoginPacket.checkUserLimit());
         //c.getSession().write(MaplePacketCreator.serverNotice(1, "恭喜您成功登陆！\r\n您的账户中有 " + c.getJinQuan() + " 张金券\r\n祝您游戏愉快"));

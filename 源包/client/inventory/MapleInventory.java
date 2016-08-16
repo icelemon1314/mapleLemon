@@ -268,7 +268,7 @@ public class MapleInventory implements Iterable<Item>, Serializable {
 
     public Item findESById(short position) {
         for (Item item : this.inventory.values()) {
-            //System.out.println("返回itemID："+item.getPosition()+"realpos："+position);
+            //FileoutputUtil.log("返回itemID："+item.getPosition()+"realpos："+position);
             if (item.getPosition() == position) {
                 return item;
             }
@@ -278,7 +278,7 @@ public class MapleInventory implements Iterable<Item>, Serializable {
 
     public Item findESByEquip(short position) {
         for (Item item : this.inventory.values()) {
-            //System.out.println("返回itemID："+item.getPosition()+"realpos："+position);
+            //FileoutputUtil.log("返回itemID："+item.getPosition()+"realpos："+position);
             if (item.getESPos() == position) {
                 return item;
             }

@@ -144,7 +144,7 @@ public class InterServerHandler {
             c.setAccID(player.getAccountID());
             if (!c.CheckIPAddress()) {
                 c.getSession().close(true);
-                System.out.println(new StringBuilder().append("检测连接地址 - 2 ").append(!c.CheckIPAddress()).toString());
+                FileoutputUtil.log(new StringBuilder().append("检测连接地址 - 2 ").append(!c.CheckIPAddress()).toString());
                 return;
             }
             int state = c.getLoginState();
@@ -155,7 +155,7 @@ public class InterServerHandler {
             if (!allowLogin) {
                 c.setPlayer(null);
                 c.getSession().close(true);
-                System.out.println(new StringBuilder().append("检测连接地址 - 3 ").append(!allowLogin).toString());
+                FileoutputUtil.log(new StringBuilder().append("检测连接地址 - 3 ").append(!allowLogin).toString());
                 return;
             }
             c.updateLoginState(MapleClient.LOGIN_LOGGEDIN, c.getSessionIPAddress());
@@ -220,7 +220,7 @@ public class InterServerHandler {
                     player.saveGuildStatus();
                 }
             }
-            player.getClient().getSession().write(MaplePacketCreator.serverMessageTop("欢迎来到怀旧冒×岛，希望你能找到儿时的感觉，如有bug可以加QQ群：479357604！dev by:icelemon1314"));
+            player.getClient().getSession().write(MaplePacketCreator.serverMessageTop("欢迎来到怀旧冒×岛，希望你能找到儿时的感觉，查看可用命令@help 如有bug可以加QQ群：479357604！dev by:icelemon1314"));
 //            player.showNote();
            // player.sendImp();
            // player.updatePartyMemberHP();

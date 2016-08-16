@@ -986,7 +986,7 @@ public class MapleClient implements Serializable {
                 if (getLatency() < 0) {
                     disconnect(true, false);
                     if (getSession().isConnected()) {
-                        System.out.println(MapleClient.getLogMessage(MapleClient.this, "PING超时."));
+                        FileoutputUtil.log(MapleClient.getLogMessage(MapleClient.this, "PING超时."));
                         getSession().close(true);
                     }
                 }

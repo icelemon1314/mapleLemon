@@ -35,10 +35,7 @@ import provider.MapleDataProvider;
 import provider.MapleDataProviderFactory;
 import provider.MapleDataTool;
 import provider.wz.MapleDataType;
-import tools.MaplePacketCreator;
-import tools.Pair;
-import tools.StringUtil;
-import tools.Triple;
+import tools.*;
 
 public class MapleItemInformationProvider {
 
@@ -231,9 +228,8 @@ public class MapleItemInformationProvider {
                 }
             }
         } catch (SQLException ex) {
-            System.out.println("[ItemLoader] 加载装备数据出错." + ex);
+            FileoutputUtil.log("[ItemLoader] 加载装备数据出错." + ex);
         }
-        System.out.println("共加载 " + this.dataCache.size() + " 个道具信息.");
     }
 
     public final void loadHairFace(boolean reload) {
@@ -259,7 +255,7 @@ public class MapleItemInformationProvider {
             for (MapleData c : stringData.getData("Item.img").getChildByPath("Eqp/" + type)) {
                 if (data.getEntry(StringUtil.getLeftPaddedStr(c.getName() + ".img", '0', 12)) != null) {
                     int dataid = Integer.parseInt(c.getName());
-                    String name = MapleDataTool.getString("name", c, "無名稱");
+                    String name = MapleDataTool.getString("name", c, "无名字");
                     if (type.equals("Hair")) {
                         hairList.put(dataid, name);
                     } else {
@@ -609,7 +605,7 @@ public class MapleItemInformationProvider {
             }
 
             int success = succ + succ * (getSuccessRates(scroll.getItemId())) / 100;
-            if (chr.isAdmin()) {
+            if (chr.isShowPacket()) {
                 chr.dropSpouseMessage(11, "普通卷轴 - 默认几率: " + succ + "% 最终概率: " + success + "% 失败消失几率: " + curse + "%");
             }
             nEquip.setUpgradeSlots((byte) (nEquip.getUpgradeSlots() - 1));
@@ -686,7 +682,7 @@ public class MapleItemInformationProvider {
             succ = Math.max(((scroll.getItemId() == 2049301) || (scroll.getItemId() == 2049307) ? 80 : 100) - nEquip.getEnhance() * 10, 5);
         }
         int success = succ;
-        if (chr.isAdmin()) {
+        if (chr.isShowPacket()) {
             chr.dropSpouseMessage(11, "装备强化卷轴 - 默认几率: " + succ + "% 倾向加成: " + 0 + "% 最终几率: " + success + "% 失败消失几率: " + curse + "%" + " 卷轴是否失败不消失装备: " + noCursed);
         }
         if (Randomizer.nextInt(100) > success) {
@@ -1217,7 +1213,7 @@ public class MapleItemInformationProvider {
         int itemID = sqlRewardData.getInt("itemid");
         if ((this.tmpInfo == null) || (this.tmpInfo.itemId != itemID)) {
             if (!this.dataCache.containsKey(itemID)) {
-                System.out.println("[initItemRewardData] Tried to load an item while this is not in the cache: " + itemID);
+                FileoutputUtil.log("[initItemRewardData] Tried to load an item while this is not in the cache: " + itemID);
                 return;
             }
             this.tmpInfo = ((ItemInformation) this.dataCache.get(itemID));
@@ -1243,7 +1239,7 @@ public class MapleItemInformationProvider {
         int itemID = sqlAddData.getInt("itemid");
         if ((this.tmpInfo == null) || (this.tmpInfo.itemId != itemID)) {
             if (!this.dataCache.containsKey(itemID)) {
-                System.out.println("[initItemAddData] Tried to load an item while this is not in the cache: " + itemID);
+                FileoutputUtil.log("[initItemAddData] Tried to load an item while this is not in the cache: " + itemID);
                 return;
             }
             this.tmpInfo = ((ItemInformation) this.dataCache.get(itemID));
@@ -1259,7 +1255,7 @@ public class MapleItemInformationProvider {
         int itemID = sqlEquipData.getInt("itemid");
         if ((this.tmpInfo == null) || (this.tmpInfo.itemId != itemID)) {
             if (!this.dataCache.containsKey(itemID)) {
-                System.out.println("[initItemEquipData] Tried to load an item while this is not in the cache: " + itemID);
+                FileoutputUtil.log("[initItemEquipData] Tried to load an item while this is not in the cache: " + itemID);
                 return;
             }
             this.tmpInfo = ((ItemInformation) this.dataCache.get(itemID));

@@ -25,7 +25,7 @@ public class ItemScriptManager extends AbstractScriptManager {
                 dispose(c);
                 return;
             }
-            if (c.getPlayer().isAdmin()) {
+            if (c.getPlayer().isShowPacket()) {
                 c.getPlayer().dropMessage(5, "开始道具脚本 NPC：" + npc + " 道具Id：" + item.getItemId());
             }
             Invocable iv = getInvocable("道具/" + item.getItemId() + ".js", c, true);

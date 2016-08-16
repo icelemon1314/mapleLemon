@@ -120,9 +120,6 @@ public class GuildPacket {
     }
 
     public static byte[] guildSkillPurchased(int guildId, int skillId, int level, long expiration, String purchase, String activate) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -139,9 +136,6 @@ public class GuildPacket {
     }
 
     public static byte[] guildLeaderChanged(int guildId, int oldLeader, int newLeader, int allianceId) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
 
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -159,9 +153,6 @@ public class GuildPacket {
     }
 
     public static byte[] guildMemberOnline(int guildId, int chrId, boolean isOnline) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -174,9 +165,6 @@ public class GuildPacket {
     }
 
     public static byte[] guildContribution(int guildId, int cid, int c) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -191,9 +179,6 @@ public class GuildPacket {
     }
 
     public static byte[] createGuildNotice(String Name) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -204,9 +189,6 @@ public class GuildPacket {
     }
 
     public static byte[] guildInvite(int guildId, String charName, int levelFrom, int jobFrom) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -221,9 +203,6 @@ public class GuildPacket {
     }
 
     public static byte[] denyGuildInvitation(String charname) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -234,9 +213,6 @@ public class GuildPacket {
     }
 
     public static byte[] genericGuildMessage(byte code) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -280,9 +256,6 @@ public class GuildPacket {
     }
 
     public static byte[] newGuildMember(MapleGuildCharacter mgc) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -346,9 +319,6 @@ public class GuildPacket {
     }
 
     public static byte[] memberLeft(MapleGuildCharacter mgc, boolean isExpelled) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -361,9 +331,6 @@ public class GuildPacket {
     }
 
     public static byte[] changeRank(MapleGuildCharacter mgc) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -376,9 +343,6 @@ public class GuildPacket {
     }
 
     public static byte[] guildNotice(int guildId, String notice) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -390,9 +354,6 @@ public class GuildPacket {
     }
 
     public static byte[] guildMemberLevelJobUpdate(MapleGuildCharacter mgc) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -406,9 +367,6 @@ public class GuildPacket {
     }
 
     public static byte[] rankTitleChange(int guildId, String[] ranks) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -422,9 +380,6 @@ public class GuildPacket {
     }
 
     public static byte[] guildDisband(int guildId) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -436,9 +391,6 @@ public class GuildPacket {
     }
 
     public static byte[] guildEmblemChange(int guildId, short bg, byte bgcolor, short logo, byte logocolor) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -453,9 +405,6 @@ public class GuildPacket {
     }
 
     public static byte[] guildCapacityChange(int guildId, int capacity) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -467,9 +416,6 @@ public class GuildPacket {
     }
 
     public static byte[] changeAllianceLeader(int allianceid, int newLeader, int oldLeader) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.ALLIANCE_OPERATION.getValue());
@@ -482,9 +428,6 @@ public class GuildPacket {
     }
 
     public static byte[] updateAllianceLeader(int allianceid, int newLeader, int oldLeader) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.ALLIANCE_OPERATION.getValue());
@@ -497,9 +440,6 @@ public class GuildPacket {
     }
 
     public static byte[] sendAllianceInvite(String allianceName, MapleCharacter inviter) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.ALLIANCE_OPERATION.getValue());
@@ -513,9 +453,6 @@ public class GuildPacket {
     }
 
     public static byte[] changeAllianceRank(int allianceid, MapleGuildCharacter player) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.ALLIANCE_OPERATION.getValue());
@@ -528,9 +465,6 @@ public class GuildPacket {
     }
 
     public static byte[] allianceMemberOnline(int alliance, int gid, int id, boolean online) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.ALLIANCE_OPERATION.getValue());
@@ -544,9 +478,6 @@ public class GuildPacket {
     }
 
     public static byte[] updateAlliance(MapleGuildCharacter mgc, int allianceid) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.ALLIANCE_OPERATION.getValue());
@@ -561,9 +492,6 @@ public class GuildPacket {
     }
 
     public static byte[] updateAllianceRank(int allianceid, MapleGuildCharacter mgc) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.ALLIANCE_OPERATION.getValue());
@@ -576,9 +504,6 @@ public class GuildPacket {
     }
 
     public static byte[] disbandAlliance(int alliance) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.ALLIANCE_OPERATION.getValue());
@@ -589,9 +514,6 @@ public class GuildPacket {
     }
 
     public static byte[] BBSThreadList(List<MapleBBSThread> bbs, int start) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.BBS_OPERATION.getValue());
@@ -638,9 +560,6 @@ public class GuildPacket {
     }
 
     public static byte[] showThread(MapleBBSThread thread) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.BBS_OPERATION.getValue());
@@ -663,9 +582,6 @@ public class GuildPacket {
     }
 
     public static byte[] showGuildRanks(int npcid, List<MapleGuildRanking.GuildRankingInfo> all, boolean show) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -689,9 +605,6 @@ public class GuildPacket {
     }
 
     public static byte[] updateGP(int guildId, int GP, int guildlevel) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.GUILD_OPERATION.getValue());
@@ -705,9 +618,6 @@ public class GuildPacket {
     }
 
     public static byte[] loadGuildName(MapleCharacter chr) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.LOAD_GUILD_NAME.getValue());
@@ -726,9 +636,6 @@ public class GuildPacket {
     }
 
     public static byte[] loadGuildIcon(MapleCharacter chr) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("调用: " + new java.lang.Throwable().getStackTrace()[0]);
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.LOAD_GUILD_ICON.getValue());

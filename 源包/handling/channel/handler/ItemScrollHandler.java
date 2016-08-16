@@ -84,18 +84,18 @@ public class ItemScrollHandler {
             scroll = chr.getInventory(MapleInventoryType.USE).getItem(slot);
         }
         if (scroll == null) {
-            if (chr.isAdmin()) {
+            if (chr.isShowPacket()) {
                 chr.dropMessage(0, "砸卷错误: 卷轴道具为空");
             }
             c.getSession().write(InventoryPacket.getInventoryFull());
             return false;
         }
-        if (chr.isAdmin()) {
+        if (chr.isShowPacket()) {
             chr.dropSpouseMessage(10, new StringBuilder().append("砸卷信息: 卷轴ID ").append(scroll.getItemId()).append(" 卷轴名字 ").append(ii.getName(scroll.getItemId())).toString());
         }
 
         if ((!ItemConstants.canScroll(toScroll.getItemId()))) {
-            if (chr.isAdmin()) {
+            if (chr.isShowPacket()) {
                 chr.dropMessage(0, new StringBuilder().append("砸卷错误: 卷轴是否能对装备进行砸卷 ").append(!ItemConstants.canScroll(toScroll.getItemId())).toString());
             }
             c.getSession().write(InventoryPacket.getInventoryFull());
@@ -103,7 +103,7 @@ public class ItemScrollHandler {
         }
         List scrollReqs = ii.getScrollReqs(scroll.getItemId());
         if ((scrollReqs != null) && (scrollReqs.size() > 0) && (!scrollReqs.contains(toScroll.getItemId()))) {
-            if (chr.isAdmin()) {
+            if (chr.isShowPacket()) {
                 chr.dropMessage(0, "砸卷错误: 特定卷轴只能对指定的卷轴进行砸卷.");
             }
             c.getSession().write(InventoryPacket.getInventoryFull());

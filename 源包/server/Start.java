@@ -120,6 +120,7 @@ public class Start {
         }
 //        ManagerSin.main(ServerConstants.GUI);
         System.out.println("加载完成, 耗时: " + seconds + "秒" + ms + "毫秒\r\n");
+        System.out.println("服务端开启完毕，可以登入游戏了！");
     }
 
     public static void runThread() {

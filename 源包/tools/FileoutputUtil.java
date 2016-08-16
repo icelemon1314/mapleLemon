@@ -75,6 +75,7 @@ public class FileoutputUtil {
     private static final SimpleDateFormat sdf_ = new SimpleDateFormat("yyyy-MM-dd");
     private static final String FILE_PATH = "日志/";
     private static final String ERROR = "錯誤/" + sdf_.format(Calendar.getInstance().getTime()) + "/";
+    private static final String GeneralLog = "日志/运行日志.log";
 
     public static void printError(String name, String msg) {
         printError(name, null, msg);
@@ -98,6 +99,10 @@ public class FileoutputUtil {
 
     public static void outputFileError(String file, Throwable t, String info) {
         logToFile(file, "\r\n------------------------ " + CurrentReadable_Time() + " ------------------------\r\n" + (info != null ? (info + "\r\n") : "") + (t != null ? getString(t) : ""));
+    }
+
+    public static void log(String msg) {
+        logToFile(FileoutputUtil.GeneralLog,msg+"\r\n");
     }
 
     public static void log(String file, String msg) {

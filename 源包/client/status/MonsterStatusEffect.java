@@ -130,7 +130,7 @@ public class MonsterStatusEffect {
                 public void run() {
                     if (time + getDotTime() > System.currentTimeMillis() && mon.isAlive()) {
                         //每次需要执行的代码放到这里面。
-                        if (weakChr.get().isAdmin()) {
+                        if (weakChr.get().isShowPacket()) {
                             weakChr.get().dropSpouseMessage(18, "[持续伤害] 持续伤害");
                         }
                         setnewpoison(false);

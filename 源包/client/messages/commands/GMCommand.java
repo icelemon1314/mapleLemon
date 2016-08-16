@@ -322,72 +322,6 @@ public class GMCommand {
         }
     }
 
-    public static class 潜能物品 extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            if (splitted.length < 8) {
-                c.getPlayer().dropMessage(6, splitted[0] + " <物品ID> <第一潜能> <第二潜能> <第三潜能> <第一附加潜能> <第二附加潜能> <第三附加潜能>");
-                return 0;
-            }
-            final int itemId = Integer.parseInt(splitted[1]);
-            if (!c.getPlayer().isAdmin()) {
-                for (int i : GameConstants.itemBlock) {
-                    if (itemId == i) {
-                        c.getPlayer().dropMessage(5, "你的管理员等级没有制作该物品的权限");
-                        return 0;
-                    }
-                }
-            }
-            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-            if (itemId >= 2000000) {
-                c.getPlayer().dropMessage(5, "物品ID必须为装备");
-            } else if (!ii.itemExists(itemId)) {
-                c.getPlayer().dropMessage(5, "装备(ID:" + itemId + ")不存在");
-            } else {
-                Equip equip;
-                equip = ii.randomizeStats((Equip) ii.getEquipById(itemId));
-                equip.setOwner(c.getPlayer().getName());
-                MapleInventoryManipulator.addbyItem(c, equip);
-            }
-            return 1;
-        }
-    }
-
-    public static class 属性物品 extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            if (!c.getPlayer().isAdmin()) {
-                return 0;
-            }
-            if (splitted.length < 4) {
-                c.getPlayer().dropMessage(6, splitted[0] + " <物品ID> <属性值> <潜能>");
-                return 0;
-            }
-            final int itemId = Integer.parseInt(splitted[1]);
-            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-            if (itemId >= 2000000) {
-                c.getPlayer().dropMessage(5, "物品ID必须为装备");
-            } else if (!ii.itemExists(itemId)) {
-                c.getPlayer().dropMessage(5, "装备(ID:" + itemId + ")不存在");
-            } else {
-                Equip equip;
-                equip = ii.randomizeStats((Equip) ii.getEquipById(itemId));
-                equip.setStr(Short.parseShort(splitted[2]));
-                equip.setDex(Short.parseShort(splitted[2]));
-                equip.setInt(Short.parseShort(splitted[2]));
-                equip.setLuk(Short.parseShort(splitted[2]));
-                equip.setWatk(Short.parseShort(splitted[2]));
-                equip.setMatk(Short.parseShort(splitted[2]));
-                equip.setOwner(c.getPlayer().getName());
-                equip.setGMLog(c.getPlayer().getName() + " 使用 " + splitted[0] + " 命令制作");
-                MapleInventoryManipulator.addbyItem(c, equip);
-            }
-            return 1;
-        }
-    }
-
     public static class 等级 extends CommandExecute {
 
         @Override
@@ -427,32 +361,7 @@ public class GMCommand {
         }
     }
 
-    public static class 开始自动事件 extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            final EventManager em = c.getChannelServer().getEventSM().getEventManager("AutomatedEvent");
-            if (em != null) {
-                em.setWorldEvent();
-                em.scheduleRandomEvent();
-                System.out.println("正在进行随机自动事件。");
-            } else {
-                System.out.println("找不到AutomatedEvent脚本。");
-            }
-            return 1;
-        }
-    }
-
     public static class 设置事件 extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            MapleEvent.onStartEvent(c.getPlayer());
-            return 1;
-        }
-    }
-
-    public static class 自动事件 extends CommandExecute {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {

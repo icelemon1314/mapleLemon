@@ -18,6 +18,7 @@ import provider.wz.MapleDataType;
 
 import server.Randomizer;
 import server.maps.MapleMapFactory;
+import tools.FileoutputUtil;
 import tools.Pair;
 import tools.StringUtil;
 
@@ -74,7 +75,7 @@ public class MapleLifeFactory {
                         }
                         questCount.put(id, z);
                     } else {
-                        System.out.println("null questcountgroup");
+                        FileoutputUtil.log("null questcountgroup");
                     }
                 }
             }
@@ -339,7 +340,7 @@ public class MapleLifeFactory {
         if (link != null) {
             String scriptName = MapleDataTool.getString("info/quest", data);
             npc.setScriptName(scriptName);
-            System.out.println("NPC("+nid+")存在脚本任务："+scriptName);
+            FileoutputUtil.log("NPC("+nid+")存在脚本任务："+scriptName);
         }
         return npc;
     }

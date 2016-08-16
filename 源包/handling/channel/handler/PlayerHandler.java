@@ -366,9 +366,9 @@ public class PlayerHandler {
             c.getSession().write(MaplePacketCreator.skillCooldown(skillid, effect.getCooldown(chr)));
             chr.addCooldown(skillid, System.currentTimeMillis(), effect.getCooldown(chr) * 1000);
         }
-        System.out.println("看是否有特需处理的BUFF");
+        FileoutputUtil.log("看是否有特需处理的BUFF");
         if (effect.is时空门()) {
-            System.out.println("释放时空们");
+            FileoutputUtil.log("释放时空们");
             if (!FieldLimitType.MysticDoor.check(chr.getMap().getFieldLimit())) {
                 effect.applyTo(c.getPlayer(), pos);
             } else {
@@ -381,7 +381,7 @@ public class PlayerHandler {
 //                c.getSession().write(MaplePacketCreator.enableActions());
 //                return;
 //            }
-            System.out.println("释放技能效果！");
+            FileoutputUtil.log("释放技能效果！");
             effect.applyTo(chr, pos);
         }
     }
@@ -847,12 +847,12 @@ public class PlayerHandler {
         try {
             res = MovementParse.parseMovement(slea, 1, chr);
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("AIOBE Type1:\r\n" + slea.toString(true));
+            FileoutputUtil.log("AIOBE Type1:\r\n" + slea.toString(true));
             return;
         }
         if ((res != null) && (chr.getMap() != null)) {
             if (slea.available() != 10) {
-                System.out.println("玩家" + chr.getName() + "(" + MapleJob.getName(MapleJob.getById(chr.getJob())) + ") slea.available != 8 (角色移动出错) 剩余封包长度: " + slea.available());
+                FileoutputUtil.log("玩家" + chr.getName() + "(" + MapleJob.getName(MapleJob.getById(chr.getJob())) + ") slea.available != 8 (角色移动出错) 剩余封包长度: " + slea.available());
                 FileoutputUtil.log(FileoutputUtil.Movement_Char, "slea.available != 8 (角色移动出错) 封包: " + slea.toString(true));
                 return;
             }
@@ -904,17 +904,17 @@ public class PlayerHandler {
         if (slea.available() != 0L) {
             int type = slea.readByte();
             int targetid = slea.readInt();
-            System.out.println("换地图目标："+targetid);
+            FileoutputUtil.log("换地图目标："+targetid);
             MaplePortal portal = chr.getMap().getPortal(slea.readMapleAsciiString());
             if ((targetid != -1) && (!chr.isAlive())) { // 角色死亡
                 chr.setStance(0);
                 if ((chr.getEventInstance() != null) && (chr.getEventInstance().revivePlayer(chr)) && (chr.isAlive())) {
-                    System.out.println("没有死亡但是要回程："+targetid);
+                    FileoutputUtil.log("没有死亡但是要回程："+targetid);
                     return;
                 }
                 chr.getStat().setHp(50);
                 MapleMap to = chr.getMap().getReturnMap();
-                System.out.println("死亡后准备回程：："+to.getId());
+                FileoutputUtil.log("死亡后准备回程：："+to.getId());
                 chr.changeMap(to, to.getPortal(0));
             } else if (targetid != -1 && c.getPlayer().isGM()) {
                 MapleMap to = ChannelServer.getInstance(c.getChannel()).getMapFactory().getMap(targetid);
@@ -924,7 +924,7 @@ public class PlayerHandler {
                 MapleMap to = ChannelServer.getInstance(c.getChannel()).getMapFactory().getMap(targetid);
                 chr.changeMap(to, to.getPortal(0));
             } else if ((portal != null) && (!chr.hasBlockedInventory())) {
-                System.out.println("执行传送口脚本："+portal.getScriptName());
+                FileoutputUtil.log("执行传送口脚本："+portal.getScriptName());
                 portal.enterPortal(c);
             } else {
                 c.getSession().write(MaplePacketCreator.enableActions());
@@ -1013,7 +1013,7 @@ public class PlayerHandler {
         }
             long startTime = System.currentTimeMillis();
             chr.saveToDB(false, false);
-            if (chr.isAdmin()) {
+            if (chr.isShowPacket()) {
                 chr.dropMessage(-11, "保存数据，耗时 " + (System.currentTimeMillis() - startTime) + " 毫秒");
             }
     }

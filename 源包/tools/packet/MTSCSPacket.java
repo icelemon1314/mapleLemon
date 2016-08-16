@@ -19,6 +19,7 @@ import java.util.Map;
 import server.cashshop.CashItemFactory;
 import server.cashshop.CashItemInfo;
 import server.cashshop.CashShop;
+import tools.FileoutputUtil;
 import tools.HexTool;
 import tools.Pair;
 import tools.data.output.MaplePacketLittleEndianWriter;
@@ -53,7 +54,7 @@ public class MTSCSPacket {
             }
         }
         mplew.writeShort(size);
-        System.out.println("商城道具个数："+size);
+        FileoutputUtil.log("商城道具个数："+size);
         for (Map.Entry csInfo : cashinfo.entrySet()) {
             CashItemInfo stats = (CashItemInfo)csInfo.getValue();
             if ((int)csInfo.getKey() > 80000000) // 剩下金币包需要处理
@@ -122,7 +123,7 @@ public class MTSCSPacket {
             }
         }
 
-//        System.out.println("写入字节数："+writeByte);
+//        FileoutputUtil.log("写入字节数："+writeByte);
         // 商城礼包
         mplew.writeShort(5); // Stock
         mplew.writeInt(-1); // 1 = Sold Out, 2 = Not Sold
@@ -379,7 +380,7 @@ public class MTSCSPacket {
         mplew.write(0x1D);
         CashShop mci = c.getPlayer().getCashInventory();
 //        int size = 0;
-        System.out.println("商城保管箱道具个数："+mci.getItemsSize());
+        FileoutputUtil.log("商城保管箱道具个数："+mci.getItemsSize());
         mplew.writeShort(mci.getItemsSize());
         for (Item itemz : mci.getInventory()) {
             mplew.writeLong(itemz.getUniqueId() > 0 ? itemz.getUniqueId() : 0L);
@@ -539,7 +540,7 @@ public class MTSCSPacket {
 
         mplew.write(SendPacketOpcode.CS_OPERATION.getValue());
         mplew.write(0x30);
-        System.out.println("道具位置："+item.getPosition());
+        FileoutputUtil.log("道具位置："+item.getPosition());
         mplew.writeShort(item.getPosition());
 //        PacketHelper.addItemInfo(mplew, item);
         // 这里比较奇怪了，理论上应该和普通的背包道具是一样的哈

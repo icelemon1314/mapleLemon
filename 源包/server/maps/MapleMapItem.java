@@ -124,7 +124,6 @@ public class MapleMapItem extends MapleMapObject {
 
     @Override
     public void sendSpawnData(MapleClient client) {
-        System.out.println("召唤道具");
         if ((this.questid <= 0) || ((client.getPlayer().getQuestStatus(this.questid) == 1) && (client.getPlayer().needQuestItem(this.questid, this.item.getItemId())))) {
             client.getSession().write(InventoryPacket.dropItemFromMapObject(this, null, getTruePosition(), (byte) 2, false));
         }

@@ -157,7 +157,7 @@ public class MapleStatEffect implements Serializable {
         if (dd.getType() != MapleDataType.STRING) {
             return MapleDataTool.getIntConvert(path, source, def);
         }
-        System.out.println("到这里就囧了！");
+        FileoutputUtil.log("到这里就囧了！");
         return 0;
         /*
         String dddd = MapleDataTool.getString(dd).replace(variables, String.valueOf(level));
@@ -174,7 +174,7 @@ public class MapleStatEffect implements Serializable {
                 break;
         }
         if (dddd.contains("y")) {
-//            System.out.println(dddd);
+//            FileoutputUtil.log(dddd);
             dddd = dddd.replaceAll("y", "0");
         }
         int result = (int) new CaltechEval(dddd).evaluate();
@@ -1026,7 +1026,7 @@ public class MapleStatEffect implements Serializable {
                             && (targetMapId != 12) && (charMapId != 10)
                             && (targetMapId != 10) && (charMapId != 12)
                             && (targetMapId != charMapId)) {
-                        System.out.println("玩家 " + applyto.getName() + " 尝试回到一个非法的位置 (" + applyto.getMapId() + "->" + target.getId() + ")");
+                        FileoutputUtil.log("玩家 " + applyto.getName() + " 尝试回到一个非法的位置 (" + applyto.getMapId() + "->" + target.getId() + ")");
                         return false;
                     }
 
@@ -1297,7 +1297,7 @@ public class MapleStatEffect implements Serializable {
 //                List stat = Collections.singletonList(new Pair(MapleBuffStat.骑兽技能, 0));
 //                foreignbuff = BuffPacket.showMonsterRiding(applyto.getId(), stat, mountid, this.sourceid);
             } else {
-                if (applyto.isAdmin()) {
+                if (applyto.isShowPacket()) {
                     applyto.dropSpouseMessage(10, "骑宠BUFF " + this.sourceid + " 错误，未找到这个骑宠的外形ID。");
                 }
                 return;
@@ -1322,7 +1322,7 @@ public class MapleStatEffect implements Serializable {
             applyfrom.dropMessage(5,"发送技能：GIVE_BUFF");
             applyto.getClient().getSession().write(buff);
         } else if (normal && localstatups.size() > 0) { //自动使用？
-            System.out.println("发送技能：GIVE_BUFF|null"+sourceid);
+            FileoutputUtil.log("发送技能：GIVE_BUFF|null"+sourceid);
             applyto.getClient().getSession().write(BuffPacket.giveBuff(skill ? sourceid : -sourceid, localDuration, maskedStatups == null ? localstatups : maskedStatups));
         }
 

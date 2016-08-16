@@ -487,7 +487,7 @@ public final class MapleMap {
         int maxSize = 200;
         if ((!instanced) && (maxSize >= 300) && (((LinkedHashMap) this.mapobjects.get(MapleMapObjectType.ITEM)).size() >= maxSize)) {
             removeDropsDelay();
-            if (chr.isAdmin()) {
+            if (chr.isShowPacket()) {
                 chr.dropMessage(6, new StringBuilder().append("[系统提示] 当前地图的道具数量达到 ").append(maxSize).append(" 系统已自动清理掉所有地上的物品信息.").toString());
             }
         }
@@ -505,7 +505,7 @@ public final class MapleMap {
         MapleMonsterInformationProvider mi = MapleMonsterInformationProvider.getInstance();
         List derp = mi.retrieveDrop(mob.getId());
         if (derp == null) {
-            System.out.println("找不到怪物的掉落："+mob.getId());
+            FileoutputUtil.log("找不到怪物的掉落："+mob.getId());
             return;
         }
         List<MonsterDropEntry> dropEntry = new ArrayList(derp);
@@ -1164,7 +1164,7 @@ public final class MapleMap {
         MapleCharacter Controller = monster.getController();
         if (Controller != null && Controller.getMap() != null) {
             if (Controller.getMap().getId() != this.getId() || Controller.getTruePosition().distance(monster.getTruePosition()) > monster.getRange()) {
-//                System.out.println("停止控制 " + monster.getObjectId()  +"  tr: "+Controller.getTruePosition().distance(monster.getTruePosition())+"  "+monster.getRange());
+//                FileoutputUtil.log("停止控制 " + monster.getObjectId()  +"  tr: "+Controller.getTruePosition().distance(monster.getTruePosition())+"  "+monster.getRange());
                 monster.getController().stopControllingMonster(monster);
             } else {
                 return;
@@ -1184,7 +1184,7 @@ public final class MapleMap {
             this.charactersLock.readLock().unlock();
         }
         if (newController != null) {
-//            System.out.println("新控制 " + monster.getObjectId());
+//            FileoutputUtil.log("新控制 " + monster.getObjectId());
             if (monster.isFirstAttack()) {
                 newController.controlMonster(monster, true);
                 monster.setControllerHasAggro(true);
@@ -1538,29 +1538,14 @@ public final class MapleMap {
     public void spawnRevives(final MapleMonster monster, final int oid) {
         monster.setMap(this);
         checkRemoveAfter(monster);
-        if (monster.getId() == 9300166) {
-            MapTimer.getInstance().schedule(new Runnable() {
-                @Override
-                public void run() {
-
-                    MapleMap.this.broadcastMessage(MobPacket.killMonster(monster.getObjectId(), 2));
-                }
-            }, 3000L);
-        }
-
         monster.setLinkOid(oid);
-        MapTimer.getInstance().schedule(new Runnable() {
+        spawnAndAddRangedMapObject(monster, new DelayedPacketCreation() {
             @Override
-            public void run() {
-                spawnAndAddRangedMapObject(monster, new DelayedPacketCreation() {
-                    @Override
-                    public void sendPackets(MapleClient c) {
-                        c.getSession().write(MobPacket.spawnMonster(monster, monster.getStats().getSummonType() <= 1 ? -3 : monster.getStats().getSummonType(), oid));
-                    }
-                });
-                updateMonsterController(monster);
+            public void sendPackets(MapleClient c) {
+                c.getSession().write(MobPacket.spawnMonster(monster, monster.getStats().getSummonType() <= 1 ? -3 : monster.getStats().getSummonType(), oid));
             }
-        },2800L);
+        });
+        updateMonsterController(monster);
         this.spawnedMonstersOnMap.incrementAndGet();
 
     }
@@ -1857,7 +1842,7 @@ public final class MapleMap {
             } else {
                 int id = mist.isMobMist() ? mist.getMobSkill().getSkillId() : mist.getSourceSkill().getId();
                 String from = mist.isMobMist() ? "怪物" : "玩家：" + mist.getOwnerId();
-                System.out.println("[未处理 mist] 来自 " + from + " 技能ID：" + id + "");
+                FileoutputUtil.log("[未处理 mist] 来自 " + from + " 技能ID：" + id + "");
                 poisonSchedule = null;
             }
         }
@@ -2980,7 +2965,7 @@ public final class MapleMap {
             pos3.y -= 1;
         }
         if ((pos1 == null) && (pos2 == null) && (pos3 == null)) {
-            System.out.println(new StringBuilder().append("WARNING: mapid ").append(this.mapid).append(", monster ").append(monster.getId()).append(" could not be spawned.").toString());
+            FileoutputUtil.log(new StringBuilder().append("WARNING: mapid ").append(this.mapid).append(", monster ").append(monster.getId()).append(" could not be spawned.").toString());
             return;
         }
         if (pos1 != null) {

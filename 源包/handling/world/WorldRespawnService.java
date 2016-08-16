@@ -188,7 +188,7 @@ public class WorldRespawnService {
                 this.cservs.add(ChannelServer.getInstance(c + i));
 //                s.append(c + i).append(" ");
             }
-//            System.out.println(s.toString());
+//            FileoutputUtil.log(s.toString());
         }
 
         @Override

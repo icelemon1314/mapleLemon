@@ -10,6 +10,7 @@ import client.inventory.MaplePet;
 import constants.ItemConstants;
 import provider.MapleDataProvider;
 import server.MapleItemInformationProvider;
+import tools.FileoutputUtil;
 import tools.Pair;
 
 import java.io.Serializable;
@@ -37,9 +38,11 @@ public class MapleQuestReward implements Serializable {
         if (type == MapleQuestRewardType.item) {
             this.dataStore.add(new Pair(rse.getInt("itemId"),rse.getInt("num")));
         } else if (type == MapleQuestRewardType.exp){
-			this.dataStore.add(new Pair(rse.getInt("itemId"),rse.getInt("num")));
-		} else {
-            System.out.println("暂时不支持的奖励类型："+type.toString());
+			this.dataStore.add(new Pair(rse.getInt("id"),rse.getInt("num")));
+		} else if (type == MapleQuestRewardType.pop){
+            this.dataStore.add(new Pair(rse.getInt("id"),rse.getInt("num")));
+        }else {
+            FileoutputUtil.log("暂时不支持的奖励类型："+type.toString());
         }
     }
 
@@ -56,6 +59,9 @@ public class MapleQuestReward implements Serializable {
                     int count = ((Integer) a.getRight());
                     chr.gainItem(itemId,count,"任务获得道具！");
                     String itemName = MapleItemInformationProvider.getInstance().getName(itemId);
+                    if (itemName == null) {
+                        itemName = String.valueOf(itemId);
+                    }
                     chr.dropMessage(0,"任务奖励："+ itemName + " "+count+"个！");
                 }
                 break;
@@ -65,8 +71,13 @@ public class MapleQuestReward implements Serializable {
                     chr.gainExp(count,true,false,false);
                 }
                 break;
+            case pop:
+                for (Pair a : this.dataStore) {
+                    int count = ((Integer) a.getRight());
+                    chr.addFame(count);
+                }
             default:
-                System.out.println("没有处理的奖励类型：："+type);
+                FileoutputUtil.log("没有处理的奖励类型：："+type);
                 break;
         }
         return true;

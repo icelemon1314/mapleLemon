@@ -80,7 +80,7 @@ public class PlayersHandler {
                 }
                 break;
             default:
-                System.out.println(new StringBuilder().append("Unhandled note action, ").append(type).append("").toString());
+                FileoutputUtil.log(new StringBuilder().append("Unhandled note action, ").append(type).append("").toString());
         }
     }
 
@@ -166,12 +166,12 @@ public class PlayersHandler {
                 int healHp = (int) (chr.getStat().getCurrentMaxHp() * (healDoor.getSource().getX() / 100.0D));
                 chr.addHP(healHp);
                 healDoor.setHealCount(healDoor.getHealCount() - 1);
-                if (chr.isAdmin()) {
+                if (chr.isShowPacket()) {
                     chr.dropMessage(5, new StringBuilder().append("使用神圣源泉 - 恢复血量: ").append(healHp).append(" 百分比: ").append(healDoor.getSource().getX() / 100.0D).append(" 剩余次数: ").append(healDoor.getHealCount()).toString());
                 }
                 c.getSession().write(MaplePacketCreator.showHolyFountain(skillId));
             }
-        } else if (chr.isAdmin()) {
+        } else if (chr.isShowPacket()) {
             chr.dropMessage(5, new StringBuilder().append("使用神圣源泉出现错误 - 源泉恢复的剩余次数: ").append(healDoor.getHealCount()).append(" 模式: ").append(mode).append(" 是否在范围内: ").append(healDoor.getBox().contains(position)).toString());
         }
         c.getSession().write(MaplePacketCreator.enableActions());
@@ -220,7 +220,7 @@ public class PlayersHandler {
         if ((!touched) || (reactor == null) || (!reactor.isAlive()) || (reactor.getTouch() == 0)) {
             return;
         }
-        if (c.getPlayer().isAdmin()) {
+        if (c.getPlayer().isShowPacket()) {
             c.getPlayer().dropMessage(5, "反应堆信息 - 反应堆ID：" + reactor.getReactorId() + " oid: " + oid + " 碰触次数: " + reactor.getTouch() + " 是否定时出现: " + reactor.isTimerActive() + " 反应堆类型: " + reactor.getReactorType());
         }
         if (reactor.getTouch() == 2) {

@@ -99,7 +99,7 @@ public class EventManager {
     }
 
     public void log(String str){
-        System.out.println(str);
+        FileoutputUtil.log(str);
     }
 
     public int getChannel() {

@@ -5,6 +5,8 @@ import constants.WorldConstants;
 import handling.channel.ChannelServer;
 import handling.world.World;
 import java.util.List;
+
+import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.LoginPacket;
@@ -28,7 +30,7 @@ public class CharlistRequestHandler {
             c.getSession().write(LoginPacket.getLoginFailed(1)); //Shows no message, but it is used to unstuck
             return;
         }
-        System.out.println("[连接信息] "+c.getSession().getRemoteAddress().toString().split(":")[0] + " 连接到世界服务器: " + server + " 频道: " + channel);
+        FileoutputUtil.log("[连接信息] "+c.getSession().getRemoteAddress().toString().split(":")[0] + " 连接到世界服务器: " + server + " 频道: " + channel);
         List chars = c.loadCharacters(server);
         if ((chars != null) && (ChannelServer.getInstance(channel) != null)) {
             c.setWorld(server);

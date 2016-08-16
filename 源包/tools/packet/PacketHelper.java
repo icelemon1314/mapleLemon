@@ -202,8 +202,8 @@ public class PacketHelper {
         mplew.writeShort(chr.getJob());
         mplew.writeShort(chr.getStat().str);
         mplew.writeShort(chr.getStat().dex);
-        mplew.writeShort(chr.getStat().luk);
         mplew.writeShort(chr.getStat().int_);
+        mplew.writeShort(chr.getStat().luk);
         mplew.writeShort(chr.getStat().baseHp);
         mplew.writeShort(chr.getStat().baseMaxHp);
         mplew.writeShort(chr.getStat().baseMp);

@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import server.maps.MapleMap;
 import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
+import tools.FileoutputUtil;
 import tools.Pair;
 import tools.packet.PlayerShopPacket;
 
@@ -143,7 +144,7 @@ public abstract class AbstractPlayerStore extends MapleMapObject implements IMap
             if (!rs.next()) {
                 rs.close();
                 ps.close();
-                System.out.println("[SaveItems] 保存雇佣商店信息出错 - 1");
+                FileoutputUtil.log("[SaveItems] 保存雇佣商店信息出错 - 1");
                 throw new RuntimeException("保存雇佣商店信息出错.");
             }
             rs.close();
@@ -162,7 +163,7 @@ public abstract class AbstractPlayerStore extends MapleMapObject implements IMap
             ItemLoader.雇佣道具.saveItems(itemsWithType, this.ownerId);
             return true;
         } catch (SQLException se) {
-            System.out.println("[SaveItems] 保存雇佣商店信息出错 - 2 " + se);
+            FileoutputUtil.log("[SaveItems] 保存雇佣商店信息出错 - 2 " + se);
         }
         return false;
     }

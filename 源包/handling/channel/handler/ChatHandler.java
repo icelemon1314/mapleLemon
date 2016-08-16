@@ -17,6 +17,7 @@ import handling.world.messenger.MapleMessenger;
 import handling.world.messenger.MapleMessengerCharacter;
 import handling.world.messenger.MessengerType;
 import org.apache.log4j.Logger;
+import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.StringUtil;
 import tools.data.input.SeekableLittleEndianAccessor;
@@ -33,7 +34,6 @@ public class ChatHandler {
                 if ((!chr.isIntern()) && (text.length() >= 80)) {
                     return;
                 }
-                System.out.println(new StringBuilder().append("[聊天信息] ").append(chr.getName()).append(" : ").append(text).toString());
                 if ((chr.getCanTalk()) || (chr.isStaff())) {
                     if (chr.isHidden()) {
                         if ((chr.isIntern()) && (!chr.isSuperGM()) && (unk == 0)) {
@@ -77,7 +77,6 @@ public class ChatHandler {
             c.getSession().write(MaplePacketCreator.serverMessagePopUp("你被禁言了，暂时不能聊天！"));
             return;
         }
-        System.out.println(new StringBuilder().append("[聊天信息] ").append(chr.getName()).append(" : ").append(chattext).toString());
         if (c.isMonitored()) {
             String chattype = "未知";
             switch (type) {
@@ -145,7 +144,6 @@ public class ChatHandler {
                     MapleMessengerCharacter messengerPlayer = new MapleMessengerCharacter(c.getPlayer());
                     MessengerType type = MessengerType.getMessengerType(maxMembers, mode != 0);
                     if (type == null) {
-                        System.out.println("聊天招待操作 → 打开 模式为空");
                         return;
                     }
                     if (mode == 0) {
@@ -189,7 +187,6 @@ public class ChatHandler {
                 }
                 int position = messenger.getLowestPosition();
                 if (position == -1) {
-                    System.out.println("聊天招待操作 → 邀请错误 没有空闲的位置");
                     return;
                 }
                 String input = slea.readMapleAsciiString();
@@ -244,7 +241,6 @@ public class ChatHandler {
                 }
                 String name = slea.readMapleAsciiString();
                 if (!messenger.getType().random) {
-                    System.out.println(new StringBuilder().append("聊天招待操作 → 对别人增加好感度错误 聊天室的类型不是随机聊天 : ").append(!messenger.getType().random).toString());
                     return;
                 }
                 MapleCharacter targetPlayer = WorldFindService.getInstance().findCharacterByName(name);
@@ -294,7 +290,7 @@ public class ChatHandler {
             case 15:
                 break;
             default:
-                System.out.println(new StringBuilder().append("聊天招待操作( 0x").append(StringUtil.getLeftPaddedStr(Integer.toHexString(action).toUpperCase(), '0', 2)).append(" ) 未知.").toString());
+                FileoutputUtil.log(new StringBuilder().append("聊天招待操作( 0x").append(StringUtil.getLeftPaddedStr(Integer.toHexString(action).toUpperCase(), '0', 2)).append(" ) 未知.").toString());
         }
     }
 

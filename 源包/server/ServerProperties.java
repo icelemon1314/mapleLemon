@@ -18,7 +18,7 @@ public class ServerProperties {
 
     private static final Properties props = new Properties();
 
-    public static boolean LOG_PACKETS = true;
+    public static boolean showPacket = false;
     private static final Map<String, Boolean> blockedOpcodes = new HashMap();
     private static boolean blockDefault;
     public static int maxHp = 99999;
@@ -38,9 +38,9 @@ public class ServerProperties {
             props.load(bf);
             bf.close();
         } catch (IOException ex) {
-            System.out.println("加载 " + getPath() + " 配置出错 " + ex);
+            FileoutputUtil.log("加载 " + getPath() + " 配置出错 " + ex);
         }
-        LOG_PACKETS = Boolean.parseBoolean(ServerProperties.getProperty("LOG_PACKETS", String.valueOf(LOG_PACKETS)));
+        showPacket = Boolean.parseBoolean(ServerProperties.getProperty("ShowPacket", String.valueOf(showPacket)));
         maxHp = Integer.parseInt(ServerProperties.getProperty("maxHp", String.valueOf(maxHp)));
         maxMp = Integer.parseInt(ServerProperties.getProperty("maxMp", String.valueOf(maxMp)));
         maxMeso = Long.parseLong(ServerProperties.getProperty("maxMeso", String.valueOf(maxMeso)));
@@ -195,7 +195,7 @@ public class ServerProperties {
     }
 
     public static boolean ShowPacket() {
-        return LOG_PACKETS;
+        return showPacket;
     }
 
     public static boolean SendPacket(String op, String pHeaderStr) {

@@ -269,7 +269,6 @@ public class WorldGuildService {
     }
 
     public void save() {
-        System.out.println("正在保存家族数据...");
         this.lock.writeLock().lock();
         try {
             for (MapleGuild guild : this.guildList.values()) {

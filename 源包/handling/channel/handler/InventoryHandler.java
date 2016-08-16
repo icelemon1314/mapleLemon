@@ -139,7 +139,7 @@ public class InventoryHandler {
                 List<Integer> rewards = ii.getRandomItemInfo().get(itemId);
                 if ((rewards != null) && ((rewards.size()) > 0)) {
                     int ID = rewards.get(Randomizer.nextInt(rewards.size()));
-                    if (chr.isAdmin()) {
+                    if (chr.isShowPacket()) {
                         chr.dropMessage(5, "打开道具获得: " + ID);
                     }
                     MapleInventoryManipulator.addById(c, ID, (short) 1, "Reward item: " + itemId + " on " + FileoutputUtil.CurrentReadable_Date());
@@ -188,7 +188,7 @@ public class InventoryHandler {
                                         item.setExpiration(System.currentTimeMillis() + reward.period * 60L * 1000L);
                                     }
                                     item.setGMLog("Reward item: " + itemId + " on " + FileoutputUtil.CurrentReadable_Date());
-                                    if (chr.isAdmin()) {
+                                    if (chr.isShowPacket()) {
                                         chr.dropMessage(5, "打开道具获得: " + item.getItemId());
                                     }
                                     if (reward.itemid / 1000 == 1182) {
@@ -197,7 +197,7 @@ public class InventoryHandler {
                                     MapleInventoryManipulator.addbyItem(c, item);
                                     c.getSession().write(MaplePacketCreator.getShowItemGain(item.getItemId(), item.getQuantity(), true));
                                 } else {
-                                    if (chr.isAdmin()) {
+                                    if (chr.isShowPacket()) {
                                         chr.dropMessage(5, "打开道具获得: " + reward.itemid + " - " + reward.quantity);
                                     }
                                     MapleInventoryManipulator.addById(c, reward.itemid, reward.quantity, "Reward item: " + itemId + " on " + FileoutputUtil.CurrentReadable_Date());
@@ -1797,10 +1797,10 @@ public class InventoryHandler {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
-        if (chr.isAdmin()) {
+        if (chr.isShowPacket()) {
             chr.dropSpouseMessage(11, "卷轴道具: " + scroll.getItemId() + " - " + ii.getName(scroll.getItemId()) + " 成功几率为: " + successRate + "% 卷轴是否失败不消失装备: " + noCursed);
         }
-            c.getSession().write(MaplePacketCreator.enableActions());
+        c.getSession().write(MaplePacketCreator.enableActions());
     }
 
     public static void UseCarvedSeal(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
@@ -1823,7 +1823,7 @@ public class InventoryHandler {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
-        if (chr.isAdmin()) {
+        if (chr.isShowPacket()) {
             chr.dropSpouseMessage(11, "卷轴道具: " + scroll.getItemId() + " - " + ii.getName(scroll.getItemId()) + " 成功几率为: " + successRate + "%");
         }
 

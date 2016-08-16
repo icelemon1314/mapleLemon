@@ -33,7 +33,7 @@ public class CouponCodeHandler {
         try {
             info = MapleCharacterUtil.getNXCodeInfo(code);
         } catch (SQLException e) {
-            System.out.println("错误 getNXCodeInfo" + e);
+            FileoutputUtil.log("错误 getNXCodeInfo" + e);
         }
         if ((info != null) && (((Boolean) info.left))) {
             int type = ((Integer) info.mid);
@@ -41,7 +41,7 @@ public class CouponCodeHandler {
             try {
                 MapleCharacterUtil.setNXCodeUsed(chr.getName(), code);
             } catch (SQLException e) {
-                System.out.println("错误 setNXCodeUsed" + e);
+                FileoutputUtil.log("错误 setNXCodeUsed" + e);
                 c.getSession().write(MTSCSPacket.商城错误提示(0));
                 return;
             }

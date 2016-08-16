@@ -70,7 +70,6 @@ public class HiredMerchantSave {
                     this.TimeTaken += System.currentTimeMillis() - Start;
                     this.ShopsSaved += 1;
                 }
-                System.out.println("[保存雇佣商店数据 线程 " + this.ThreadID + "] 共保存: " + this.ShopsSaved + " | 耗时: " + this.TimeTaken + " 毫秒.");
                 synchronized (this.ToNotify) {
                     this.ToNotify.notify();
                 }

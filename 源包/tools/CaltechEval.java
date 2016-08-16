@@ -18,7 +18,7 @@ public class CaltechEval {
         }
 
         CaltechEval m = new CaltechEval(args[0]);
-        System.out.println(args[0].replace(" ", "") + " = " + m.evaluate());
+        FileoutputUtil.log(args[0].replace(" ", "") + " = " + m.evaluate());
     }
 
     public CaltechEval(String s) {

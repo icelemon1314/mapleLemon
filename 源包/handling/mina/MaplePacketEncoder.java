@@ -4,6 +4,7 @@ import client.MapleClient;
 import handling.RecvPacketOpcode;
 import handling.SendPacketOpcode;
 
+import java.io.File;
 import java.util.concurrent.locks.Lock;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
@@ -56,10 +57,9 @@ public final class MaplePacketEncoder implements ProtocolEncoder {
                             } else if (op.endsWith("PLAYER_INTERACTION")) {
                                 FileoutputUtil.packetLog(FileoutputUtil.玩家互动封包, SendTos + RecvTo);
                             }
-
                         }
                     } else {
-                        System.out.println(Recv + HexTool.toString(new byte[]{input[0], input[1]}) + "...\r\n");
+                        FileoutputUtil.log(Recv + HexTool.toString(new byte[]{input[0], input[1]}) + "...\r\n");
                     }
                 }
             }

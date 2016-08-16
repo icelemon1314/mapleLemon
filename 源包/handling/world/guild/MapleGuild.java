@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.log4j.Logger;
 import server.MapleStatEffect;
+import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.data.output.MaplePacketLittleEndianWriter;
 import tools.packet.GuildPacket;
@@ -934,7 +935,7 @@ public class MapleGuild
             }
         }
         if (players.size() != this.members.size()) {
-            System.out.println(new StringBuilder().append("家族成员信息加载错误 - 实际加载: ").append(players.size()).append(" 应当加载: ").append(this.members.size()).toString());
+            FileoutputUtil.log(new StringBuilder().append("家族成员信息加载错误 - 实际加载: ").append(players.size()).append(" 应当加载: ").append(this.members.size()).toString());
         }
         mplew.writeShort(players.size());
         for (MapleGuildCharacter mgc : players) {
@@ -1035,7 +1036,7 @@ public class MapleGuild
                 ps.close();
             }
         } catch (SQLException se) {
-            System.out.println(new StringBuilder().append("SQLException: ").append(se.getLocalizedMessage()).toString());
+            FileoutputUtil.log(new StringBuilder().append("SQLException: ").append(se.getLocalizedMessage()).toString());
         }
     }
 
@@ -1105,7 +1106,7 @@ public class MapleGuild
                 ps.close();
             }
         } catch (SQLException se) {
-            System.out.println("SQLException: " + se.getLocalizedMessage());
+            FileoutputUtil.log("SQLException: " + se.getLocalizedMessage());
         }
         return guilds;
     }

@@ -8,6 +8,7 @@ import client.inventory.Item;
 import client.inventory.MapleInventoryType;
 import client.inventory.MaplePet;
 import constants.ItemConstants;
+import tools.FileoutputUtil;
 import tools.Pair;
 
 import java.io.Serializable;
@@ -34,7 +35,7 @@ public class MapleQuestComplete implements Serializable {
         } if (type == MapleQuestCompleteType.exp) {
             this.dataStore.add(new Pair(itemId,num));
         } else {
-            System.out.println("暂时不支持的奖励类型："+type.toString());
+            FileoutputUtil.log("暂时不支持的奖励类型："+type.toString());
         }
     }
 
@@ -109,7 +110,6 @@ public class MapleQuestComplete implements Serializable {
     }
 
     public boolean removeQuestItem(MapleCharacter chr){
-        System.out.println("准备扣除道具！");
         switch (type) {
             case item:
                 for (Pair a : this.dataStore) {
@@ -119,12 +119,10 @@ public class MapleQuestComplete implements Serializable {
                     for (Item item : chr.getInventory(iType).listById(itemId)) {
                         quantity = (short) (quantity + item.getQuantity());
                     }
-                    System.out.println("准备扣除道具:"+quantity);
                     int count = ((Integer) a.getRight());
                     if ((quantity < count) || ((count <= 0) && (quantity > 0))) {
                         return false;
                     }
-                    System.out.println("扣除道具:"+itemId+'|'+count);
                     chr.removeItem(itemId,count);
                 }
                 return true;

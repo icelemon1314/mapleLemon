@@ -99,9 +99,9 @@ public class MapleShop {
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         MapleShopItem shopItem = findBySlotAndId(c, itemId, position);
 
-        System.out.println("购买商店道具！");
+        FileoutputUtil.log("购买商店道具！");
         if ((shopItem != null) && (shopItem.getPrice() > 0)) {
-            System.out.println("购买商店道具！");
+            FileoutputUtil.log("购买商店道具！");
             int price = ItemConstants.isRechargable(itemId) ? shopItem.getPrice() : shopItem.getPrice() * quantity;
             if ((price >= 0) && (c.getPlayer().getMeso() >= price)) {
                 if (MapleInventoryManipulator.checkSpace(c, itemId, quantity, "")) {
@@ -139,7 +139,7 @@ public class MapleShop {
         }
         Item item = c.getPlayer().getInventory(type).getItem((short) slot);
         if (item == null) {
-            System.out.println("该位置上无道具："+slot);
+            FileoutputUtil.log("该位置上无道具："+slot);
             return;
         }
         if (ItemConstants.is飞镖道具(item.getItemId()) || ItemConstants.is子弹道具(item.getItemId())) {

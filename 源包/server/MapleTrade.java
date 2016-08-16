@@ -14,6 +14,7 @@ import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
+import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.packet.PlayerShopPacket;
 import tools.packet.TradePacket;
@@ -46,13 +47,13 @@ public class MapleTrade {
                     item.setFlag((short) (flag - ItemFlag.KARMA_USE.getValue()));
                 }
                 MapleInventoryManipulator.addFromDrop(((MapleCharacter) this.chr.get()).getClient(), item, false);
-                System.out.println("[交易] " + ((MapleCharacter) this.chr.get()).getName() + " 交易获得道具: " + item.getItemId() + " x " + item.getQuantity() + " - " + ii.getName(item.getItemId()));
+                FileoutputUtil.log("[交易] " + ((MapleCharacter) this.chr.get()).getName() + " 交易获得道具: " + item.getItemId() + " x " + item.getQuantity() + " - " + ii.getName(item.getItemId()));
             }
             this.exchangeItems.clear();
         }
         if (this.exchangeMeso > 0) {
             ((MapleCharacter) this.chr.get()).gainMeso(this.exchangeMeso - GameConstants.getTaxAmount(this.exchangeMeso), false, false);
-            System.out.println("[交易] " + ((MapleCharacter) this.chr.get()).getName() + " 交易获得金币: " + this.exchangeMeso);
+            FileoutputUtil.log("[交易] " + ((MapleCharacter) this.chr.get()).getName() + " 交易获得金币: " + this.exchangeMeso);
         }
         this.exchangeMeso = 0;
         ((MapleCharacter) this.chr.get()).getClient().getSession().write(TradePacket.TradeMessage(this.tradingslot, (byte) 8));
@@ -263,7 +264,7 @@ public class MapleTrade {
             if ((lz == 0) && (lz2 == 0)) {
                 local.CompleteTrade();
                 partner.CompleteTrade();
-                System.out.println("[交易] " + local.getChr().getName() + " 和 " + partner.getChr().getName() + " 交易完成。");
+                FileoutputUtil.log("[交易] " + local.getChr().getName() + " 和 " + partner.getChr().getName() + " 交易完成。");
             } else {
                 partner.cancel(partner.getChr().getClient(), partner.getChr(), lz == 0 ? lz2 : lz);
                 local.cancel(player.getClient(), player, lz == 0 ? lz2 : lz);

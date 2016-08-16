@@ -2,6 +2,7 @@ package client.messages.commands;
 
 import client.MapleClient;
 import client.MapleJob;
+import client.MapleStat;
 import client.inventory.Equip;
 import client.inventory.Item;
 import client.inventory.MapleInventoryType;
@@ -31,6 +32,7 @@ import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.life.MapleLifeFactory;
 import server.life.MapleMonster;
+import server.life.MapleMonsterInformationProvider;
 import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
 import server.shop.MapleShopFactory;
@@ -49,84 +51,78 @@ public class PlayerCommand {
         return PlayerGMRank.NORMAL;
     }
 
-    public static class 添加怪物 extends CommandExecute {
+    public static class ap extends CommandExecute {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
             if (splitted.length < 3) {
-                c.getPlayer().dropMessage(6, splitted[0] + " <怪物ID> <数量>");
+                c.getPlayer().dropMessage(6, splitted[0] + " str/dex/luk/int <数量>");
                 return 0;
             }
-            int mobid = Integer.parseInt(splitted[1]);
-            int mobTime = Integer.parseInt(splitted[2]);
-            MapleMonster npc;
-            try {
-                npc = MapleLifeFactory.getMonster(mobid);
-            } catch (RuntimeException e) {
-                c.getPlayer().dropMessage(5, "错误: " + e.getMessage());
+            String subAp = splitted[1];
+            int apNum = Integer.parseInt(splitted[2]);
+
+            if (c.getPlayer().getRemainingAp() < apNum) {
+                c.getPlayer().dropMessage(6, "能力点不足！");
                 return 0;
             }
-            if (npc != null) {
-                final int xpos = c.getPlayer().getPosition().x;
-                final int ypos = c.getPlayer().getPosition().y;
-                final int fh = c.getPlayer().getMap().getFootholds().findBelow(c.getPlayer().getPosition()).getId();
-                npc.setPosition(c.getPlayer().getPosition());
-                npc.setCy(ypos);
-                npc.setRx0(xpos);
-                npc.setRx1(xpos);
-                npc.setFh(fh);
-                c.getPlayer().getMap().addMonsterSpawn(npc, mobTime, (byte) -1, null);
-                c.getPlayer().dropMessage(6, "请不要重载此地图, 否则服务器重启后怪物会消失");
-            } else {
-                c.getPlayer().dropMessage(6, "你输入了一个无效的怪物ID");
-                return 0;
+
+            c.getPlayer().gainAp((short)(-apNum));
+            switch(subAp) {
+                case "str":
+                    c.getPlayer().getStat().setStr((short)(apNum+c.getPlayer().getStat().getStr()),c.getPlayer());
+                    c.getPlayer().updateSingleStat(MapleStat.力量, c.getPlayer().getStat().getStr());
+                    break;
+                case "dex":
+                    c.getPlayer().getStat().setDex((short)(apNum+c.getPlayer().getStat().getDex()),c.getPlayer());
+                    c.getPlayer().updateSingleStat(MapleStat.敏捷, c.getPlayer().getStat().getDex());
+                    break;
+                case "luk":
+                    c.getPlayer().getStat().setLuk((short)(apNum+c.getPlayer().getStat().getLuk()),c.getPlayer());
+                    c.getPlayer().updateSingleStat(MapleStat.运气, c.getPlayer().getStat().getLuk());
+                    break;
+                case "int":
+                    c.getPlayer().getStat().setInt((short)(apNum+c.getPlayer().getStat().getInt()),c.getPlayer());
+                    c.getPlayer().updateSingleStat(MapleStat.智力, c.getPlayer().getStat().getInt());
+                    break;
+                default:
+                    c.getPlayer().dropMessage(6, splitted[0] + " str/dex/luk/int <数量>");
+                    break;
             }
             return 1;
         }
     }
 
-    public static class 怪物 extends CommandExecute {
+    public static class spawn extends CommandExecute {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
-            MapleMonster mob = null;
-            for (final MapleMapObject monstermo : c.getPlayer().getMap().getMapObjectsInRange(c.getPlayer().getPosition(), 100000, Arrays.asList(MapleMapObjectType.MONSTER))) {
-                mob = (MapleMonster) monstermo;
-                if (mob.isAlive()) {
-                    c.getPlayer().dropMessage(6, "怪物: " + mob.toString());
-                    break; //only one
-                }
+
+            if (splitted.length < 2) {
+                c.getPlayer().dropMessage(6, splitted[0] + " <怪物ID>");
+                return 0;
             }
+            int mobId = Integer.parseInt(splitted[1]);
+            MapleMonster mob = MapleLifeFactory.getMonster(mobId);
             if (mob == null) {
-                c.getPlayer().dropMessage(6, "没找到任何怪物");
+                c.getPlayer().dropMessage(6, "找不到怪物： "+mobId);
+                return 0;
             }
+            c.getPlayer().getMap().spawnMonsterOnGroundBelow(mob, c.getPlayer().getPosition());
             return 1;
         }
     }
 
-    /*public static class 活动 extends CommandExecute {
-
-     @Override
-     public int execute(MapleClient c, String[] splitted) {
-     if (c.getPlayer().isInBlockedMap() || c.getPlayer().hasBlockedInventory()) {
-     c.getPlayer().dropMessage(5, "在这里无法使用该命令");
-     return 0;
-     }
-     NPCScriptManager.getInstance().start(c, 9000000, null);
-     return 1;
-     }
-     }*/
-
-    public static class 解卡 extends CommandExecute {
+    public static class exp extends CommandExecute {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
-            c.removeClickedNPC();
-            NPCScriptManager.getInstance().dispose(c);
-            ItemScriptManager.getInstance().dispose(c);
-            QuestScriptManager.getInstance().dispose(c);
-            c.getSession().write(MaplePacketCreator.enableActions());
-            c.getPlayer().dropMessage(6, "解卡成功。");
+            if (splitted.length < 2) {
+                c.getPlayer().dropMessage(6, splitted[0] + " <经验>");
+                return 0;
+            }
+            int exp = Integer.parseInt(splitted[1]);
+            c.getPlayer().gainExp(exp);
             return 1;
         }
     }
@@ -178,13 +174,39 @@ public class PlayerCommand {
         }
     }
 
-    public static class tomap extends CommandExecute {
+    public static class warp extends CommandExecute {
 
         @Override
         public int execute(MapleClient c, String[] splitted){
             final int mapId = Integer.parseInt(splitted[1]);
             c.getPlayer().changeMap(mapId,0);
             return 0;
+        }
+    }
+
+    public static class meso extends CommandExecute {
+
+        @Override
+        public int execute(MapleClient c, String[] splitted) {
+            if (splitted.length < 2) {
+                c.getPlayer().dropMessage(6, splitted[0] + " <金额>");
+                return 0;
+            }
+            c.getPlayer().gainMeso(Long.parseLong(splitted[1]), true);
+            return 1;
+        }
+    }
+
+    public static class cash extends CommandExecute {
+
+        @Override
+        public int execute(MapleClient c, String[] splitted) {
+            if (splitted.length < 2) {
+                c.getPlayer().dropMessage(6, splitted[0] + " <金额>");
+                return 0;
+            }
+            c.getPlayer().modifyCSPoints(1,Integer.parseInt(splitted[1]));
+            return 1;
         }
     }
 
@@ -195,22 +217,13 @@ public class PlayerCommand {
         public int execute(MapleClient c, String[] splitted) {
             c.getPlayer().dropMessage(6, "怀旧冒×岛所有内容还原GF设定，转职请找转职教官！");
             c.getPlayer().dropMessage(6, "制作道具：@item 道具ID");
-            c.getPlayer().dropMessage(6, "传送到指定地图：@tomap 地图ID");
+            c.getPlayer().dropMessage(6, "传送到指定地图：@warp 地图ID");
             c.getPlayer().dropMessage(6, "快速转职：@job 职业ID");
-            return 1;
-        }
-    }
-
-    /**
-     * 重置事件脚本
-     */
-    public static class reloadevents extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            for (ChannelServer instance : ChannelServer.getAllInstances()) {
-                instance.reloadEvents();
-            }
+            c.getPlayer().dropMessage(6, "快速加点：@ap str/dex/luk/int 数量 ");
+            c.getPlayer().dropMessage(6, "加经验：@exp 经验值");
+            c.getPlayer().dropMessage(6, "召唤怪物：@spawn 怪物ID");
+            c.getPlayer().dropMessage(6, "加金币：@meso 数量");
+            c.getPlayer().dropMessage(6, "加点卷：@cash 数量");
             return 1;
         }
     }
@@ -249,55 +262,6 @@ public class PlayerCommand {
                 result = "找不到物品";
             }
             c.getSession().write(NPCPacket.sendNPCSay(9010000, result));
-            return 1;
-        }
-    }
-
-    public static class 扔物品 extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            if (splitted.length < 2) {
-                c.getPlayer().dropMessage(6, splitted[0] + " <数量> <道具名稱>");
-                return 0;
-            }
-            final String itemName = StringUtil.joinStringFrom(splitted, 2);
-            final short quantity = (short) CommandProcessorUtil.getOptionalIntArg(splitted, 1, 1);
-            int itemId = 0;
-            for (Pair<Integer, String> item : MapleItemInformationProvider.getInstance().getAllItems2()) {
-                if (item.getRight().toLowerCase().equals(itemName.toLowerCase())) {
-                    itemId = item.getLeft();
-                    break;
-                }
-            }
-            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-            if (!ii.itemExists(itemId)) {
-                c.getPlayer().dropMessage(5, itemName + "不存在");
-            } else {
-                Item toDrop;
-                if (GameConstants.getInventoryType(itemId) == MapleInventoryType.EQUIP) {
-
-                    toDrop = ii.getEquipById(itemId);
-                } else {
-                    toDrop = new client.inventory.Item(itemId, (byte) 0, quantity, (byte) 0);
-                }
-                toDrop.setGMLog(c.getPlayer().getName() + " 使用 " + splitted[0] + " 命令制作");
-                toDrop.setOwner(c.getPlayer().getName());
-                c.getPlayer().getMap().spawnItemDrop(c.getPlayer(), c.getPlayer(), toDrop, c.getPlayer().getPosition(), true, true);
-            }
-            return 1;
-        }
-    }
-
-    public static class 金币 extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            if (splitted.length < 2) {
-                c.getPlayer().dropMessage(6, splitted[0] + " <金额>");
-                return 0;
-            }
-            c.getPlayer().gainMeso(Long.parseLong(splitted[1]), true);
             return 1;
         }
     }

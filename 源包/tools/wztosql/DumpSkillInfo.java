@@ -1,6 +1,7 @@
 package tools.wztosql;
 
 import provider.*;
+import tools.FileoutputUtil;
 import tools.Pair;
 
 import java.awt.*;
@@ -32,7 +33,7 @@ public class DumpSkillInfo {
                 }
             } else {
                 String skillName = MapleDataTool.getString(data.getChildByPath("name"),"默认");
-                System.out.println("public static final int "+skillName+" = "+data.getName()+";");
+                FileoutputUtil.log("public static final int "+skillName+" = "+data.getName()+";");
             }
         }
     }

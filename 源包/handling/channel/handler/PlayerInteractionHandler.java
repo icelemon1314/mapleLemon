@@ -37,12 +37,12 @@ public class PlayerInteractionHandler {
         byte mode = slea.readByte();
         InteractionOpcode action = InteractionOpcode.getByAction(mode);
         if (chr == null || (action == null)) {
-            System.out.println("玩家互动未知的操作类型: " + mode + " " + slea.toString() + "  " + chr == null);
+            FileoutputUtil.log("玩家互动未知的操作类型: " + mode + " " + slea.toString());
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
         chr.setScrolledPosition((short) 0);
-        if (chr.isAdmin()) {
+        if (chr.isShowPacket()) {
             chr.dropMessage(5, "玩家互动操作类型: " + action);
         }
         switch (action) {
@@ -449,7 +449,7 @@ public class PlayerInteractionHandler {
                 slea.skip(1);
                 int slot1 = slea.readShort();
                 IMaplePlayerShop shop1 = chr.getPlayerShop();
-                if (chr.isAdmin()) {
+                if (chr.isShowPacket()) {
                     chr.dropMessage(5, "移除商店道具: 道具数量 " + shop1.getItems().size() + " slot " + slot1);
                 }
                 if ((shop1 == null) || (!shop1.isOwner(chr)) || ((shop1 instanceof MapleMiniGame)) || (shop1.getItems().size() <= 0) || (shop1.getItems().size() <= slot1) || (slot1 < 0)) {
@@ -461,7 +461,7 @@ public class PlayerInteractionHandler {
                     Item item_get = item2.item.copy();
                     check = item2.bundles * item2.item.getQuantity();
                     if ((check < 0L) || (check > 32767L)) {
-                        if (chr.isAdmin()) {
+                        if (chr.isShowPacket()) {
                             chr.dropMessage(5, "移除商店道具出错: check " + check);
                         }
                         return;
@@ -536,7 +536,7 @@ public class PlayerInteractionHandler {
                 }
                 if (chr.getMeso() + imps.getMeso() > 0) {
                     chr.gainMeso(imps.getMeso(), false);
-                    System.out.println("[雇佣] " + chr.getName() + " 雇佣整理获得金币: " + imps.getMeso() + " 时间: " + FileoutputUtil.CurrentReadable_Date());
+                    FileoutputUtil.log("[雇佣] " + chr.getName() + " 雇佣整理获得金币: " + imps.getMeso() + " 时间: " + FileoutputUtil.CurrentReadable_Date());
                     FileoutputUtil.hiredMerchLog(chr.getName(), "雇佣整理获得金币: " + imps.getMeso());
                     imps.setMeso(0);
                 }
@@ -780,7 +780,7 @@ public class PlayerInteractionHandler {
                 break;
             default:
                 if (ServerProperties.ShowPacket()) {
-                    System.out.println("玩家互动未知的操作类型: 0x" + StringUtil.getLeftPaddedStr(Integer.toHexString(mode).toUpperCase(), '0', 2) + " " + slea.toString());
+                    FileoutputUtil.log("玩家互动未知的操作类型: 0x" + StringUtil.getLeftPaddedStr(Integer.toHexString(mode).toUpperCase(), '0', 2) + " " + slea.toString());
                 }
                 c.getSession().write(MaplePacketCreator.enableActions());
         }

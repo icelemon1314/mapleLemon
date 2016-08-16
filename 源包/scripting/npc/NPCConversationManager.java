@@ -530,22 +530,22 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     public void startQuest(int questId) {
         MapleQuestStatus tmp = getPlayer().getQuest(MapleQuest.getInstance(questId));
         if (tmp.getCustomData().isEmpty()) {
-            System.out.println("开始纯记录任务！");
+            FileoutputUtil.log("开始纯记录任务！");
             tmp.setStatus((byte)MapleQuestStatus.QUEST_STARTED);
         } else {
-            System.out.println("开始WZ任务");
+            FileoutputUtil.log("开始WZ任务");
             MapleQuest.getInstance(questId).start(getPlayer(), getNpc());
         }
     }
 
     public void completeQuest(int questId) {
-        System.out.println("任务附加数据："+getPlayer().getQuest(MapleQuest.getInstance(questId)).getCustomData());
+        FileoutputUtil.log("任务附加数据："+getPlayer().getQuest(MapleQuest.getInstance(questId)).getCustomData());
         MapleQuestStatus tmp = getPlayer().getQuest(MapleQuest.getInstance(questId));
         if (tmp.getCustomData().isEmpty()) {
-            System.out.println("完成纯记录任务！");
+            FileoutputUtil.log("完成纯记录任务！");
             getPlayer().getQuest(MapleQuest.getInstance(questId)).setStatus((byte)MapleQuestStatus.QUEST_COMPLETED);
         } else {
-            System.out.println("完成WZ任务");
+            FileoutputUtil.log("完成WZ任务");
             MapleQuest.getInstance(questId).complete(getPlayer(), getNpc());
         }
     }
@@ -1485,7 +1485,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
                         namez = new StringBuilder().append(de.Minimum * getClient().getChannelServer().getMesoRate(getPlayer().getWorld())).append(" - ").append(de.Maximum * getClient().getChannelServer().getMesoRate(getPlayer().getWorld())).append(" 的金币").toString();
                     }
                     int chance = de.chance * getClient().getChannelServer().getDropRate(getPlayer().getWorld());
-                    if (getPlayer().isAdmin()) {
+                    if (getPlayer().isShowPacket()) {
                         name.append(num + 1).append(") #v").append(itemId).append("#").append(namez).append(" - ").append(Integer.valueOf(chance >= 999999 ? 1000000 : chance).doubleValue() / 10000.0D).append("%的爆率. ").append((de.questid > 0) && (MapleQuest.getInstance(de.questid).getName().length() > 0) ? new StringBuilder().append("需要接受任务: ").append(MapleQuest.getInstance(de.questid).getName()).toString() : "").append("\r\n");
                     } else {
                         name.append(num + 1).append(") #v").append(itemId).append("#").append(namez).append((de.questid > 0) && (MapleQuest.getInstance(de.questid).getName().length() > 0) ? new StringBuilder().append("需要接受任务: ").append(MapleQuest.getInstance(de.questid).getName()).toString() : "").append("\r\n");
@@ -1523,7 +1523,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
                         names = new StringBuilder().append(de.Minimum * cashServerRate).append(" - ").append(de.Maximum * cashServerRate).append(" 的抵用卷").toString();
                     }
                     int chance = de.chance * globalServerRate;
-                    if (getPlayer().isAdmin()) {
+                    if (getPlayer().isShowPacket()) {
                         name.append(num + 1).append(") #v").append(itemId).append("#").append(names).append(" - ").append(Integer.valueOf(chance >= 999999 ? 1000000 : chance).doubleValue() / 10000.0D).append("%的爆率. ").append((de.questid > 0) && (MapleQuest.getInstance(de.questid).getName().length() > 0) ? new StringBuilder().append("需要接受任务: ").append(MapleQuest.getInstance(de.questid).getName()).toString() : "").append("\r\n");
                     } else {
                         name.append(num + 1).append(") #v").append(itemId).append("#").append(names).append((de.questid > 0) && (MapleQuest.getInstance(de.questid).getName().length() > 0) ? new StringBuilder().append("需要接受任务: ").append(MapleQuest.getInstance(de.questid).getName()).toString() : "").append("\r\n");

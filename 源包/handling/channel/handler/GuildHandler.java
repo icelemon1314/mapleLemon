@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import server.MapleStatEffect;
+import tools.FileoutputUtil;
 import tools.Pair;
 import tools.StringUtil;
 import tools.data.input.SeekableLittleEndianAccessor;
@@ -284,7 +285,7 @@ public class GuildHandler {
                 }
                 break;
             default:
-                System.out.println("未知家族操作类型: ( 0x" + StringUtil.getLeftPaddedStr(Integer.toHexString(mode).toUpperCase(), '0', 2) + " )" + slea.toString());
+                FileoutputUtil.log("未知家族操作类型: ( 0x" + StringUtil.getLeftPaddedStr(Integer.toHexString(mode).toUpperCase(), '0', 2) + " )" + slea.toString());
         }
     }
 }

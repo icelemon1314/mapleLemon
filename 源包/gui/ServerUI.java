@@ -50,6 +50,7 @@ import server.Start;
 import server.Timer;
 import server.life.MapleLifeFactory;
 import server.quest.MapleQuest;
+import tools.FileoutputUtil;
 import tools.HexTool;
 import tools.MaplePacketCreator;
 import tools.packet.NPCPacket;
@@ -2617,7 +2618,7 @@ public class ServerUI extends javax.swing.JFrame {
         try {
             initCharacterPannel();
         } catch (Exception ex) {
-            System.out.println("初始化角色信息出错:" + ex);
+            FileoutputUtil.log("初始化角色信息出错:" + ex);
         }
     }
 

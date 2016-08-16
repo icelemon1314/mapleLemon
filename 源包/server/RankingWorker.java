@@ -52,8 +52,8 @@ public class RankingWorker {
     }
 
     public static void start() {
-        System.out.println("系统自动更新玩家排名功能已启动...");
-        System.out.println(new StringBuilder().append("更新间隔时间为: ").append(Start.instance.getRankTime()).append(" 分钟1次。").toString());
+        FileoutputUtil.log("系统自动更新玩家排名功能已启动...");
+        FileoutputUtil.log(new StringBuilder().append("更新间隔时间为: ").append(Start.instance.getRankTime()).append(" 分钟1次。").toString());
         Timer.WorldTimer.getInstance().register(new Runnable() {
             @Override
             public void run() {
@@ -69,7 +69,7 @@ public class RankingWorker {
     }
 
     public static void updateRank() {
-        System.out.println("开始更新玩家排名...");
+        FileoutputUtil.log("开始更新玩家排名...");
         long startTime = System.currentTimeMillis();
         loadJobCommands();
         Connection con = DatabaseConnection.getConnection();
@@ -91,7 +91,7 @@ public class RankingWorker {
                 System.err.println("Could not rollback unfinished ranking transaction");
             }
         }
-        System.out.println(new StringBuilder().append("玩家排名更新完成 耗时: ").append((System.currentTimeMillis() - startTime) / 1000L).append(" 秒..").toString());
+        FileoutputUtil.log(new StringBuilder().append("玩家排名更新完成 耗时: ").append((System.currentTimeMillis() - startTime) / 1000L).append(" 秒..").toString());
     }
 
     public static void printSection(String s) {
@@ -99,7 +99,7 @@ public class RankingWorker {
         while (s.getBytes().length < 79) {
             s = new StringBuilder().append("=").append(s).toString();
         }
-        System.out.println(s);
+        FileoutputUtil.log(s);
     }
 
     private static void updateRanking(Connection con) throws Exception {

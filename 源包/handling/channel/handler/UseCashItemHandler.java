@@ -71,7 +71,7 @@ public class UseCashItemHandler {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
-        if (chr.isAdmin()) {
+        if (chr.isShowPacket()) {
             chr.dropMessage(5, new StringBuilder().append("使用商城道具 物品ID: ").append(itemId).append(" 物品类型: ").append(itemType).toString());
         }
         boolean used = false;
@@ -89,7 +89,7 @@ public class UseCashItemHandler {
                     int apto = slea.readInt();
                     int apfrom = slea.readInt();
                     int statLimit = c.getChannelServer().getStatLimit();
-                    if (chr.isAdmin()) {
+                    if (chr.isShowPacket()) {
                         chr.dropMessage(5, new StringBuilder().append("洗能力点 apto: ").append(apto).append(" apfrom: ").append(apfrom).toString());
                     }
                     if (apto == apfrom) {
@@ -333,7 +333,7 @@ public class UseCashItemHandler {
                 break;
             case 208: // 喇叭
                 // 2B 08 00 E8 C0 1F 00 0A 00 BA EC C0 AE B0 C8 B2 E2 CA D4
-                if (chr.isAdmin()) {
+                if (chr.isShowPacket()) {
                     chr.dropMessage(0, new StringBuilder().append("使用商场喇叭 道具类型: ").append(itemId / 1000 % 10).toString());
                 }
                 if (!c.getChannelServer().getMegaphoneMuteState()) {
@@ -616,8 +616,8 @@ public class UseCashItemHandler {
                 }
                 break;
             default:
-                System.out.println(new StringBuilder().append("使用未处理的商城道具 : ").append(itemId).toString());
-                System.out.println(slea.toString(true));
+                FileoutputUtil.log(new StringBuilder().append("使用未处理的商城道具 : ").append(itemId).toString());
+                FileoutputUtil.log(slea.toString(true));
         }
 
         if ((itemType != 506) || (used)) {

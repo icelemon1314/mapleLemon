@@ -12,6 +12,7 @@ import server.maps.MapleMapObjectType;
 import server.movement.AbsoluteLifeMovement;
 import server.movement.LifeMovement;
 import server.movement.LifeMovementFragment;
+import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.data.output.MaplePacketLittleEndianWriter;
 import tools.packet.PacketHelper;
@@ -124,7 +125,7 @@ public final class MonsterFamiliar extends AnimatedMapleMapObject implements Ser
 
     @Override
     public void sendSpawnData(MapleClient client) {
-        System.out.println("召唤spawnFamiliar");
+        FileoutputUtil.log("召唤spawnFamiliar");
         client.getSession().write(MaplePacketCreator.spawnFamiliar(this, true));
     }
 

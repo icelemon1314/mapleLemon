@@ -11,6 +11,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import server.ServerProperties;
+import tools.FileoutputUtil;
 
 public class ServerConstants implements Runnable {
 
@@ -70,8 +71,8 @@ public class ServerConstants implements Runnable {
             instance = new ServerConstants();
             mBeanServer.registerMBean(instance, new ObjectName("constants:type=ServerConstants"));
         } catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Error registering Shutdown MBean");
+            FileoutputUtil.log(e.getMessage());
+            FileoutputUtil.log("Error registering Shutdown MBean");
         }
     }
 

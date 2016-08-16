@@ -197,7 +197,7 @@ public class MapleInventoryManipulator {
                             pet.setInventoryPosition(newSlot);
                         }
                         //c.getSession().write(InventoryPacket.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nItem))));
-                        System.out.println("添加新道具到背包："+nItem.getItemId());
+                        FileoutputUtil.log("添加新道具到背包："+nItem.getItemId());
                         c.getSession().write(InventoryPacket.addItemToInventory(nItem));
 
                         if ((ItemConstants.isRechargable(itemId)) && (quantity == 0)) {
@@ -227,7 +227,7 @@ public class MapleInventoryManipulator {
                 if (gmLog != null) {
                     nItem.setGMLog(gmLog);
                 }
-                System.out.println("添加新道具到背包2："+nItem.getItemId());
+                FileoutputUtil.log("添加新道具到背包2："+nItem.getItemId());
                 c.getSession().write(InventoryPacket.addItemToInventory(nItem));
                 c.getSession().write(MaplePacketCreator.enableActions());
             }
@@ -256,7 +256,7 @@ public class MapleInventoryManipulator {
                 c.getSession().write(InventoryPacket.getShowInventoryFull());
                 return -1;
             }
-            System.out.println("添加新装备到背包1："+nEquip.getItemId());
+            FileoutputUtil.log("添加新装备到背包1："+nEquip.getItemId());
             c.getSession().write(InventoryPacket.addItemToInventory(nEquip));
             c.getPlayer().checkCopyItems();
         } else {
@@ -788,14 +788,14 @@ public class MapleInventoryManipulator {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
-        if ((chr.isAdmin()) && (ServerProperties.ShowPacket())) {
+        if (chr.isShowPacket()) {
             chr.dropMessage(5, new StringBuilder().append("穿戴装备  ").append(source.getItemId()).append(" src: ").append(src).append(" dst: ").append(dst).toString());
         }
 
         if (((source.getItemId() == 1003142) || (source.getItemId() == 1002140) || (source.getItemId() == 1042003) || (source.getItemId() == 1062007) || (source.getItemId() == 1322013) || (source.getItemId() == 1003824))
                 && (!chr.isIntern())) {
             chr.dropMessage(1, "无法佩带此物品");
-            System.out.println(new StringBuilder().append("[作弊] 非管理员玩家: ").append(chr.getName()).append(" 非法穿戴GM装备 ").append(source.getItemId()).toString());
+            FileoutputUtil.log(new StringBuilder().append("[作弊] 非管理员玩家: ").append(chr.getName()).append(" 非法穿戴GM装备 ").append(source.getItemId()).toString());
             removeById(c, MapleInventoryType.EQUIP, source.getItemId(), 1, true, false);
             AutobanManager.getInstance().autoban(chr.getClient(), "非法穿戴GM装备。");
             c.getSession().write(MaplePacketCreator.enableActions());
@@ -815,14 +815,14 @@ public class MapleInventoryManipulator {
             return;
         }
         if (((dst < -5003) || ((dst >= -999) && (dst < -99))) && (!stats.containsKey("cash"))) {
-            if (chr.isAdmin()) {
+            if (chr.isShowPacket()) {
                 chr.dropMessage(5, new StringBuilder().append("穿戴装备 - 2 ").append(source.getItemId()).append(" dst: ").append(dst).append(" 检测1: ").append(dst <= -1200).append(" 检测2: ").append((dst >= -999) && (dst < -99)).append(" 检测3: ").append(!stats.containsKey("cash")).toString());
             }
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
         if ((dst <= -1300) && (dst > -1306) ) {
-            if (chr.isAdmin()) {
+            if (chr.isShowPacket()) {
                 chr.dropMessage(5, new StringBuilder().append("穿戴装备 - 4 ").append(source.getItemId()).append(" dst: ").append(dst).append(" 检测1: ").append((dst <= -1300) && (dst > -1306)).append(" 检测2: ").toString());
             }
             c.getSession().write(MaplePacketCreator.enableActions());

@@ -19,6 +19,7 @@ import provider.MapleDataFileEntry;
 import provider.MapleDataProvider;
 import provider.MapleDataProviderFactory;
 import provider.MapleDataTool;
+import tools.FileoutputUtil;
 import tools.Pair;
 
 /**
@@ -34,16 +35,16 @@ public class BuffInformation {
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        System.out.println("Would you like to export all skills' information? <y/n>");
+        FileoutputUtil.log("Would you like to export all skills' information? <y/n>");
         boolean export = input.next().equalsIgnoreCase("y");
         if (export) {
             dumpSkills();
             for (Pair c : a) {
-                System.out.println("special char " + c.getRight() + " skill " + c.getLeft());
+                FileoutputUtil.log("special char " + c.getRight() + " skill " + c.getLeft());
             }
         }
         while (!export) {
-            System.out.println("Please insert skill id.");
+            FileoutputUtil.log("Please insert skill id.");
             int skill;
             try {
                 skill = input.nextInt();
@@ -51,17 +52,17 @@ public class BuffInformation {
                 if (!exceptions.contains(ex)) {
                     exceptions.add(ex);
                 }
-                System.out.println("Could not parse skill id.");
+                FileoutputUtil.log("Could not parse skill id.");
                 return;
             }
-            System.out.println(getSkillInformation(skill).toString());
+            FileoutputUtil.log(getSkillInformation(skill).toString());
         }
         if (exceptions.size() > 0) {
-            System.out.println("Show exceptions? <y/n>");
+            FileoutputUtil.log("Show exceptions? <y/n>");
             boolean show = input.next().equalsIgnoreCase("y");
             if (show) {
                 for (Exception ex : exceptions) {
-                    System.out.println(ex.toString());
+                    FileoutputUtil.log(ex.toString());
                 }
             }
         }
@@ -129,7 +130,7 @@ public class BuffInformation {
             if (data.getName().length() > 8) {
                 continue;
             }
-            System.out.println("Exporting job " + data.getName().replaceAll(".img", ""));
+            FileoutputUtil.log("Exporting job " + data.getName().replaceAll(".img", ""));
             for (MapleData sub : prov.getData(data.getName())) {
                 if (!sub.getName().equals("skill")) {
                     continue;
@@ -143,7 +144,7 @@ public class BuffInformation {
                             }
                         }
                         if (!found) {
-                            System.out.println("New information type found: " + sub3.getName());
+                            FileoutputUtil.log("New information type found: " + sub3.getName());
                         }
                         for (MapleData sub4 : sub3.getChildren()) {
                             String tab = "";
@@ -192,7 +193,7 @@ public class BuffInformation {
                             if (!exceptions.contains(ex)) {
                                 exceptions.add(ex);
                             }
-                            System.out.println("Failed to get information of " + sub2.getName());
+                            FileoutputUtil.log("Failed to get information of " + sub2.getName());
                         }
                         sb = new StringBuilder();
                     }
@@ -204,7 +205,7 @@ public class BuffInformation {
         long minutes = (total / (60 * 1000));
         long seconds = (total % (60 * 1000) / 1000);
         long milliseconds = (total % 1000);
-        System.out.println("Total time: " + minutes + " minute(s), " + seconds
+        FileoutputUtil.log("Total time: " + minutes + " minute(s), " + seconds
                 + " second(s), " + milliseconds + " millisecond(s).");
     }
 

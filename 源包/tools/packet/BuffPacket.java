@@ -258,7 +258,6 @@ public class BuffPacket {
         // E0 93
         // 00 00
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        System.out.println("发送BUFF:"+buffid);
         mplew.write(SendPacketOpcode.GIVE_BUFF.getValue());
         PacketHelper.writeBuffMask(mplew, statups);
         for (Pair<MapleBuffStat, Integer> statup : statups) {

@@ -11,6 +11,7 @@ import handling.login.LoginInformationProvider;
 import org.apache.log4j.Logger;
 import server.MapleItemInformationProvider;
 import server.ServerProperties;
+import tools.FileoutputUtil;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.LoginPacket;
 
@@ -34,15 +35,11 @@ public class CreateCharHandler {
         int shoes = slea.readInt();
         int weapon = slea.readInt();
 
-        if (ServerProperties.ShowPacket()) {
-            System.out.println("\r\n名字: " + name + "\r\n头发: " + hair + "\r\n脸型: " + face + "\r\n发型: " + hair + "\r\n脸饰: " + faceMark + "\r\n上衣: " + top + "\r\n裤子: " + bottom + "\r\n鞋子: " + shoes + "\r\n武器: " + weapon + "\r\n");
-        }
-
         MapleItemInformationProvider li = MapleItemInformationProvider.getInstance();
         int[] items = {top, bottom, cape, shoes, weapon};
         for (int i : items) {
             if (!LoginInformationProvider.getInstance().isEligibleItem(i)) {
-                System.out.println("[作弊] 新建角色装备检测失败 名字: " + name + " 道具ID: " + i + " - " + li.getName(i));
+                FileoutputUtil.log("[作弊] 新建角色装备检测失败 名字: " + name + " 道具ID: " + i + " - " + li.getName(i));
                 c.getSession().write(LoginPacket.charNameResponse(name, (byte) 3));
                 return;
             }
@@ -53,13 +50,13 @@ public class CreateCharHandler {
         for (int i = 0; i < 4; i++) {
             stat[i] = slea.readByte();
             if (stat[i] < 4 || stat[i] > 13) {
-                System.out.println("[作弊] 創建角色初始能力值過小或過大");
+                FileoutputUtil.log("[作弊] 創建角色初始能力值過小或過大");
                 return;
             }
             totalStat += stat[i];
         }
         if (totalStat != 25) {
-            System.out.println("[作弊] 創建角色初始總能力值不正確");
+            FileoutputUtil.log("[作弊] 創建角色初始總能力值不正確");
             return;
         }
         MapleCharacter newchar = MapleCharacter.getDefault(c, stat);

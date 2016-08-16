@@ -48,7 +48,7 @@ public class SummonHandler {
         }
         MapleSummon sum = chr.getSummons().get(slea.readInt());
         if (sum == null) {
-            System.out.println("找不到地图物体：召唤兽！");
+            FileoutputUtil.log("找不到地图物体：召唤兽！");
             return;
         }
         if ((sum.getOwnerId() != chr.getId()) || (sum.getSkillLevel() <= 0) || (sum.getMovementType() == SummonMovementType.不会移动)) {
@@ -60,7 +60,7 @@ public class SummonHandler {
         MovementParse.updatePosition(res, sum, 0);
         if (res.size() > 0) {
             if (slea.available() != 1L) {
-                System.out.println("slea.available() != 1 (召唤兽移动错误) 剩余封包长度: " + slea.available());
+                FileoutputUtil.log("slea.available() != 1 (召唤兽移动错误) 剩余封包长度: " + slea.available());
                 FileoutputUtil.log(FileoutputUtil.Movement_Sumon, "slea.available() = " + slea.available() + " (召唤兽移动错误) 封包: " + slea.toString(true));
                 return;
             }
@@ -80,7 +80,7 @@ public class SummonHandler {
         }
         MapleSummon summon = chr.getSummons().get(slea.readInt());
         if ((summon == null) || (summon.getOwnerId() != chr.getId())) {
-            System.out.println("找不到地图物体：召唤兽！");
+            FileoutputUtil.log("找不到地图物体：召唤兽！");
             return;
         }
         int type = slea.readByte();
@@ -165,7 +165,7 @@ public class SummonHandler {
             List allDamageNumbers = new ArrayList();
             for (int j = 0; j < numDamage; j++) {
                 int damge = slea.readInt();
-                if (chr.isAdmin()) {
+                if (chr.isShowPacket()) {
                     chr.dropMessage(-5, "召唤兽攻击 打怪数量: " + numAttacked + " 打怪次数: " + numDamage + " 打怪伤害: " + damge + " 怪物OID: " + mob.getObjectId());
                 }
                 allDamageNumbers.add(new Pair(damge, false));

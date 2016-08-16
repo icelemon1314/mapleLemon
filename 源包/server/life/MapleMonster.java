@@ -31,6 +31,7 @@ import scripting.event.EventInstanceManager;
 import server.MapleItemInformationProvider;
 import server.MapleStatEffect;
 import server.Randomizer;
+import server.Timer;
 import server.Timer.EtcTimer;
 import server.maps.MapleMap;
 import server.maps.MapleMapObject;
@@ -528,7 +529,18 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
             if (dropsDisabled()) {
                 mob.disableDrops();
             }
-            map.spawnRevives(mob, this.getObjectId());
+            int objId = this.getObjectId();
+            if (this.getId() == 5100001 || this.getId() == 5130106) {
+                Timer.MapTimer.getInstance().schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        map.spawnRevives(mob, objId);
+                    }
+                }, 2800L);
+            } else {
+                map.spawnRevives(mob, this.getObjectId());
+            }
+
         }
     }
 
@@ -803,13 +815,13 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
             } else {
                 poisonDot += effect.getDOT();
             }
-            if (from.isAdmin()) {
+            if (from.isShowPacket()) {
                 from.dropSpouseMessage(18, "[持续伤害] 开始处理效果 - 技能ID：" + effect.getSourceId());
                 from.dropSpouseMessage(18, "[持续伤害] 加成 - 技能ID：" + effect.getDOT() + " 被动： " + from.getStat().dot + " 被动加成： " + damageIncrease + " 最终加成：" + poisonDot);
             }
             status.setValue(status.getStati(), (int) (poisonDot * from.getStat().getCurrentMaxBaseDamage() / 100.0D));
             int poisonDamage = (int) (aniTime / 1000L * status.getX() / 2L);
-            if (from.isAdmin()) {
+            if (from.isShowPacket()) {
                 from.dropSpouseMessage(18, "[持续伤害] 持续伤害： " + poisonDamage + " 持续时间：" + aniTime + " 持续掉血：" + status.getX());
             }
             status.setPoisonSchedule(poisonDamage, from);

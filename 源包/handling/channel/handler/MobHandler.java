@@ -67,7 +67,7 @@ public final class MobHandler {
             MapleMap map = chr.getMap();
             c.getSession().write(MobPacket.moveMonsterResponse(monster.getObjectId(), moveid, monster.getMp(), monster.isControllerHasAggro(), skillId, skillLevel));
             if (slea.available() != 1) {
-                System.out.println("slea.available != 1 (怪物移动错误) 剩余封包长度: " + slea.available());
+                FileoutputUtil.log("slea.available != 1 (怪物移动错误) 剩余封包长度: " + slea.available());
                 FileoutputUtil.log(FileoutputUtil.Movement_Mob, "slea.available != 36 (怪物移动错误)\r\n怪物ID: " + monster.getId() + "\r\n" + slea.toString(true));
                 return;
             }

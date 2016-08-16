@@ -15,6 +15,7 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketSessionConfig;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import server.ServerProperties;
+import tools.FileoutputUtil;
 
 /**
  * 现金商城服务
@@ -48,10 +49,10 @@ public class CashShopServer {
             acceptor.bind(new InetSocketAddress(port));
             ((SocketSessionConfig) acceptor.getSessionConfig()).setTcpNoDelay(true);
 
-            System.out.println("完成!");
-            System.out.println("商城伺服器正在监听" + port + "端口\r\n");
+            FileoutputUtil.log("完成!");
+            FileoutputUtil.log("商城伺服器正在监听" + port + "端口\r\n");
         } catch (IOException e) {
-            System.out.println("失败!");
+            FileoutputUtil.log("失败!");
             System.err.println("无法绑定" + port + "端口");
             throw new RuntimeException("绑定端口失败.", e);
         }
@@ -73,9 +74,9 @@ public class CashShopServer {
         if (finishedShutdown) {
             return;
         }
-        System.out.println("正在关闭商城服务器...");
+        FileoutputUtil.log("正在关闭商城服务器...");
         players.disconnectAll();
-        System.out.println("商城服务器解除端口绑定...");
+        FileoutputUtil.log("商城服务器解除端口绑定...");
         acceptor.unbind();
         finishedShutdown = true;
     }

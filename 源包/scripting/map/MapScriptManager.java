@@ -42,7 +42,7 @@ public class MapScriptManager {
         }
         File scriptFile = new File("脚本/地图/" + type + scriptName + ".js");
         if (!scriptFile.exists()) {
-            if (c.getPlayer().isAdmin()) {
+            if (c.getPlayer().isShowPacket()) {
                 c.getPlayer().dropMessage(5, "地图触发: 未找到 地图/" + type + " 文件中的 " + scriptName + ".js 文件.");
             }
             FileoutputUtil.log(FileoutputUtil.Map_ScriptEx_Log, "地图触发: 未找到 地图/" + type + " 文件中的 " + scriptName + ".js 文件. 在地图 " + c.getPlayer().getMapId() + " - " + c.getPlayer().getMap().getMapName());
@@ -67,7 +67,7 @@ public class MapScriptManager {
                 }
             }
         }
-        if (c.getPlayer().isAdmin()) {
+        if (c.getPlayer().isShowPacket()) {
             c.getPlayer().dropMessage(5, "开始执行地图触发: 地图/" + type + " 文件中的 " + scriptName + ".js 文件.");
         }
         MapScript script = (MapScript) ((Invocable) map).getInterface(MapScript.class);

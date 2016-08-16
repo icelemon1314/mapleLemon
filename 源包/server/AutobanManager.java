@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.locks.ReentrantLock;
 import org.apache.log4j.Logger;
+import tools.FileoutputUtil;
 
 public class AutobanManager implements Runnable {
 
@@ -67,7 +68,7 @@ public class AutobanManager implements Runnable {
             }
 
             if ((this.points.get(acc)) >= AUTOBAN_POINTS) {
-                System.out.println(new StringBuilder().append("[作弊] 玩家 ").append(c.getPlayer().getName()).append(" A/b 触发 ").append(reason).toString());
+                FileoutputUtil.log(new StringBuilder().append("[作弊] 玩家 ").append(c.getPlayer().getName()).append(" A/b 触发 ").append(reason).toString());
                 if (c.getPlayer().isGM()) {
                     c.getPlayer().dropMessage(5, new StringBuilder().append("[警告] A/b 触发 : ").append(reason).toString());
                     return;

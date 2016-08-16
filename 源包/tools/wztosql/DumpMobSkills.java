@@ -33,6 +33,7 @@ import provider.MapleData;
 import provider.MapleDataProvider;
 import provider.MapleDataProviderFactory;
 import provider.MapleDataTool;
+import tools.FileoutputUtil;
 
 public class DumpMobSkills {
 
@@ -60,7 +61,6 @@ public class DumpMobSkills {
             try {
                 dumpMobSkills(ps);
             } catch (Exception e) {
-                System.out.println(id + " skill.");
                 hadError = true;
             } finally {
                 ps.executeBatch();
@@ -87,10 +87,10 @@ public class DumpMobSkills {
     public void dumpMobSkills(PreparedStatement ps) throws Exception {
         if (!update) {
             delete("DELETE FROM wz_mobskilldata");
-            System.out.println("Deleted wz_mobskilldata successfully.");
+            FileoutputUtil.log("Deleted wz_mobskilldata successfully.");
         }
         final MapleData skillz = skill.getData("MobSkill.img");
-        System.out.println("Adding into wz_mobskilldata.....");
+        FileoutputUtil.log("Adding into wz_mobskilldata.....");
 
         for (MapleData ids : skillz.getChildren()) {
             for (MapleData lvlz : ids.getChildByPath("level").getChildren()) {
@@ -143,11 +143,11 @@ public class DumpMobSkills {
                     ps.setInt(16, 0);
                 }
                 ps.setByte(17, (byte) (MapleDataTool.getInt("summonOnce", lvlz, 0) > 0 ? 1 : 0));
-                System.out.println("Added skill: " + id + " level " + lvl);
+                FileoutputUtil.log("Added skill: " + id + " level " + lvl);
                 ps.addBatch();
             }
         }
-        System.out.println("Done wz_mobskilldata...");
+        FileoutputUtil.log("Done wz_mobskilldata...");
     }
 
     public int currentId() {
@@ -166,13 +166,13 @@ public class DumpMobSkills {
         int currentQuest = 0;
         try {
             final DumpMobSkills dq = new DumpMobSkills(update);
-            System.out.println("Dumping mobskills");
+            FileoutputUtil.log("Dumping mobskills");
             dq.dumpMobSkills();
             hadError |= dq.isHadError();
             currentQuest = dq.currentId();
         } catch (Exception e) {
             hadError = true;
-            System.out.println(currentQuest + " skill.");
+            FileoutputUtil.log(currentQuest + " skill.");
         }
         long endTime = System.currentTimeMillis();
         double elapsedSeconds = (endTime - startTime) / 1000.0;
@@ -183,6 +183,6 @@ public class DumpMobSkills {
         if (hadError) {
             withErrors = " with errors";
         }
-        System.out.println("Finished" + withErrors + " in " + elapsedMinutes + " minutes " + elapsedSecs + " seconds");
+        FileoutputUtil.log("Finished" + withErrors + " in " + elapsedMinutes + " minutes " + elapsedSecs + " seconds");
     }
 }

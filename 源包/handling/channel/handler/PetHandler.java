@@ -204,7 +204,7 @@ public class PetHandler {
         List res = MovementParse.parseMovement(slea, 3);
         if ((res != null) && (chr != null) && (!res.isEmpty()) && (chr.getMap() != null)) {
             if (slea.available() != 1) {
-                System.out.println("slea.available != 1 (宠物移动出错) 剩余封包长度: " + slea.available());
+                FileoutputUtil.log("slea.available != 1 (宠物移动出错) 剩余封包长度: " + slea.available());
                 FileoutputUtil.log(FileoutputUtil.Movement_Pet, "slea.available != 1 (宠物移动出错) 封包: " + slea.toString(true));
                 return;
             }

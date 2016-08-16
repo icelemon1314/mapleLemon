@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import scripting.portal.PortalScriptManager;
 import scripting.reactor.ReactorScriptManager;
 import server.shop.MapleShopFactory;
+import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.packet.NPCPacket;
@@ -54,7 +55,7 @@ public class ManagerSin extends javax.swing.JFrame {
                 ps.close();
             }
         } catch (SQLException ex) {
-            System.out.println("Failed to load npc name data. " + ex);
+            FileoutputUtil.log("Failed to load npc name data. " + ex);
         }
 
         initComponents();
@@ -67,7 +68,7 @@ public class ManagerSin extends javax.swing.JFrame {
         for (i = 0; i < wid.getItemCount(); i++) {
             int ttt = Integer.parseInt(String.valueOf(wid.getItemAt(i)));
             if (w == ttt) {
-                //System.out.println("经验倍率："+ exp[i]+" " + ttt );
+                //FileoutputUtil.log("经验倍率："+ exp[i]+" " + ttt );
                 break;
             }
         }
@@ -81,7 +82,7 @@ public class ManagerSin extends javax.swing.JFrame {
         for (i = 0; i < wid.getItemCount(); i++) {
             int ttt = Integer.parseInt(String.valueOf(wid.getItemAt(i)));
             if (w == ttt) {
-                //System.out.println("金币爆率："+ meso[i]+" " + ttt );
+                //FileoutputUtil.log("金币爆率："+ meso[i]+" " + ttt );
                 break;
             }
         }
@@ -93,7 +94,7 @@ public class ManagerSin extends javax.swing.JFrame {
         for (i = 0; i < wid.getItemCount(); i++) {
             int ttt = Integer.parseInt(String.valueOf(wid.getItemAt(i)));
             if (w == ttt) {
-                //System.out.println("物品爆率："+ drop[i]+" " + ttt );
+                //FileoutputUtil.log("物品爆率："+ drop[i]+" " + ttt );
                 break;
             }
         }
@@ -965,7 +966,7 @@ public class ManagerSin extends javax.swing.JFrame {
 
     private void wworldItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_wworldItemStateChanged
         int index = wworld.getSelectedIndex();
-        //System.out.println(index);
+        //FileoutputUtil.log(index);
         wid.getItemAt(index);
         exprate.setText(exp[index] + "");
         mesorate.setText(meso[index] + "");

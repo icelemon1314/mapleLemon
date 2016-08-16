@@ -176,7 +176,7 @@ public class MapleMapFactory {
                         }
                     }
                 } catch (SQLException e) {
-                    System.out.println("读取SQL刷Npc和刷新怪物出错.");
+                    FileoutputUtil.log("读取SQL刷Npc和刷新怪物出错.");
                 }
 
                 for (MapleData life : mapData.getChildByPath("life")) {
@@ -390,7 +390,7 @@ public class MapleMapFactory {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("读取SQL刷Npc和刷新怪物出错.");
+            FileoutputUtil.log("读取SQL刷Npc和刷新怪物出错.");
         }
 
         for (MapleData life : mapData.getChildByPath("life")) {
@@ -712,7 +712,7 @@ public class MapleMapFactory {
                         di.eventQ.add(MapleDataTool.getString(event));
                     }
                 } else {
-                    System.out.println(new StringBuilder().append("[loadNodes] 地图: ").append(mapid).append(" 没有找到EventQ.").toString());
+                    FileoutputUtil.log(new StringBuilder().append("[loadNodes] 地图: ").append(mapid).append(" 没有找到EventQ.").toString());
                 }
                 nodeInfo.addDirection(Integer.parseInt(area.getName()), di);
             }

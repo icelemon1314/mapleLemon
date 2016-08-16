@@ -50,7 +50,6 @@ public class MapleDataProviderFactory {
     }
 
     public static MapleDataProvider getDataProvider(Object in) {
-        System.out.println(in.toString());
         return getWZ(in);
     }
 

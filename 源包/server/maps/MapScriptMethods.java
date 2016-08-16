@@ -23,6 +23,7 @@ import server.life.MapleMonster;
 import server.life.OverrideMonsterStats;
 import server.maps.MapleNodes.DirectionInfo;
 import server.quest.MapleQuest;
+import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.packet.MobPacket;
 import tools.packet.NPCPacket;
@@ -921,7 +922,7 @@ public class MapScriptMethods {
                 NPCScriptManager.getInstance().onFirstUserEnter(c, scriptName);
                 //MapScriptManager.getInstance().getMapScript(c, scriptName, true);
                 return;
-//                System.out.println("Unhandled script : " + scriptName + ", type : onFirstUserEnter - MAPID " + c.getPlayer().getMapId());
+//                FileoutputUtil.log("Unhandled script : " + scriptName + ", type : onFirstUserEnter - MAPID " + c.getPlayer().getMapId());
 //                FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Unhandled script : " + scriptName + ", type : onFirstUserEnter - MAPID " + c.getPlayer().getMapId());
 //                break;
             }
@@ -1604,20 +1605,20 @@ public class MapScriptMethods {
                 try {
                     Thread.sleep(6000);
                 } catch (InterruptedException e) {
-                    System.out.println("" + e.toString());
+                    FileoutputUtil.log("" + e.toString());
                 }
                 c.getSession().write(MaplePacketCreator.showEffect("phantom/back"));
                 c.getSession().write(MaplePacketCreator.showEffect("newPirate/TimeTravel/0"));
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
-                    System.out.println("" + e.toString());
+                    FileoutputUtil.log("" + e.toString());
                 }
                 c.getSession().write(MaplePacketCreator.showEffect("newPirate/text1"));
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
-                    System.out.println("" + e.toString());
+                    FileoutputUtil.log("" + e.toString());
                 }
 
                 c.getSession().write(UIPacket.getDirectionInfo(3, 0));
@@ -1625,7 +1626,7 @@ public class MapScriptMethods {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    System.out.println("" + e.toString());
+                    FileoutputUtil.log("" + e.toString());
                 }
                 EventTimer.getInstance().schedule(new Runnable() {
                     @Override
@@ -1654,14 +1655,14 @@ public class MapScriptMethods {
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
-                            System.out.println("" + e.toString());
+                            FileoutputUtil.log("" + e.toString());
                         }
                         c.getSession().write(UIPacket.getDirectionInfo(3, 0));
                         c.getSession().write(UIPacket.getDirectionInfo("Effect/DirectionNewPirate.img/newPirate/balloonMsg2/17", 2000, 0, -100, 1, 0));
                         try {
                             Thread.sleep(3000);
                         } catch (InterruptedException e) {
-                            System.out.println("" + e.toString());
+                            FileoutputUtil.log("" + e.toString());
                         }
                         MapleMap mapto = c.getChannelServer().getMapFactory().getMap(552000050);
                         c.getPlayer().changeMap(mapto, mapto.getPortal(0));
@@ -2832,7 +2833,7 @@ public class MapScriptMethods {
                 NPCScriptManager.getInstance().onUserEnter(c, scriptName);
                 //MapScriptManager.getInstance().getMapScript(c, scriptName, false);
                 return;
-//                System.out.println("Unhandled script : " + scriptName + ", type : onUserEnter - MAPID " + c.getPlayer().getMapId());
+//                FileoutputUtil.log("Unhandled script : " + scriptName + ", type : onUserEnter - MAPID " + c.getPlayer().getMapId());
 //                FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Unhandled script : " + scriptName + ", type : onUserEnter - MAPID " + c.getPlayer().getMapId());
 //                break;
             }

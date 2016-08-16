@@ -51,7 +51,7 @@ public class BuyCashItemHandler {
 
                 CashItemInfo cItem = cashinfo.getItem(snCS);
                 if (chr.isShowPacket()) {
-                    System.out.println(new StringBuilder().append("商城 => 购买 - 物品 ").append(snCS).append(" 是否为空 ").append(cItem == null).toString());
+                    FileoutputUtil.log(new StringBuilder().append("商城 => 购买 - 物品 ").append(snCS).append(" 是否为空 ").append(cItem == null).toString());
                 }
                 if (cItem != null) {
                     if (snCS == 92000046) {
@@ -93,7 +93,7 @@ public class BuyCashItemHandler {
                         return;
                     }
                     if (chr.isShowPacket()) {
-                        System.out.println(new StringBuilder().append("商城 => 购买 - 点券类型 ").append(toCharge).append(" 减少 ").append(cItem.getPrice()).toString());
+                        FileoutputUtil.log(new StringBuilder().append("商城 => 购买 - 点券类型 ").append(toCharge).append(" 减少 ").append(cItem.getPrice()).toString());
                     }
                     Item item = cs.toItem(cItem);
 
@@ -105,7 +105,7 @@ public class BuyCashItemHandler {
                             cs.addToInventory(item);
                             c.getSession().write(MTSCSPacket.购买商城道具(item, cItem.getSN(), c.getAccID()));
                         } else {
-                            System.out.println(new StringBuilder().append("[作弊] ").append(chr.getName()).append(" 商城非法购买道具.道具: ").append(item.getItemId()).append(" - ").append(ii.getName(item.getItemId())).toString());
+                            FileoutputUtil.log(new StringBuilder().append("[作弊] ").append(chr.getName()).append(" 商城非法购买道具.道具: ").append(item.getItemId()).append(" - ").append(ii.getName(item.getItemId())).toString());
 //                            AutobanManager.getInstance().autoban(chr.getClient(), "商城非法购买道具.");
                         }
                     } else {
@@ -157,7 +157,7 @@ public class BuyCashItemHandler {
 //                    int types = (cItem.getId() - 9110000) / 1000;
 //                    MapleInventoryType type = MapleInventoryType.getByType((byte) types);
 //                    if (chr.isShowPacket()) {
-//                        System.out.println(new StringBuilder().append("增加道具栏  snCS ").append(snCS).append(" 扩充: ").append(types).toString());
+//                        FileoutputUtil.log(new StringBuilder().append("增加道具栏  snCS ").append(snCS).append(" 扩充: ").append(types).toString());
 //                    }
 //                    if ((chr.getCSPoints(toCharge) >= 1100) && (chr.getInventory(type).getSlotLimit() < 96)) {
 //                        chr.modifyCSPoints(toCharge, -1100, false);
@@ -211,7 +211,7 @@ public class BuyCashItemHandler {
                 if (item1 == null) {
                     c.getSession().write(MTSCSPacket.刷新点券信息(chr));
                     if (chr.isShowPacket()) {
-                        System.out.println("删除商城道具 - 道具为空 删除失败");
+                        FileoutputUtil.log("删除商城道具 - 道具为空 删除失败");
                     }
                     return;
                 }
@@ -231,7 +231,7 @@ public class BuyCashItemHandler {
                 cs.removeFromInventory(item1);
                 c.getSession().write(MTSCSPacket.商城到背包(item1));
                 if (chr.isShowPacket()) {
-                    System.out.println("商城 => 背包 - 移动成功");
+                    FileoutputUtil.log("商城 => 背包 - 移动成功");
                 }
                 break;
             case 0xB: // 背包到商城
@@ -240,7 +240,7 @@ public class BuyCashItemHandler {
                 MapleInventory mi = chr.getInventory(MapleInventoryType.getByType(itemType));
                 item1 = mi.findByUniqueId(cashId);
                 if (chr.isShowPacket()) {
-                    System.out.println(new StringBuilder().append("背包 => 商城 - 道具是否为空 ").append(item1 == null).toString());
+                    FileoutputUtil.log(new StringBuilder().append("背包 => 商城 - 道具是否为空 ").append(item1 == null).toString());
                 }
                 if (item1 == null) {
                     c.getSession().write(MTSCSPacket.刷新点券信息(chr));
@@ -252,7 +252,7 @@ public class BuyCashItemHandler {
                     mi.removeSlot(item1.getPosition());
                     c.getSession().write(MTSCSPacket.背包到商城(item1, c.getAccID(), snCS));
                     if (chr.isShowPacket()) {
-                        System.out.println("背包 => 商城 - 移动成功");
+                        FileoutputUtil.log("背包 => 商城 - 移动成功");
                     }
                 } else {
                     chr.dropMessage(1, "移动失败。");
@@ -270,7 +270,7 @@ public class BuyCashItemHandler {
                 snCS = cashinfo.getSnFromId(item1.getItemId());
                 cItem = cashinfo.getItem(snCS);
                 if ((cItem == null) || (cashinfo.isBlockRefundableItemId(item1.getItemId()))) {
-                    if (chr.isAdmin()) {
+                    if (chr.isShowPacket()) {
                         if (cItem == null) {
                             chr.dropMessage(1, new StringBuilder().append("换购失败:\r\n道具是否为空: ").append(cItem == null).toString());
                         } else {
@@ -418,7 +418,7 @@ public class BuyCashItemHandler {
 //                        continue;
 //                    }
 //                    if (!ii.isCash(itemz.getItemId())) {
-//                        System.out.println(new StringBuilder().append("[作弊] ").append(chr.getName()).append(" 商城非法购买礼包道具.道具: ").append(itemz.getItemId()).append(" - ").append(ii.getName(itemz.getItemId())).toString());
+//                        FileoutputUtil.log(new StringBuilder().append("[作弊] ").append(chr.getName()).append(" 商城非法购买礼包道具.道具: ").append(itemz.getItemId()).append(" - ").append(ii.getName(itemz.getItemId())).toString());
 //                        AutobanManager.getInstance().autoban(chr.getClient(), "商城非法购买礼包道具.");
 //                        continue;
 //                    }
@@ -567,7 +567,7 @@ public class BuyCashItemHandler {
             default:
                 label1652:
                 c.getSession().write(MTSCSPacket.刷新点券信息(chr));
-                System.out.println(new StringBuilder().append("商城操作未知的操作类型: 0x").append(StringUtil.getLeftPaddedStr(Integer.toHexString(action).toUpperCase(), '0', 2)).append(" ").append(slea.toString()).toString());
+                FileoutputUtil.log(new StringBuilder().append("商城操作未知的操作类型: 0x").append(StringUtil.getLeftPaddedStr(Integer.toHexString(action).toUpperCase(), '0', 2)).append(" ").append(slea.toString()).toString());
         }
     }
 
@@ -603,7 +603,7 @@ public class BuyCashItemHandler {
             c.getSession().write(MTSCSPacket.商城错误提示(8));
         } else {
             if (!ii.isCash(item.getId())) {
-                System.out.println(new StringBuilder().append("[作弊] ").append(chr.getName()).append(" 商城非法购买礼物道具.道具: ").append(item.getId()).append(" - ").append(ii.getName(item.getId())).toString());
+                FileoutputUtil.log(new StringBuilder().append("[作弊] ").append(chr.getName()).append(" 商城非法购买礼物道具.道具: ").append(item.getId()).append(" - ").append(ii.getName(item.getId())).toString());
                 chr.dropMessage(1, "购买商城礼物道具出现错误.");
                 c.getSession().write(MTSCSPacket.刷新点券信息(chr));
 

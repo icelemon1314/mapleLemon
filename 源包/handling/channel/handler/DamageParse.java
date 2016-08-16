@@ -52,7 +52,7 @@ public class DamageParse {
             return;
         }
         if (attack.skillId != 0) {
-            if (player.isAdmin()) {
+            if (player.isShowPacket()) {
                 player.dropMessage(5, "[技能攻击] 使用技能[" + attack.skillId + "]进行攻击");
             }
             if (effect == null) {
@@ -81,9 +81,6 @@ public class DamageParse {
                 }
                 return;
             }
-        }
-        if (player.isShowPacket()) {
-            player.dropMessage(0, "攻击动作: " + Integer.toHexString(attack.display));
         }
         boolean useAttackCount = !GameConstants.is不检测次数(attack.skillId);
 
@@ -153,7 +150,6 @@ public class DamageParse {
 
         for (AttackPair oned : attack.allDamage) {
             monster = map.getMonsterByOid(oned.objectid);
-            player.dropMessage(5, "[攻击信息] 怪物ID[" + monster.getId() + "]");
             if (monster != null && monster.getLinkCID() <= 0) {
                 totDamageToOneMonster = 0;
                 hpMob = monster.getMobMaxHp();
@@ -352,9 +348,6 @@ public class DamageParse {
             return;
         }
 
-        if (player.isAdmin()) {
-            player.dropMessage(-1, "攻击动作: " + Integer.toHexString(attack.display));
-        }
         PlayerStats stats = player.getStat();
         Element element = theSkill.getElement();
 
@@ -385,7 +378,7 @@ public class DamageParse {
                     if (fixeddmg != -1) {
                         eachd = monsterstats.getOnlyNoramlAttack() ? 0 : fixeddmg;
                     } else {
-                        if (player.isAdmin()) {
+                        if (player.isShowPacket()) {
                             player.dropMessage(0, new StringBuilder().append("魔法攻击打怪伤害 : ").append(eachd).append(" 服务端预计伤害 : ").append(maxDamagePerHit).append(" 是否超过 : ").append(eachd > maxDamagePerHit).toString());
                         }
                         if (monsterstats.getOnlyNoramlAttack()) {
@@ -927,7 +920,7 @@ public class DamageParse {
                     chr.dropMessage(-5, "远距离攻击 - 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage);
                 }
                 if ((damage > chr.getMaxDamageOver(ret.skillId)) || (damage < 0)) {
-                    if (chr.isAdmin()) {
+                    if (chr.isShowPacket()) {
                         chr.dropMessage(-5, "远距离攻击次数出错:  技能ID: " + ret.skillId + " 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage);
                     }
 //                    if ((damage > chr.getMaxDamageOver(ret.skillId)) && (!chr.isGM())) {

@@ -54,7 +54,7 @@ public class CashShopOperation {
      */
     public static void EnterCS(CharacterTransfer transfer, MapleClient c) {
         if (transfer == null) {
-            System.out.println("玩家为空："+c.getPlayer().getAccountID());
+            FileoutputUtil.log("玩家为空："+c.getPlayer().getAccountID());
             c.getSession().close(true);
             return;
         }
@@ -65,7 +65,7 @@ public class CashShopOperation {
 
         if (!c.CheckIPAddress()) {
             c.getSession().close(true);
-            System.out.println(new StringBuilder().append("商城检测连接 - 2 ").append(!c.CheckIPAddress()).toString());
+            FileoutputUtil.log(new StringBuilder().append("商城检测连接 - 2 ").append(!c.CheckIPAddress()).toString());
             return;
         }
 
@@ -79,7 +79,7 @@ public class CashShopOperation {
         if (!allowLogin) {
             c.setPlayer(null);
             c.getSession().close(true);
-            System.out.println(new StringBuilder().append("商城检测连接 - 3 ").append(!allowLogin).toString());
+            FileoutputUtil.log(new StringBuilder().append("商城检测连接 - 3 ").append(!allowLogin).toString());
             return;
         }
         c.updateLoginState(MapleClient.LOGIN_LOGGEDIN, c.getSessionIPAddress());

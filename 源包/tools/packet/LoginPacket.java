@@ -30,7 +30,6 @@ public class LoginPacket {
         mplew.write(recvIv);
         mplew.write(sendIv);
         mplew.write(ServerConstants.MAPLE_TYPE.getType());
-        System.out.println("Hello:"+mplew.toString());
         return mplew.getPacket();
     }
 
@@ -54,9 +53,6 @@ public class LoginPacket {
     }
 
     public static byte[] licenseResult() {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.LICENSE_RESULT.getValue());
@@ -102,9 +98,6 @@ public class LoginPacket {
     }
 
     public static byte[] getPermBan(byte reason) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(16);
 
         mplew.write(SendPacketOpcode.LOGIN_STATUS.getValue());
@@ -117,9 +110,6 @@ public class LoginPacket {
     }
 
     public static byte[] getTempBan(long timestampTill, byte reason) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(17);
 
         mplew.write(SendPacketOpcode.LOGIN_STATUS.getValue());
@@ -132,9 +122,6 @@ public class LoginPacket {
     }
     
     public static byte[] getTempBan(long timestampTill) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(17);
 
         mplew.write(SendPacketOpcode.LOGIN_STATUS.getValue());
@@ -193,9 +180,6 @@ public class LoginPacket {
     }
 
     public static byte[] deleteCharResponse(int chrId, int state) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.DELETE_CHAR_RESPONSE.getValue());
@@ -206,9 +190,6 @@ public class LoginPacket {
     }
 
     public static byte[] secondPwError(byte mode) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(3);
 
         mplew.write(SendPacketOpcode.SECONDPW_ERROR.getValue());
@@ -218,9 +199,6 @@ public class LoginPacket {
     }
 
     public static byte[] enableRecommended() {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.ENABLE_RECOMMENDED.getValue());
@@ -230,9 +208,6 @@ public class LoginPacket {
     }
 
     public static byte[] sendRecommended(int world, String message) {
-        if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("调用: ").append(new java.lang.Throwable().getStackTrace()[0]).toString());
-        }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.SEND_RECOMMENDED.getValue());

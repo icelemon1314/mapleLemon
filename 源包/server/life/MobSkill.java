@@ -306,7 +306,7 @@ public class MobSkill {
                     break;
                 }
                 FileoutputUtil.log(FileoutputUtil.未处理的怪物技能, "怪物ID:" + monster.getStats().getId() + " 未处理的怪物技能 skillid : " + this.skillId);
-                System.out.println("未处理的怪物技能:\n\r怪物ID:" + monster.getStats().getId() + " skillid : " + this.skillId);
+                FileoutputUtil.log("未处理的怪物技能:\n\r怪物ID:" + monster.getStats().getId() + " skillid : " + this.skillId);
         }
 
         if ((stats.size() > 0) && (monster != null)) {

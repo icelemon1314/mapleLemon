@@ -15,6 +15,7 @@ import server.life.MapleNPC;
 import server.life.PlayerNPC;
 import server.shop.MapleShop;
 import server.shop.MapleShopResponse;
+import tools.FileoutputUtil;
 import tools.HexTool;
 import tools.Pair;
 import tools.data.output.MaplePacketLittleEndianWriter;
@@ -404,7 +405,7 @@ public class NPCPacket {
                 case 3: size[3]++; break;
                 case 4: size[4]++; break;
                 case 5: size[5]++; break;
-                default: System.out.println("Unknown type found!"); break;
+                default: FileoutputUtil.log("Unknown type found!"); break;
             }
         }
 

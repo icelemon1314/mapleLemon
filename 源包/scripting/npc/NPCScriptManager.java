@@ -144,15 +144,15 @@ public class NPCScriptManager extends AbstractScriptManager {
 
     public final void onUserEnter(final MapleClient c, final String script) {
         try {
-            if (c.getPlayer().isAdmin()) {
+            if (c.getPlayer().isShowPacket()) {
                 c.getPlayer().dropMessage(5, "开始地图onUserEnter脚本：" + script + c.getPlayer().getMap().getMapName());
             }
             Invocable iv = getInvocable("地图/onUserEnter/" + script + ".js", c, true);
             ScriptEngine scriptengine = (ScriptEngine) iv;
             NPCConversationManager cm = new NPCConversationManager(c, 0, script, ScriptType.ON_USER_ENTER, iv);
             if (this.cms.containsValue(cm)) {
-                System.out.println("无法执行脚本:已有脚本執行-" + cms.containsKey(c) + "脚本名称：" + script + c.getPlayer().getMap().getMapName());
-                if (c.getPlayer().isAdmin()) {
+                FileoutputUtil.log("无法执行脚本:已有脚本執行-" + cms.containsKey(c) + "脚本名称：" + script + c.getPlayer().getMap().getMapName());
+                if (c.getPlayer().isShowPacket()) {
                     c.getPlayer().dropMessage(5, "无法执行脚本:已有脚本執行-" + cms.containsKey(c));
                 }
                 dispose(c);
@@ -160,7 +160,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             }
             if ((iv == null) || (getInstance() == null)) {
                 if (iv == null) {
-                    System.out.println("找不到onUserEnter脚本 :(" + script + "),所在地图(ID:" + c.getPlayer().getMapId() + ")");
+                    FileoutputUtil.log("找不到onUserEnter脚本 :(" + script + "),所在地图(ID:" + c.getPlayer().getMapId() + ")");
                 }
                 dispose(c);
                 return;
@@ -171,7 +171,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             c.setClickedNPC();
             try {
                 iv.invokeFunction("start", new Object[0]);
-                System.out.println("开始执行onUserEnter脚本 :(" + script + "), 所在地图(ID:" + c.getPlayer().getMapId() + ")");
+                FileoutputUtil.log("开始执行onUserEnter脚本 :(" + script + "), 所在地图(ID:" + c.getPlayer().getMapId() + ")");
             } catch (NoSuchMethodException nsme) {
                 iv.invokeFunction("action", new Object[]{(byte) 1, (byte) 0, (int) (byte) 0});
             }
@@ -184,11 +184,11 @@ public class NPCScriptManager extends AbstractScriptManager {
 
     public final void onFirstUserEnter(final MapleClient c, final String script) {
         try {
-            if (c.getPlayer().isAdmin()) {
+            if (c.getPlayer().isShowPacket()) {
                 c.getPlayer().dropMessage(5, "开始地图onFirstUserEnter脚本：" + script + c.getPlayer().getMap().getMapName());
             }
             if (this.cms.containsKey(c)) {
-                if (c.getPlayer().isAdmin()) {
+                if (c.getPlayer().isShowPacket()) {
                     c.getPlayer().dropMessage(5, "无法执行脚本:已有脚本執行-" + cms.containsKey(c));
                 }
                 dispose(c);
@@ -199,7 +199,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             NPCConversationManager cm = new NPCConversationManager(c, 0, script, ScriptType.ON_FIRST_USER_ENTER, iv);
             if ((iv == null) || (getInstance() == null)) {
                 if (iv == null) {
-                    System.out.println("找不到onFirstUserEnter脚本 :" + script + ",所在地图(ID:" + c.getPlayer().getMapId() + ")");
+                    FileoutputUtil.log("找不到onFirstUserEnter脚本 :" + script + ",所在地图(ID:" + c.getPlayer().getMapId() + ")");
                 }
                 dispose(c);
                 return;
@@ -210,7 +210,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             c.setClickedNPC();
             try {
                 iv.invokeFunction("start", new Object[0]);
-                System.out.println("开始执行onFirstUserEnter脚本 :(" + script + "), 所在地图(ID:" + c.getPlayer().getMapId() + ")");
+                FileoutputUtil.log("开始执行onFirstUserEnter脚本 :(" + script + "), 所在地图(ID:" + c.getPlayer().getMapId() + ")");
             } catch (NoSuchMethodException nsme) {
                 iv.invokeFunction("action", new Object[]{(byte) 1, (byte) 0, (int) (byte) 0});
             }

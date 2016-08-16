@@ -15,6 +15,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import org.apache.log4j.Logger;
+import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 
 public class ShutdownServer implements ShutdownServerMBean {
@@ -29,7 +30,7 @@ public class ShutdownServer implements ShutdownServerMBean {
             instance = new ShutdownServer();
             mBeanServer.registerMBean(instance, new ObjectName("server:type=ShutdownServer"));
         } catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException e) {
-            System.out.println("Error registering Shutdown MBean");
+            FileoutputUtil.log("Error registering Shutdown MBean");
         }
     }
 
@@ -51,7 +52,7 @@ public class ShutdownServer implements ShutdownServerMBean {
                 cs.closeAllMerchants();
             }
             WorldGuildService.getInstance().save();
-            System.out.println("所有档案已保存.");
+            FileoutputUtil.log("所有档案已保存.");
             this.mode++;
         } else if (this.mode == 1) {
             this.mode++;
@@ -71,7 +72,7 @@ public class ShutdownServer implements ShutdownServerMBean {
             LoginServer.shutdown();
             CashShopServer.shutdown();
             //AuctionServer.shutdown(); //已注释启动拍卖
-            System.out.println("正在关闭时钟线程...");
+            FileoutputUtil.log("正在关闭时钟线程...");
             Timer.WorldTimer.getInstance().stop();
             Timer.MapTimer.getInstance().stop();
             Timer.BuffTimer.getInstance().stop();
@@ -80,7 +81,7 @@ public class ShutdownServer implements ShutdownServerMBean {
             Timer.EventTimer.getInstance().stop();
             Timer.EtcTimer.getInstance().stop();
             Timer.PingTimer.getInstance().stop();
-            System.out.println("正在关闭数据库连接...");
+            FileoutputUtil.log("正在关闭数据库连接...");
             try {
                 DatabaseConnection.closeAll();
             } catch (SQLException e) {
@@ -88,7 +89,7 @@ public class ShutdownServer implements ShutdownServerMBean {
             }
 
         }
-        System.out.println("游戏服务已成功关闭");
+        FileoutputUtil.log("游戏服务已成功关闭");
         System.exit(0);
     }
 }

@@ -458,7 +458,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public static MapleCharacter getDefault(MapleClient client, short[] stat) {
         if (stat.length < 4) {
-            System.out.println("[錯誤] 創建角色默認能力值出錯");
+            FileoutputUtil.log("[錯誤] 創建角色默認能力值出錯");
         }
         MapleCharacter ret = new MapleCharacter(false);
         ret.client = client;
@@ -766,7 +766,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 MapleMapFactory mapFactory = ChannelServer.getInstance(client.getChannel()).getMapFactory();
                 ret.map = mapFactory.getMap(ret.mapid);
                 if (ret.map == null) {
-                    System.out.println("不存在的地图："+ret.mapid);
+                    FileoutputUtil.log("不存在的地图："+ret.mapid);
                     ret.map = mapFactory.getMap(101000000);
                 }
                 MaplePortal portal = ret.map.getPortal(ret.initialSpawnPoint);
@@ -821,7 +821,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 MapleQuest q = MapleQuest.getInstance(id);
                 byte stat = rs.getByte("status");
 //                if ((stat == 1 || stat == 2) && ((channelserver && (q == null || q.isBlocked())) || (stat == 1 && channelserver && (!q.canStart(ret, null))))) {
-//                    System.out.println("已经完成的任务ID"+id);
+//                    FileoutputUtil.log("已经完成的任务ID"+id);
 //                    continue;
 //                }
                 MapleQuestStatus status = new MapleQuestStatus(q, stat);
@@ -1059,7 +1059,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
             }
         } catch (SQLException ess) {
-            //System.out.println("加载角色数据信息出错...");
             FileoutputUtil.outputFileError(FileoutputUtil.SQL_Ex_Log, ess);
             ret.getClient().getSession().close(true);
             throw new RuntimeException("加载角色数据信息出错.服务端断开这个连接...");
@@ -1218,7 +1217,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
      */
     public void saveToDB(boolean dc, boolean fromcs) {
         if (this.isSaveing) {
-            System.out.println(MapleClient.getLogMessage(this, "正在保存数据，本次操作返回."));
+            FileoutputUtil.log(MapleClient.getLogMessage(this, "正在保存数据，本次操作返回."));
             this.isSaveing = false;
             return;
         }
@@ -2110,7 +2109,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
         }
         if (ServerProperties.ShowPacket()) {
-            System.out.println(new StringBuilder().append("取消技能BUFF: - buffstats.size() ").append(buffstats.size()).toString());
+            FileoutputUtil.log(new StringBuilder().append("取消技能BUFF: - buffstats.size() ").append(buffstats.size()).toString());
         }
         deregisterBuffStats(buffstats, effect, overwrite);
         if (effect.is时空门()) {
@@ -2838,7 +2837,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     private void changeMapInternal(final MapleMap to, final Point pos, byte[] warpPacket, final MaplePortal pto) {
         if (to == null) {
-            System.out.println("目标地图为空了，不能传送过去！");
+            FileoutputUtil.log("目标地图为空了，不能传送过去！");
             return;
         }
         final int nowmapid = this.map.getId();
@@ -2943,7 +2942,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 ////                        }
 ////                    }
 //                }
-//                System.out.println("SP能力点的值为："+this.remainingSp);
+//                FileoutputUtil.log("SP能力点的值为："+this.remainingSp);
 //                updateSingleStat(MapleStat.AVAILABLESP, this.remainingSp);
             }
 
@@ -3447,7 +3446,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void changeSingleSkillLevel(Skill skill, int newLevel, byte newMasterlevel) {
         if (skill == null) {
-            System.out.println("技能为空，忽略！");
+            FileoutputUtil.log("技能为空，忽略！");
             return;
         }
         changeSingleSkillLevel(skill, newLevel, newMasterlevel, SkillFactory.getDefaultSExpiry(skill));
@@ -3471,7 +3470,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 recalculate = true;
             }
         } else {
-            System.out.println("修改技能等级失败！");
+            FileoutputUtil.log("修改技能等级失败！");
             return;
         }
         this.client.getSession().write(MaplePacketCreator.updateSkills(list));
@@ -3514,7 +3513,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public boolean changeSkillData(Skill skill, int newLevel, byte newMasterlevel, long expiration) {
         if ((skill == null)) {
-            System.out.println("changeSkillData die()!!!");
+            FileoutputUtil.log("changeSkillData die()!!!");
             return false;
         }
         if ((newLevel == 0) && (newMasterlevel == 0)) {
@@ -3745,6 +3744,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         Map statup = new EnumMap(MapleStat.class);
         statup.put(stat, newval);
         this.client.getSession().write(MaplePacketCreator.updatePlayerStats(statup, itemReaction, this));
+    }
+
+    public void gainExp(int total) {
+        gainExp(total,true,false,false);
     }
 
     public void gainExp(int total, boolean show, boolean inChat, boolean white) {
@@ -5163,7 +5166,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void addCooldown(int skillId, long startTime, long length) {
-        if (isAdmin()) {
+        if (isShowPacket()) {
             dropMessage(-10, "服务器管理员消除技能冷却时间(原时间:" + length / 1000 + "秒)");
             client.getSession().write(MaplePacketCreator.skillCooldown(skillId, 0));
         } else {
@@ -6251,7 +6254,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             this.pqStartTime = System.currentTimeMillis();
             updateOneInfo(questid, "try", String.valueOf(Integer.parseInt(getOneInfo(questid, "try")) + 1));
         } catch (NumberFormatException e) {
-            System.out.println("tryPartyQuest error");
+            FileoutputUtil.log("tryPartyQuest error");
         }
     }
 
@@ -6278,7 +6281,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 this.pqStartTime = 0L;
             }
         } catch (Exception e) {
-            System.out.println("endPartyQuest error");
+            FileoutputUtil.log("endPartyQuest error");
         }
     }
 
@@ -6455,7 +6458,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public boolean hasBlockedInventory() {
-        System.out.println("getConversation："+getConversation()+"||getDirection："+getDirection());
+        FileoutputUtil.log("getConversation："+getConversation()+"||getDirection："+getDirection());
         return (!isAlive()) || (getTrade() != null) || (getConversation() > 0) || (getDirection() > 0) || (getPlayerShop() != null)|| (this.map == null);
     }
 
@@ -6553,7 +6556,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         mapp.removePlayer(this);
         mapp.addPlayer(this);
         mapp.setCheckStates(true);
-        if (isAdmin()) {
+        if (isShowPacket()) {
             client.getSession().write(MaplePacketCreator.serverNotice(5, "刷新人物数据完成..."));
         }
     }
@@ -6911,7 +6914,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 if (getTotalSkillLevel(skill) > 0) {
                     MapleStatEffect venomEffect = skill.getEffect(getTotalSkillLevel(skill));
                     if (ServerProperties.ShowPacket()) {
-                        System.out.println(new StringBuilder().append("神秘瞄准术: ").append(skill.getId()).append(" - ").append(skill.getName()).append(" getAllLinkMid ").append(getAllLinkMid().size()).append(" Y ").append(venomEffect.getY()).toString());
+                        FileoutputUtil.log(new StringBuilder().append("神秘瞄准术: ").append(skill.getId()).append(" - ").append(skill.getName()).append(" getAllLinkMid ").append(getAllLinkMid().size()).append(" Y ").append(venomEffect.getY()).toString());
                     }
                     if ((!venomEffect.makeChanceResult()) || (getAllLinkMid().size() > venomEffect.getY())) {
                         break;

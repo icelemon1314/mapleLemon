@@ -124,9 +124,9 @@ public abstract class AbstractPlayerInteraction {
      */
     public void warp(int mapId, int portal) {
         MapleMap mapz = getWarpMap(mapId);
-        System.out.println("准备传送到地图："+mapId);
+        FileoutputUtil.log("准备传送到地图："+mapId);
         if ((portal != 0) && (mapId == this.c.getPlayer().getMapId())) {
-            System.out.println("准备地图内传送："+mapId);
+            FileoutputUtil.log("准备地图内传送："+mapId);
             Point portalPos = new Point(this.c.getPlayer().getMap().getPortal(portal).getPosition());
             if (portalPos.distanceSq(getPlayer().getTruePosition()) < 90000.0D) {
                 this.c.getSession().write(MaplePacketCreator.instantMapWarp((byte) portal));
@@ -135,7 +135,7 @@ public abstract class AbstractPlayerInteraction {
                 this.c.getPlayer().changeMap(mapz, mapz.getPortal(portal));
             }
         } else {
-            System.out.println("准备跨地图传送："+mapId);
+            FileoutputUtil.log("准备跨地图传送："+mapId);
             this.c.getPlayer().changeMap(mapz, mapz.getPortal(portal));
         }
     }
@@ -201,7 +201,7 @@ public abstract class AbstractPlayerInteraction {
         for (int i = 0; i < quantity; i++) {
             MapleMonster mob = MapleLifeFactory.getMonster(mobId);
             if ((mob == null) || (!mob.getStats().isChangeable())) {
-                if (this.c.getPlayer().isAdmin()) {
+                if (this.c.getPlayer().isShowPacket()) {
                     this.c.getPlayer().dropMessage(-11, new StringBuilder().append("[系统提示] spawnMobLevel召唤怪物出错，ID为: ").append(mobId).append(" 怪物不存在或者该怪物无法使用这个函数来改变怪物的属性！").toString());
                 }
             } else {
@@ -227,7 +227,7 @@ public abstract class AbstractPlayerInteraction {
         for (int i = 0; i < quantity; i++) {
             MapleMonster mob = MapleLifeFactory.getMonster(mobId);
             if (mob == null) {
-                if (this.c.getPlayer().isAdmin()) {
+                if (this.c.getPlayer().isShowPacket()) {
                     this.c.getPlayer().dropMessage(-11, new StringBuilder().append("[系统提示] spawnMobStats召唤怪物出错，ID为: ").append(mobId).append(" 怪物不存在！").toString());
                 }
             } else {
@@ -254,7 +254,7 @@ public abstract class AbstractPlayerInteraction {
         for (int i = 0; i < quantity; i++) {
             MapleMonster mob = MapleLifeFactory.getMonster(mobId);
             if (mob == null) {
-                if (this.c.getPlayer().isAdmin()) {
+                if (this.c.getPlayer().isShowPacket()) {
                     this.c.getPlayer().dropMessage(-11, new StringBuilder().append("[系统提示] spawnMobMultipler召唤怪物出错，ID为: ").append(mobId).append(" 怪物不存在！").toString());
                 }
             } else {
@@ -421,19 +421,19 @@ public abstract class AbstractPlayerInteraction {
 
     public byte getQuestStatus(int questId) {
         byte status = this.c.getPlayer().getQuestStatus(questId);
-        System.out.println("任务状态："+questId+"-"+status);
+        FileoutputUtil.log("任务状态："+questId+"-"+status);
         return status;
     }
 
     public boolean isQuestCompleted(int questId){
         byte status = this.c.getPlayer().getQuestStatus(questId);
-        System.out.println("任务状态1："+questId+"-"+status);
+        FileoutputUtil.log("任务状态1："+questId+"-"+status);
         return status == MapleQuestStatus.QUEST_COMPLETED;
     }
 
     public boolean isQuestStarted(int questId){
         byte status = this.c.getPlayer().getQuestStatus(questId);
-        System.out.println("任务状态2："+questId+"-"+status);
+        FileoutputUtil.log("任务状态2："+questId+"-"+status);
         return status == MapleQuestStatus.QUEST_STARTED;
     }
 

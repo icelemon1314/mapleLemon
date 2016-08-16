@@ -22,6 +22,7 @@ import java.util.List;
 import server.ServerProperties;
 import server.maps.FieldLimitType;
 import server.quest.MapleQuest;
+import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.StringUtil;
 import tools.data.input.SeekableLittleEndianAccessor;
@@ -64,7 +65,7 @@ public class PartyHandler {
                         }
                         break;
                     default:
-                        System.out.println(new StringBuilder().append("第二方收到组队邀请处理( 0x").append(StringUtil.getLeftPaddedStr(Integer.toHexString(action).toUpperCase(), '0', 2)).append(" ) 未知.").toString());
+                        FileoutputUtil.log(new StringBuilder().append("第二方收到组队邀请处理( 0x").append(StringUtil.getLeftPaddedStr(Integer.toHexString(action).toUpperCase(), '0', 2)).append(" ) 未知.").toString());
                 }
             } else {
                 c.getPlayer().dropMessage(5, "要参加的队伍不存在。");
@@ -103,7 +104,7 @@ public class PartyHandler {
                     }
                     break;
                 default:
-                    System.out.println(new StringBuilder().append("第二方收到申请加入组队处理( 0x").append(StringUtil.getLeftPaddedStr(Integer.toHexString(action).toUpperCase(), '0', 2)).append(" ) 未知.").toString());
+                    FileoutputUtil.log(new StringBuilder().append("第二方收到申请加入组队处理( 0x").append(StringUtil.getLeftPaddedStr(Integer.toHexString(action).toUpperCase(), '0', 2)).append(" ) 未知.").toString());
             }
         }
     }
@@ -296,7 +297,7 @@ public class PartyHandler {
                 if (!ServerProperties.ShowPacket()) {
                     break;
                 }
-                System.out.println(new StringBuilder().append("组队邀请处理( ").append(operation).append(" ) 未知.").toString());
+                FileoutputUtil.log(new StringBuilder().append("组队邀请处理( ").append(operation).append(" ) 未知.").toString());
         }
     }
 

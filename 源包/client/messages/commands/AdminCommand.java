@@ -140,7 +140,7 @@ public class AdminCommand {
         public int execute(MapleClient c, String[] splitted) {
             LoginServer.autoReg = !LoginServer.autoReg;
             c.getPlayer().dropMessage(0, "自动注册状态: " + (LoginServer.isAutoReg() ? "开启" : "关闭"));
-            System.out.println("自动注册状态: " + (LoginServer.isAutoReg() ? "开启" : "关闭"));
+            FileoutputUtil.log("自动注册状态: " + (LoginServer.isAutoReg() ? "开启" : "关闭"));
             return 1;
         }
     }
@@ -209,7 +209,7 @@ public class AdminCommand {
                     }
                 }
             }
-            System.out.println("HotTime操作已经完成");
+            FileoutputUtil.log("HotTime操作已经完成");
             return 1;
         }
     }

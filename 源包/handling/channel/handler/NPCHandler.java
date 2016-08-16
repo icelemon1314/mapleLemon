@@ -31,6 +31,7 @@ import server.maps.MapScriptMethods;
 import server.maps.MapleQuickMove;
 import server.quest.MapleQuest;
 import server.shop.MapleShop;
+import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.data.input.SeekableLittleEndianAccessor;
@@ -281,7 +282,7 @@ public class NPCHandler {
                         c.getSession().write(NPCPacket.getStorageError((byte) 9));
                     }
                 } else {
-                    System.out.println("[作弊] " + chr.getName() + " (等级 " + chr.getLevel() + ") 试图从仓库取出不存在的道具.");
+                    FileoutputUtil.log("[作弊] " + chr.getName() + " (等级 " + chr.getLevel() + ") 试图从仓库取出不存在的道具.");
                     WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverMessageRedText("[GM 信息] 玩家: " + chr.getName() + " (等级 " + chr.getLevel() + ") 试图从仓库取出不存在的道具."));
                     c.getSession().write(MaplePacketCreator.enableActions());
                 }
@@ -366,7 +367,7 @@ public class NPCHandler {
                 chr.setConversation(0);
                 break;
             default:
-                System.out.println("Unhandled Storage mode : " + mode);
+                FileoutputUtil.log("Unhandled Storage mode : " + mode);
         }
     }
 
