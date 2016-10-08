@@ -5494,13 +5494,29 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void deleteFromRegRocks(int map) {
+        this.changed_trocklocations = true;
         for (int i = 0; i < 5; i++) {
             if (this.regrocks[i] == map) {
                 this.regrocks[i] = 999999999;
-                this.changed_trocklocations = true;
                 break;
             }
         }
+        // 重新排列下
+        int[] tmp = new int[5];
+        int j = 0;
+        for (int i = 0; i < 5; i++) {
+            if (this.regrocks[i] != 999999999) {
+                tmp[j] = this.regrocks[i];
+                j++;
+            }
+        }
+        // 补上
+        if (j <4) {
+            for (;j<=4;j++) {
+                tmp[j] = 999999999;
+            }
+        }
+        this.regrocks = tmp;
     }
 
     public void addRegRockMap() {

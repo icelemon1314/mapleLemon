@@ -31,7 +31,16 @@ public class GameConstants {
 
     public static boolean GMS = false;
     public static final Map<Integer, Integer> advanceskill = new HashMap<>();
-    public static final List<MapleMapObjectType> rangedMapobjectTypes = Collections.unmodifiableList(Arrays.asList(new MapleMapObjectType[]{MapleMapObjectType.ITEM, MapleMapObjectType.MONSTER, MapleMapObjectType.DOOR, MapleMapObjectType.REACTOR, MapleMapObjectType.SUMMON, MapleMapObjectType.NPC, MapleMapObjectType.MIST, MapleMapObjectType.FAMILIAR, MapleMapObjectType.EXTRACTOR}));
+    public static final List<MapleMapObjectType> rangedMapobjectTypes = Collections.unmodifiableList(Arrays.asList(new MapleMapObjectType[]{
+            MapleMapObjectType.ITEM,
+            MapleMapObjectType.MONSTER,
+            MapleMapObjectType.DOOR,
+            MapleMapObjectType.REACTOR,
+            MapleMapObjectType.SUMMON,
+            MapleMapObjectType.NPC,
+            MapleMapObjectType.MIST,
+            MapleMapObjectType.FAMILIAR,
+            MapleMapObjectType.EXTRACTOR}));
     public static final int[] CygnusLink = {80000066, 80000067, 80000068, 80000069, 80000070};
     private static final int[] closeness = {0, 1, 3, 6, 14, 31, 60, 108, 181, 287, 434, 632, 891, 1224, 1642, 2161, 2793, 3557, 4467, 5542, 6801, 8263, 9950, 11882, 14084, 16578, 19391, 22547, 26074, 30000};
     private static final int[] setScore = {0, 10, 100, 300, 600, 1000, 2000, 4000, 7000, 10000};
@@ -1720,140 +1729,6 @@ public class GameConstants {
     public static int getCurrentDate_NoTime() {
         String time = FileoutputUtil.CurrentReadable_Time();
         return Integer.parseInt(time.substring(0, 4) + time.substring(5, 7) + time.substring(8, 10));
-    }
-
-    public static void achievementRatio(MapleClient c) {
-        if ((c.getPlayer() == null) || (c.getPlayer().getMap() == null)) {
-            return;
-        }
-
-        switch (c.getPlayer().getMapId()) {
-            case 240080600:
-            case 910010000:
-            case 910340100:
-            case 920010000:
-            case 921120005:
-            case 921160100:
-            case 922010100:
-            case 923040100:
-            case 925100000:
-            case 926100000:
-            case 926110000:
-            case 930000000:
-            case 930000100:
-            case 932000100:
-                c.getSession().write(MaplePacketCreator.achievementRatio(0));
-                break;
-            case 921160200:
-            case 922010200:
-            case 922010300:
-            case 922010400:
-            case 922010401:
-            case 922010402:
-            case 922010403:
-            case 922010404:
-            case 922010405:
-            case 925100100:
-            case 926100001:
-            case 926110001:
-            case 930000200:
-                c.getSession().write(MaplePacketCreator.achievementRatio(10));
-                break;
-            case 910340200:
-            case 921120100:
-            case 921160300:
-            case 921160310:
-            case 921160320:
-            case 921160330:
-            case 921160340:
-            case 921160350:
-            case 922010500:
-            case 922010600:
-            case 923040200:
-            case 925100200:
-            case 925100201:
-            case 925100202:
-            case 926100100:
-            case 926110100:
-            case 930000300:
-            case 932000200:
-                c.getSession().write(MaplePacketCreator.achievementRatio(25));
-                break;
-            case 921160400:
-            case 926100200:
-            case 926100201:
-            case 926100202:
-            case 926110200:
-            case 926110201:
-            case 926110202:
-            case 930000400:
-                c.getSession().write(MaplePacketCreator.achievementRatio(35));
-                break;
-            case 240080700:
-            case 240080800:
-            case 910340300:
-            case 921120200:
-            case 921160500:
-            case 922010700:
-            case 923040300:
-            case 925100300:
-            case 925100301:
-            case 925100302:
-            case 926100203:
-            case 926110203:
-            case 930000500:
-            case 932000300:
-                c.getSession().write(MaplePacketCreator.achievementRatio(50));
-                break;
-            case 910340400:
-            case 921120300:
-            case 921160600:
-            case 922010800:
-            case 923040400:
-            case 925100400:
-            case 926100300:
-            case 926100301:
-            case 926100302:
-            case 926100303:
-            case 926100304:
-            case 926110300:
-            case 926110301:
-            case 926110302:
-            case 926110303:
-            case 926110304:
-            case 930000600:
-            case 932000400:
-                c.getSession().write(MaplePacketCreator.achievementRatio(70));
-                break;
-            case 910340500:
-            case 920010800:
-            case 921120400:
-            case 921160700:
-            case 922010900:
-            case 925100500:
-            case 926100400:
-            case 926100401:
-            case 926110400:
-            case 926110401:
-            case 930000700:
-                c.getSession().write(MaplePacketCreator.achievementRatio(85));
-                break;
-            case 920011000:
-            case 920011100:
-            case 920011200:
-            case 920011300:
-            case 921120500:
-            case 921120600:
-            case 922011000:
-            case 922011100:
-            case 925100600:
-            case 926100500:
-            case 926100600:
-            case 926110500:
-            case 926110600:
-            case 930000800:
-                c.getSession().write(MaplePacketCreator.achievementRatio(100));
-        }
     }
 
     public static boolean isFishingMap(int mapid) {
