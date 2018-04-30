@@ -50,7 +50,7 @@ function action(mode, type, selection) {
 			cm.sendNextPrev("The DigitalMS support E-Mail is xbpm07x@gmail.com, please E-Mail us if you need help/want to report a bug.");
 		} else if (status == 5) {
 			if (cm.getQuestStatus(100012) ==
-				net.sf.odinms.client.MapleQuestStatus.Status.COMPLETED) {
+				2) {
 				cm.sendNextPrev("One gift should be enough, right?");
 				cm.gainMeso(5000000);
 				return;
@@ -58,7 +58,7 @@ function action(mode, type, selection) {
 			cm.startQuest(100012);
 			cm.completeQuest(100012);
 			if (cm.getQuestStatus(100012) ==
-				net.sf.odinms.client.MapleQuestStatus.Status.COMPLETED) {
+				2) {
 				cm.sendNextPrev("Since I'm such a fucking nice guy, how about a welcome gift? Check your inventory!");
 			}
 		} else if (status == 6) {
