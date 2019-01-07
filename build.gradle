@@ -1,0 +1,29 @@
+plugins {
+    // Apply the java plugin to add support for Java
+    id 'java'
+
+    // Apply the application plugin to add support for building an application
+    id 'application'
+}
+
+repositories {
+    // Use jcenter for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    mavenCentral()
+}
+
+dependencies {
+    // This dependency is found on compile classpath of this component and consumers.
+    implementation 'io.netty:netty-all:4.1.32.Final'
+
+    implementation 'mysql:mysql-connector-java:8.0.13'
+    implementation 'ch.qos.logback:logback-core:1.2.3'
+
+
+}
+
+application {
+    // Define the main class for the application
+    mainClassName = 'server.Start'
+}
+
