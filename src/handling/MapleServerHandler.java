@@ -49,8 +49,6 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
         this.channel = channel;
     }
 
-
-
     @Override
     public void exceptionCaught(ChannelHandlerContext session, Throwable cause) { //异常捕获
         if (cause.getMessage() != null) {

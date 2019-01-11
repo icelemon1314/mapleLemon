@@ -43,7 +43,6 @@ public class MapleGuildRanking {
                     
                     this.ranks.add(rank);
                 }
-                ps.close();
             }
             rs.close();
         } catch (SQLException e) {

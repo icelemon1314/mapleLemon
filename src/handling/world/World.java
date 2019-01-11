@@ -15,6 +15,9 @@ import tools.CollectionUtil;
 
 public class World {
 
+    /**
+     * init the worldService
+     */
     public static void init() {
         WorldFindService.getInstance();
         WorldBroadcastService.getInstance();

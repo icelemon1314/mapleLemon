@@ -15,6 +15,7 @@ import server.Timer.WorldTimer;
 import server.life.MapleMonster;
 import server.maps.MapleMap;
 import server.maps.MapleMapItem;
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.packet.PetPacket;
 
@@ -183,12 +184,12 @@ public class WorldRespawnService {
         private final List<ChannelServer> cservs = new ArrayList(3);
 
         public Respawn(Integer[] chs, int c) {
-//            StringBuilder s = new StringBuilder("[Respawn Worker] Registered for channels ");
+            StringBuilder s = new StringBuilder("[Respawn Worker] Registered for channels ");
             for (int i = 1; (i <= CHANNELS_PER_THREAD) && (chs.length >= c + i); i++) {
                 this.cservs.add(ChannelServer.getInstance(c + i));
-//                s.append(c + i).append(" ");
+                s.append(c + i).append(" ");
             }
-//            FileoutputUtil.log(s.toString());
+            MapleLogger.info(s.toString());
         }
 
         @Override

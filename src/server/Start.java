@@ -58,7 +58,6 @@ public class Start {
         }
         try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE `accounts` SET `loggedin` = 0")) {
             ps.executeUpdate();
-            ps.close();
         } catch (SQLException ex) {
             throw new RuntimeException("运行时错误: 无法连接到MySQL数据库伺服器");
         }
@@ -69,18 +68,20 @@ public class Start {
         System.out.println("服务器地址: " + ServerProperties.getProperty("channel.interface", ServerConstants.IP) + ":" + LoginServer.DEFAULT_PORT);
         System.out.println("游戏版本: " + ServerConstants.MAPLE_TYPE + " v." + ServerConstants.MAPLE_VERSION + "." + ServerConstants.MAPLE_PATCH);
         System.out.println("主服务器: " + WorldConstants.getMainWorld().name());
-        System.out.println("");
-        runThread();
-        loadData(false);
+        runTimerThread();
+        loadMapleData(false);
 
         System.out.print("加载\"登入\"服务...");
         LoginServer.run_startup_configurations();
+
         System.out.println("正在加载频道...");
         ChannelServer.startChannel_Main();
+
         System.out.println("频道加载完成!\r\n");
         System.out.print("正在加载商城...");
         CashShopServer.run_startup_configurations();
         Runtime.getRuntime().addShutdownHook(new Thread(new Shutdown()));
+
         printSection("刷怪线程");
         WorldRespawnService.getInstance();
         if (ServerProperties.getProperty("RandDrop", false)) {
@@ -123,21 +124,23 @@ public class Start {
         System.out.println("服务端开启完毕，可以登入游戏了！");
     }
 
-    public static void runThread() {
+    /**
+     *  时间计时线程
+     */
+    public static void runTimerThread() {
         System.out.print("\r\n正在加载线程");
         Timer.WorldTimer.getInstance().start();
         Timer.EtcTimer.getInstance().start();
         Timer.MapTimer.getInstance().start();
         Timer.CloneTimer.getInstance().start();
         Timer.CheatTimer.getInstance().start();
-        System.out.print(/*"\u25CF"*/".");
         Timer.EventTimer.getInstance().start();
         Timer.BuffTimer.getInstance().start();
         Timer.PingTimer.getInstance().start();
         System.out.println("完成!\r\n");
     }
 
-    public static void loadData(boolean reload) {
+    public static void loadMapleData(boolean reload) {
         System.out.println("载入数据(因为数据量大可能比较久而且内存消耗会飙升)");
 
         System.out.println("加载等级经验数据");

@@ -128,7 +128,6 @@ public class MapleSidekick
                 while (rs.next()) {
                     ret.add(new MapleSidekick(rs.getInt("id")));
                 }
-                ps.close();
             }
         } catch (SQLException se) {
             System.err.println("unable to read sidekick information from sql" + se);

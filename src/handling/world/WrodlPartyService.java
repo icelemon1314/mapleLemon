@@ -41,7 +41,6 @@ public class WrodlPartyService {
         try {
             try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE characters SET party = -1, fatigue = 0")) {
                 ps.executeUpdate();
-                ps.close();
             }
         } catch (SQLException e) {
             FileoutputUtil.log("更新角色组队为-1失败");

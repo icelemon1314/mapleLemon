@@ -32,7 +32,7 @@ public enum PartySearchType {
     public int timeLimit;
     public boolean exped;
 
-    private PartySearchType(int minLevel, int maxLevel, int value, boolean exped) {
+    PartySearchType(int minLevel, int maxLevel, int value, boolean exped) {
         this.id = value;
         this.minLevel = minLevel;
         this.maxLevel = maxLevel;

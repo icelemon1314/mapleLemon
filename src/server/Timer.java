@@ -18,7 +18,7 @@ public abstract class Timer {
         if ((this.ses != null) && (!this.ses.isShutdown()) && (!this.ses.isTerminated())) {
             return;
         }
-        this.file = ("日志\\日志_" + this.name + "_异常.rtf");
+        this.file = ("logs\\timer\\" + this.name + ".log");
         this.ses = new ScheduledThreadPoolExecutor(5, new RejectedThreadFactory());
         this.ses.setKeepAliveTime(10L, TimeUnit.MINUTES);
         this.ses.allowCoreThreadTimeOut(true);
@@ -104,7 +104,7 @@ public abstract class Timer {
         private static final PingTimer instance = new PingTimer();
 
         private PingTimer() {
-            this.name = "PING计时线程";
+            this.name = "pingTimer";
         }
 
         public static PingTimer getInstance() {
@@ -117,7 +117,7 @@ public abstract class Timer {
         private static final CheatTimer instance = new CheatTimer();
 
         private CheatTimer() {
-            this.name = "作弊计时线程";
+            this.name = "cheatTimer";
         }
 
         public static CheatTimer getInstance() {
@@ -130,7 +130,7 @@ public abstract class Timer {
         private static final EtcTimer instance = new EtcTimer();
 
         private EtcTimer() {
-            this.name = "其他计时线程";
+            this.name = "etcTimer";
         }
 
         public static EtcTimer getInstance() {
@@ -147,7 +147,7 @@ public abstract class Timer {
         private static final CloneTimer instance = new CloneTimer();
 
         private CloneTimer() {
-            this.name = "克隆计时线程";
+            this.name = "cloneTimer";
         }
 
         public static CloneTimer getInstance() {
@@ -160,7 +160,7 @@ public abstract class Timer {
         private static final EventTimer instance = new EventTimer();
 
         private EventTimer() {
-            this.name = "事件计时线程";
+            this.name = "eventTimer";
         }
 
         public static EventTimer getInstance() {
@@ -173,7 +173,7 @@ public abstract class Timer {
         private static final BuffTimer instance = new BuffTimer();
 
         private BuffTimer() {
-            this.name = "BUFF计时线程";
+            this.name = "buffTimer";
         }
 
         public static BuffTimer getInstance() {
@@ -186,7 +186,7 @@ public abstract class Timer {
         private static final MapTimer instance = new MapTimer();
 
         private MapTimer() {
-            this.name = "地图计时线程";
+            this.name = "mapTimer";
         }
 
         public static MapTimer getInstance() {
@@ -199,7 +199,7 @@ public abstract class Timer {
         private static final WorldTimer instance = new WorldTimer();
 
         private WorldTimer() {
-            this.name = "世界计时线程";
+            this.name = "worldTimer";
         }
 
         public static WorldTimer getInstance() {

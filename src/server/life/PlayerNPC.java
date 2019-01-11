@@ -87,7 +87,6 @@ public final class PlayerNPC extends MapleNPC {
                     toAdd.add(new PlayerNPC(rs));
                 }
                 rs.close();
-                ps.close();
             }
         } catch (Exception se) {
             se.printStackTrace();
