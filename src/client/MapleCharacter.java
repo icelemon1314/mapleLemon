@@ -69,7 +69,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.swing.table.DefaultTableModel;
-import org.apache.log4j.Logger;
 import scripting.event.EventInstanceManager;
 import scripting.npc.NPCScriptManager;
 import server.AutobanManager;
@@ -116,12 +115,7 @@ import server.quest.MapleQuest;
 import server.shop.MapleShop;
 import server.shops.IMaplePlayerShop;
 import server.skill.冒险家.勇士;
-import tools.AttackPair;
-import tools.ConcurrentEnumMap;
-import tools.FileoutputUtil;
-import tools.MaplePacketCreator;
-import tools.Pair;
-import tools.Triple;
+import tools.*;
 import tools.packet.BuddyListPacket;
 import tools.packet.BuffPacket;
 import tools.packet.InventoryPacket;
@@ -263,7 +257,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private boolean changed_pokemon;
     private boolean changed_questinfo;
     private boolean changed_keyValue;
-    private static final Logger log = Logger.getLogger(MapleCharacter.class);
     private int aranCombo = 0;
     private int forceCounter = 0;
     private int decorate;
@@ -482,12 +475,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.stats.baseMaxMp = 5;
         ret.stats.baseMp = 5;
         ret.gachexp = 0;
-        try {
-            Connection con = DatabaseConnection.getConnection();
+        try (Connection con = DatabaseConnection.getConnection()){
             PreparedStatement ps;
             ps = con.prepareStatement("SELECT * FROM accounts WHERE id = ?");
             ps.setInt(1, ret.accountid);
-            try (ResultSet rs = ps.executeQuery();) {
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     ret.client.setAccountName(rs.getString("name"));
                     ret.acash = rs.getInt("ACash");
@@ -870,7 +862,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     if (rs.getInt("banned") > 0) {
                         rs.close();
                         ps.close();
-                        ret.getClient().getSession().close(true);
+                        ret.getClient().getSession().close();
                         throw new RuntimeException("加载的角色为封号状态，服务端断开这个连接...");
                     }
                     psd = con.prepareStatement("UPDATE accounts SET lastlogon = CURRENT_TIMESTAMP() WHERE id = ?");
@@ -1060,8 +1052,12 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
         } catch (SQLException ess) {
             FileoutputUtil.outputFileError(FileoutputUtil.SQL_Ex_Log, ess);
-            ret.getClient().getSession().close(true);
+            ret.getClient().getSession().close();
             throw new RuntimeException("加载角色数据信息出错.服务端断开这个连接...");
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e){}
         }
         return ret;
     }
@@ -1203,6 +1199,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
                 con.setAutoCommit(true);
                 con.setTransactionIsolation(4);
+                con.close();
             } catch (SQLException e) {
                 FileoutputUtil.outputFileError(FileoutputUtil.SQL_Ex_Log, e);
                 System.err.println("[charsave] Error going back to autocommit mode");
@@ -1601,12 +1598,12 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             con.commit();
         } catch (SQLException | DatabaseException e) {
             FileoutputUtil.outputFileError(FileoutputUtil.SQL_Ex_Log, e);
-            log.error(new StringBuilder().append(MapleClient.getLogMessage(this, "[charsave] 保存角色数据出现错误 .")).append(e).toString());
+            MapleLogger.error(new StringBuilder().append(MapleClient.getLogMessage(this, "[charsave] 保存角色数据出现错误 .")).append(e).toString());
             try {
                 con.rollback();
             } catch (SQLException ex) {
                 FileoutputUtil.outputFileError(FileoutputUtil.SQL_Ex_Log, ex);
-                log.error(new StringBuilder().append(MapleClient.getLogMessage(this, "[charsave] Error Rolling Back")).append(ex).toString());
+                MapleLogger.error(new StringBuilder().append(MapleClient.getLogMessage(this, "[charsave] Error Rolling Back")).append(ex).toString());
             }
         } finally {
             try {
@@ -1621,9 +1618,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
                 con.setAutoCommit(true);
                 con.setTransactionIsolation(4);
+                con.close();
             } catch (SQLException e) {
                 FileoutputUtil.outputFileError(FileoutputUtil.SQL_Ex_Log, e);
-                log.error(new StringBuilder().append(MapleClient.getLogMessage(this, "[charsave] Error going back to autocommit mode")).append(e).toString());
+                MapleLogger.error(new StringBuilder().append(MapleClient.getLogMessage(this, "[charsave] Error going back to autocommit mode")).append(e).toString());
             }
         }
     }
@@ -7198,7 +7196,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 ps.close();
             }
         } catch (SQLException se) {
-            log.error("获取雇佣商店金币发生错误", se);
+            MapleLogger.error("获取雇佣商店金币发生错误", se);
         }
         return mesos;
     }
@@ -7237,7 +7235,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             rs.close();
         } catch (SQLException ex) {
-            log.error("获取充值信息发生错误", ex);
+            MapleLogger.error("获取充值信息发生错误", ex);
         }
         return pay;
     }
@@ -7260,7 +7258,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             return 1;
         } catch (SQLException ex) {
-            log.error("加减充值信息发生错误", ex);
+            MapleLogger.error("加减充值信息发生错误", ex);
         }
         return -1;
     }
@@ -7282,7 +7280,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             return 1;
         } catch (SQLException ex) {
-            log.error("加减消费奖励信息发生错误", ex);
+            MapleLogger.error("加减消费奖励信息发生错误", ex);
         }
         return -1;
     }
@@ -7438,7 +7436,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             return gamePoints;
         } catch (SQLException Ex) {
-            log.error("获取角色帐号的在线时间点出现错误 - 数据库查询失败", Ex);
+            MapleLogger.error("获取角色帐号的在线时间点出现错误 - 数据库查询失败", Ex);
         }
         return -1;
     }
@@ -7463,7 +7461,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 ps.close();
             }
         } catch (SQLException Ex) {
-            log.error("更新角色帐号的在线时间出现错误 - 数据库更新失败.", Ex);
+            MapleLogger.error("更新角色帐号的在线时间出现错误 - 数据库更新失败.", Ex);
         }
     }
 
@@ -7734,7 +7732,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             return count;
         } catch (SQLException Ex) {
-            log.error("获取 EventCount 次数.", Ex);
+            MapleLogger.error("获取 EventCount 次数.", Ex);
         }
         return -1;
     }
@@ -7759,7 +7757,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 ps.close();
             }
         } catch (SQLException Ex) {
-            log.error("增加 EventCount 次数失败.", Ex);
+            MapleLogger.error("增加 EventCount 次数失败.", Ex);
         }
     }
 
@@ -7777,7 +7775,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 ps.close();
             }
         } catch (SQLException Ex) {
-            log.error("重置 EventCount 次数失败.", Ex);
+            MapleLogger.error("重置 EventCount 次数失败.", Ex);
         }
     }
 

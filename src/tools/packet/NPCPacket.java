@@ -9,7 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.log4j.Logger;
 import server.ServerProperties;
 import server.life.MapleNPC;
 import server.life.PlayerNPC;
@@ -21,8 +20,6 @@ import tools.Pair;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class NPCPacket {
-
-    private static final Logger log = Logger.getLogger(NPCPacket.class);
 
     /**
      * 召唤NPC

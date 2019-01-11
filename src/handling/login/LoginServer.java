@@ -1,19 +1,13 @@
 package handling.login;
 
 import handling.MapleServerHandler;
-import handling.mina.MapleCodecFactory;
-import java.io.IOException;
+
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import org.apache.log4j.Logger;
-import org.apache.mina.core.buffer.IoBuffer;
-import org.apache.mina.core.buffer.SimpleBufferAllocator;
-import org.apache.mina.core.service.IoAcceptor; import org.apache.mina.core.session.IdleStatus;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.transport.socket.SocketSessionConfig;
-import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+
+import handling.netty.ServerConnection;
 import server.ServerProperties;
 import tools.FileoutputUtil;
 import tools.Triple;
@@ -23,7 +17,7 @@ public class LoginServer {
     public static short port;
     public static final short DEFAULT_PORT = 8484;
     private static InetSocketAddress InetSocketadd;
-    private static IoAcceptor acceptor;
+    private static ServerConnection acceptor;
     private static Map<Integer, Integer> load = new HashMap();
     private static String serverName;
     private static byte flag;
@@ -36,7 +30,6 @@ public class LoginServer {
     private static boolean checkMacs = false;
     private static final HashMap<Integer, Triple<String, String, Integer>> loginAuth = new HashMap();
     private static final HashSet<String> loginIPAuth = new HashSet();
-    private static final Logger log = Logger.getLogger(LoginServer.class);
 
     public static void putLoginAuth(int chrid, String ip, String tempIp, int channel) {
         loginAuth.put(chrid, new Triple(ip, tempIp, channel));
@@ -77,20 +70,22 @@ public class LoginServer {
         checkMacs = Boolean.parseBoolean(ServerProperties.getProperty("checkMacs", "false"));
         port = Short.parseShort(ServerProperties.getProperty("world.port", String.valueOf(DEFAULT_PORT)));
 
-        IoBuffer.setUseDirectBuffer(false);
-        IoBuffer.setAllocator(new SimpleBufferAllocator());
-
-        acceptor = new NioSocketAcceptor();
-        acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new MapleCodecFactory()));
-        acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 30);
+//        IoBuffer.setUseDirectBuffer(false);
+//        IoBuffer.setAllocator(new SimpleBufferAllocator());
+//
+//        acceptor = new NioSocketAcceptor();
+//        acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new MapleCodecFactory()));
+//        acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 30);
 
         try {
-            acceptor.setHandler(new MapleServerHandler(MapleServerHandler.LOGIN_SERVER));
-            acceptor.bind(new InetSocketAddress(port));
-            ((SocketSessionConfig) acceptor.getSessionConfig()).setTcpNoDelay(true);
+//            acceptor.setHandler(new MapleServerHandler(MapleServerHandler.LOGIN_SERVER));
+//            acceptor.bind(new InetSocketAddress(port));
+//            ((SocketSessionConfig) acceptor.getSessionConfig()).setTcpNoDelay(true);
+            acceptor = new ServerConnection(port, 1, MapleServerHandler.LOGIN_SERVER);
+            acceptor.run();
 
             FileoutputUtil.log("\"登入\"伺服器正在监听" + port + "端口\r\n");
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("无法绑定" + port + "端口: " + e);
         }
     }
@@ -100,7 +95,7 @@ public class LoginServer {
             return;
         }
         FileoutputUtil.log("正在关闭登录服务器...");
-        acceptor.unbind();
+        acceptor.close();
         finishedShutdown = true;
     }
 
@@ -139,10 +134,6 @@ public class LoginServer {
 
     public static void setUserLimit(int newLimit) {
         userLimit = newLimit;
-    }
-
-    public static int getNumberOfSessions() {
-        return acceptor.getManagedSessions().size();
     }
 
     public static boolean isAdminOnly() {

@@ -13,7 +13,6 @@ import handling.SendPacketOpcode;
 import java.awt.Point;
 import java.util.Collections;
 import java.util.List;
-import org.apache.log4j.Logger;
 import server.Randomizer;
 import server.ServerProperties;
 import server.maps.MapleMapItem;
@@ -21,8 +20,6 @@ import tools.FileoutputUtil;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class InventoryPacket {
-
-    private static final Logger log = Logger.getLogger(InventoryPacket.class);
 
     /**
      * 增加道具栏格子数

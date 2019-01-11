@@ -11,7 +11,7 @@ public class MapLoginHandler {
         short mapleVersion = slea.readShort();
         String maplePatch = String.valueOf(slea.readShort());
         if ((mapleType != ( ServerConstants.MAPLE_TYPE.getType()))) {
-            c.getSession().close(true);
+            c.getSession().close();
         }
     }
 }

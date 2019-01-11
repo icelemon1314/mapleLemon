@@ -17,7 +17,7 @@ public class SetGenderHandler {
             c.updateLoginState(MapleClient.LOGIN_NOTLOGGEDIN);
             LoginWorker.registerClient(c);
         } else {
-            c.getSession().close(true);
+            c.getSession().close();
         }
     }
 }

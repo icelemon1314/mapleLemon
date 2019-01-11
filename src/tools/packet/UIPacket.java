@@ -1,14 +1,11 @@
 package tools.packet;
 
 import handling.SendPacketOpcode;
-import org.apache.log4j.Logger;
 import server.ServerProperties;
 import tools.MaplePacketCreator;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class UIPacket {
-
-    private static final Logger log = Logger.getLogger(UIPacket.class);
 
     public static byte[] EarnTitleMsg(String msg) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();

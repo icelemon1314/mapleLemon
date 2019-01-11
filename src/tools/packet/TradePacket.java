@@ -5,14 +5,11 @@ import client.MapleClient;
 import client.inventory.Item;
 import handling.InteractionOpcode;
 import handling.SendPacketOpcode;
-import org.apache.log4j.Logger;
 import server.MapleTrade;
 import server.ServerProperties;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class TradePacket {
-
-    private static final Logger log = Logger.getLogger(TradePacket.class);
 
     public static byte[] getTradeInvite(MapleCharacter chr) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();

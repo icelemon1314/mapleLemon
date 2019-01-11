@@ -1,13 +1,10 @@
 package tools.packet;
 
 import handling.SendPacketOpcode;
-import org.apache.log4j.Logger;
 import server.ServerProperties;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class WhisperPacket {
-
-    private static final Logger log = Logger.getLogger(WhisperPacket.class);
 
     public static byte[] getWhisper(String sender, int channel, String text) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();

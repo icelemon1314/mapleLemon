@@ -11,14 +11,11 @@ import handling.world.guild.MapleGuildCharacter;
 import handling.world.guild.MapleGuildSkill;
 import java.util.Collection;
 import java.util.List;
-import org.apache.log4j.Logger;
 import server.ServerProperties;
 import tools.MaplePacketCreator;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class GuildPacket {
-
-    private static final Logger log = Logger.getLogger(GuildPacket.class);
 
     public static byte[] showGuildInfo(MapleCharacter chr) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();

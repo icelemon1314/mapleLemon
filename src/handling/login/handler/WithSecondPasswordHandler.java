@@ -21,7 +21,7 @@ public class WithSecondPasswordHandler {
             c.setWorld(slea.readInt());
         }
         if ((!c.isLoggedIn()) || (loginFailCount(c)) || (c.getSecondPassword() == null) || (!c.login_Auth(charId)) || (ChannelServer.getInstance(c.getChannel()) == null) || (c.getWorld() != 0)) {
-            c.getSession().close(true);
+            c.getSession().close();
             return;
         }
 //      if ((c.CheckSecondPassword(password)) && (password.length() >= 6) && (password.length() <= 16)) {

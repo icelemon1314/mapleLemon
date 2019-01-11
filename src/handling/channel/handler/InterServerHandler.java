@@ -28,7 +28,6 @@ import handling.world.party.MapleParty;
 import handling.world.party.MaplePartyCharacter;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
-import org.apache.log4j.Logger;
 import server.ManagerSin;
 import server.maps.FieldLimitType;
 import tools.FileoutputUtil;
@@ -130,7 +129,7 @@ public class InterServerHandler {
                     if (ip != null) {
                         LoginServer.putLoginAuth(playerid, (String) ip.left, (String) ip.mid, (Integer) ip.right);
                     }
-                    c.getSession().close(true);
+                    c.getSession().close();
                     return;
                 }
                 c.setTempIP((String) ip.mid);
@@ -143,7 +142,7 @@ public class InterServerHandler {
             c.setPlayer(player);
             c.setAccID(player.getAccountID());
             if (!c.CheckIPAddress()) {
-                c.getSession().close(true);
+                c.getSession().close();
                 FileoutputUtil.log(new StringBuilder().append("检测连接地址 - 2 ").append(!c.CheckIPAddress()).toString());
                 return;
             }
@@ -154,7 +153,7 @@ public class InterServerHandler {
             }
             if (!allowLogin) {
                 c.setPlayer(null);
-                c.getSession().close(true);
+                c.getSession().close();
                 FileoutputUtil.log(new StringBuilder().append("检测连接地址 - 3 ").append(!allowLogin).toString());
                 return;
             }

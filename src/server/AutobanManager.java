@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.locks.ReentrantLock;
-import org.apache.log4j.Logger;
 import tools.FileoutputUtil;
 
 public class AutobanManager implements Runnable {
@@ -19,7 +18,6 @@ public class AutobanManager implements Runnable {
     private static final int AUTOBAN_POINTS = 5000;
     private static final AutobanManager instance = new AutobanManager();
     private final ReentrantLock lock = new ReentrantLock(true);
-    private static final Logger log = Logger.getLogger(AutobanManager.class);
 
     public static AutobanManager getInstance() {
         return instance;
@@ -76,7 +74,7 @@ public class AutobanManager implements Runnable {
                 StringBuilder sb = new StringBuilder("A/b ");
                 sb.append(c.getPlayer().getName());
                 sb.append(" (IP ");
-                sb.append(c.getSession().getRemoteAddress().toString());
+                sb.append(c.getSession().remoteAddress().toString());
                 sb.append("): ");
                 for (String s : reasons.get(acc)) {
                     sb.append(s);

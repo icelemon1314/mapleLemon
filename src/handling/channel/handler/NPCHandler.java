@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.log4j.Logger;
 import scripting.item.ItemScriptManager;
 import scripting.npc.NPCConversationManager;
 import scripting.npc.NPCScriptManager;

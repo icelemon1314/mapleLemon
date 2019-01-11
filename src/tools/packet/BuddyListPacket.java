@@ -3,13 +3,10 @@ package tools.packet;
 import client.BuddylistEntry;
 import handling.SendPacketOpcode;
 import java.util.Collection;
-import org.apache.log4j.Logger;
 import server.ServerProperties;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class BuddyListPacket {
-
-    private static final Logger log = Logger.getLogger(BuddyListPacket.class);
 
     public static byte[] buddylistMessage(int message) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();

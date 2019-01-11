@@ -15,7 +15,7 @@ public class DeleteCharHandler {
         //String Secondpw_Client = slea.readMapleAsciiString();
         int charId = slea.readInt();
         if ((!c.login_Auth(charId)) || (!c.isLoggedIn())) {
-            c.getSession().close(true);
+            c.getSession().close();
             return;
         }
         byte state = 0;

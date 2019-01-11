@@ -4,14 +4,11 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
-import org.apache.log4j.Logger;
 
 public class LoginCryptoLegacy {
 
     private static final Random rand = new Random();
     private static final char[] iota64 = new char[64];
-
-    private static final Logger log = Logger.getLogger(LoginCryptoLegacy.class);
 
     public static String hashPassword(String password) {
         byte[] randomBytes = new byte[6];

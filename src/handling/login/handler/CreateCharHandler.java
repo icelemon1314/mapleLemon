@@ -8,7 +8,6 @@ import client.inventory.MapleInventory;
 import client.inventory.MapleInventoryType;
 import gui.ServerUI;
 import handling.login.LoginInformationProvider;
-import org.apache.log4j.Logger;
 import server.MapleItemInformationProvider;
 import server.ServerProperties;
 import tools.FileoutputUtil;
@@ -17,11 +16,9 @@ import tools.packet.LoginPacket;
 
 public class CreateCharHandler {
 
-    private static final Logger log = Logger.getLogger(CreateCharHandler.class);
-
     public static void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         if (!c.isLoggedIn()) {
-            c.getSession().close(true);
+            c.getSession().close();
             return;
         }
         int faceMark = 0;

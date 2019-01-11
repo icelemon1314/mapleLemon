@@ -140,8 +140,8 @@ public class PlayerStorage {
                 MapleCharacter chr = (MapleCharacter) chrit.next();
                 if (!chr.isGM() || !checkGM) {
                     chr.getClient().disconnect(false, false, true);
-                    if (chr.getClient().getSession().isConnected()) {
-                        chr.getClient().getSession().close(true);
+                    if (chr.getClient().getSession().isActive()) {
+                        chr.getClient().getSession().close();
                     }
                     WorldFindService.getInstance().forceDeregister(chr.getId(), chr.getName());
                     chrit.remove();

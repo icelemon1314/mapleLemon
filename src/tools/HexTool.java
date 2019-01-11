@@ -3,7 +3,6 @@ package tools;
 import constants.ServerConstants;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
-import org.apache.mina.core.buffer.IoBuffer;
 
 public class HexTool {
 
@@ -15,15 +14,15 @@ public class HexTool {
         return String.valueOf(retstr);
     }
 
-    public static String toString(IoBuffer buf) {
-        buf.flip();
-        byte[] arr = new byte[buf.remaining()];
-        buf.get(arr);
-        String ret = toString(arr);
-        buf.flip();
-        buf.put(arr);
-        return ret;
-    }
+//    public static String toString(IoBuffer buf) {
+//        buf.flip();
+//        byte[] arr = new byte[buf.remaining()];
+//        buf.get(arr);
+//        String ret = toString(arr);
+//        buf.flip();
+//        buf.put(arr);
+//        return ret;
+//    }
 
     public static String toString(int intValue) {
         return Integer.toHexString(intValue);

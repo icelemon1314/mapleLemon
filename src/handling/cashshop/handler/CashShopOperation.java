@@ -8,15 +8,12 @@ import handling.login.LoginServer;
 import handling.world.CharacterTransfer;
 import handling.world.World;
 import java.util.List;
-import org.apache.log4j.Logger;
 import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.MTSCSPacket;
 
 public class CashShopOperation {
-
-    private static final Logger log = Logger.getLogger(CashShopOperation.class);
 
     /**
      * 玩家离开商城
@@ -32,7 +29,7 @@ public class CashShopOperation {
         ChannelServer toch = ChannelServer.getInstance(channel);
         if (toch == null) {
             FileoutputUtil.log(FileoutputUtil.离开商城, new StringBuilder().append("玩家: ").append(chr.getName()).append(" 从商城离开发生错误.找不到频道[").append(channel).append("]的信息.").toString(), true);
-            c.getSession().close(true);
+            c.getSession().close();
             return;
         }
 
@@ -55,7 +52,7 @@ public class CashShopOperation {
     public static void EnterCS(CharacterTransfer transfer, MapleClient c) {
         if (transfer == null) {
             FileoutputUtil.log("玩家为空："+c.getPlayer().getAccountID());
-            c.getSession().close(true);
+            c.getSession().close();
             return;
         }
         MapleCharacter chr = MapleCharacter.ReconstructChr(transfer, c, false);
@@ -64,7 +61,7 @@ public class CashShopOperation {
         c.setAccID(chr.getAccountID());
 
         if (!c.CheckIPAddress()) {
-            c.getSession().close(true);
+            c.getSession().close();
             FileoutputUtil.log(new StringBuilder().append("商城检测连接 - 2 ").append(!c.CheckIPAddress()).toString());
             return;
         }
@@ -78,7 +75,7 @@ public class CashShopOperation {
 
         if (!allowLogin) {
             c.setPlayer(null);
-            c.getSession().close(true);
+            c.getSession().close();
             FileoutputUtil.log(new StringBuilder().append("商城检测连接 - 3 ").append(!allowLogin).toString());
             return;
         }

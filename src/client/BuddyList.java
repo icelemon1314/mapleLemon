@@ -101,8 +101,8 @@ public class BuddyList implements Serializable {
                     put(new BuddylistEntry(rs.getString("buddyname"), rs.getInt("buddyid"), rs.getString("groupname"), -1, rs.getInt("pending") != 1));
                 }
             }
-            ps.close();
         }
+        con.close();
     }
 
     public void addBuddyRequest(MapleClient c, int cidFrom, String nameFrom, int channelFrom, int levelFrom, int jobFrom, int AccID) {

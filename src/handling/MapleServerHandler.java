@@ -20,10 +20,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.table.DefaultTableModel;
-import org.apache.mina.core.service.IoHandlerAdapter;
-import org.apache.mina.core.session.IdleStatus;
-import org.apache.mina.core.session.IoSession;
-import org.apache.mina.transport.socket.SocketSessionConfig;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import scripting.npc.NPCScriptManager;
 import server.ManagerSin;
 import tools.FileoutputUtil;
@@ -37,7 +36,7 @@ import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.LoginPacket;
 import tools.packet.UIPacket;
 
-public class MapleServerHandler extends IoHandlerAdapter {
+public class MapleServerHandler extends ChannelInboundHandlerAdapter {
 
     private final int channel;
     public final static int CASH_SHOP_SERVER = -10;
@@ -50,24 +49,17 @@ public class MapleServerHandler extends IoHandlerAdapter {
         this.channel = channel;
     }
 
-    @Override
-    public void sessionCreated(IoSession session) throws Exception {
-        SocketSessionConfig cfg = (SocketSessionConfig) session.getConfig();
-        cfg.setReceiveBufferSize(2 * 1024 * 1024);
-        cfg.setReadBufferSize(2 * 1024 * 1024);
-        cfg.setKeepAlive(true);
-        cfg.setSoLinger(0);
-    }
+
 
     @Override
-    public void exceptionCaught(IoSession session, Throwable cause) { //异常捕获
+    public void exceptionCaught(ChannelHandlerContext session, Throwable cause) { //异常捕获
         if (cause.getMessage() != null) {
             System.err.println("[异常信息] " + cause.getMessage());
             cause.getLocalizedMessage();
             FileoutputUtil.printError(FileoutputUtil.发现异常, cause.getMessage());
         }
         if ((!(cause instanceof IOException))) {
-            MapleClient client = (MapleClient) session.getAttribute(MapleClient.CLIENT_KEY);
+            MapleClient client = session.channel().attr(MapleClient.CLIENT_KEY).get();
             if ((client != null) && (client.getPlayer() != null)) {
                 client.getPlayer().saveToDB(false, channel == MapleServerHandler.CASH_SHOP_SERVER);
                 FileoutputUtil.printError(FileoutputUtil.发现异常, cause, "发现异常 by: 玩家:" + client.getPlayer().getName() + " 职业:" + client.getPlayer().getJob() + " 地图:" + client.getPlayer().getMap().getMapName() + " - " + client.getPlayer().getMapId());
@@ -76,16 +68,16 @@ public class MapleServerHandler extends IoHandlerAdapter {
     }
 
     @Override
-    public void sessionOpened(IoSession session) throws Exception {
+    public void channelActive(ChannelHandlerContext session) {
         // 起始 IP 检查
-        String address = session.getRemoteAddress().toString().split(":")[0];
+        String address = session.channel().remoteAddress().toString().split(":")[0];
         FileoutputUtil.log("[登陆服务] " + address + " 已连接");
 
         if (BlockIPList.contains(address)) {
-            session.close(true);
+            session.close();
             return;
         }
-        Pair track = (Pair) tracker.get(address);
+        Pair track = tracker.get(address);
 
         byte count;
         if (track == null) {
@@ -102,7 +94,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
             if (count > 10) {
                 BlockIPList.add(address);
                 tracker.remove(address);// 清理
-                session.close(true);
+                session.close();
                 return;
             }
         }
@@ -112,26 +104,26 @@ public class MapleServerHandler extends IoHandlerAdapter {
 
         if (channel == MapleServerHandler.CASH_SHOP_SERVER) {
             if (CashShopServer.isShutdown()) {
-                session.close(true);
+                session.close();
                 return;
             }
         } else if (channel == MapleServerHandler.LOGIN_SERVER) {
             if (LoginServer.isShutdown()) {
-                session.close(true);
+                session.close();
                 return;
             }
         } else if (this.channel > MapleServerHandler.LOGIN_SERVER) {
             if (ChannelServer.getInstance(this.channel).isShutdown()) {
-                session.close(true);
+                session.close();
                 return;
             }
             if (!LoginServer.containsIPAuth(IP)) {
-                session.close(true);
+                session.close();
                 return;
             }
         } else {
             FileoutputUtil.log("[連結錯誤] 未知類型: " + channel);
-            session.close(true);
+            session.close();
             return;
         }
 
@@ -142,10 +134,10 @@ public class MapleServerHandler extends IoHandlerAdapter {
         ivSend[3] = (byte) (int) (Math.random() * 255.0);
         MapleAESOFB sendCypher = new MapleAESOFB(ivSend, 0xFFFF - ServerConstants.MAPLE_VERSION, false);
         MapleAESOFB recvCypher = new MapleAESOFB(ivRecv, ServerConstants.MAPLE_VERSION, false);
-        MapleClient client = new MapleClient(sendCypher, recvCypher, session);
+        MapleClient client = new MapleClient(sendCypher, recvCypher, session.channel());
         client.setChannel(channel);
         MaplePacketDecoder.DecoderState decoderState = new MaplePacketDecoder.DecoderState();
-        session.setAttribute(MaplePacketDecoder.DECODER_STATE_KEY, decoderState);
+        session.channel().attr(MaplePacketDecoder.DECODER_STATE_KEY).set(decoderState);
 
         byte[] handShakePacket = LoginPacket.getHello(ServerConstants.MAPLE_VERSION, ivSend, ivRecv);
         session.write(handShakePacket);
@@ -160,13 +152,13 @@ public class MapleServerHandler extends IoHandlerAdapter {
         FileoutputUtil.log("[登陆服务] " + address + ", 发送握手包成功！");
         Random r = new Random();
         client.setSessionId(r.nextLong()); // Generates a random session id.  
-        session.setAttribute(MapleClient.CLIENT_KEY, client);
+        session.channel().attr(MapleClient.CLIENT_KEY).set(client);
         World.Client.addClient(client);
     }
 
     @Override
-    public void sessionClosed(final IoSession session) throws Exception {
-        MapleClient client = (MapleClient) session.getAttribute(MapleClient.CLIENT_KEY);
+    public void channelInactive(ChannelHandlerContext session) {
+        MapleClient client = (MapleClient) session.channel().attr(MapleClient.CLIENT_KEY);
         if (client != null) {
             try {
                 int countRows = ManagerSin.jTable1.getRowCount();//获取当前表格总行数
@@ -185,25 +177,25 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 client.disconnect(true, (channel == MapleServerHandler.CASH_SHOP_SERVER));
             } finally {
                 World.Client.removeClient(client);
-                session.close(true);
-                session.removeAttribute(MapleClient.CLIENT_KEY);
-                session.removeAttribute(MaplePacketDecoder.DECODER_STATE_KEY);
+                session.channel().close();
+                session.channel().attr(MapleClient.CLIENT_KEY).remove();
+                session.channel().attr(MaplePacketDecoder.DECODER_STATE_KEY).remove();
             }
         }
-        super.sessionClosed(session);
+//        super.sessionClosed(session);
     }
 
     @Override
-    public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
-        MapleClient client = (MapleClient) session.getAttribute(MapleClient.CLIENT_KEY);
+    public void userEventTriggered(ChannelHandlerContext session, Object status) {
+        MapleClient client = session.channel().attr(MapleClient.CLIENT_KEY).get();
         if (client != null) {
             //client.sendPing();
         }
-        super.sessionIdle(session, status);
+//        super.sessionIdle(session, status);
     }
 
     @Override
-    public void messageReceived(IoSession session, Object message) {
+    public void channelRead(ChannelHandlerContext session, Object message) {
         if (message == null || session == null) {
             return;
         }
@@ -212,7 +204,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
             FileoutputUtil.log("数据包长度异常：" + slea.toString());
             return;
         }
-        MapleClient client = (MapleClient) session.getAttribute(MapleClient.CLIENT_KEY);
+        MapleClient client = session.channel().attr(MapleClient.CLIENT_KEY).get();
         if (client == null || !client.isReceiving()) {
             return;
         }

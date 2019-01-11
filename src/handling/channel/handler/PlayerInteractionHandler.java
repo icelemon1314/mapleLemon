@@ -9,7 +9,6 @@ import constants.ItemConstants;
 import handling.InteractionOpcode;
 import handling.world.WorldBroadcastService;
 import java.util.Arrays;
-import org.apache.log4j.Logger;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.MapleTrade;
@@ -30,8 +29,6 @@ import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.PlayerShopPacket;
 
 public class PlayerInteractionHandler {
-
-    private static final Logger log = Logger.getLogger(PlayerInteractionHandler.class);
 
     public static void PlayerInteraction(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         byte mode = slea.readByte();
@@ -254,7 +251,7 @@ public class PlayerInteractionHandler {
                     }
                 } else {
                     chr.getClient().disconnect(true, false);
-                    c.getSession().close(true);
+                    c.getSession().close();
                 }
                 break;
             case 设置物品:
@@ -510,7 +507,7 @@ public class PlayerInteractionHandler {
                         shop.update();
                     }
                 } else {
-                    c.getSession().close(true);
+                    c.getSession().close();
                 }
                 break;
             case 雇佣商店_关闭完成:

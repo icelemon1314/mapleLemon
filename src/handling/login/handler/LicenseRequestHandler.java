@@ -11,7 +11,7 @@ public class LicenseRequestHandler {
             c.getSession().write(LoginPacket.licenseResult());
             c.updateLoginState(MapleClient.LOGIN_NOTLOGGEDIN);
         } else {
-            c.getSession().close(true);
+            c.getSession().close();
         }
     }
 }

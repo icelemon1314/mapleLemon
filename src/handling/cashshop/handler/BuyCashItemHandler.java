@@ -17,7 +17,6 @@ import handling.world.WorldFindService;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-import org.apache.log4j.Logger;
 import server.AutobanManager;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
@@ -33,8 +32,6 @@ import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.MTSCSPacket;
 
 public class BuyCashItemHandler {
-
-    private static final Logger log = Logger.getLogger(BuyCashItemHandler.class);
 
     public static void BuyCashItem(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         // 73 05 00 01

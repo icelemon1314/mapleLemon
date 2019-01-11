@@ -9,15 +9,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
 import server.MapleItemInformationProvider;
 import tools.FileoutputUtil;
+import tools.MapleLogger;
 import tools.Pair;
 import tools.Triple;
 
 public class MapleCharacterUtil {
 
-    private static final Logger log = Logger.getLogger(MapleCharacterUtil.class);
     private static final Pattern namePattern = Pattern.compile("^(?!_)(?!.*?_$)[a-zA-Z0-9_一-龥]+$");
     private static final Pattern petPattern = Pattern.compile("^(?!_)(?!.*?_$)[a-zA-Z0-9_一-龥]+$");
 
@@ -72,7 +71,7 @@ public class MapleCharacterUtil {
 
             return id;
         } catch (SQLException e) {
-            log.error("error 'getIdByName' " + e);
+            MapleLogger.error("error 'getIdByName' " + e);
         }
         return -1;
     }
@@ -95,7 +94,7 @@ public class MapleCharacterUtil {
             }
             return id;
         } catch (SQLException e) {
-            log.error("error 'getInfoByName' " + e);
+            MapleLogger.error("error 'getInfoByName' " + e);
         }
         return null;
     }
@@ -193,7 +192,7 @@ public class MapleCharacterUtil {
             ps.close();
             return -2;
         } catch (SQLException e) {
-            log.error("修改二级密码发生错误" + e);
+            MapleLogger.error("change second password failed.");
         }
         return -2;
     }
@@ -226,7 +225,7 @@ public class MapleCharacterUtil {
             }
             return id;
         } catch (Exception e) {
-            log.error("error 'getInfoByName' " + e);
+            MapleLogger.error("error 'getInfoByName' " + e);
         }
         return null;
     }
@@ -263,7 +262,7 @@ public class MapleCharacterUtil {
                 receiver.showNote();
             }
         } catch (SQLException e) {
-            log.error("Unable to send note" + e);
+            MapleLogger.error("Unable to send note" + e);
         }
     }
 
@@ -325,11 +324,10 @@ public class MapleCharacterUtil {
                     return null;
                 }   id = new Pair(rs.getInt("ACash"), rs.getInt("mPoints"));
             rs.close();
-            ps.close();
             }
             return id;
         } catch (Exception e) {
-            log.error("error 'getInfoByName' " + e);
+            MapleLogger.error("error 'getInfoByName' " + e);
         }
         return null;
     }

@@ -1,7 +1,8 @@
 package database;
 
+import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.pool.DruidPooledConnection;
 import constants.ServerConstants;
-import tools.FileoutputUtil;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,7 +15,8 @@ import java.util.Map;
 
 public class DatabaseConnection {
 
-    private static final HashMap<Integer, ConWrapper> connections = new HashMap();
+    //    private static final HashMap<Integer, ConWrapper> connections = new HashMap();
+    private static DruidDataSource connectionPoll = null;
     public static final int CLOSE_CURRENT_RESULT = 1;
     public static final int KEEP_CURRENT_RESULT = 2;
     public static final int CLOSE_ALL_RESULTS = 3;
@@ -25,24 +27,31 @@ public class DatabaseConnection {
 
     static {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            FileoutputUtil.log("[数据库信息] 找不到JDBC驱动.");
+            System.out.println("[数据库信息] 找不到JDBC驱动.");
             System.exit(0);
         }
     }
 
     public static Connection getConnection() {
-        Thread cThread = Thread.currentThread();
-        int threadID = (int) cThread.getId();
-        ConWrapper ret = (ConWrapper) connections.get(Integer.valueOf(threadID));
-        if (ret == null) {
-            Connection retCon = connectToDB();
-            ret = new ConWrapper(retCon);
-            ret.id = threadID;
-            connections.put(threadID, ret);
+//        Thread cThread = Thread.currentThread();
+//        int threadID = (int) cThread.getId();
+//        ConWrapper ret = connections.get(Integer.valueOf(threadID));
+        try {
+            if (connectionPoll == null) {
+                connectionPoll = connectToDB();
+//                ret = new ConWrapper(retCon);
+//                ret.id = threadID;
+//                connections.put(threadID, ret);
+            }
+            return connectionPoll.getConnection();
+        } catch (SQLException e) {
+            //MapleLogger.error("sql get connection error.", e);
+
         }
-        return ret.getConnection();
+        return null;
+//        return ret.getConnection();
     }
 
     private static long getWaitTimeout(Connection con) {
@@ -76,79 +85,88 @@ public class DatabaseConnection {
         }
     }
 
-    private static Connection connectToDB() {
-        try {
-            Connection con = DriverManager.getConnection(
-                    "jdbc:mysql://" + ServerConstants.SQL_IP + ":" + ServerConstants.SQL_PORT + "/" + ServerConstants.SQL_DATABASE + "?autoReconnect=true&characterEncoding=GBK", 
-                    ServerConstants.SQL_USER, ServerConstants.SQL_PASSWORD);
-            long timeout = getWaitTimeout(con);
-            if (timeout == -1L) {
-                FileoutputUtil.log("[数据库信息] 无法读取超时时间, using " + ServerConstants.SQL_TIMEOUT + " instead.");
-            } else {
-                ServerConstants.SQL_TIMEOUT = timeout;
-                FileoutputUtil.log("[数据库信息] 连接超时时间为: " + (ServerConstants.SQL_TIMEOUT / 1000 / 60) + " 分钟.");
-            }
-            return con;
-        } catch (SQLException e) {
-            throw new DatabaseException("[数据库信息] 连接到数据库错误,请检查MYSQL数据库是否开启,账号密码数据库名是否正确", e);
-        }
+    private static DruidDataSource connectToDB() {
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        dataSource.setUsername(ServerConstants.SQL_USER);
+        dataSource.setPassword(ServerConstants.SQL_PASSWORD);
+        dataSource.setUrl("jdbc:mysql://" + ServerConstants.SQL_IP + ":" + ServerConstants.SQL_PORT + "/" + ServerConstants.SQL_DATABASE + "?autoReconnect=true&characterEncoding=GBK");
+        dataSource.setInitialSize(10);
+        dataSource.setMinIdle(1);
+        dataSource.setMaxActive(100);
+        // dataSource.setFilters("stat"); // 启用监控统计功能
+        dataSource.setPoolPreparedStatements(false);
+        dataSource.setRemoveAbandoned(true);    // 程序从池中拿出连接后多久没归还，系统会强制收回该连接
+        dataSource.setRemoveAbandonedTimeout(3600);
+
+        return dataSource;
+
+//
+//            Connection con = DriverManager.getConnection(
+//                    "jdbc:mysql://" + ServerConstants.SQL_IP + ":" + ServerConstants.SQL_PORT + "/" + ServerConstants.SQL_DATABASE + "?autoReconnect=true&characterEncoding=GBK",
+//                    ServerConstants.SQL_USER, ServerConstants.SQL_PASSWORD);
+//            long timeout = getWaitTimeout(con);
+//            if (timeout == -1L) {
+//                System.out.println("[数据库信息] 无法读取超时时间, using " + ServerConstants.SQL_TIMEOUT + " instead.");
+//            } else {
+//                ServerConstants.SQL_TIMEOUT = timeout;
+//                System.out.println("[数据库信息] 连接超时时间为: " + (ServerConstants.SQL_TIMEOUT / 1000 / 60) + " 分钟.");
+//            }
+//            return con;
     }
 
-    public static void closeAll() throws SQLException {
-        for (ConWrapper con : connections.values()) {
-            con.connection.close();
-        }
-        connections.clear();
+    public static void closeAll() {
+        connectionPoll.close();
     }
+//
+//    public static void closeConnection() throws SQLException {
+//        Iterator<Map.Entry<Integer, ConWrapper>> con = connections.entrySet().iterator();
+//        Map<Integer, ConWrapper> toclose = new HashMap();
+//        while (con.hasNext()) {
+//            Map.Entry<Integer, ConWrapper> temp = con.next();
+//            if (temp.getValue().expiredConnection()) {
+//                toclose.put(temp.getKey(), temp.getValue());
+//                System.out.println("过时连接已经被清理...");
+//            }
+//        }
+//        for (Map.Entry<Integer, ConWrapper> t : toclose.entrySet()) {
+//            t.getValue().connection.close();
+//            connections.remove(t.getKey());
+//        }
+//
+//    }
 
-    public static void closeConnection() throws SQLException {
-        Iterator<Map.Entry<Integer, ConWrapper>> con = connections.entrySet().iterator();
-        Map<Integer, ConWrapper> toclose = new HashMap();
-        while (con.hasNext()) {
-            Map.Entry<Integer, ConWrapper> temp = con.next();
-            if (temp.getValue().expiredConnection()) {
-                toclose.put(temp.getKey(), temp.getValue());
-                FileoutputUtil.log("过时连接已经被清理...");
-            }
-        }
-        for (Map.Entry<Integer, ConWrapper> t : toclose.entrySet()) {
-            t.getValue().connection.close();
-            connections.remove(t.getKey());
-        }
-
-    }
-
-    public static class ConWrapper {
-
-        private long lastAccessTime = 0L;
-        private Connection connection;
-        private int id;
-
-        public ConWrapper(Connection con) {
-            this.connection = con;
-        }
-
-        public Connection getConnection() {
-            if (expiredConnection()) {
-                try {
-                    this.connection.close();
-                } catch (SQLException err) {
-                }
-                connection = connectToDB();
-            }
-            this.lastAccessTime = System.currentTimeMillis();
-            return this.connection;
-        }
-
-        public boolean expiredConnection() {
-            if (this.lastAccessTime == 0L) {
-                return false;
-            }
-            try {
-                return (System.currentTimeMillis() - this.lastAccessTime >= ServerConstants.SQL_TIMEOUT) || (this.connection.isClosed());
-            } catch (SQLException ex) {
-            }
-            return true;
-        }
-    }
+//    public static class ConWrapper {
+//
+//        private long lastAccessTime = 0L;
+//        private Connection connection;
+//        private int id;
+//
+//        public ConWrapper(Connection con) {
+//            this.connection = con;
+//        }
+//
+//        public Connection getConnection() {
+//            if (expiredConnection()) {
+//                try {
+//                    this.connection.close();
+//                } catch (SQLException err) {
+//                }
+//                connection = connectToDB();
+//            }
+//            this.lastAccessTime = System.currentTimeMillis();
+//            return this.connection;
+//        }
+//
+//        public boolean expiredConnection() {
+//            if (this.lastAccessTime == 0L) {
+//                return false;
+//            }
+//            try {
+//                return (System.currentTimeMillis() - this.lastAccessTime >= ServerConstants.SQL_TIMEOUT) || (this.connection.isClosed());
+//            } catch (SQLException ex) {
+//            }
+//            return true;
+//        }
+//    }
 }

@@ -13,7 +13,6 @@ import handling.world.WorldBroadcastService;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
 import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.packet.PlayerShopPacket;
@@ -30,7 +29,6 @@ public class MapleTrade {
     private boolean inTrade = false;
     private final WeakReference<MapleCharacter> chr;
     private final byte tradingslot;
-    private static final Logger log = Logger.getLogger(MapleTrade.class);
 
     public MapleTrade(byte tradingslot, MapleCharacter chr) {
         this.tradingslot = tradingslot;

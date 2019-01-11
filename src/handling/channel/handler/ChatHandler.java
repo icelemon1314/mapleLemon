@@ -16,7 +16,6 @@ import handling.world.WrodlPartyService;
 import handling.world.messenger.MapleMessenger;
 import handling.world.messenger.MapleMessengerCharacter;
 import handling.world.messenger.MessengerType;
-import org.apache.log4j.Logger;
 import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.StringUtil;
@@ -25,8 +24,6 @@ import tools.packet.MessengerPacket;
 import tools.packet.WhisperPacket;
 
 public class ChatHandler {
-
-    private static final Logger log = Logger.getLogger(ChatHandler.class);
 
     public static void GeneralChat(String text, byte unk, MapleClient c, MapleCharacter chr) {
         if ((text.length() > 0) && (chr != null) && (chr.getMap() != null)) {

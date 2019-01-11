@@ -86,12 +86,12 @@ public class MapleMonsterInformationProvider {
 
         PreparedStatement ps = null;
         ResultSet rs = null;
-        try {
+        try (Connection con = DatabaseConnection.getConnection()) {
             MapleMonsterStats mons = MapleLifeFactory.getMonsterStats(monsterId);
             if (mons == null) {
                 return;
             }
-            ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM drop_data WHERE mobID = ?");
+            ps = con.prepareStatement("SELECT * FROM drop_data WHERE mobID = ?");
             ps.setInt(1, monsterId);
             rs = ps.executeQuery();
 

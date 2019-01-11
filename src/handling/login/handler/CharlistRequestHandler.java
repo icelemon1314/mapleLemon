@@ -15,7 +15,7 @@ public class CharlistRequestHandler {
 
     public static void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         if (!c.isLoggedIn()) {
-            c.getSession().close(true);
+            c.getSession().close();
             return;
         }
         int server = slea.readByte();
@@ -30,14 +30,14 @@ public class CharlistRequestHandler {
             c.getSession().write(LoginPacket.getLoginFailed(1)); //Shows no message, but it is used to unstuck
             return;
         }
-        FileoutputUtil.log("[连接信息] "+c.getSession().getRemoteAddress().toString().split(":")[0] + " 连接到世界服务器: " + server + " 频道: " + channel);
+        FileoutputUtil.log("[连接信息] "+c.getSession().remoteAddress().toString().split(":")[0] + " 连接到世界服务器: " + server + " 频道: " + channel);
         List chars = c.loadCharacters(server);
         if ((chars != null) && (ChannelServer.getInstance(channel) != null)) {
             c.setWorld(server);
             c.setChannel(channel);
             c.getSession().write(LoginPacket.getCharList(c.getSecondPassword(), chars, c.getAccCharSlots()));
         } else {
-            c.getSession().close(true);
+            c.getSession().close();
         }
     }
 }

@@ -14,7 +14,6 @@ import handling.login.LoginServer;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
 import server.ServerProperties;
 import tools.HexTool;
 import tools.data.output.MaplePacketLittleEndianWriter;

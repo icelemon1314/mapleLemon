@@ -4,8 +4,8 @@ import client.*;
 import client.inventory.*;
 import client.messages.CommandProcessorUtil;
 import client.messages.PlayerGMRank;
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.PreparedStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import constants.GameConstants;
 import custom.LoadPacket;
 import database.DatabaseConnection;
@@ -173,7 +173,7 @@ public class SuperGMCommand {
                 c.getPlayer().dropMessage(6, "你没有权限更改比你高级的管理员的名字");
                 return 0;
             }
-            victim.getClient().getSession().close(true);
+            victim.getClient().getSession().close();
             victim.getClient().disconnect(true, false);
             victim.setName(splitted[2]);
             return 1;

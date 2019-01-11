@@ -1,7 +1,6 @@
 package client.inventory;
 
 import client.MapleCharacter;
-import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import database.DatabaseConnection;
 import java.io.Serializable;
 import java.sql.Connection;
@@ -9,12 +8,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Comparator;
-import org.apache.log4j.Logger;
 import server.MapleInventoryManipulator;
+import tools.MapleLogger;
 
 public class MapleRing implements Serializable {
 
-    private static final Logger log = Logger.getLogger(MapleRing.class);
     private static final long serialVersionUID = 9179541993413738579L;
     private final int ringId;
     private final int partnerRingId;
@@ -51,7 +49,7 @@ public class MapleRing implements Serializable {
             }
             return ret;
         } catch (SQLException ex) {
-            log.error("加载戒指信息出错", ex);
+            MapleLogger.error("加载戒指信息出错", ex);
         }
         return null;
     }
@@ -87,7 +85,7 @@ public class MapleRing implements Serializable {
             }
             return makeRing(itemId, player, partnerName, partnerId, msg, itemSn);
         } catch (Exception ex) {
-            log.error("创建戒指信息出错", ex);
+            MapleLogger.error("创建戒指信息出错", ex);
         }
         return 0;
     }
@@ -97,7 +95,7 @@ public class MapleRing implements Serializable {
         int[] makeRingId = {MapleInventoryIdentifier.getInstance(), MapleInventoryIdentifier.getInstance()};
         try {
             addToDB(itemId, player, partnerPlayer.getName(), partnerPlayer.getId(), makeRingId);
-        } catch (MySQLIntegrityConstraintViolationException mslcve) {
+        } catch (Exception mslcve) {
             return makeRingId;
         }
         return makeRingId;
@@ -107,7 +105,7 @@ public class MapleRing implements Serializable {
         int[] makeRingId = {MapleInventoryIdentifier.getInstance(), MapleInventoryIdentifier.getInstance()};
         try {
             addToDB(itemId, player, partnerName, partnerId, makeRingId);
-        } catch (MySQLIntegrityConstraintViolationException mslcve) {
+        } catch (Exception mslcve) {
             return 0;
         }
         MapleInventoryManipulator.addRing(player, itemId, makeRingId[1], itemSn);
@@ -171,7 +169,7 @@ public class MapleRing implements Serializable {
                 ps.close();
             }
         } catch (SQLException ex) {
-            log.error("删除戒指信息出错", ex);
+            MapleLogger.error("删除戒指信息出错", ex);
         }
     }
 
@@ -196,7 +194,7 @@ public class MapleRing implements Serializable {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException ex) {
-            log.error("删除戒指信息出错", ex);
+            MapleLogger.error("删除戒指信息出错", ex);
         }
     }
 

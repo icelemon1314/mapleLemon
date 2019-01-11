@@ -25,7 +25,7 @@ public class WithoutSecondPasswordHandler {
         }
         String currentpw = c.getSecondPassword();
         if ((!c.isLoggedIn()) || (loginFailCount(c)) || ((currentpw != null) && ((!currentpw.equals("")) || (haspic))) || (!c.login_Auth(charId)) || (ChannelServer.getInstance(c.getChannel()) == null) || (c.getWorld() != 0)) {
-            c.getSession().close(true);
+            c.getSession().close();
             return;
         }
         if (slea.available() != 0L) {

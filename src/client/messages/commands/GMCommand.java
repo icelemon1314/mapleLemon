@@ -934,7 +934,7 @@ public class GMCommand {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
-            c.getPlayer().dropMessage(5, "IP: " + c.getSession().getRemoteAddress().toString().split(":")[0]);
+            c.getPlayer().dropMessage(5, "IP: " + c.getSession().remoteAddress().toString().split(":")[0]);
             return 1;
         }
     }

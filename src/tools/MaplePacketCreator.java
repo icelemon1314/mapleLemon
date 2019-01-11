@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
-import org.apache.log4j.Logger;
 import server.MapleDueyActions;
 import server.MapleItemInformationProvider;
 import server.Randomizer;
@@ -59,8 +58,6 @@ import tools.packet.PacketHelper;
 import tools.packet.PetPacket;
 
 public class MaplePacketCreator {
-
-    private static final Logger log = Logger.getLogger(MaplePacketCreator.class);
 
     public static byte[] getWzCheck(String WzCheckPack) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();

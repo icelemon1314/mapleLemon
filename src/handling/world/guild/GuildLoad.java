@@ -1,17 +1,17 @@
 package handling.world.guild;
 
 import handling.world.WorldGuildService;
+import tools.MapleLogger;
+
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.apache.log4j.Logger;
 
 public class GuildLoad {
 
     public static final int NumSavingThreads = 6;
     private static Map<Integer, Map<Integer, MapleBBSReply>> replies = null;
     private static final TimingThread[] Threads = new TimingThread[6];
-    private static final Logger log = Logger.getLogger(GuildLoad.class);
     private static final AtomicInteger Distribute;
 
     public static void QueueGuildForLoad(int hm, Map<Integer, Map<Integer, MapleBBSReply>> replie) {
@@ -69,7 +69,7 @@ public class GuildLoad {
                     this.ToNotify.notify();
                 }
             } catch (InterruptedException ex) {
-                GuildLoad.log.error("[GuildLoad] 加载家族信息出错." + ex);
+                MapleLogger.error("[GuildLoad] 加载家族信息出错." + ex);
             }
         }
 

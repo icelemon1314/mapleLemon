@@ -8,8 +8,6 @@ import client.inventory.Item;
 import client.inventory.MapleInventoryType;
 import client.messages.CommandProcessorUtil;
 import client.messages.PlayerGMRank;
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.PreparedStatement;
 import constants.GameConstants;
 import custom.LoadPacket;
 import database.DatabaseConnection;

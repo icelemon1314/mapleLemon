@@ -2,10 +2,10 @@ package handling.mina;
 
 import client.MapleClient;
 import handling.RecvPacketOpcode;
-import org.apache.mina.core.buffer.IoBuffer;
-import org.apache.mina.core.session.IoSession;
-import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
-import org.apache.mina.filter.codec.ProtocolDecoderOutput;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.util.AttributeKey;
 import server.ServerProperties;
 import tools.FileoutputUtil;
 import tools.HexTool;
@@ -14,29 +14,32 @@ import tools.StringUtil;
 import tools.data.input.ByteArrayByteStream;
 import tools.data.input.GenericLittleEndianAccessor;
 
-public final class MaplePacketDecoder extends CumulativeProtocolDecoder {
+import java.util.List;
 
-    public static final String DECODER_STATE_KEY = MaplePacketDecoder.class.getName() + ".STATE";
+public class MaplePacketDecoder extends ByteToMessageDecoder {
+
+    @SuppressWarnings("deprecation")
+    public static final AttributeKey<DecoderState> DECODER_STATE_KEY = AttributeKey.valueOf(MaplePacketDecoder.class.getName() + ".STATE");
 
     @Override
-    protected boolean doDecode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
-        DecoderState decoderState = (DecoderState) session.getAttribute(DECODER_STATE_KEY);
-        MapleClient client = (MapleClient) session.getAttribute("CLIENT");
+    protected void decode(ChannelHandlerContext session, ByteBuf in, List<Object> out) throws Exception {
+        DecoderState decoderState =  session.channel().attr(DECODER_STATE_KEY).get();
+        MapleClient client = session.channel().attr(MapleClient.CLIENT_KEY).get();
         if (decoderState.packetlength == -1) {
-            if (in.remaining() >= 4) {
-                int packetHeader = in.getInt(); // 另外一种方式，getShort() xor getShort()
+            if (in.readableBytes() >= 4) {
+                int packetHeader = in.readInt(); // 另外一种方式，getShort() xor getShort()
                 decoderState.packetlength = MapleAESOFB.getPacketLength(packetHeader);
             } else {
                 FileoutputUtil.log("没有足够的数据来解密封包.");
-                return false;
+                return ;
             }
         }
-        if (in.remaining() >= decoderState.packetlength) {
+        if (in.readableBytes() >= decoderState.packetlength) {
             byte[] decryptedPacket = new byte[decoderState.packetlength];
-            in.get(decryptedPacket, 0, decoderState.packetlength);
+            in.readBytes(decryptedPacket, 0, decoderState.packetlength);
             decoderState.packetlength = -1;
             client.getReceiveCrypto().crypt(decryptedPacket);
-            out.write(decryptedPacket);
+            out.add(decryptedPacket);
 
             if (ServerProperties.ShowPacket()) {
                 int packetLen = decryptedPacket.length;
@@ -51,7 +54,7 @@ public final class MaplePacketDecoder extends CumulativeProtocolDecoder {
                     }
                 }
                 if (!记录) {
-                    return true;
+                    return ;
                 }
                 String pHeaderStr = Integer.toHexString(pHeader).toUpperCase();
                 pHeaderStr = StringUtil.getLeftPaddedStr(pHeaderStr, '0', 4);
@@ -76,9 +79,9 @@ public final class MaplePacketDecoder extends CumulativeProtocolDecoder {
                     FileoutputUtil.log(Send + HexTool.toString(new byte[]{decryptedPacket[0], decryptedPacket[1]}) + "...\r\n");
                 }
             }
-            return true;
+            return ;
         }
-        return false;
+        return ;
     }
 
     private String lookupSend(int val) {

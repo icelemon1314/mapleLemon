@@ -24,7 +24,6 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.log4j.Logger;
 import scripting.npc.NPCScriptManager;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
@@ -52,7 +51,6 @@ import tools.packet.SkillPacket;
 
 public class PlayerHandler {
 
-    private static final Logger log = Logger.getLogger(PlayerHandler.class);
     public static int fox = 0;
 
     // 消耗斗气的技能

@@ -5,7 +5,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.SecretKeySpec;
-import org.apache.log4j.Logger;
 
 public class MapleAESOFB {
 

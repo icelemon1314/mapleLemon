@@ -166,6 +166,7 @@ public class MapleQuest implements Serializable {
             ((List) ret.partyQuestInfo.get(rse.getString("rank"))).add(new Pair(rse.getString("mode"), new Pair(rse.getString("property"), rse.getInt("value"))));
         }
         rse.close();
+        con.close();
         return ret;
     }
 
@@ -200,8 +201,7 @@ public class MapleQuest implements Serializable {
         if (!quests.isEmpty() ) {
             return;
         }
-        Connection con = DatabaseConnection.getConnection();
-        try (
+        try (Connection con = DatabaseConnection.getConnection();
                 PreparedStatement questData = con.prepareStatement("SELECT * FROM wz_questdata");
                 ResultSet rs = questData.executeQuery();
         ) {
@@ -214,7 +214,6 @@ public class MapleQuest implements Serializable {
                 tmp.add(rs.getInt("questid"));
                 npcQuest.put(rs.getInt("npcId"), tmp);
             }
-            questData.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

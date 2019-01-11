@@ -14,13 +14,10 @@ import handling.world.sidekick.MapleSidekickCharacter;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
 import server.ServerProperties;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class PartyPacket {
-
-    private static final Logger log = Logger.getLogger(PartyPacket.class);
 
     public static byte[] partyCreated(MapleParty party) {//创建组队
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();

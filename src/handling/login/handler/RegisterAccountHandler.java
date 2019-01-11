@@ -3,7 +3,7 @@ package handling.login.handler;
 import client.LoginCrypto;
 import client.MapleClient;
 import database.DatabaseConnection;
-import org.apache.log4j.Logger;
+import tools.MapleLogger;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.LoginPacket;
 
@@ -13,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class RegisterAccountHandler {
-    private static final Logger log = Logger.getLogger(RegisterAccountHandler.class);
 
     public static void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         c.getSession().write(LoginPacket.RegisterInfo(true));
@@ -79,7 +78,7 @@ public class RegisterAccountHandler {
                     result = true;
                 }
             } catch (SQLException ex) {
-                log.error("注册帐号失败！", ex);
+                MapleLogger.error("注册帐号失败！", ex);
             }
         }
         c.getSession().write(LoginPacket.RegisterAccount(result));

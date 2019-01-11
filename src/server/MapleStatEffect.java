@@ -29,7 +29,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
-import org.apache.log4j.Logger;
 import provider.MapleData;
 import provider.MapleDataTool;
 import provider.wz.MapleDataType;
@@ -53,7 +52,6 @@ import tools.packet.SkillPacket;
 public class MapleStatEffect implements Serializable {
 
     private static final long serialVersionUID = 9179541993413738569L;
-    private static final Logger log = Logger.getLogger(MapleStatEffect.class);
     public Map<MapleStatInfo, Integer> info;
     private boolean overTime;
     private boolean skill;

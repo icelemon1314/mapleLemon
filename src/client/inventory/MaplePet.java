@@ -9,15 +9,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.log4j.Logger;
 import server.MapleItemInformationProvider;
 import server.movement.AbsoluteLifeMovement;
 import server.movement.LifeMovement;
 import server.movement.LifeMovementFragment;
+import tools.MapleLogger;
 
 public class MaplePet implements Serializable {
 
-    private static final Logger log = Logger.getLogger(MaplePet.class);
     private static final long serialVersionUID = 9179541993413738569L;
     private String name;
     private int Fh = 0;
@@ -94,7 +93,7 @@ public class MaplePet implements Serializable {
             }
             return ret;
         } catch (SQLException ex) {
-            log.error("加载宠物信息出错", ex);
+            MapleLogger.error("加载宠物信息出错", ex);
         }
         return null;
     }
@@ -125,7 +124,7 @@ public class MaplePet implements Serializable {
             }
             this.changed = false;
         } catch (SQLException ex) {
-            log.error("保存宠物信息出错", ex);
+            MapleLogger.error("保存宠物信息出错", ex);
         }
     }
 
@@ -152,7 +151,7 @@ public class MaplePet implements Serializable {
                 pse.close();
             }
         } catch (SQLException ex) {
-            log.error("创建宠物信息出错", ex);
+            MapleLogger.error("创建宠物信息出错", ex);
             return null;
         }
         MaplePet pet = new MaplePet(itemid, uniqueid);

@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.script.Invocable;
-import org.apache.log4j.Logger;
 import scripting.AbstractPlayerInteraction;
 import scripting.ScriptType;
 import scripting.event.EventInstanceManager;
@@ -60,10 +59,7 @@ import server.maps.MapleMap;
 import server.quest.MapleQuest;
 import server.shop.MapleShopFactory;
 import server.squad.MapleSquad;
-import tools.FileoutputUtil;
-import tools.MaplePacketCreator;
-import tools.StringUtil;
-import tools.Triple;
+import tools.*;
 import tools.packet.GuildPacket;
 import tools.packet.NPCPacket;
 import tools.packet.PlayerShopPacket;
@@ -71,7 +67,6 @@ import tools.packet.UIPacket;
 
 public class NPCConversationManager extends AbstractPlayerInteraction {
 
-    private static final Logger _log = Logger.getLogger(NPCConversationManager.class);
     private final int npcId;
     private String getText;
     private final ScriptType type;
@@ -477,7 +472,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             byte rareness = GameConstants.gachaponRareItem(item.getItemId());
             return item.getItemId();
         } catch (Exception e) {
-            _log.error("gainGachaponItem 错误", e);
+            MapleLogger.error("gainGachaponItem 错误", e);
         }
         return -1;
     }
@@ -506,7 +501,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             }
             return item.getItemId();
         } catch (Exception e) {
-            _log.error("gainGachaponItem 错误", e);
+            MapleLogger.error("gainGachaponItem 错误", e);
         }
         return -1;
     }
@@ -1062,7 +1057,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         try {
             this.c.getChannelServer().getFireWorks().giveDecs(this.c.getPlayer(), kegs);
         } catch (Exception e) {
-            _log.error("addDecorations 错误", e);
+            MapleLogger.error("addDecorations 错误", e);
         }
     }
 
@@ -1268,7 +1263,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
                 return true;
             }
         } catch (Exception re) {
-            _log.error("addCapacityToAlliance 错误", re);
+            MapleLogger.error("addCapacityToAlliance 错误", re);
         }
         return false;
     }
@@ -1281,7 +1276,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
                 return true;
             }
         } catch (Exception re) {
-            _log.error("disbandAlliance 错误", re);
+            MapleLogger.error("disbandAlliance 错误", re);
         }
         return false;
     }
@@ -1795,7 +1790,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             }
             rs.close();
         } catch (SQLException ex) {
-            _log.error("银行存款获取信息发生错误", ex);
+            MapleLogger.error("银行存款获取信息发生错误", ex);
         }
         return money;
     }
@@ -1819,7 +1814,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             ps.close();
             rs.close();
         } catch (SQLException ex) {
-            _log.error("银行存款添加数量发生错误", ex);
+            MapleLogger.error("银行存款添加数量发生错误", ex);
         }
         return 0;
     }

@@ -4,7 +4,6 @@ import client.MapleCharacter;
 import handling.SendPacketOpcode;
 import java.awt.Point;
 import java.util.List;
-import org.apache.log4j.Logger;
 import server.ServerProperties;
 import server.maps.MapleSummon;
 import server.movement.LifeMovementFragment;
@@ -13,8 +12,6 @@ import tools.Pair;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class SummonPacket {
-
-    private static final Logger log = Logger.getLogger(SummonPacket.class);
 
     /**
      * 召唤召唤兽

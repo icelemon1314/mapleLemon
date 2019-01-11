@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
 import server.AutobanManager;
 import server.MapleStatEffect;
 import server.Randomizer;
@@ -42,8 +41,6 @@ import tools.packet.BuffPacket;
 import tools.packet.SkillPacket;
 
 public class DamageParse {
-
-    private static final Logger log = Logger.getLogger(DamageParse.class);
 
     public static void applyAttack(AttackInfo attack, Skill theSkill, MapleCharacter player, int attackCount, double maxDamagePerMonster, MapleStatEffect effect, AttackType attack_type, int visProjectile) {
         MapleMonster monster;

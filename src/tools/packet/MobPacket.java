@@ -8,7 +8,6 @@ import java.awt.Point;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
 import server.ServerProperties;
 import server.life.MapleMonster;
 import server.life.MobSkill;
@@ -21,8 +20,6 @@ import tools.data.input.SeekableLittleEndianAccessor;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class MobPacket {
-
-    private static final Logger log = Logger.getLogger(MobPacket.class);
 
     public static byte[] damageMonster(int oid, long damage) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();

@@ -6,10 +6,10 @@ import handling.SendPacketOpcode;
 
 import java.io.File;
 import java.util.concurrent.locks.Lock;
-import org.apache.mina.core.buffer.IoBuffer;
-import org.apache.mina.core.session.IoSession;
-import org.apache.mina.filter.codec.ProtocolEncoder;
-import org.apache.mina.filter.codec.ProtocolEncoderOutput;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToByteEncoder;
 import server.ServerProperties;
 import tools.FileoutputUtil;
 import tools.HexTool;
@@ -17,11 +17,11 @@ import tools.StringUtil;
 import tools.data.input.ByteArrayByteStream;
 import tools.data.input.GenericLittleEndianAccessor;
 
-public final class MaplePacketEncoder implements ProtocolEncoder {
+public class MaplePacketEncoder extends MessageToByteEncoder<Object> {
 
     @Override
-    public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception {
-        MapleClient client = (MapleClient) session.getAttribute(MapleClient.CLIENT_KEY);
+    protected void encode(ChannelHandlerContext session, Object message, ByteBuf out) throws Exception {
+        MapleClient client =  session.channel().attr(MapleClient.CLIENT_KEY).get();
 
         if (client != null) {
             byte[] input = (byte[]) message;
@@ -77,16 +77,16 @@ public final class MaplePacketEncoder implements ProtocolEncoder {
                 mutex.unlock();
             }
             System.arraycopy(unencrypted, 0, ret, 4, unencrypted.length);
-            out.write(IoBuffer.wrap(ret));
+            out.writeBytes(ret);
 
         } else {
-            out.write(IoBuffer.wrap((byte[]) message));
+            out.writeBytes((byte[]) message);
         }
     }
 
-    @Override
-    public void dispose(IoSession session) throws Exception {
-    }
+//    @Override
+//    public void dispose(IoSession session) throws Exception {
+//    }
 
     private String lookupRecv(int val) {
         for (SendPacketOpcode op : SendPacketOpcode.values()) {

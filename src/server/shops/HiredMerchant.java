@@ -9,7 +9,6 @@ import handling.channel.ChannelServer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
-import org.apache.log4j.Logger;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.Timer.EtcTimer;
@@ -25,7 +24,6 @@ public class HiredMerchant extends AbstractPlayerStore {
     private int storeid;
     private final long start;
     private long lastChangeNameTime = 0L;
-    private static final Logger log = Logger.getLogger(HiredMerchant.class);
 
     public HiredMerchant(MapleCharacter owner, int itemId, String desc) {
         super(owner, itemId, desc, "", 6);

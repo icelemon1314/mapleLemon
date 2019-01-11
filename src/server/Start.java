@@ -264,7 +264,6 @@ public class Start {
         @Override
         public void run() {
             ShutdownServer.getInstance().run();
-//            ShutdownServer.getInstance().run();
         }
     }
 }

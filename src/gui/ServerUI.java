@@ -2470,7 +2470,7 @@ public class ServerUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "未选择角色或者选择的角色是离线状态或不存在。");
         } else {
             player.getClient().disconnect(true, false);
-            player.getClient().getSession().close(true);
+            player.getClient().getSession().close();
             JOptionPane.showMessageDialog(null, "操作成功。");
         }
     }//GEN-LAST:event_jButton35ActionPerformed

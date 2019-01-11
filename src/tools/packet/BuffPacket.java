@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
 import server.MapleStatEffect;
 import server.ServerProperties;
 import tools.DateUtil;
@@ -19,8 +18,6 @@ import tools.Pair;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class BuffPacket {
-
-    private static final Logger log = Logger.getLogger(BuffPacket.class);
 
     public static byte[] giveDice(int buffid, int skillid, int duration, List<Pair<MapleBuffStat, Integer>> statups, MapleCharacter chr) {
         int value = 0;

@@ -14,13 +14,12 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
-import org.apache.log4j.Logger;
 import tools.FileoutputUtil;
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 
 public class ShutdownServer implements ShutdownServerMBean {
 
-    private static final Logger log = Logger.getLogger(ShutdownServer.class);
     public static ShutdownServer instance;
     public int mode = 0;
 
@@ -66,7 +65,7 @@ public class ShutdownServer implements ShutdownServerMBean {
                         cs.shutdown();
                     }
                 } catch (Exception e) {
-                    log.error("关闭服务端错误 - 3" + e);
+                    MapleLogger.error("关闭服务端错误 - 3" + e);
                 }
             }
             LoginServer.shutdown();
@@ -82,11 +81,7 @@ public class ShutdownServer implements ShutdownServerMBean {
             Timer.EtcTimer.getInstance().stop();
             Timer.PingTimer.getInstance().stop();
             FileoutputUtil.log("正在关闭数据库连接...");
-            try {
-                DatabaseConnection.closeAll();
-            } catch (SQLException e) {
-                log.error("关闭数据库连接错误" + e);
-            }
+            DatabaseConnection.closeAll();
 
         }
         FileoutputUtil.log("游戏服务已成功关闭");

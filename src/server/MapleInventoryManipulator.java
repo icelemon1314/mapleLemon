@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
 import server.cashshop.CashItemFactory;
 import server.cashshop.CashItemInfo;
 import server.quest.MapleQuest;
@@ -36,8 +35,6 @@ import tools.packet.InventoryPacket;
 import tools.packet.MTSCSPacket;
 
 public class MapleInventoryManipulator {
-
-    private static final Logger log = Logger.getLogger(MapleInventoryManipulator.class);
 
     public static void addRing(MapleCharacter chr, int itemId, int ringId, int sn) {
         CashItemInfo csi = CashItemFactory.getInstance().getItem(sn);

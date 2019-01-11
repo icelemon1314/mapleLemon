@@ -5,11 +5,9 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MonitorInfo;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import org.apache.log4j.Logger;
 
 public class DeadlockDetector extends Thread{
 
-    private static final Logger log = Logger.getLogger(DeadlockDetector.class);
     private int checkInterval = 0;
     private static final String INDENT = "    ";
     private StringBuilder sb = null;
@@ -28,7 +26,7 @@ public class DeadlockDetector extends Thread{
                 long[] threadIds = bean.findDeadlockedThreads();
 
                 if (threadIds != null) {
-                    log.error("检测到死锁!!");
+                    MapleLogger.error("检测到死锁!!");
                     this.sb = new StringBuilder();
                     noDeadLocks = false;
 
@@ -47,7 +45,7 @@ public class DeadlockDetector extends Thread{
                     for (ThreadInfo ti : bean.dumpAllThreads(true, true)) {
                         printThreadInfo(ti);
                     }
-                    log.error(this.sb.toString());
+                    MapleLogger.error(this.sb.toString());
                 }
                 Thread.sleep(this.checkInterval);
             } catch (Exception ex) {

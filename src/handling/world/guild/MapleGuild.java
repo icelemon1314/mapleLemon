@@ -25,9 +25,9 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.apache.log4j.Logger;
 import server.MapleStatEffect;
 import tools.FileoutputUtil;
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.data.output.MaplePacketLittleEndianWriter;
 import tools.packet.GuildPacket;
@@ -60,7 +60,6 @@ public class MapleGuild
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private boolean init = false;
     private boolean changed = false;
-    private static final Logger log = Logger.getLogger(MapleGuild.class);
     private List<Integer> joinList = new ArrayList<>();
 
     public MapleGuild(int guildid) {
@@ -189,7 +188,7 @@ public class MapleGuild
 
             this.level = calculateLevel();
         } catch (SQLException se) {
-            log.error(new StringBuilder().append("[MapleGuild] 从数据库中加载家族信息出错.").append(se).toString());
+            MapleLogger.error(new StringBuilder().append("[MapleGuild] 从数据库中加载家族信息出错.").append(se).toString());
         }
     }
 
@@ -222,7 +221,7 @@ public class MapleGuild
             rs.close();
             ps.close();
         } catch (SQLException se) {
-            log.error(new StringBuilder().append("[MapleGuild] 从数据库中加载家族信息出错.").append(se).toString());
+            MapleLogger.error(new StringBuilder().append("[MapleGuild] 从数据库中加载家族信息出错.").append(se).toString());
         }
     }
 
@@ -256,7 +255,7 @@ public class MapleGuild
                 return;
             }
         } catch (SQLException se) {
-            log.error(new StringBuilder().append("[MapleGuild] 从数据库中加载家族信息出错.").append(se).toString());
+            MapleLogger.error(new StringBuilder().append("[MapleGuild] 从数据库中加载家族信息出错.").append(se).toString());
         }
         AtomicInteger FinishedThreads = new AtomicInteger(0);
         GuildLoad.Execute(toNotify);
@@ -371,7 +370,7 @@ public class MapleGuild
                 broadcast(GuildPacket.guildDisband(this.id));
             }
         } catch (SQLException se) {
-            log.error(new StringBuilder().append("[MapleGuild] 保存家族信息出错.").append(se).toString());
+            MapleLogger.error(new StringBuilder().append("[MapleGuild] 保存家族信息出错.").append(se).toString());
         }
     }
 
@@ -552,7 +551,7 @@ public class MapleGuild
                 ps.close();
             }
         } catch (SQLException e) {
-            log.error(new StringBuilder().append("[MapleGuild] 保存家族联盟信息出错.").append(e).toString());
+            MapleLogger.error(new StringBuilder().append("[MapleGuild] 保存家族联盟信息出错.").append(e).toString());
         }
     }
 
@@ -588,7 +587,7 @@ public class MapleGuild
             ps.close();
             return ret;
         } catch (SQLException se) {
-            log.error(new StringBuilder().append("[MapleGuild] 创建家族信息出错.").append(se).toString());
+            MapleLogger.error(new StringBuilder().append("[MapleGuild] 创建家族信息出错.").append(se).toString());
         }
         return 0;
     }
@@ -756,7 +755,7 @@ public class MapleGuild
                     ps.close();
                 }
             } catch (SQLException e) {
-                log.error(new StringBuilder().append("[MapleGuild] Saving leaderid ERROR.").append(e).toString());
+                MapleLogger.error(new StringBuilder().append("[MapleGuild] Saving leaderid ERROR.").append(e).toString());
             }
         }
     }
@@ -836,7 +835,7 @@ public class MapleGuild
             ps.execute();
             ps.close();
         } catch (SQLException e) {
-            log.error(new StringBuilder().append("[MapleGuild] Saving guild logo / BG colo ERROR.").append(e).toString());
+            MapleLogger.error(new StringBuilder().append("[MapleGuild] Saving guild logo / BG colo ERROR.").append(e).toString());
         }
     }
 
@@ -872,7 +871,7 @@ public class MapleGuild
                 ps.close();
             }
         } catch (SQLException e) {
-            log.error(new StringBuilder().append("[MapleGuild] Saving guild capacity ERROR.").append(e).toString());
+            MapleLogger.error(new StringBuilder().append("[MapleGuild] Saving guild capacity ERROR.").append(e).toString());
         }
         return true;
     }

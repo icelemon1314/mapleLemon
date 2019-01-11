@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.MerchItemPackage;
@@ -27,8 +26,6 @@ import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.PlayerShopPacket;
 
 public class HiredMerchantHandler {
-
-    private static final Logger log = Logger.getLogger(HiredMerchantHandler.class);
 
     public static boolean UseHiredMerchant(MapleClient c, boolean packet) {
         MapleCharacter chr = c.getPlayer();

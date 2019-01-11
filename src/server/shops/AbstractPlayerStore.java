@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.apache.log4j.Logger;
 import server.maps.MapleMap;
 import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
@@ -29,7 +28,6 @@ import tools.packet.PlayerShopPacket;
 
 public abstract class AbstractPlayerStore extends MapleMapObject implements IMaplePlayerShop {
 
-    private static final Logger log = Logger.getLogger(AbstractPlayerStore.class);
     protected boolean open = false;
     protected boolean available = false;
     protected String ownerName;

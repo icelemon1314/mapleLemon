@@ -2,6 +2,8 @@ plugins {
     // Apply the java plugin to add support for Java
     id 'java'
 
+    id 'idea'
+
     // Apply the application plugin to add support for building an application
     id 'application'
 }
@@ -18,12 +20,34 @@ dependencies {
 
     implementation 'mysql:mysql-connector-java:8.0.13'
     implementation 'ch.qos.logback:logback-core:1.2.3'
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+    implementation 'com.alibaba:druid:1.1.12'
+    implementation 'org.slf4j:slf4j-api:1.7.25'
 
 
 }
 
-application {
-    // Define the main class for the application
-    mainClassName = 'server.Start'
+mainClassName = 'server.Start'
+
+jar {
+    baseName = "mapleLemon"
+    // version = '0.1.1'
+    manifest {
+        attributes(
+                'Main-Class': 'server.Start'
+        )
+    }
 }
 
+sourceSets {
+    main {
+        java {
+            //源代码的dir
+            srcDirs = ['src']
+        }
+        resources {
+            //class文件的dir
+            srcDirs = ['bin']
+        }
+    }
+}

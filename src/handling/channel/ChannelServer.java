@@ -4,12 +4,8 @@ import client.MapleCharacter;
 import constants.ServerConstants;
 import constants.WorldConstants;
 import database.DatabaseConnection;
-import handling.MapleServerHandler;
 import handling.login.LoginServer;
-import handling.mina.MapleCodecFactory;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.InetSocketAddress;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,18 +20,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.apache.log4j.Logger;
-import org.apache.mina.core.buffer.IoBuffer;
-import org.apache.mina.core.buffer.SimpleBufferAllocator;
-import org.apache.mina.core.service.IoAcceptor;
-import org.apache.mina.core.session.IdleStatus;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.executor.ExecutorFilter;
-import org.apache.mina.transport.socket.SocketSessionConfig;
-import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+
+import handling.netty.ServerConnection;
 import scripting.event.EventScriptManager;
 import server.ManagerSin;
 import server.ServerProperties;
@@ -58,6 +46,7 @@ import server.squad.MapleSquad;
 import server.squad.MapleSquadType;
 import tools.ConcurrentEnumMap;
 import tools.FileoutputUtil;
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 
 public class ChannelServer {
@@ -93,7 +82,7 @@ public class ChannelServer {
     private boolean checkCash = false;
     private boolean useMapScript = false;//?
     private PlayerStorage players;
-    private IoAcceptor acceptor;
+    private ServerConnection acceptor;
     private final MapleMapFactory mapFactory;
     private EventScriptManager eventSM;
     private String eventSMs;
@@ -109,7 +98,6 @@ public class ChannelServer {
     private final Map<MapleEventType, MapleEvent> events = new EnumMap(MapleEventType.class);
     private String ShopPack;
     Connection shareCon;
-    private static final Logger log = Logger.getLogger(ChannelServer.class);
     private final ManagerSin a = new ManagerSin();
 
     private ChannelServer(int channel) {
@@ -171,24 +159,26 @@ public class ChannelServer {
         }
         ip = (ServerProperties.getProperty("channel.interface", ServerConstants.IP) + ":" + port);
 
-        IoBuffer.setUseDirectBuffer(false);
-        IoBuffer.setAllocator(new SimpleBufferAllocator());
-        acceptor = new NioSocketAcceptor(Runtime.getRuntime().availableProcessors() + 1);
-        acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 30);
-        acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new MapleCodecFactory()));
-        //Executor threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
-        acceptor.getFilterChain().addLast("exceutor", new ExecutorFilter(/*threadPool*/));
-        //acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(threadPool));
+//        IoBuffer.setUseDirectBuffer(false);
+//        IoBuffer.setAllocator(new SimpleBufferAllocator());
+//        acceptor = new NioSocketAcceptor(Runtime.getRuntime().availableProcessors() + 1);
+//        acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 30);
+//        acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new MapleCodecFactory()));
+//        //Executor threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
+//        acceptor.getFilterChain().addLast("exceutor", new ExecutorFilter(/*threadPool*/));
+//        //acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(threadPool));
         players = new PlayerStorage(channel);
         loadEvents(); // 事件脚本
         //loadShare();
         try {
-            acceptor.setHandler(new MapleServerHandler(channel));
-            acceptor.bind(new InetSocketAddress(port));
-            ((SocketSessionConfig) acceptor.getSessionConfig()).setTcpNoDelay(true);
+//            acceptor.setHandler(new MapleServerHandler(channel));
+//            acceptor.bind(new InetSocketAddress(port));
+//            ((SocketSessionConfig) acceptor.getSessionConfig()).setTcpNoDelay(true);
+            this.acceptor = new ServerConnection(port, 1, channel);
+            this.acceptor.run();
             FileoutputUtil.log("频道" + channel + " 正在监听" + port + "端口");
             eventSM.init();
-        } catch (IOException e) {
+        } catch (Exception e) {
             FileoutputUtil.log("无法绑定" + port + "端口 (频道: " + getChannel() + ")" + e);
         }
     }
@@ -210,15 +200,10 @@ public class ChannelServer {
 
         FileoutputUtil.log("频道 " + channel + " 解除绑定端口...");
 
-        acceptor.unbind();
-        acceptor = null;
+        acceptor.close();
 
         instances.remove(channel);
         setFinishShutdown();
-    }
-
-    public void unbind() {
-        acceptor.unbind();
     }
 
     public boolean hasFinishedShutdown() {
@@ -428,7 +413,7 @@ public class ChannelServer {
                 ret++;
             }
         } catch (Exception e) {
-            log.error("关闭雇佣商店出现错误..." + e);
+            MapleLogger.error("关闭雇佣商店出现错误..." + e);
         } finally {
             mcWriteLock.unlock();
         }
@@ -745,7 +730,7 @@ public class ChannelServer {
                 ps.close();
             }
         } catch (SQLException e) {
-            log.error("ERROR Load Shares", e);
+            MapleLogger.error("ERROR Load Shares", e);
         }
     }
 
@@ -760,7 +745,7 @@ public class ChannelServer {
                 ps.executeUpdate();
             }
         } catch (SQLException e) {
-            log.error("ERROR Increase Shares", e);
+            MapleLogger.error("ERROR Increase Shares", e);
         }
     }
 
@@ -778,7 +763,7 @@ public class ChannelServer {
                 ps.executeUpdate();
             }
         } catch (SQLException e) {
-            log.error("ERROR Decrease Shares", e);
+            MapleLogger.error("ERROR Decrease Shares", e);
         }
     }
 
@@ -792,7 +777,7 @@ public class ChannelServer {
                 ps.executeUpdate();
             }
         } catch (SQLException e) {
-            log.error("ERROR Save Shares", e);
+            MapleLogger.error("ERROR Save Shares", e);
         }
     }
 

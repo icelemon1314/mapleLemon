@@ -34,7 +34,8 @@ public enum MapleQuestRewardType {
     willMin(25),
     charismaMin(26),
     insightMin(27),
-    exp(28);
+    exp(28),
+    meso(29);
 
     final byte type;
 

@@ -5,14 +5,11 @@ import handling.SendPacketOpcode;
 import handling.world.WorldGuildService;
 import handling.world.guild.MapleGuild;
 import handling.world.messenger.MessengerRankingWorker;
-import org.apache.log4j.Logger;
 import server.ServerProperties;
 import tools.DateUtil;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class MessengerPacket {
-
-    private static final Logger log = Logger.getLogger(MessengerPacket.class);
 
     public static byte[] addMessengerPlayer(String from, MapleCharacter chr, int position, int channel) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();

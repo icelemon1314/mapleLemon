@@ -3,37 +3,33 @@
  Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc> 
  Matthias Butz <matze@odinms.de>
  Jan Christian Meyer <vimes@odinms.de>
-
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License version 3
  as published by the Free Software Foundation. You may not use, modify
  or distribute this program under any other version of the
  GNU Affero General Public License.
-
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
-
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package tools;
 
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelConfig;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelId;
+import io.netty.channel.ChannelMetadata;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.ChannelProgressivePromise;
+import io.netty.channel.ChannelPromise;
+import io.netty.channel.EventLoop;
+import io.netty.util.Attribute;
+import io.netty.util.AttributeKey;
 import java.net.SocketAddress;
-import java.util.Set;
-import org.apache.mina.core.filterchain.IoFilterChain;
-import org.apache.mina.core.future.CloseFuture;
-import org.apache.mina.core.future.ReadFuture;
-import org.apache.mina.core.future.WriteFuture;
-import org.apache.mina.core.service.IoHandler;
-import org.apache.mina.core.service.IoService;
-import org.apache.mina.core.service.TransportMetadata;
-import org.apache.mina.core.session.IdleStatus;
-import org.apache.mina.core.session.IoSession;
-import org.apache.mina.core.session.IoSessionConfig;
-import org.apache.mina.core.write.WriteRequest;
-import org.apache.mina.core.write.WriteRequestQueue;
 
 /**
  * Represents a mock version of an IOSession to use a MapleClient instance
@@ -47,397 +43,220 @@ import org.apache.mina.core.write.WriteRequestQueue;
  * @since Revision 518
  * @version 1.0
  */
-public class MockIOSession implements IoSession {
-
-    /**
-     * Does nothing.
-     *
-     * @return
-     */
-    @Override
-    public IoSessionConfig getConfig() {
-        return null;
-    }
-
-    /**
-     * Does nothing.
-     *
-     * @return
-     */
-    @Override
-    public IoFilterChain getFilterChain() {
-        return null;
-    }
-
-    /**
-     * Does nothing.
-     *
-     * @return
-     */
-    @Override
-    public IoHandler getHandler() {
-        return null;
-    }
-
-    /**
-     * Does nothing.
-     *
-     * @return
-     */
-    @Override
-    public SocketAddress getLocalAddress() {
-        return null;
-    }
-
-    /**
-     * Does nothing.
-     *
-     * @return
-     */
-    @Override
-    public SocketAddress getRemoteAddress() {
-        return null;
-    }
-
-    /**
-     * Does nothing.
-     *
-     * @return
-     */
-    @Override
-    public IoService getService() {
-        return null;
-    }
-
-    /**
-     * Does nothing.
-     *
-     * @return
-     */
-    @Override
-    public SocketAddress getServiceAddress() {
-        return null;
-    }
-
-    /**
-     * Does nothing.
-     *
-     * @param message
-     * @param remoteAddress
-     * @return
-     */
-    @Override
-    public WriteFuture write(Object message, SocketAddress remoteAddress) {
-        return null;
-    }
-
-    /**
-     * "Fake writes" a packet to the client, only running the OnSend event of
-     * the packet.
-     *
-     * @param message
-     * @return
-     */
-    @Override
-    public WriteFuture write(Object message) {
-        return null;
-    }
+public class MockIOSession implements Channel {
 
     @Override
-    public long getId() {
-        return -1;
-    }
-
-    @Override
-    public WriteRequestQueue getWriteRequestQueue() {
-        return null;
-    }
-
-    @Override
-    public TransportMetadata getTransportMetadata() {
-        return null;
-    }
-
-    @Override
-    public ReadFuture read() {
-        return null;
-    }
-
-    @Override
-    public CloseFuture close(boolean bln) {
-        return null;
-    }
-
-    @Override
-    public Object getAttribute(Object o) {
-        return null;
-    }
-
-    @Override
-    public Object getAttribute(Object o, Object o1) {
-        return null;
-    }
-
-    @Override
-    public Object setAttribute(Object o, Object o1) {
-        return null;
-    }
-
-    @Override
-    public Object setAttribute(Object o) {
-        return null;
-    }
-
-    @Override
-    public Object setAttributeIfAbsent(Object o, Object o1) {
-        return null;
-    }
-
-    @Override
-    public Object setAttributeIfAbsent(Object o) {
-        return null;
-    }
-
-    @Override
-    public Object removeAttribute(Object o) {
-        return null;
-    }
-
-    @Override
-    public boolean removeAttribute(Object o, Object o1) {
+    public ChannelId id() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean replaceAttribute(Object o, Object o1, Object o2) {
+    public EventLoop eventLoop() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean containsAttribute(Object o) {
+    public Channel parent() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Set<Object> getAttributeKeys() {
-        return null;
-    }
-
-    @Override
-    public boolean isConnected() {
+    public ChannelConfig config() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean isClosing() {
+    public boolean isOpen() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public CloseFuture getCloseFuture() {
-        return null;
-    }
-
-    @Override
-    public void setCurrentWriteRequest(WriteRequest wr) {
-
-    }
-
-    @Override
-    public void suspendRead() {
-
-    }
-
-    @Override
-    public void suspendWrite() {
-
-    }
-
-    @Override
-    public void resumeRead() {
-
-    }
-
-    @Override
-    public void resumeWrite() {
-
-    }
-
-    @Override
-    public boolean isReadSuspended() {
+    public boolean isRegistered() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean isWriteSuspended() {
+    public boolean isActive() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void updateThroughput(long l, boolean bln) {
-
-    }
-
-    @Override
-    public long getReadBytes() {
-        return -1;
-    }
-
-    @Override
-    public long getWrittenBytes() {
-        return -1;
-    }
-
-    @Override
-    public long getReadMessages() {
-        return -1;
-    }
-
-    @Override
-    public long getWrittenMessages() {
-        return -1;
-    }
-
-    @Override
-    public double getReadBytesThroughput() {
-        return -1;
-    }
-
-    @Override
-    public double getWrittenBytesThroughput() {
-        return -1;
-    }
-
-    @Override
-    public double getReadMessagesThroughput() {
-        return -1;
-    }
-
-    @Override
-    public double getWrittenMessagesThroughput() {
-        return -1;
-    }
-
-    @Override
-    public int getScheduledWriteMessages() {
-        return -1;
-    }
-
-    @Override
-    public long getScheduledWriteBytes() {
-        return -1;
-    }
-
-    @Override
-    public Object getCurrentWriteMessage() {
-        return null;
-    }
-
-    @Override
-    public WriteRequest getCurrentWriteRequest() {
-        return null;
-    }
-
-    @Override
-    public long getCreationTime() {
-        return -1;
-    }
-
-    @Override
-    public long getLastIoTime() {
-        return -1;
-    }
-
-    @Override
-    public long getLastReadTime() {
-        return -1;
-    }
-
-    @Override
-    public long getLastWriteTime() {
-        return -1;
-    }
-
-    @Override
-    public boolean isIdle(IdleStatus is) {
+    public ChannelMetadata metadata() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean isReaderIdle() {
+    public SocketAddress localAddress() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean isWriterIdle() {
+    public SocketAddress remoteAddress() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean isBothIdle() {
+    public ChannelFuture closeFuture() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public int getIdleCount(IdleStatus is) {
-        return -1;
+    public boolean isWritable() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public int getReaderIdleCount() {
-        return -1;
+    public Unsafe unsafe() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public int getWriterIdleCount() {
-        return -1;
+    public ChannelPipeline pipeline() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public int getBothIdleCount() {
-        return -1;
+    public ByteBufAllocator alloc() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public long getLastIdleTime(IdleStatus is) {
-        return -1;
+    public Channel read() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public long getLastReaderIdleTime() {
-        return -1;
+    public Channel flush() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public long getLastWriterIdleTime() {
-        return -1;
+    public <T> Attribute<T> attr(AttributeKey<T> ak) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public long getLastBothIdleTime() {
-        return -1;
-    }
-
-    @Deprecated
-    @Override
-    public CloseFuture close() {
-        return null;
-    }
-
-    @Deprecated
-    @Override
-    public Object getAttachment() {
-        return null;
-    }
-
-    @Deprecated
-    @Override
-    public Object setAttachment(Object o) {
-        return null;
+    public <T> boolean hasAttr(AttributeKey<T> key) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean isSecured() {
+    public ChannelFuture bind(SocketAddress sa) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture connect(SocketAddress sa) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture connect(SocketAddress sa, SocketAddress sa1) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture disconnect() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture close() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture deregister() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture bind(SocketAddress sa, ChannelPromise cp) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture connect(SocketAddress sa, ChannelPromise cp) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture connect(SocketAddress sa, SocketAddress sa1, ChannelPromise cp) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture disconnect(ChannelPromise cp) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture close(ChannelPromise cp) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture deregister(ChannelPromise cp) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture write(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture write(Object o, ChannelPromise cp) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture writeAndFlush(Object o, ChannelPromise cp) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture writeAndFlush(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelPromise newPromise() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelProgressivePromise newProgressivePromise() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture newSucceededFuture() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelFuture newFailedFuture(Throwable thrwbl) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ChannelPromise voidPromise() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int compareTo(Channel o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public long bytesBeforeUnwritable() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public long bytesBeforeWritable() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

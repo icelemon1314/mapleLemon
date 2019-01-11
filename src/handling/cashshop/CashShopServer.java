@@ -3,17 +3,8 @@ package handling.cashshop;
 import constants.ServerConstants;
 import handling.MapleServerHandler;
 import handling.channel.PlayerStorage;
-import handling.mina.MapleCodecFactory;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import org.apache.log4j.Logger;
-import org.apache.mina.core.buffer.IoBuffer;
-import org.apache.mina.core.buffer.SimpleBufferAllocator;
-import org.apache.mina.core.service.IoAcceptor;
-import org.apache.mina.core.session.IdleStatus;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.transport.socket.SocketSessionConfig;
-import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+
+import handling.netty.ServerConnection;
 import server.ServerProperties;
 import tools.FileoutputUtil;
 
@@ -24,12 +15,11 @@ import tools.FileoutputUtil;
 public class CashShopServer {
 
     private static String ip;
-    private static IoAcceptor acceptor;
+    private static ServerConnection acceptor;
     private static PlayerStorage players;
     private static boolean finishedShutdown = false;
     public static short port;
     private static final short DEFAULT_PORT = 8600;
-    private static final Logger log = Logger.getLogger(CashShopServer.class);
     private static int autoPaoDian;
 
     public static void run_startup_configurations() {
@@ -37,21 +27,23 @@ public class CashShopServer {
         port = Short.parseShort(ServerProperties.getProperty("cashshop.port", String.valueOf(DEFAULT_PORT)));
         ip = ServerProperties.getProperty("world.host", ServerConstants.IP) + ":" + port;
 
-        IoBuffer.setUseDirectBuffer(false);
-        IoBuffer.setAllocator(new SimpleBufferAllocator());
+//        IoBuffer.setUseDirectBuffer(false);
+//        IoBuffer.setAllocator(new SimpleBufferAllocator());
 
-        acceptor = new NioSocketAcceptor();
-        acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new MapleCodecFactory()));
-        acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 30);
+//        acceptor = new NioSocketAcceptor();
+//        acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new MapleCodecFactory()));
+//        acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 30);
         players = new PlayerStorage(MapleServerHandler.CASH_SHOP_SERVER);
         try {
-            acceptor.setHandler(new MapleServerHandler(MapleServerHandler.CASH_SHOP_SERVER));
-            acceptor.bind(new InetSocketAddress(port));
-            ((SocketSessionConfig) acceptor.getSessionConfig()).setTcpNoDelay(true);
+//            acceptor.setHandler(new MapleServerHandler(MapleServerHandler.CASH_SHOP_SERVER));
+//            acceptor.bind(new InetSocketAddress(port));
+//            ((SocketSessionConfig) acceptor.getSessionConfig()).setTcpNoDelay(true);
+            acceptor = new ServerConnection(port, 1, MapleServerHandler.CASH_SHOP_SERVER);
+            acceptor.run();
 
             FileoutputUtil.log("完成!");
             FileoutputUtil.log("商城伺服器正在监听" + port + "端口\r\n");
-        } catch (IOException e) {
+        } catch (Exception e) {
             FileoutputUtil.log("失败!");
             System.err.println("无法绑定" + port + "端口");
             throw new RuntimeException("绑定端口失败.", e);
@@ -77,7 +69,7 @@ public class CashShopServer {
         FileoutputUtil.log("正在关闭商城服务器...");
         players.disconnectAll();
         FileoutputUtil.log("商城服务器解除端口绑定...");
-        acceptor.unbind();
+        acceptor.close();
         finishedShutdown = true;
     }
 

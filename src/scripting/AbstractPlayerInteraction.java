@@ -32,7 +32,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import org.apache.log4j.Logger;
 import scripting.event.EventInstanceManager;
 import scripting.event.EventManager;
 import scripting.npc.NPCScriptManager;
@@ -65,7 +64,6 @@ import tools.packet.UIPacket;
 
 public abstract class AbstractPlayerInteraction {
 
-    private static final Logger log = Logger.getLogger(AbstractPlayerInteraction.class);
     protected MapleClient c;
     protected int id;
     protected String script;

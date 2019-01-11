@@ -121,7 +121,7 @@ public class InternCommand {
             }
             MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[splitted.length - 1]);
             if (victim != null && c.getPlayer().getGMLevel() >= victim.getGMLevel()) {
-                victim.getClient().getSession().close(true);
+                victim.getClient().getSession().close();
                 victim.getClient().disconnect(true, false);
                 return 1;
             } else {

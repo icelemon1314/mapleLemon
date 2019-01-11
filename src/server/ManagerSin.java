@@ -990,7 +990,7 @@ public class ManagerSin extends javax.swing.JFrame {
                 if (val_targ == player.getClient().getAccID()) {
                     player.getClient().getSession().write(MaplePacketCreator.serverMessagePopUp("[通知] 你已经被运营员强制踢下线！"));
                     player.getClient().disconnect(true, player.getClient().getChannel() == -10);
-                    player.getClient().getSession().close(true);
+                    player.getClient().getSession().close();
                     break;
                 }
             }

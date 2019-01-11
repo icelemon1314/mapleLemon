@@ -4,7 +4,6 @@ import client.MapleCharacter;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
 import server.maps.AnimatedMapleMapObject;
 import server.movement.AbsoluteLifeMovement;
 import server.movement.BounceMovement;
@@ -14,11 +13,10 @@ import server.movement.LifeMovementFragment;
 import server.movement.RelativeLifeMovement;
 import server.movement.TeleportMovement;
 import tools.FileoutputUtil;
+import tools.MapleLogger;
 import tools.data.input.SeekableLittleEndianAccessor;
 
 public class MovementParse {
-
-    private static final Logger log = Logger.getLogger(MovementParse.class);
 
     //1 = player, 2 = mob, 3 = pet, 4 = summon, 5 = dragon
     public static List<LifeMovementFragment> parseMovement(final SeekableLittleEndianAccessor lea, final int kind) {
@@ -89,7 +87,7 @@ public class MovementParse {
             }
         }
         if (numCommands != res.size()) {
-            log.warn("循环次数[" + numCommands + "]和实际上获取的循环次数[" + res.size() + "]不符");
+            MapleLogger.error("循环次数[" + numCommands + "]和实际上获取的循环次数[" + res.size() + "]不符");
             FileoutputUtil.log(FileoutputUtil.Movement_Err, "循环次数[" + numCommands + "]和实际上获取的循环次数[" + res.size() + "]不符 " + "(" + chr.getName() + ") 职业：" + chr.getJobName() + "(" + chr.getJob() + "移动封包 剩余次数: " + (numCommands - res.size()) + "  封包: " + lea.toString(true));
             return null;
         }

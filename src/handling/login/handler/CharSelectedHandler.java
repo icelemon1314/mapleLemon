@@ -21,7 +21,7 @@ public class CharSelectedHandler {
             return;
         }
         if ((ChannelServer.getInstance(c.getChannel()) == null) || !WorldConstants.isExists(c.getWorld())) {
-            c.getSession().close(true);
+            c.getSession().close();
             return;
         }
         if (c.getIdleTask() != null) {
