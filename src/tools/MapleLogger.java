@@ -16,7 +16,7 @@ public class MapleLogger {
     }
 
     public static void error(String msg) {
-        MapleLogger.error(msg);
+        log.error(msg);
     }
 
     public static void error(Throwable e) {
@@ -33,6 +33,6 @@ public class MapleLogger {
         StringBuilder s = new StringBuilder();
         s.append(("exception : -->>"));
         s.append((msg));
-        MapleLogger.error(s.toString(), e);
+        log.error(s.toString(), e);
     }
 }
