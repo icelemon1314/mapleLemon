@@ -16,6 +16,7 @@ import client.inventory.MaplePet;
 import client.inventory.PetFlag;
 import constants.GameConstants;
 import constants.ItemConstants;
+import handling.MaplePacketHandler;
 import handling.channel.ChannelServer;
 import handling.world.WorldBroadcastService;
 import java.awt.Rectangle;
@@ -50,15 +51,17 @@ import tools.packet.InventoryPacket;
 import tools.packet.MTSCSPacket;
 import tools.packet.PetPacket;
 
-public class UseCashItemHandler {
+public class UseCashItemHandler extends MaplePacketHandler {
 
-    public static void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
+    @Override
+    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         // 2B 0F 00
         // D0 C4 1F 00 // 道具ID
         // 10 00 B2 E2 CA D4 C0 AE B0 C8 A3 A1 A3 A1 A3 A1 A3 A1
         // 01
+        MapleCharacter chr = c.getPlayer();
         if ((chr == null) || (chr.getMap() == null)) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         chr.setScrolledPosition((short) 0);
@@ -68,7 +71,7 @@ public class UseCashItemHandler {
         int itemType = itemId / 10000;
         Item toUse = chr.getInventory(MapleInventoryType.USE).getItem((short) slot);
         if ((toUse == null) || (toUse.getItemId() != itemId) || (toUse.getQuantity() < 1) || (chr.hasBlockedInventory())) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         if (chr.isShowPacket()) {
@@ -305,7 +308,7 @@ public class UseCashItemHandler {
                                 statupdate.put(MapleStat.MAXMP, (long) maxmp);
                         }
 
-                        c.getSession().write(MaplePacketCreator.updatePlayerStats(statupdate, true, chr));
+                        c.sendPacket(MaplePacketCreator.updatePlayerStats(statupdate, true, chr));
                     }
                 }else {
                     // 洗技能点
@@ -423,8 +426,8 @@ public class UseCashItemHandler {
                         chr.setHair(((Integer) ret.getRight()));
                         statup.put(MapleStat.脸型, (long) chr.getFace());
                         statup.put(MapleStat.发型, (long) chr.getHair());
-                        c.getSession().write(MaplePacketCreator.updatePlayerStats(statup, chr));
-                        c.getSession().write(MaplePacketCreator.showOwnCraftingEffect("Effect/BasicEff.img/TransGender", 0, 0));
+                        c.sendPacket(MaplePacketCreator.updatePlayerStats(statup, chr));
+                        c.sendPacket(MaplePacketCreator.showOwnCraftingEffect("Effect/BasicEff.img/TransGender", 0, 0));
                         chr.getMap().broadcastMessage(chr, MaplePacketCreator.showCraftingEffect(chr.getId(), "Effect/BasicEff.img/TransGender", 0, 0), false);
                         chr.equipChanged();
                         used = true;
@@ -456,8 +459,8 @@ public class UseCashItemHandler {
                     }
                     pet.setName(nName);
                     pet.saveToDb();
-                    c.getSession().write(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     chr.getMap().broadcastMessage(MTSCSPacket.changePetName(chr, nName, pet.getInventoryPosition()));
                     used = true;
                 }
@@ -481,9 +484,9 @@ public class UseCashItemHandler {
                         }
                         pet.setFlags(pet.getFlags() | petFlag.getValue());
                         pet.saveToDb();
-                        c.getSession().write(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
-                        c.getSession().write(MaplePacketCreator.enableActions());
-                        c.getSession().write(MTSCSPacket.changePetFlag(uniqueid, true, petFlag.getValue()));
+                        c.sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
+                        c.sendPacket(MaplePacketCreator.enableActions());
+                        c.sendPacket(MTSCSPacket.changePetFlag(uniqueid, true, petFlag.getValue()));
                         used = true;
                     }
                 } else {
@@ -505,9 +508,9 @@ public class UseCashItemHandler {
                         if ((petFlag != null) && (petFlag.check(pet.getFlags()))) {
                             pet.setFlags(pet.getFlags() - petFlag.getValue());
                             pet.saveToDb();
-                            c.getSession().write(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
-                            c.getSession().write(MaplePacketCreator.enableActions());
-                            c.getSession().write(MTSCSPacket.changePetFlag(uniqueid, false, petFlag.getValue()));
+                            c.sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
+                            c.sendPacket(MaplePacketCreator.enableActions());
+                            c.sendPacket(MTSCSPacket.changePetFlag(uniqueid, false, petFlag.getValue()));
                             used = true;
                         }
                     }
@@ -520,9 +523,9 @@ public class UseCashItemHandler {
                     if (Math.random() > 0.1D) {
                         int gainmes = Randomizer.nextInt(mesars);
                         chr.gainMeso(gainmes, false);
-                        c.getSession().write(MTSCSPacket.sendMesobagSuccess(gainmes));
+                        c.sendPacket(MTSCSPacket.sendMesobagSuccess(gainmes));
                     } else {
-                        c.getSession().write(MTSCSPacket.sendMesobagFailed());
+                        c.sendPacket(MTSCSPacket.sendMesobagFailed());
                     }
                 } else {
                     chr.dropMessage(1, "金币已达到上限无法使用这个道具。");
@@ -545,7 +548,7 @@ public class UseCashItemHandler {
                                 mf = new MonsterFamiliar(chr.getId(), (f.getKey()), System.currentTimeMillis() + 2592000000L);
                                 chr.getFamiliars().put(f.getKey(), mf);
                             }
-                            c.getSession().write(MaplePacketCreator.registerFamiliar(mf));
+                            c.sendPacket(MaplePacketCreator.registerFamiliar(mf));
                         }
                     }
                 } else if (itemId == 5220084) {
@@ -562,7 +565,7 @@ public class UseCashItemHandler {
                                 for (Map.Entry f : ii.getFamiliars().entrySet()) {
                                     if ((Randomizer.nextInt(500) == 0) && (((i < 2) && (((StructFamiliar) f.getValue()).grade == 0)) || ((i == 2) && (((StructFamiliar) f.getValue()).grade != 0)))) {
                                         MapleInventoryManipulator.addById(c, ((StructFamiliar) f.getValue()).itemid, (short) 1, "Booster Pack");
-                                        c.getSession().write(MTSCSPacket.getBoosterFamiliar(chr.getId(), ((Integer) f.getKey()), 0));
+                                        c.sendPacket(MTSCSPacket.getBoosterFamiliar(chr.getId(), ((Integer) f.getKey()), 0));
                                         familiars[i] = ((StructFamiliar) f.getValue()).itemid;
                                         break;
                                     }
@@ -572,9 +575,9 @@ public class UseCashItemHandler {
                                 break;
                             }
                         }
-                        c.getSession().write(MTSCSPacket.getBoosterPack(familiars[0], familiars[1], familiars[2]));
-                        c.getSession().write(MTSCSPacket.getBoosterPackClick());
-                        c.getSession().write(MTSCSPacket.getBoosterPackReveal());
+                        c.sendPacket(MTSCSPacket.getBoosterPack(familiars[0], familiars[1], familiars[2]));
+                        c.sendPacket(MTSCSPacket.getBoosterPackClick());
+                        c.sendPacket(MTSCSPacket.getBoosterPackReveal());
                     }
                 } else {
                     chr.dropMessage(1, "暂时无法使用这个道具。");
@@ -584,7 +587,7 @@ public class UseCashItemHandler {
                 int itemSearch = slea.readInt();
                 List hms = c.getChannelServer().searchMerchant(itemSearch);
                 if (hms.size() > 0) {
-                    c.getSession().write(MaplePacketCreator.getOwlSearched(itemSearch, hms));
+                    c.sendPacket(MaplePacketCreator.getOwlSearched(itemSearch, hms));
                     used = true;
                 } else {
                     chr.dropMessage(1, "没有找到这个道具。");
@@ -606,11 +609,11 @@ public class UseCashItemHandler {
                         }
                         if (pet.getCloseness() >= GameConstants.getClosenessNeededForLevel(pet.getLevel() + 1)) {
                             pet.setLevel(pet.getLevel() + 1);
-                            c.getSession().write(PetPacket.showOwnPetLevelUp());
+                            c.sendPacket(PetPacket.showOwnPetLevelUp());
                             chr.getMap().broadcastMessage(PetPacket.showPetLevelUp(chr));
                         }
                     }
-                    c.getSession().write(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem(pet.getInventoryPosition()), false));
+                    c.sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem(pet.getInventoryPosition()), false));
                     chr.getMap().broadcastMessage(chr, PetPacket.commandResponse(chr.getId(), (byte) 1, true, true), true);
                     used = true;
                 }
@@ -623,7 +626,7 @@ public class UseCashItemHandler {
         if ((itemType != 506) || (used)) {
             MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, (short) slot, (short) 1, false, true);
         }
-        c.getSession().write(MaplePacketCreator.enableActions());
+        c.sendPacket(MaplePacketCreator.enableActions());
         if (cc) {
             if ((!chr.isAlive()) || (chr.getEventInstance() != null) || (FieldLimitType.ChannelSwitch.check(chr.getMap().getFieldLimit()))) {
                 chr.dropMessage(1, "刷新人物数据失败。");
@@ -632,7 +635,7 @@ public class UseCashItemHandler {
             chr.dropMessage(5, "正在刷新人数据.请等待...");
             chr.fakeRelog();
             if (chr.getScrolledPosition() != 0) {
-                c.getSession().write(MaplePacketCreator.pamSongUI());
+                c.sendPacket(MaplePacketCreator.pamSongUI());
             }
         }
     }
@@ -651,7 +654,7 @@ public class UseCashItemHandler {
         while (!ii.itemExists(id2)) {
             id2 = RandomRewards.getPeanutReward();
         }
-        c.getSession().write(MaplePacketCreator.getPeanutResult(id1, (short) 1, id2, (short) 1, itemId));
+        c.sendPacket(MaplePacketCreator.getPeanutResult(id1, (short) 1, id2, (short) 1, itemId));
         MapleInventoryManipulator.addById(c, id1, (short) 1, new StringBuilder().append(ii.getName(itemId)).append(" 在 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
         MapleInventoryManipulator.addById(c, id2, (short) 1, new StringBuilder().append(ii.getName(itemId)).append(" 在 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
         return true;

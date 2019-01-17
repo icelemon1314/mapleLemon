@@ -81,7 +81,7 @@ public class MapleSidekick
         List effects = new ArrayList();
         int levelD = Math.abs(getCharacter(0).getLevel() - getCharacter(1).getLevel());
 
-        chr.getClient().getSession().write(BuffPacket.giveBuff(79797980, 2100000000, effects));
+        chr.getClient().sendPacket(BuffPacket.giveBuff(79797980, 2100000000, effects));
         MapleStatEffect eff = MapleItemInformationProvider.getInstance().getItemEffect(2022891);
         chr.registerEffect(eff, System.currentTimeMillis(), null, effects, false, 2100000000, chr.getId());
     }

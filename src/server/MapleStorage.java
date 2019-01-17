@@ -226,18 +226,18 @@ public class MapleStorage
             for (MapleInventoryType type : MapleInventoryType.values()) {
                 this.typeItems.put(type, new ArrayList(this.items));
             }
-            c.getSession().write(NPCPacket.getStorage(npcId, this.slots, this.items, this.meso));
+            c.sendPacket(NPCPacket.getStorage(npcId, this.slots, this.items, this.meso));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void sendStored(MapleClient c, MapleInventoryType type) {
-        c.getSession().write(NPCPacket.storeStorage(this.slots, type, (Collection) this.typeItems.get(type)));
+        c.sendPacket(NPCPacket.storeStorage(this.slots, type, (Collection) this.typeItems.get(type)));
     }
 
     public void sendTakenOut(MapleClient c, MapleInventoryType type) {
-        c.getSession().write(NPCPacket.takeOutStorage(this.slots, type, (Collection) this.typeItems.get(type)));
+        c.sendPacket(NPCPacket.takeOutStorage(this.slots, type, (Collection) this.typeItems.get(type)));
     }
 
     public long getMeso() {
@@ -262,7 +262,7 @@ public class MapleStorage
     }
 
     public void sendMeso(MapleClient c) {
-        c.getSession().write(NPCPacket.mesoStorage(this.slots, this.meso));
+        c.sendPacket(NPCPacket.mesoStorage(this.slots, this.meso));
     }
 
     public boolean isFull() {

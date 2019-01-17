@@ -31,9 +31,9 @@ public class WithSecondPasswordHandler {
 //        String s = c.getSessionIPAddress();
 //        LoginServer.putLoginAuth(charId, s.substring(s.indexOf('/') + 1, s.length()), c.getTempIP(), c.getChannel());
 //        c.updateLoginState(1, s);
-//        c.getSession().write(MaplePacketCreator.getServerIP(c, Integer.parseInt(ChannelServer.getInstance(c.getChannel()).getIP().split(":")[1]), charId));
+//        c.sendPacket(MaplePacketCreator.getServerIP(c, Integer.parseInt(ChannelServer.getInstance(c.getChannel()).getIP().split(":")[1]), charId));
 //      } else {
-//        c.getSession().write(LoginPacket.secondPwError((byte)20));
+//        c.sendPacket(LoginPacket.secondPwError((byte)20));
 //      }
     }
 }

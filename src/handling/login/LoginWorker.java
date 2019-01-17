@@ -18,19 +18,19 @@ public class LoginWorker {
 
     public static void registerClient(final MapleClient c) {
         if ((LoginServer.isAdminOnly()) && (!c.isGm()) && (!c.isLocalhost())) {
-            c.getSession().write(MaplePacketCreator.serverMessageNotice("当前服务器设置只能管理员进入游戏.\r\n我们目前在修复几个问题.\r\n请稍后再试."));
-            c.getSession().write(LoginPacket.getLoginFailed(16));
+            c.sendPacket(MaplePacketCreator.serverMessageNotice("当前服务器设置只能管理员进入游戏.\r\n我们目前在修复几个问题.\r\n请稍后再试."));
+            c.sendPacket(LoginPacket.getLoginFailed(16));
             return;
         }
         updateChannel(c);
         if (c.finishLogin() != 0) {
-            c.getSession().write(LoginPacket.getLoginFailed(7));
+            c.sendPacket(LoginPacket.getLoginFailed(7));
             return;
         }
         FileoutputUtil.log("登录成功，准备通知客户端！！！！");
-        c.getSession().write(LoginPacket.getAuthSuccessRequest(c));
-//        c.getSession().write(LoginPacket.checkUserLimit());
-        //c.getSession().write(MaplePacketCreator.serverNotice(1, "恭喜您成功登陆！\r\n您的账户中有 " + c.getJinQuan() + " 张金券\r\n祝您游戏愉快"));
+        c.sendPacket(LoginPacket.getAuthSuccessRequest(c));
+//        c.sendPacket(LoginPacket.checkUserLimit());
+        //c.sendPacket(MaplePacketCreator.serverNotice(1, "恭喜您成功登陆！\r\n您的账户中有 " + c.getJinQuan() + " 张金券\r\n祝您游戏愉快"));
         ServerlistRequestHandler.handlePacket(c, false);
 //        try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("INSERT INTO accounts_log (accid, accname, ip, macs) VALUES (?, ?, ?, ?)")) {
 //            ps.setInt(1, c.getAccID());
@@ -51,7 +51,7 @@ public class LoginWorker {
             int usersOn = 0;
             if (load.size() <= 0) {
                 lastUpdate = 0;
-                c.getSession().write(LoginPacket.getLoginFailed(7));
+                c.sendPacket(LoginPacket.getLoginFailed(7));
                 return;
             }
             double loadFactor = LoginServer.getUserLimit() / load.size(); // 每个频道人数

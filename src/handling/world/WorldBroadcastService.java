@@ -53,7 +53,7 @@ public class WorldBroadcastService {
             }
             MapleCharacter chr = ChannelServer.getInstance(ch).getPlayerStorage().getCharacterById(i);
             if (chr != null) {
-                chr.getClient().getSession().write(packet);
+                chr.getClient().sendPacket(packet);
             }
         }
     }
@@ -65,7 +65,7 @@ public class WorldBroadcastService {
         }
         MapleCharacter chr = ChannelServer.getInstance(ch).getPlayerStorage().getCharacterById(targetId);
         if (chr != null) {
-            chr.getClient().getSession().write(packet);
+            chr.getClient().sendPacket(packet);
         }
     }
 
@@ -79,7 +79,7 @@ public class WorldBroadcastService {
         }
         MapleCharacter chr = ChannelServer.getInstance(ch).getPlayerStorage().getCharacterById(targetIds);
         if ((chr != null) && (chr.getGuildId() == guildid)) {
-            chr.getClient().getSession().write(packet);
+            chr.getClient().sendPacket(packet);
         }
     }
 

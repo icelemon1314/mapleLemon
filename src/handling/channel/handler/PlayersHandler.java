@@ -104,14 +104,14 @@ public class PlayersHandler {
                 if (!chr.isGM()) {
                     chr.hasGivenFame(target);
                 }
-                c.getSession().write(MaplePacketCreator.giveFameResponse(mode, target.getName(), target.getFame()));
-                target.getClient().getSession().write(MaplePacketCreator.receiveFame(mode, chr.getName()));
+                c.sendPacket(MaplePacketCreator.giveFameResponse(mode, target.getName(), target.getFame()));
+                target.getClient().sendPacket(MaplePacketCreator.receiveFame(mode, chr.getName()));
                 break;
             case NOT_TODAY:
-                c.getSession().write(MaplePacketCreator.giveFameErrorResponse(3));
+                c.sendPacket(MaplePacketCreator.giveFameErrorResponse(3));
                 break;
             case NOT_THIS_MONTH:
-                c.getSession().write(MaplePacketCreator.giveFameErrorResponse(4));
+                c.sendPacket(MaplePacketCreator.giveFameErrorResponse(4));
         }
     }
 
@@ -121,24 +121,14 @@ public class PlayersHandler {
      * @param chr
      */
     public static void UseDoor(SeekableLittleEndianAccessor slea, MapleCharacter chr) {
-        // 49 08 00 00 00 00
-        int oid = slea.readInt();
-        boolean mode = slea.readByte() == 0;
-        for (MapleMapObject obj : chr.getMap().getAllDoorsThreadsafe()) {
-            MapleDoor door = (MapleDoor) obj;
-            if (door.getOwnerId() == oid) {
-                door.warp(chr, mode);
-                break;
-            }
-        }
-        chr.getClient().getSession().write(MaplePacketCreator.enableActions());
+
     }
 
     public static void UseMechDoor(SeekableLittleEndianAccessor slea, MapleCharacter chr) {
         int oid = slea.readInt();
         Point pos = slea.readPos();
         int mode = slea.readByte();
-        chr.getClient().getSession().write(MaplePacketCreator.enableActions());
+        chr.getClient().sendPacket(MaplePacketCreator.enableActions());
         for (MapleMapObject obj : chr.getMap().getAllMechDoorsThreadsafe()) {
             MechDoor door = (MechDoor) obj;
             if ((door.getOwnerId() == oid) && (door.getId() == mode)) {
@@ -169,12 +159,12 @@ public class PlayersHandler {
                 if (chr.isShowPacket()) {
                     chr.dropMessage(5, new StringBuilder().append("使用神圣源泉 - 恢复血量: ").append(healHp).append(" 百分比: ").append(healDoor.getSource().getX() / 100.0D).append(" 剩余次数: ").append(healDoor.getHealCount()).toString());
                 }
-                c.getSession().write(MaplePacketCreator.showHolyFountain(skillId));
+                c.sendPacket(MaplePacketCreator.showHolyFountain(skillId));
             }
         } else if (chr.isShowPacket()) {
             chr.dropMessage(5, new StringBuilder().append("使用神圣源泉出现错误 - 源泉恢复的剩余次数: ").append(healDoor.getHealCount()).append(" 模式: ").append(mode).append(" 是否在范围内: ").append(healDoor.getBox().contains(position)).toString());
         }
-        c.getSession().write(MaplePacketCreator.enableActions());
+        c.sendPacket(MaplePacketCreator.enableActions());
     }
 
     public static void TransformPlayer(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
@@ -184,7 +174,7 @@ public class PlayersHandler {
         String target = slea.readMapleAsciiString();
         Item toUse = c.getPlayer().getInventory(MapleInventoryType.USE).getItem((short) slot);
         if ((toUse == null) || (toUse.getQuantity() < 1) || (toUse.getItemId() != itemId)) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         switch (itemId) {
@@ -199,7 +189,7 @@ public class PlayersHandler {
                 }
         }
 
-        c.getSession().write(MaplePacketCreator.enableActions());
+        c.sendPacket(MaplePacketCreator.enableActions());
     }
 
     public static void HitReactor(SeekableLittleEndianAccessor slea, MapleClient c) {
@@ -310,9 +300,9 @@ public class PlayersHandler {
             tt.setFollowInitiator(false);
             c.getPlayer().setFollowOn(false);
             c.getPlayer().setFollowInitiator(false);
-            tt.getClient().getSession().write(MaplePacketCreator.followRequest(c.getPlayer().getId()));
+            tt.getClient().sendPacket(MaplePacketCreator.followRequest(c.getPlayer().getId()));
         } else {
-            c.getSession().write(MaplePacketCreator.serverMessageRedText("距离太远。"));
+            c.sendPacket(MaplePacketCreator.serverMessageRedText("距离太远。"));
         }
     }
 
@@ -331,14 +321,14 @@ public class PlayersHandler {
                 } else {
                     c.getPlayer().setFollowId(0);
                     tt.setFollowId(0);
-                    tt.getClient().getSession().write(MaplePacketCreator.getFollowMsg(5));
+                    tt.getClient().sendPacket(MaplePacketCreator.getFollowMsg(5));
                 }
             } else {
                 if (tt != null) {
                     tt.setFollowId(0);
                     c.getPlayer().setFollowId(0);
                 }
-                c.getSession().write(MaplePacketCreator.serverMessageRedText("距离太远."));
+                c.sendPacket(MaplePacketCreator.serverMessageRedText("距离太远."));
             }
         } else {
             c.getPlayer().setFollowId(0);
@@ -374,12 +364,12 @@ public class PlayersHandler {
             System.err.println(new StringBuilder().append("对方是否有位置: ").append(!MapleInventoryManipulator.checkSpace(c, newItemId, 1, "")).toString());
         }
         if (errcode > 0) {
-            c.getSession().write(SkillPacket.sendEngagement((byte) errcode, 0, null, null));
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(SkillPacket.sendEngagement((byte) errcode, 0, null, null));
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         c.getPlayer().setMarriageItemId(itemid);
-        chr.getClient().getSession().write(SkillPacket.sendEngagementRequest(c.getPlayer().getName(), c.getPlayer().getId()));
+        chr.getClient().sendPacket(SkillPacket.sendEngagementRequest(c.getPlayer().getName(), c.getPlayer().getId()));
     }
 
     public static void RingAction(SeekableLittleEndianAccessor slea, MapleClient c) {
@@ -394,16 +384,16 @@ public class PlayersHandler {
             int id = slea.readInt();
             MapleCharacter chr = c.getChannelServer().getPlayerStorage().getCharacterByName(name);
             if ((c.getPlayer().getMarriageId() > 0) || (chr == null) || (chr.getId() != id) || (chr.getMarriageItemId() <= 0) || (!chr.haveItem(chr.getMarriageItemId(), 1)) || (chr.getMarriageId() > 0) || (!chr.isAlive()) || (chr.getEventInstance() != null) || (!c.getPlayer().isAlive()) || (c.getPlayer().getEventInstance() != null)) {
-                c.getSession().write(SkillPacket.sendEngagement((byte) 31, (byte) 0, null, null));
-                c.getSession().write(MaplePacketCreator.enableActions());
+                c.sendPacket(SkillPacket.sendEngagement((byte) 31, (byte) 0, null, null));
+                c.sendPacket(MaplePacketCreator.enableActions());
                 return;
             }
             if (accepted) {
                 int itemid = chr.getMarriageItemId();
                 int newItemId = getMarriageNewItemId(itemid);
                 if ((!MapleInventoryManipulator.checkSpace(c, newItemId, 1, "")) || (!MapleInventoryManipulator.checkSpace(chr.getClient(), newItemId, 1, ""))) {
-                    c.getSession().write(SkillPacket.sendEngagement((byte) 21, (byte) 0, null, null));
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(SkillPacket.sendEngagement((byte) 21, (byte) 0, null, null));
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
                 try {
@@ -421,7 +411,7 @@ public class PlayersHandler {
                     }
                     MapleInventoryManipulator.addbyItem(chr.getClient(), eq);
                     MapleInventoryManipulator.removeById(chr.getClient(), MapleInventoryType.USE, chr.getMarriageItemId(), 1, false, false);
-                    chr.getClient().getSession().write(SkillPacket.sendEngagement((byte) 13, newItemId, chr, c.getPlayer()));
+                    chr.getClient().sendPacket(SkillPacket.sendEngagement((byte) 13, newItemId, chr, c.getPlayer()));
                     chr.setMarriageId(c.getPlayer().getId());
                     c.getPlayer().setMarriageId(chr.getId());
                     chr.fakeRelog();
@@ -431,9 +421,9 @@ public class PlayersHandler {
                     FileoutputUtil.outputFileError(FileoutputUtil.Packet_Ex, e);
                 }
             } else {
-                chr.getClient().getSession().write(SkillPacket.sendEngagement((byte) 32, 0, null, null));
+                chr.getClient().sendPacket(SkillPacket.sendEngagement((byte) 32, 0, null, null));
             }
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             chr.setMarriageItemId(0);
         } else if (mode == 3) {
             int itemId = slea.readInt();
@@ -500,7 +490,7 @@ public class PlayersHandler {
     }
 
     public static void Solomon(SeekableLittleEndianAccessor slea, MapleClient c) {
-        c.getSession().write(MaplePacketCreator.enableActions());
+        c.sendPacket(MaplePacketCreator.enableActions());
         Item item = c.getPlayer().getInventory(MapleInventoryType.USE).getItem(slea.readShort());
         if ((item == null) || (item.getItemId() != slea.readInt()) || (item.getQuantity() <= 0) || (c.getPlayer().getGachExp() > 0) || (c.getPlayer().getLevel() > 50) || (MapleItemInformationProvider.getInstance().getItemEffect(item.getItemId()).getEXP() <= 0)) {
             return;
@@ -510,7 +500,7 @@ public class PlayersHandler {
     }
 
     public static void GachExp(SeekableLittleEndianAccessor slea, MapleClient c) {
-        c.getSession().write(MaplePacketCreator.enableActions());
+        c.sendPacket(MaplePacketCreator.enableActions());
         slea.readInt();
         if (c.getPlayer().getGachExp() <= 0) {
             return;

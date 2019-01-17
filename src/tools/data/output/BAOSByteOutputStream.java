@@ -7,6 +7,7 @@ public class BAOSByteOutputStream implements ByteOutputStream {
     private final ByteArrayOutputStream baos;
 
     public BAOSByteOutputStream(ByteArrayOutputStream baos) {
+        super();
         this.baos = baos;
     }
 

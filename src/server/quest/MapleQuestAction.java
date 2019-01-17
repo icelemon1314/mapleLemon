@@ -170,7 +170,7 @@ public class MapleQuestAction implements Serializable {
                         } catch (InventoryException ie) {
                             System.err.println("[h4x] Completing a quest without meeting the requirements" + ie);
                         }
-                        chr.getClient().getSession().write(MaplePacketCreator.getShowItemGain(id, count, true));
+                        chr.getClient().sendPacket(MaplePacketCreator.getShowItemGain(id, count, true));
                     } else {
                         int period = item.period / 1440;
                         String name = MapleItemInformationProvider.getInstance().getName(id);
@@ -180,7 +180,7 @@ public class MapleQuestAction implements Serializable {
                             chr.dropMessage(5, msg);
                         }
                         MapleInventoryManipulator.addById(chr.getClient(), id, count, "", null, period, "任务获得 " + this.quest.getId() + " 时间: " + FileoutputUtil.CurrentReadable_Date());
-                        chr.getClient().getSession().write(MaplePacketCreator.getShowItemGain(id, count, true));
+                        chr.getClient().sendPacket(MaplePacketCreator.getShowItemGain(id, count, true));
                     }
                 }
                 break;
@@ -189,7 +189,7 @@ public class MapleQuestAction implements Serializable {
                 if (status.getForfeited() > 0) {
                     break;
                 }
-                chr.getClient().getSession().write(MaplePacketCreator.updateQuestFinish(this.quest.getId(), status.getNpc(), this.intStore));
+                chr.getClient().sendPacket(MaplePacketCreator.updateQuestFinish(this.quest.getId(), status.getNpc(), this.intStore));
                 break;
             case money:
                 status = chr.getQuest(this.quest);
@@ -411,7 +411,7 @@ public class MapleQuestAction implements Serializable {
                     short count = (short) item.count;
                     if (count < 0) {
                         MapleInventoryManipulator.removeById(chr.getClient(), ItemConstants.getInventoryType(id), id, count * -1, true, false);
-                        chr.getClient().getSession().write(MaplePacketCreator.getShowItemGain(id, count, true));
+                        chr.getClient().sendPacket(MaplePacketCreator.getShowItemGain(id, count, true));
                     } else {
                         int period = item.period / 1440;
                         String name = MapleItemInformationProvider.getInstance().getName(id);
@@ -421,12 +421,12 @@ public class MapleQuestAction implements Serializable {
                             chr.dropMessage(5, msg);
                         }
                         MapleInventoryManipulator.addById(chr.getClient(), id, count, "", null, period, "任务获得 " + this.quest.getId() + " 时间: " + FileoutputUtil.CurrentReadable_Date());
-                        chr.getClient().getSession().write(MaplePacketCreator.getShowItemGain(id, count, true));
+                        chr.getClient().sendPacket(MaplePacketCreator.getShowItemGain(id, count, true));
                     }
                 }
                 break;
             case nextQuest:
-                chr.getClient().getSession().write(MaplePacketCreator.updateQuestFinish(this.quest.getId(), chr.getQuest(this.quest).getNpc(), this.intStore));
+                chr.getClient().sendPacket(MaplePacketCreator.updateQuestFinish(this.quest.getId(), chr.getQuest(this.quest).getNpc(), this.intStore));
                 break;
             case money:
                 chr.gainMeso(this.intStore, true, true);

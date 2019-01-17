@@ -34,7 +34,7 @@ public class WithoutSecondPasswordHandler {
                 c.setSecondPassword(setpassword);
                 c.updateSecondPassword();
             } else {
-                c.getSession().write(LoginPacket.secondPwError((byte) 20));
+                //c.sendPacket(LoginPacket.secondPwError((byte) 20));
                 return;
             }
         } else if ((GameConstants.GMS) && (haspic)) {
@@ -46,6 +46,6 @@ public class WithoutSecondPasswordHandler {
         String s = c.getSessionIPAddress();
         LoginServer.putLoginAuth(charId, s.substring(s.indexOf('/') + 1, s.length()), c.getTempIP(), c.getChannel());
         c.updateLoginState(MapleClient.LOGIN_SERVER_TRANSITION, s);
-        c.getSession().write(MaplePacketCreator.getServerIP(c, Integer.parseInt(ChannelServer.getInstance(c.getChannel()).getIP().split(":")[1]), charId));
+        c.sendPacket(MaplePacketCreator.getServerIP(c, Integer.parseInt(ChannelServer.getInstance(c.getChannel()).getIP().split(":")[1]), charId));
     }
 }

@@ -91,7 +91,7 @@ public class WorldRespawnService {
                 if (m.startTime + m.length < now) {
                     int skillId = m.skillId;
                     chr.removeCooldown(skillId);
-                    chr.getClient().getSession().write(MaplePacketCreator.skillCooldown(skillId, 0));
+                    chr.getClient().sendPacket(MaplePacketCreator.skillCooldown(skillId, 0));
                 }
             }
         }
@@ -154,7 +154,7 @@ public class WorldRespawnService {
                     chr.unequipSpawnPet(pet, true, true);
                 } else {
                     pet.setFullness(newFullness);
-                    chr.getClient().getSession().write(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem(pet.getInventoryPosition()), false));
+                    chr.getClient().sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem(pet.getInventoryPosition()), false));
                 }
             }
         }

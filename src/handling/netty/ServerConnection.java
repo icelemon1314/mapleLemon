@@ -14,7 +14,7 @@ public class ServerConnection {
     private int world = -1;
     private int channels = -1;
     private ServerBootstrap boot;
-    private EventLoopGroup bossGroup = new NioEventLoopGroup(1); //The initial connection thread where all the new connections go to
+    private EventLoopGroup bossGroup = new NioEventLoopGroup(); //The initial connection thread where all the new connections go to
     private EventLoopGroup workerGroup = new NioEventLoopGroup(); //Once the connection thread has finished it will be moved over to this group where the thread will be managed
     private Channel channel;
 
@@ -42,14 +42,10 @@ public class ServerConnection {
                     .childOption(ChannelOption.TCP_NODELAY, true)
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childHandler(new ServerInitializer(this.world, this.channels));
-            try {
                 channel = boot.bind(port).sync().channel().closeFuture().channel();
-            }  catch(Exception e) {
-                e.printStackTrace();
-            } finally {
-                System.out.println("Listening to port: " + port);
-            }
+            System.out.println("Listening to port: " + port);
         } catch(Exception e) {
+            e.printStackTrace();
             System.out.printf("Connection to %s failed.", channel.remoteAddress());
         }
     }

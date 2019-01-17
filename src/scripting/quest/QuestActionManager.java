@@ -74,7 +74,7 @@ public class QuestActionManager extends NPCConversationManager {
     }
 
     public void showCompleteQuestEffect() {
-        this.c.getPlayer().getClient().getSession().write(MaplePacketCreator.showSpecialEffect(0x0E));
+        this.c.getPlayer().getClient().sendPacket(MaplePacketCreator.showSpecialEffect(0x0E));
         this.c.getPlayer().getMap().broadcastMessage(this.c.getPlayer(), MaplePacketCreator.showSpecialEffect(this.c.getPlayer().getId(), 0x0E), false);
     }
 }

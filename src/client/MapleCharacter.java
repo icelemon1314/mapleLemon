@@ -320,7 +320,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void send(byte[] ob) { //给自己发包
-        getClient().getSession().write(ob);
+        getClient().sendPacket(ob);
     }
 
     public void send_other(byte[] ob, boolean tome) { //给地图的其他玩家发包
@@ -1659,7 +1659,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (time <= 0) {
             time = 1;
         }
-        this.client.getSession().write(MaplePacketCreator.getClock(time));
+        this.client.sendPacket(MaplePacketCreator.getClock(time));
         final MapleMap ourMap = getMap();
         time *= 1000;
         this.mapTimeLimitTask = MapTimer.getInstance().register(new Runnable() {
@@ -1806,9 +1806,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
      */
     public void updateQuest(MapleQuestStatus quest, boolean update) {
         this.quests.put(quest.getQuest(), quest);
-        this.client.getSession().write(MaplePacketCreator.updateQuest(quest));
+        this.client.sendPacket(MaplePacketCreator.updateQuest(quest));
         if ((quest.getStatus() == 1) && (!update)) {
-            this.client.getSession().write(MaplePacketCreator.updateQuestInfo(quest.getQuest().getId(), quest.getNpc(), quest.getStatus() == 1));
+            this.client.sendPacket(MaplePacketCreator.updateQuestInfo(quest.getQuest().getId(), quest.getNpc(), quest.getStatus() == 1));
         }
     }
 
@@ -2035,7 +2035,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                                     this.visibleMapObjects.remove(summon);
                                     this.summons.remove(summon.getSkillId());
                                     /*if (summon.getSkillId() == 22171052) {
-                                     client.getSession().write(MaplePacketCreator.spawnDragon(this.dragon));
+                                     client.sendPacket(MaplePacketCreator.spawnDragon(this.dragon));
                                      }*/
                                 }
                             }
@@ -2185,7 +2185,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 dropMessage(5, new StringBuilder().append("取消BUFF效果 - 发送封包 - 是否注册BUFF时: ").append(overwrite).toString());
             }
             this.stats.recalcLocalStats(this);
-            this.client.getSession().write(BuffPacket.cancelBuff(buffstats, this));
+            this.client.sendPacket(BuffPacket.cancelBuff(buffstats, this));
             this.map.broadcastMessage(this, BuffPacket.cancelForeignBuff(getId(), buffstats), false);
         }
     }
@@ -2377,7 +2377,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             cancelBuffStats(new MapleBuffStat[]{MapleBuffStat.龙之力});
         } else {
             addHP(-bloodEffect.getStr());
-            this.client.getSession().write(MaplePacketCreator.showOwnBuffEffect(bloodEffect.getSourceId(), 8, getLevel(), bloodEffect.getLevel()));//7+1 119
+            this.client.sendPacket(MaplePacketCreator.showOwnBuffEffect(bloodEffect.getSourceId(), 8, getLevel(), bloodEffect.getLevel()));//7+1 119
             this.map.broadcastMessage(this, MaplePacketCreator.showBuffeffect(this, bloodEffect.getSourceId(), 8, getLevel(), bloodEffect.getLevel()), false);//7+1 119
         }
     }
@@ -2440,7 +2440,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         int skilllevel = getTotalSkillLevel(skill);
         if (setPowerCount(getPowerCount() + delta)) {
             this.stats.recalcLocalStats(this);
-            this.client.getSession().write(BuffPacket.updatePowerCount(30020232, Math.min(getPowerCount(), 20)));
+            this.client.sendPacket(BuffPacket.updatePowerCount(30020232, Math.min(getPowerCount(), 20)));
         }
     }
 
@@ -2458,7 +2458,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public boolean isUsePower() {
-        this.client.getSession().write(BuffPacket.startPower(this.usePower, this.batterytime));
+        this.client.sendPacket(BuffPacket.startPower(this.usePower, this.batterytime));
         return this.usePower;
     }
 
@@ -2485,7 +2485,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             setBuffedValue(MapleBuffStat.斗气集中, orbcount);
             int duration = ceffect.getDuration();
             duration += (int) (getBuffedStartTime(MapleBuffStat.斗气集中) - System.currentTimeMillis());
-            this.client.getSession().write(BuffPacket.giveBuff(combos.getId(), duration, stat));
+            this.client.sendPacket(BuffPacket.giveBuff(combos.getId(), duration, stat));
             this.map.broadcastMessage(this, BuffPacket.giveForeignBuff(getId(), stat, ceffect), false);
         }
     }
@@ -2507,7 +2507,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         setBuffedValue(MapleBuffStat.斗气集中, Math.max(1, getBuffedValue(MapleBuffStat.斗气集中) - howmany));
         int duration = effect.getDuration();
         duration += (int) (getBuffedStartTime(MapleBuffStat.斗气集中) - System.currentTimeMillis());
-        this.client.getSession().write(BuffPacket.giveBuff(combos.getId(), duration, stat));
+        this.client.sendPacket(BuffPacket.giveBuff(combos.getId(), duration, stat));
         this.map.broadcastMessage(this, BuffPacket.giveForeignBuff(getId(), stat, effect), false);
     }
 
@@ -2580,7 +2580,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             statups.put(MapleStat.HP, (long) this.stats.getHp());
         }
         if (statups.size() > 0) {
-            this.client.getSession().write(MaplePacketCreator.updatePlayerStats(statups, this));
+            this.client.sendPacket(MaplePacketCreator.updatePlayerStats(statups, this));
         }
     }
 
@@ -2850,7 +2850,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             this.map.removePlayer(this);
             if (shouldChange) {
-                this.client.getSession().write(warpPacket);
+                this.client.sendPacket(warpPacket);
                 this.map = to;
                 setPosition(pos);
                 to.addPlayer(this);
@@ -3004,7 +3004,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             statup.put(MapleStat.HP, (long) maxhp);
             statup.put(MapleStat.MP, (long) maxmp);
             this.stats.recalcLocalStats(this);
-            this.client.getSession().write(MaplePacketCreator.updatePlayerStats(statup, this));
+            this.client.sendPacket(MaplePacketCreator.updatePlayerStats(statup, this));
             this.map.broadcastMessage(this, MaplePacketCreator.showForeignEffect(getId(), 0x0D), false);
             this.map.broadcastMessage(this, MaplePacketCreator.updateCharLook(this), false);
             silentPartyUpdate();
@@ -3248,7 +3248,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     equip.setQuantity((short) 1);
                     equip.setGMLog("系统赠送");
                     forceReAddItem_NoUpdate(equip, MapleInventoryType.EQUIPPED);
-                    this.client.getSession().write(InventoryPacket.modifyInventory(false, Collections.singletonList(new ModifyInventory(0, equip))));
+                    this.client.sendPacket(InventoryPacket.modifyInventory(false, Collections.singletonList(new ModifyInventory(0, equip))));
                 }
             }
             equipChanged();
@@ -3471,7 +3471,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             FileoutputUtil.log("修改技能等级失败！");
             return;
         }
-        this.client.getSession().write(MaplePacketCreator.updateSkills(list));
+        this.client.sendPacket(MaplePacketCreator.updateSkills(list));
         reUpdateStat(hasRecovery, recalculate);
     }
 
@@ -3496,7 +3496,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (list.isEmpty()) {
             return;
         }
-        this.client.getSession().write(MaplePacketCreator.updateSkills(list));
+        this.client.sendPacket(MaplePacketCreator.updateSkills(list));
         reUpdateStat(hasRecovery, recalculate);
     }
 
@@ -3549,7 +3549,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
         }
         if ((write) && (!newlist.isEmpty())) {
-            this.client.getSession().write(MaplePacketCreator.updateSkills(newlist));
+            this.client.sendPacket(MaplePacketCreator.updateSkills(newlist));
         }
     }
 
@@ -3575,7 +3575,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
 //         if (!newlist.isEmpty()) {
 //             for (Map.Entry date : newlist.entrySet()) {
-//                 this.client.getSession().write(MaplePacketCreator.updatePetSkill(((Skill) date.getKey()).getId(), ((SkillEntry) date.getValue()).skillevel, ((SkillEntry) date.getValue()).masterlevel, ((SkillEntry) date.getValue()).expiration));
+//                 this.client.sendPacket(MaplePacketCreator.updatePetSkill(((Skill) date.getKey()).getId(), ((SkillEntry) date.getValue()).skillevel, ((SkillEntry) date.getValue()).masterlevel, ((SkillEntry) date.getValue()).expiration));
 //                             }
 //             reUpdateStat(false, true);
 //                     }
@@ -3586,7 +3586,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (skill == null) {
             return;
         }
-        this.client.getSession().write(MaplePacketCreator.updateSkill(skillId, toChrId, 1, -1L));
+        this.client.sendPacket(MaplePacketCreator.updateSkill(skillId, toChrId, 1, -1L));
         this.skills.put(skill, new SkillEntry(this.getTotalSkillLevel(skillId), (byte) skill.getMasterLevel(), -1L, toChrId));
     }
 
@@ -3604,7 +3604,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 this.dispelDebuffs();
                 cancelEffectFromBuffStat(stat);
                 if (冷却时间 > 0 && !skillisCooling(statss.getSourceId())) {
-                    getClient().getSession().write(MaplePacketCreator.skillCooldown(statss.getSourceId(), 冷却时间));
+                    getClient().sendPacket(MaplePacketCreator.skillCooldown(statss.getSourceId(), 冷却时间));
                     addCooldown(statss.getSourceId(), System.currentTimeMillis(), 冷却时间 * 1000);
                 }
                 return;
@@ -3631,7 +3631,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 if (charms > 255) {
                     charms = 255;
                 }
-                this.client.getSession().write(MTSCSPacket.useCharm((byte) charms, (byte) 0));
+                this.client.sendPacket(MTSCSPacket.useCharm((byte) charms, (byte) 0));
             } else {
                 long expforlevel = getExpNeededForLevel();
                 float diepercentage= 0.01F;;
@@ -3655,7 +3655,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 if ((partychar != null) && (partychar.getMapid() == getMapId()) && (partychar.getChannel() == channel)) {
                     MapleCharacter other = this.client.getChannelServer().getPlayerStorage().getCharacterByName(partychar.getName());
                     if (other != null) {
-                        other.getClient().getSession().write(PartyPacket.updatePartyMemberHP(getId(), this.stats.getHp(), this.stats.getCurrentMaxHp()));
+                        other.getClient().sendPacket(PartyPacket.updatePartyMemberHP(getId(), this.stats.getHp(), this.stats.getCurrentMaxHp()));
                     }
                 }
             }
@@ -3671,7 +3671,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             if ((partychar != null) && (partychar.getMapid() == getMapId()) && (partychar.getChannel() == channel)) {
                 MapleCharacter other = this.client.getChannelServer().getPlayerStorage().getCharacterByName(partychar.getName());
                 if (other != null) {
-                    this.client.getSession().write(PartyPacket.updatePartyMemberHP(other.getId(), other.getStat().getHp(), other.getStat().getCurrentMaxHp()));
+                    this.client.sendPacket(PartyPacket.updatePartyMemberHP(other.getId(), other.getStat().getHp(), other.getStat().getCurrentMaxHp()));
                 }
             }
         }
@@ -3679,13 +3679,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void healHP(int delta) {
         addHP(delta);
-        this.client.getSession().write(MaplePacketCreator.showOwnHpHealed(delta));
+        this.client.sendPacket(MaplePacketCreator.showOwnHpHealed(delta));
         getMap().broadcastMessage(this, MaplePacketCreator.showHpHealed(getId(), delta), false);
     }
 
     public void healMP(int delta) {
         addMP(delta);
-        this.client.getSession().write(MaplePacketCreator.showOwnHpHealed(delta));
+        this.client.sendPacket(MaplePacketCreator.showOwnHpHealed(delta));
         getMap().broadcastMessage(this, MaplePacketCreator.showHpHealed(getId(), delta), false);
     }
 
@@ -3730,7 +3730,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             statups.put(MapleStat.HP, (long) stats.getHp());
         }
         if (statups.size() > 0) {
-            client.getSession().write(MaplePacketCreator.updatePlayerStats(statups, this));
+            client.sendPacket(MaplePacketCreator.updatePlayerStats(statups, this));
         }
     }
 
@@ -3741,7 +3741,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void updateSingleStat(MapleStat stat, long newval, boolean itemReaction) {
         Map statup = new EnumMap(MapleStat.class);
         statup.put(stat, newval);
-        this.client.getSession().write(MaplePacketCreator.updatePlayerStats(statup, itemReaction, this));
+        this.client.sendPacket(MaplePacketCreator.updatePlayerStats(statup, itemReaction, this));
     }
 
     public void gainExp(int total) {
@@ -3906,7 +3906,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 if (结婚奖励经验 > 0) {
                     expStatup.put(MapleExpStat.结婚奖励经验, 结婚奖励经验);
                 }
-                this.client.getSession().write(MaplePacketCreator.GainEXP_Monster((int) total, 最高伤害, expStatup));
+                this.client.sendPacket(MaplePacketCreator.GainEXP_Monster((int) total, 最高伤害, expStatup));
             }
         }
         killMonsterExps.add(gain);
@@ -3920,7 +3920,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void forceReAddItem(Item item, MapleInventoryType type) {
         forceReAddItem_NoUpdate(item, type);
         if (type != MapleInventoryType.UNDEFINED) {
-            this.client.getSession().write(InventoryPacket.modifyInventory(false, Collections.singletonList(new ModifyInventory(0, item))));
+            this.client.sendPacket(InventoryPacket.modifyInventory(false, Collections.singletonList(new ModifyInventory(0, item))));
         }
     }
 
@@ -3932,14 +3932,14 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         List mods = new LinkedList();
         mods.add(new ModifyInventory(3, item));
         mods.add(new ModifyInventory(0, item));
-        this.client.getSession().write(InventoryPacket.modifyInventory(updateTick, mods, this));
+        this.client.sendPacket(InventoryPacket.modifyInventory(updateTick, mods, this));
     }
 
     public void forceReAddItem_Book(Item item, MapleInventoryType type) {
         getInventory(type).removeSlot(item.getPosition());
         getInventory(type).addFromDB(item);
         if (type != MapleInventoryType.UNDEFINED) {
-            this.client.getSession().write(MaplePacketCreator.upgradeBook(item, this));
+            this.client.sendPacket(MaplePacketCreator.upgradeBook(item, this));
         }
     }
 
@@ -4061,7 +4061,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if ((stat != null) && (stat.getCustomData() != null) && (Long.parseLong(stat.getCustomData()) < currenttime)) {
             this.quests.remove(MapleQuest.getInstance(7830));
             this.quests.remove(MapleQuest.getInstance(122700));
-            this.client.getSession().write(MaplePacketCreator.pendantSlot(false));
+            this.client.sendPacket(MaplePacketCreator.pendantSlot(false));
         }
 
         Item itemFix = getInventory(MapleInventoryType.EQUIPPED).getItem((short) -37);
@@ -4079,17 +4079,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (!this.pendingExpiration.isEmpty()) {
             for (Integer itemId : this.pendingExpiration) {
                 if (ii.isCash(itemId)) {
-                    this.client.getSession().write(MaplePacketCreator.showCashItemExpired(itemId));
+                    this.client.sendPacket(MaplePacketCreator.showCashItemExpired(itemId));
                 } else {
-                    this.client.getSession().write(MaplePacketCreator.showItemExpired(itemId));
+                    this.client.sendPacket(MaplePacketCreator.showItemExpired(itemId));
                 }
             }
         }
         this.pendingExpiration = null;
 
         if (!this.pendingSkills.isEmpty()) {
-            this.client.getSession().write(MaplePacketCreator.updateSkills(this.pendingSkills));
-//            this.client.getSession().write(MaplePacketCreator.showSkillExpired(this.pendingSkills));
+            this.client.sendPacket(MaplePacketCreator.updateSkills(this.pendingSkills));
+//            this.client.sendPacket(MaplePacketCreator.showSkillExpired(this.pendingSkills));
         }
         this.pendingSkills = null;
         this.lastExpirationTime = System.currentTimeMillis();
@@ -4145,7 +4145,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void gainMeso(long gain, boolean show, boolean inChat) {
         if (this.meso + gain < 0) {
-            this.client.getSession().write(MaplePacketCreator.enableActions());
+            this.client.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         this.meso += gain;
@@ -4153,9 +4153,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             this.meso = 2147480000;
         }
         updateSingleStat(MapleStat.金币, this.meso, false);
-        this.client.getSession().write(MaplePacketCreator.enableActions());
+        this.client.sendPacket(MaplePacketCreator.enableActions());
         if (show) {
-            this.client.getSession().write(MaplePacketCreator.showMesoGain(gain, inChat));
+            this.client.sendPacket(MaplePacketCreator.showMesoGain(gain, inChat));
         }
     }
 
@@ -4174,7 +4174,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         } finally {
             this.controlledLock.writeLock().unlock();
         }
-        this.client.getSession().write(MobPacket.controlMonster(monster, false, aggro));
+        this.client.sendPacket(MobPacket.controlMonster(monster, false, aggro));
         monster.sendStatus(this.client);
     }
 
@@ -4264,7 +4264,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             if (q.mobKilled(id, skillID)) {
                 if (q.getQuest().canComplete(this)) {
-                    this.client.getSession().write(MaplePacketCreator.getShowQuestCompletion(q.getQuest().getId()));
+                    this.client.sendPacket(MaplePacketCreator.getShowQuestCompletion(q.getQuest().getId()));
                 }
             }
         }
@@ -4467,7 +4467,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             statup.put(MapleStat.AVAILABLEAP, Long.valueOf(remainingAp));
             statup.put(MapleStat.AVAILABLESP, Long.valueOf(remainingSp));
             stats.setInfo(maxhp, maxmp, maxhp, maxmp);
-            client.getSession().write(MaplePacketCreator.updatePlayerStats(statup, this));
+            client.sendPacket(MaplePacketCreator.updatePlayerStats(statup, this));
             map.broadcastMessage(this, MaplePacketCreator.showForeignEffect(getId(), 0), false);
             stats.recalcLocalStats(this);
             silentPartyUpdate();
@@ -4563,13 +4563,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     @Override
     public void sendDestroyData(MapleClient client) {
-        client.getSession().write(MaplePacketCreator.removePlayerFromMap(getObjectId()));
+        client.sendPacket(MaplePacketCreator.removePlayerFromMap(getObjectId()));
     }
 
     @Override
     public void sendSpawnData(MapleClient client) {
         if (client.getPlayer().allowedToTarget(this)) {
-            client.getSession().write(MaplePacketCreator.spawnPlayerMapobject(this));
+            client.sendPacket(MaplePacketCreator.spawnPlayerMapobject(this));
         }
     }
 
@@ -4689,13 +4689,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         Item item = getInventory(MapleInventoryType.CASH).getItem((short) slot);
         if ((item == null) || (!ItemConstants.isPet(item.getItemId()))) {
             dropMessage(1, "召唤失败，请你重新登陆");
-            client.getSession().write(MaplePacketCreator.enableActions());
+            client.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         MaplePet pet = item.getPet();
         if ((pet == null) || ((item.getExpiration() != -1L) && (item.getExpiration() <= System.currentTimeMillis()))) {
             dropMessage(1, "召唤失败，找不到宠物");
-            client.getSession().write(MaplePacketCreator.enableActions());
+            client.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         //if ( pet != null) {
@@ -4713,13 +4713,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             pet.setCanPickup(true);
             addSpawnPet(pet);
             if (getMap() != null) {
-//                client.getSession().write(PetPacket.updatePet(pet, getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
+//                client.sendPacket(PetPacket.updatePet(pet, getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
                 getMap().broadcastMessage(this, PetPacket.showPet(this, pet, false, false), true);
-//                client.getSession().write(PetPacket.loadExceptionList(this, pet));
-//                client.getSession().write(PetPacket.petStatUpdate(this));
+//                client.sendPacket(PetPacket.loadExceptionList(this, pet));
+//                client.sendPacket(PetPacket.petStatUpdate(this));
             }
         //}
-        client.getSession().write(MaplePacketCreator.enableActions());
+        client.sendPacket(MaplePacketCreator.enableActions());
     }
 
     public void unequipSpawnPet(MaplePet pet, boolean shiftLeft, boolean hunger) {
@@ -4727,13 +4727,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             getSpawnPet().setSummoned(0);
             getSpawnPet().saveToDb();
         }
-        this.client.getSession().write(PetPacket.updatePet(pet, getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), true));
+        this.client.sendPacket(PetPacket.updatePet(pet, getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), true));
         if (this.map != null) {
             this.map.broadcastMessage(this, PetPacket.showPet(this, pet, true, hunger), true);
         }
         removeSpawnPet(pet, shiftLeft);
 
-        this.client.getSession().write(MaplePacketCreator.enableActions());
+        this.client.sendPacket(MaplePacketCreator.enableActions());
     }
 
 
@@ -5032,7 +5032,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             dropMessage(0, new StringBuilder().append("你").append(quantity > 0 ? "获得了 " : "消耗了 ").append(Math.abs(quantity)).append(type == 1 ? " 点券。" : " 抵用券。").toString());
         }
 
-        this.client.getSession().write(MaplePacketCreator.showCharCash(this));
+        this.client.sendPacket(MaplePacketCreator.showCharCash(this));
         return true;
     }
 
@@ -5117,7 +5117,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void setBuddyCapacity(byte capacity) {
         this.buddylist.setCapacity(capacity);
-        this.client.getSession().write(BuddyListPacket.updateBuddyCapacity(capacity));
+        this.client.sendPacket(BuddyListPacket.updateBuddyCapacity(capacity));
     }
 
     public MapleMessenger getMessenger() {
@@ -5166,7 +5166,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void addCooldown(int skillId, long startTime, long length) {
         if (isShowPacket()) {
             dropMessage(-10, "服务器管理员消除技能冷却时间(原时间:" + length / 1000 + "秒)");
-            client.getSession().write(MaplePacketCreator.skillCooldown(skillId, 0));
+            client.sendPacket(MaplePacketCreator.skillCooldown(skillId, 0));
         } else {
             this.coolDowns.put(skillId, new MapleCoolDownValueHolder(skillId, startTime, length));
         }
@@ -5234,10 +5234,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             冷却时间 -= time * 1000;
             if (冷却时间 <= 0) {
                 removeCooldown(skillId);
-                client.getSession().write(MaplePacketCreator.skillCooldown(skillId, 0));
+                client.sendPacket(MaplePacketCreator.skillCooldown(skillId, 0));
             } else {
                 coolDowns.get(skillId).length = 冷却时间;
-                client.getSession().write(MaplePacketCreator.skillCooldown(skillId, (int) (冷却时间 / 1000)));
+                client.sendPacket(MaplePacketCreator.skillCooldown(skillId, (int) (冷却时间 / 1000)));
             }
         }
     }
@@ -5268,7 +5268,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 return;
             }
             this.diseases.put(disease, new MapleDiseaseValueHolder(disease, System.currentTimeMillis(), duration - this.stats.decreaseDebuff));
-            this.client.getSession().write(BuffPacket.giveDebuff(disease, x, skillid, level, (int) duration));
+            this.client.sendPacket(BuffPacket.giveDebuff(disease, x, skillid, level, (int) duration));
             this.map.broadcastMessage(this, BuffPacket.giveForeignDebuff(this.id, disease, skillid, level, x), false);
             if ((x > 0) && (disease == MapleDisease.中毒)) {
                 addHP((int) (-(x * ((duration - this.stats.decreaseDebuff) / 1000L))));
@@ -5286,7 +5286,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public boolean dispelDebuff(MapleDisease debuff) {
         if (hasDisease(debuff)) {
-            this.client.getSession().write(BuffPacket.cancelDebuff(debuff));
+            this.client.sendPacket(BuffPacket.cancelDebuff(debuff));
             this.map.broadcastMessage(this, BuffPacket.cancelForeignDebuff(this.id, debuff), false);
             this.diseases.remove(debuff);
             return true;
@@ -5332,7 +5332,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 rs.last();
                 int count = rs.getRow();
                 rs.first();
-                this.client.getSession().write(MTSCSPacket.showNotes(rs, count));
+                this.client.sendPacket(MTSCSPacket.showNotes(rs, count));
                 rs.close();
                 ps.close();
             }
@@ -5367,23 +5367,23 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         } else {
             this.mulung_energy = 0;
         }
-        this.client.getSession().write(MaplePacketCreator.MulungEnergy(this.mulung_energy));
+        this.client.sendPacket(MaplePacketCreator.MulungEnergy(this.mulung_energy));
     }
 
     public void writeMulungEnergy() {
-        this.client.getSession().write(MaplePacketCreator.MulungEnergy(this.mulung_energy));
+        this.client.sendPacket(MaplePacketCreator.MulungEnergy(this.mulung_energy));
     }
 
     public void writeEnergy(String type, String inc) {
-        this.client.getSession().write(MaplePacketCreator.sendPyramidEnergy(type, inc));
+        this.client.sendPacket(MaplePacketCreator.sendPyramidEnergy(type, inc));
     }
 
     public void writeStatus(String type, String inc) {
-        this.client.getSession().write(MaplePacketCreator.sendGhostStatus(type, inc));
+        this.client.sendPacket(MaplePacketCreator.sendGhostStatus(type, inc));
     }
 
     public void writePoint(String type, String inc) {
-        this.client.getSession().write(MaplePacketCreator.sendGhostPoint(type, inc));
+        this.client.sendPacket(MaplePacketCreator.sendGhostPoint(type, inc));
     }
 
     public int getAranCombo() {
@@ -5398,7 +5398,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
         this.aranCombo = Math.min(30000, oldCombo);
         if (show) {
-            this.client.getSession().write(MaplePacketCreator.ShowAranCombo(this.aranCombo));
+            this.client.sendPacket(MaplePacketCreator.ShowAranCombo(this.aranCombo));
         }
     }
 
@@ -5429,7 +5429,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             this.lastBerserkTime = System.currentTimeMillis();
             MapleStatEffect ampStat = BerserkX.getEffect(skilllevel);
             this.stats.Berserk = (this.stats.getHp() * 100 / this.stats.getCurrentMaxHp() >= ampStat.getX());
-            this.client.getSession().write(MaplePacketCreator.showOwnBuffEffect(skillId, 1, getLevel(), skilllevel, (byte) (this.stats.Berserk ? 1 : 0)));
+            this.client.sendPacket(MaplePacketCreator.showOwnBuffEffect(skillId, 1, getLevel(), skilllevel, (byte) (this.stats.Berserk ? 1 : 0)));
             this.map.broadcastMessage(this, MaplePacketCreator.showBuffeffect(this, skillId, 1, getLevel(), skilllevel, (byte) (this.stats.Berserk ? 1 : 0)), false);
         } else {
             this.lastBerserkTime = -1L;
@@ -5544,32 +5544,32 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void dropMessage(int type, String message) {
         if (type == -1) {
-            this.client.getSession().write(MaplePacketCreator.serverMessageTop(message));
+            this.client.sendPacket(MaplePacketCreator.serverMessageTop(message));
         } else if (type == -2) {
-            this.client.getSession().write(PlayerShopPacket.shopChat(message, 0));
+            this.client.sendPacket(PlayerShopPacket.shopChat(message, 0));
         } else if (type == -3) {
-            this.client.getSession().write(MaplePacketCreator.getChatText(getId(), message, isSuperGM(), 0));
+            this.client.sendPacket(MaplePacketCreator.getChatText(getId(), message, isSuperGM(), 0));
         } else if (type == -4) {
-            this.client.getSession().write(MaplePacketCreator.getChatText(getId(), message, isSuperGM(), 1));
+            this.client.sendPacket(MaplePacketCreator.getChatText(getId(), message, isSuperGM(), 1));
         } else if (type == -5) {
-            this.client.getSession().write(MaplePacketCreator.spouseMessage(message, false));
+            this.client.sendPacket(MaplePacketCreator.spouseMessage(message, false));
         } else if (type == -6) {
-            this.client.getSession().write(MaplePacketCreator.spouseMessage(message, true));
+            this.client.sendPacket(MaplePacketCreator.spouseMessage(message, true));
         } else if (type == -7) {
-            this.client.getSession().write(UIPacket.getMidMsg(message, false, 0));
+            this.client.sendPacket(UIPacket.getMidMsg(message, false, 0));
         } else if (type == -8) {
-            this.client.getSession().write(UIPacket.getMidMsg(message, true, 0));
+            this.client.sendPacket(UIPacket.getMidMsg(message, true, 0));
         } else if (type == -10) {
-            this.client.getSession().write(MaplePacketCreator.getFollowMessage(message));
+            this.client.sendPacket(MaplePacketCreator.getFollowMessage(message));
         } else if (type == -11) {
-            this.client.getSession().write(MaplePacketCreator.yellowChat(message));
+            this.client.sendPacket(MaplePacketCreator.yellowChat(message));
         } else {
-            this.client.getSession().write(MaplePacketCreator.serverMessageRedText(message));
+            this.client.sendPacket(MaplePacketCreator.serverMessageRedText(message));
         }
     }
 
     public void dropSpouseMessage(int type, String message) {
-        this.client.getSession().write(MaplePacketCreator.serverNotice(5, message));
+        this.client.sendPacket(MaplePacketCreator.serverNotice(5, message));
     }
 
     public IMaplePlayerShop getPlayerShop() {
@@ -5729,7 +5729,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void removeItem(int id, int quantity) {
         MapleInventoryManipulator.removeById(this.client, ItemConstants.getInventoryType(id), id, quantity, true, false);
-        this.client.getSession().write(MaplePacketCreator.getShowItemGain(id, (short) (-quantity), true));
+        this.client.sendPacket(MaplePacketCreator.getShowItemGain(id, (short) (-quantity), true));
     }
 
     public void removeAll(int id) {
@@ -5742,7 +5742,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (possessed > 0) {
             MapleInventoryManipulator.removeById(getClient(), type, itemId, possessed, true, false);
             if (show) {
-                getClient().getSession().write(MaplePacketCreator.getShowItemGain(itemId, (short) (-possessed), true));
+                getClient().sendPacket(MaplePacketCreator.getShowItemGain(itemId, (short) (-possessed), true));
             }
         }
         if ((checkEquipped) && (type == MapleInventoryType.EQUIP)) {
@@ -5751,7 +5751,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             if (possessed > 0) {
                 MapleInventoryManipulator.removeById(getClient(), type, itemId, possessed, true, false);
                 if (show) {
-                    getClient().getSession().write(MaplePacketCreator.getShowItemGain(itemId, (short) (-possessed), true));
+                    getClient().sendPacket(MaplePacketCreator.getShowItemGain(itemId, (short) (-possessed), true));
                 }
                 equipChanged();
             }
@@ -5770,7 +5770,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             if (possessed > 0) {
                 MapleInventoryManipulator.removeById(getClient(), type, itemId, possessed, true, false);
                 if (show) {
-                    getClient().getSession().write(MaplePacketCreator.getShowItemGain(itemId, (short) (-possessed), true));
+                    getClient().sendPacket(MaplePacketCreator.getShowItemGain(itemId, (short) (-possessed), true));
                 }
                 equipChanged();
             }
@@ -6041,7 +6041,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void changeChannel(int channel) {
         ChannelServer toch = ChannelServer.getInstance(channel);
         if ((channel == this.client.getChannel()) || (toch == null) || (toch.isShutdown())) {
-            this.client.getSession().write(MaplePacketCreator.serverBlocked(1));
+            this.client.sendPacket(MaplePacketCreator.serverBlocked(1));
             return;
         }
         changeRemoval();
@@ -6058,7 +6058,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.client.updateLoginState(3, this.client.getSessionIPAddress());
         String s = this.client.getSessionIPAddress();
         LoginServer.addIPAuth(s.substring(s.indexOf(47) + 1, s.length()));
-        this.client.getSession().write(MaplePacketCreator.getChannelChange(this.client, Integer.parseInt(toch.getIP().split(":")[1])));
+        this.client.sendPacket(MaplePacketCreator.getChannelChange(this.client, Integer.parseInt(toch.getIP().split(":")[1])));
         saveToDB(false, false);
         getMap().removePlayer(this);
         this.client.setPlayer(null);
@@ -6068,7 +6068,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void expandInventory(byte type, int amount) {
         MapleInventory inv = getInventory(MapleInventoryType.getByType(type));
         inv.addSlot((byte) amount);
-        this.client.getSession().write(InventoryPacket.updateInventorySlotLimit(type, inv.getSlotLimit()));
+        this.client.sendPacket(InventoryPacket.updateInventorySlotLimit(type, inv.getSlotLimit()));
     }
 
     public boolean allowedToTarget(MapleCharacter other) {
@@ -6560,18 +6560,18 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
      */
     public void refreshItem(Item item) {
         MapleInventoryType type = ItemConstants.getInventoryType(item.getItemId());
-        client.getSession().write(InventoryPacket.addItemToInventory(item));
+        client.sendPacket(InventoryPacket.addItemToInventory(item));
     }
 
     public void fakeRelog() {
-        this.client.getSession().write(MaplePacketCreator.getCharInfo(this));
+        this.client.sendPacket(MaplePacketCreator.getCharInfo(this));
         MapleMap mapp = getMap();
         mapp.setCheckStates(false);
         mapp.removePlayer(this);
         mapp.addPlayer(this);
         mapp.setCheckStates(true);
         if (isShowPacket()) {
-            client.getSession().write(MaplePacketCreator.serverNotice(5, "刷新人物数据完成..."));
+            client.sendPacket(MaplePacketCreator.serverNotice(5, "刷新人物数据完成..."));
         }
     }
 
@@ -6604,13 +6604,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void updatePetAuto() {
-        this.client.getSession().write(MaplePacketCreator.petAutoHP(getIntRecord(122221)));
-        this.client.getSession().write(MaplePacketCreator.petAutoMP(getIntRecord(122223)));
-        this.client.getSession().write(MaplePacketCreator.petAutoBuff(getIntRecord(122224)));
+        this.client.sendPacket(MaplePacketCreator.petAutoHP(getIntRecord(122221)));
+        this.client.sendPacket(MaplePacketCreator.petAutoMP(getIntRecord(122223)));
+        this.client.sendPacket(MaplePacketCreator.petAutoBuff(getIntRecord(122224)));
     }
 
     public void sendEnglishQuiz(String msg) {
-        this.client.getSession().write(MaplePacketCreator.englishQuizMsg(msg));
+        this.client.sendPacket(MaplePacketCreator.englishQuizMsg(msg));
     }
 
     public void setChangeTime(boolean changeMap) {
@@ -6709,7 +6709,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void sendImp() {
         for (int i = 0; i < this.imps.length; i++) {
             if (this.imps[i] != null) {
-                this.client.getSession().write(MaplePacketCreator.updateImp(this.imps[i], ImpFlag.SUMMONED.getValue(), i, true));
+                this.client.sendPacket(MaplePacketCreator.updateImp(this.imps[i], ImpFlag.SUMMONED.getValue(), i, true));
             }
         }
     }
@@ -6724,7 +6724,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void changeTeam(int newTeam) {
         this.coconutteam = newTeam;
-        this.client.getSession().write(MaplePacketCreator.showEquipEffect(newTeam));
+        this.client.sendPacket(MaplePacketCreator.showEquipEffect(newTeam));
     }
 
     public void disease(int type, int level) {
@@ -6732,7 +6732,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             return;
         }
         this.chair = 0;
-        this.client.getSession().write(MaplePacketCreator.cancelChair(-1, id));
+        this.client.sendPacket(MaplePacketCreator.cancelChair(-1, id));
         this.map.broadcastMessage(this, MaplePacketCreator.showChair(this.id, 0), false);
         giveDebuff(MapleDisease.getBySkill(type), MobSkillFactory.getInstance().getMobSkill(type, level));
     }
@@ -6741,7 +6741,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         for (MapleCoolDownValueHolder m : getCooldowns()) {
             int skil = m.skillId;
             removeCooldown(skil);
-            this.client.getSession().write(MaplePacketCreator.skillCooldown(skil, 0));
+            this.client.sendPacket(MaplePacketCreator.skillCooldown(skil, 0));
         }
     }
 
@@ -6773,7 +6773,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     MapleStatEffect divineShield = divine.getEffect(getTotalSkillLevel(divine));
                     if (divineShield.makeChanceResult()) {
                         divineShield.applyTo(this);
-                        this.client.getSession().write(MaplePacketCreator.skillCooldown(1210016, divineShield.getCooldown(this)));
+                        this.client.sendPacket(MaplePacketCreator.skillCooldown(1210016, divineShield.getCooldown(this)));
                         addCooldown(1210016, System.currentTimeMillis(), divineShield.getCooldown(this) * 1000);
                     }
                 }
@@ -6791,7 +6791,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     MapleStatEffect divineShield = divine.getEffect(getTotalSkillLevel(divine));
                     if (divineShield.makeChanceResult()) {
                         divineShield.applyTo(this);
-                        this.client.getSession().write(MaplePacketCreator.skillCooldown(divine.getId(), divineShield.getX()));
+                        this.client.sendPacket(MaplePacketCreator.skillCooldown(divine.getId(), divineShield.getX()));
                         addCooldown(divine.getId(), System.currentTimeMillis(), divineShield.getX() * 1000);
                     }
                 }
@@ -6817,7 +6817,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 if ((getTotalSkillLevel(divine) > 0) && (!skillisCooling(divine.getId())) && (getBuffSource(MapleBuffStat.灵魂助力) == 1301013)) {
                     MapleStatEffect divineShield = divine.getEffect(getTotalSkillLevel(divine));
                     if (divineShield.makeChanceResult()) {
-                        this.client.getSession().write(MaplePacketCreator.skillCooldown(divine.getId(), divineShield.getCooldown(this)));
+                        this.client.sendPacket(MaplePacketCreator.skillCooldown(divine.getId(), divineShield.getCooldown(this)));
                         addCooldown(divine.getId(), System.currentTimeMillis(), divineShield.getCooldown(this) * 1000);
                         if ((attacke instanceof MapleMonster)) {
                             MapleMonster attacker = (MapleMonster) attacke;
@@ -6873,7 +6873,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                                     attacker.damage(this, theDmg, true);
                                     checkMonsterAggro(attacker);
                                     if (!attacker.isAlive()) {
-                                        getClient().getSession().write(MobPacket.killMonster(attacker.getObjectId(), 1));
+                                        getClient().sendPacket(MobPacket.killMonster(attacker.getObjectId(), 1));
                                     }
                                 } else {
                                     MapleCharacter chr = (MapleCharacter) attacke;
@@ -7002,12 +7002,12 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
         this.forceCounter += 1;
         addMP(extraForce > 0 ? extraForce : forceGain);
-        getClient().getSession().write(SkillPacket.showForce(this, moboid, this.forceCounter, forceGain));
+        getClient().sendPacket(SkillPacket.showForce(this, moboid, this.forceCounter, forceGain));
         if ((this.stats.mpRecoverProp > 0) && (extraForce <= 0)
                 && (Randomizer.nextInt(100) <= this.stats.mpRecoverProp)) {
             this.forceCounter += 1;
             addMP(this.stats.mpRecover);
-            getClient().getSession().write(SkillPacket.showForce(this, moboid, this.forceCounter, this.stats.mpRecoverProp));
+            getClient().sendPacket(SkillPacket.showForce(this, moboid, this.forceCounter, this.stats.mpRecoverProp));
         }
     }
 
@@ -7018,15 +7018,15 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (Randomizer.nextInt(100) >= 60) {
             addMP(forceColor);
         }
-        getClient().getSession().write(SkillPacket.showForce(this, moboid, this.forceCounter, forceColor));
+        getClient().sendPacket(SkillPacket.showForce(this, moboid, this.forceCounter, forceColor));
         if ((maxFuryLevel > 0) && ((skillid == 31000004) || (skillid == 31001006) || (skillid == 31001007) || (skillid == 31001008))) {
             this.forceCounter += 1;
             int rand = Randomizer.nextInt(100);
             if (rand >= 40) {
                 addMP(forceColor);
-                getClient().getSession().write(SkillPacket.showForce(this, moboid, this.forceCounter, 2));
+                getClient().sendPacket(SkillPacket.showForce(this, moboid, this.forceCounter, 2));
             } else {
-                getClient().getSession().write(SkillPacket.showForce(this, moboid, this.forceCounter, 3));
+                getClient().sendPacket(SkillPacket.showForce(this, moboid, this.forceCounter, 3));
             }
         }
     }
@@ -7059,12 +7059,12 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     break;
                 }
                 this.forceCounter += 1;
-                getClient().getSession().write(SkillPacket.gainCardStack(this, oid, skill.getId(), this.forceCounter, skill.getId() == 24120002 ? 2 : 1));
+                getClient().sendPacket(SkillPacket.gainCardStack(this, oid, skill.getId(), this.forceCounter, skill.getId() == 24120002 ? 2 : 1));
                 if (getCardStack() >= getCarteByJob()) {
                     break;
                 }
                 this.cardStack += 1;
-                getClient().getSession().write(SkillPacket.updateCardStack(this.cardStack));
+                getClient().sendPacket(SkillPacket.updateCardStack(this.cardStack));
                 break;
             }
         }
@@ -7090,7 +7090,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (mesos.size() > 0) {
             this.getMap().broadcastMessage(SkillPacket.MesosBomb(this, attack));
         }
-        this.client.getSession().write(MaplePacketCreator.enableActions());
+        this.client.sendPacket(MaplePacketCreator.enableActions());
     }
 
     public void handleAssassinStack(MapleMonster mob, int visProjectile) {
@@ -7144,7 +7144,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void updateCash() {
-        this.client.getSession().write(MaplePacketCreator.showCharCash(this));
+        this.client.sendPacket(MaplePacketCreator.showCharCash(this));
     }
 
     public short getSpace(int type) {
@@ -7296,7 +7296,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void sendPolice(String text) {
-//         this.client.getSession().write(MaplePacketCreator.sendPolice(text));
+//         this.client.sendPacket(MaplePacketCreator.sendPolice(text));
 //         this.isbanned = true;
 //         WorldTimer.getInstance().schedule(new Runnable() {
 //            public void run() {
@@ -7609,7 +7609,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         stat.put(MapleStat.运气, (long) luk);
         stat.put(MapleStat.AVAILABLEAP, (long) total);
 
-        this.client.getSession().write(MaplePacketCreator.updatePlayerStats(stat, false, this));
+        this.client.sendPacket(MaplePacketCreator.updatePlayerStats(stat, false, this));
     }
 
     public void SpReset() {
@@ -7641,7 +7641,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         spToGive += (getLevel() - 10) * 3;
         setRemainingSp(spToGive);
         updateSingleStat(MapleStat.AVAILABLESP, 0L);
-        this.client.getSession().write(MaplePacketCreator.enableActions());
+        this.client.sendPacket(MaplePacketCreator.enableActions());
     }
 
     public int getPlayerPoints() {
@@ -7675,16 +7675,16 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void dropTopMsg(String message) {
-        this.client.getSession().write(UIPacket.getTopMsg(message));
+        this.client.sendPacket(UIPacket.getTopMsg(message));
     }
 
     public void dropMidMsg(String message) {
-        this.client.getSession().write(UIPacket.clearMidMsg());
-        this.client.getSession().write(UIPacket.getMidMsg(message, true, 0));
+        this.client.sendPacket(UIPacket.clearMidMsg());
+        this.client.sendPacket(UIPacket.getMidMsg(message, true, 0));
     }
 
     public void clearMidMsg() {
-        this.client.getSession().write(UIPacket.clearMidMsg());
+        this.client.sendPacket(UIPacket.clearMidMsg());
     }
 
     public int getEventCount(String eventId) {
@@ -7951,7 +7951,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         } else {
             MapleInventoryManipulator.removeById(client, GameConstants.getInventoryType(id), id, -quantity, true, false);
         }
-        client.getSession().write(MaplePacketCreator.getShowItemGain(id, (short) quantity, true));
+        client.sendPacket(MaplePacketCreator.getShowItemGain(id, (short) quantity, true));
 
     }
 

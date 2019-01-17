@@ -36,46 +36,7 @@ import tools.packet.MobPacket;
 public final class MobHandler {
 
     public static void MoveMonster(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        if (chr == null || chr.getMap() == null) {
-            return;
-        }
-        MapleMonster monster = chr.getMap().getMonsterByOid(slea.readInt());
-        if (monster == null) {
-            return;
-        }
-        if (monster.getLinkCID() > 0) {
-            return;
-        }
-        short moveid = slea.readShort();
-        boolean useSkill = (slea.readByte() & 0xFF) > 0;
-        int skillId = slea.readByte();
-        int skillLevel = 0;
-        int start_x = slea.readShort(); // hmm.. startpos?
-        int start_y = slea.readShort(); // hmm...
-        slea.readShort();
-        slea.readShort();
 
-        final List<LifeMovementFragment> res;
-        try {
-            res = MovementParse.parseMovement(slea, 2);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.Movement_Mob, e);
-            FileoutputUtil.log(FileoutputUtil.Movement_Mob, "怪物ID " + monster.getId() + ", AIOBE Type2:\r\n" + slea.toString(true));
-            return;
-        }
-        if ((res != null) && (res.size() > 0)) {
-            MapleMap map = chr.getMap();
-            c.getSession().write(MobPacket.moveMonsterResponse(monster.getObjectId(), moveid, monster.getMp(), monster.isControllerHasAggro(), skillId, skillLevel));
-            if (slea.available() != 1) {
-                FileoutputUtil.log("slea.available != 1 (怪物移动错误) 剩余封包长度: " + slea.available());
-                FileoutputUtil.log(FileoutputUtil.Movement_Mob, "slea.available != 36 (怪物移动错误)\r\n怪物ID: " + monster.getId() + "\r\n" + slea.toString(true));
-                return;
-            }
-            MovementParse.updatePosition(res, monster, -1);
-            Point endPos = monster.getTruePosition();
-            map.moveMonster(monster, endPos);
-            map.broadcastMessage(chr, MobPacket.moveMonster(useSkill, slea, skillId, skillLevel, monster.getObjectId()), endPos);
-        }
     }
 
     public static void FriendlyDamage(SeekableLittleEndianAccessor slea, MapleCharacter chr) {
@@ -182,7 +143,7 @@ public final class MobHandler {
     public static void DisplayNode(SeekableLittleEndianAccessor slea, MapleCharacter chr) {
         MapleMonster mob_from = chr.getMap().getMonsterByOid(slea.readInt());
         if (mob_from != null) {
-            chr.getClient().getSession().write(MobPacket.getNodeProperties(mob_from, chr.getMap()));
+            chr.getClient().sendPacket(MobPacket.getNodeProperties(mob_from, chr.getMap()));
         }
     }
 
@@ -221,12 +182,12 @@ public final class MobHandler {
         } else {
             chr.dropMessage(1, "Name was not eligible.");
         }
-        c.getSession().write(MaplePacketCreator.enableActions());
+        c.sendPacket(MaplePacketCreator.enableActions());
     }
 
     public static void SpawnFamiliar(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         int mId = slea.readInt();
-        c.getSession().write(MaplePacketCreator.enableActions());
+        c.sendPacket(MaplePacketCreator.enableActions());
         c.getPlayer().removeFamiliar();
         if ((c.getPlayer().getFamiliars().containsKey(mId)) && (slea.readByte() > 0)) {
             MonsterFamiliar mf = (MonsterFamiliar) c.getPlayer().getFamiliars().get(Integer.valueOf(mId));
@@ -328,14 +289,14 @@ public final class MobHandler {
 
     public static void UseFamiliar(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         if ((chr == null) || (!chr.isAlive()) || (chr.getMap() == null) || (chr.hasBlockedInventory())) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         short slot = slea.readShort();
         int itemId = slea.readInt();
         Item toUse = chr.getInventory(MapleInventoryType.USE).getItem(slot);
 
-        c.getSession().write(MaplePacketCreator.enableActions());
+        c.sendPacket(MaplePacketCreator.enableActions());
         if ((toUse == null) || (toUse.getQuantity() < 1) || (toUse.getItemId() != itemId) || (itemId / 10000 != 287)) {
             return;
         }
@@ -354,7 +315,7 @@ public final class MobHandler {
                 c.getPlayer().getFamiliars().put(f.familiar, mf);
             }
             MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (short) 1, false, false);
-            c.getSession().write(MaplePacketCreator.registerFamiliar(mf));
+            c.sendPacket(MaplePacketCreator.registerFamiliar(mf));
         }
     }
 }

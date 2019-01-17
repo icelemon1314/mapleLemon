@@ -93,11 +93,11 @@ public final class MapleArrowsTurret extends AnimatedMapleMapObject {
 
     @Override
     public void sendSpawnData(MapleClient client) {
-        client.getSession().write(SkillPacket.spawnArrowsTurret(this));
+        client.sendPacket(SkillPacket.spawnArrowsTurret(this));
     }
 
     @Override
     public void sendDestroyData(MapleClient client) {
-        client.getSession().write(SkillPacket.cancelArrowsTurret(this));
+        client.sendPacket(SkillPacket.cancelArrowsTurret(this));
     }
 }

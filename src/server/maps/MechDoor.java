@@ -20,12 +20,12 @@ public class MechDoor extends MapleMapObject {
 
     @Override
     public void sendSpawnData(MapleClient client) {
-        client.getSession().write(SkillPacket.spawnMechDoor(this, false));
+        client.sendPacket(SkillPacket.spawnMechDoor(this, false));
     }
 
     @Override
     public void sendDestroyData(MapleClient client) {
-        client.getSession().write(SkillPacket.removeMechDoor(this, false));
+        client.sendPacket(SkillPacket.removeMechDoor(this, false));
     }
 
     public int getOwnerId() {

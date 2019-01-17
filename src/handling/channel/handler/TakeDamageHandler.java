@@ -10,6 +10,8 @@ import client.inventory.MapleInventoryType;
 import client.status.MonsterStatus;
 import client.status.MonsterStatusEffect;
 import java.awt.Point;
+
+import handling.MaplePacketHandler;
 import server.MapleStatEffect;
 import server.Randomizer;
 import server.life.MapleMonster;
@@ -21,15 +23,15 @@ import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.data.input.SeekableLittleEndianAccessor;
 
-public class TakeDamageHandler {
+public class TakeDamageHandler extends MaplePacketHandler {
 
     /**
      * 玩家受到伤害
      * @param slea
      * @param c
-     * @param chr
      */
-    public static void TakeDamage(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
+    @Override
+    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         // 1E
         // FF
         // 07 00 00 00
@@ -37,8 +39,9 @@ public class TakeDamageHandler {
         // 00 35 FC 01 00 00 00
         //TODO 修复反射伤害给怪物 还有其他的掉血类型
         // 1E FE 19 00 00 00 00 00 高处掉落下来扣血
+        MapleCharacter chr = c.getPlayer();
         if ((chr == null) || (chr.getMap() == null) || (chr.isHidden())) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         byte type = slea.readByte();
@@ -138,7 +141,7 @@ public class TakeDamageHandler {
         if (chr.isShowPacket()) {
             chr.dropMessage(5, "玩家掉血 - 类型: " + type + " 怪物ID: " + monsteridfrom + " 伤害: " + damage + " fake: " + fake + " direction: " + direction + " oid: " + oid + " offset: " + offset);
         }
-        c.getSession().write(MaplePacketCreator.enableActions());
+        c.sendPacket(MaplePacketCreator.enableActions());
         chr.getMap().broadcastMessage(chr, MaplePacketCreator.damagePlayer(chr.getId(), type, damage, monsteridfrom, direction, 0, pDamage, pPhysical, pOid, pType, pPos, offset, offset_d, fake), false);
     }
 }

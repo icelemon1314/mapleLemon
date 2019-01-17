@@ -11,13 +11,13 @@ public class ServerlistRequestHandler {
         if (packet) {
             return;
         }
-//        c.getSession().write(LoginPacket.getLoginWelcome());
+//        c.sendPacket(LoginPacket.getLoginWelcome());
         for (WorldConstants.Option servers : WorldConstants.values()) {
             if (servers.show()) {
-                c.getSession().write(LoginPacket.getServerList(servers, LoginServer.getLoad()));
+                c.sendPacket(LoginPacket.getServerList(servers, LoginServer.getLoad()));
             }
         }
-        c.getSession().write(LoginPacket.getEndOfServerList());
-//        c.getSession().write(LoginPacket.enableRecommended());
+        c.sendPacket(LoginPacket.getEndOfServerList());
+//        c.sendPacket(LoginPacket.enableRecommended());
     }
 }

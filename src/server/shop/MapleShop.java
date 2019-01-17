@@ -58,18 +58,18 @@ public class MapleShop {
 
     public void sendShop(MapleClient c) {
         c.getPlayer().setShop(this);
-        c.getSession().write(NPCPacket.getNPCShop(getNpcId(), this, c));
+        c.sendPacket(NPCPacket.getNPCShop(getNpcId(), this, c));
     }
 
     public void sendShop(MapleClient c, int customNpc) {
         c.getPlayer().setShop(this);
-        c.getSession().write(NPCPacket.getNPCShop(customNpc, this, c));
+        c.sendPacket(NPCPacket.getNPCShop(customNpc, this, c));
     }
 
     public void sendItemShop(MapleClient c, int itemId) {
         this.shopItemId = itemId;
         c.getPlayer().setShop(this);
-        c.getSession().write(NPCPacket.getNPCShop(getNpcId(), this, c));
+        c.sendPacket(NPCPacket.getNPCShop(getNpcId(), this, c));
     }
 
     /**
@@ -93,7 +93,7 @@ public class MapleShop {
         }
         if ((itemId / 10000 == 190) && (!GameConstants.isMountItemAvailable(itemId, c.getPlayer().getJob()))) {
             c.getPlayer().dropMessage(1, "您无法够买这个道具。");
-            c.getSession().write(NPCPacket.confirmShopTransaction(MapleShopResponse.购买道具完成, this, c, -1));
+            c.sendPacket(NPCPacket.confirmShopTransaction(MapleShopResponse.购买道具完成, this, c, -1));
             return;
         }
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
@@ -119,7 +119,7 @@ public class MapleShop {
                 } else {
                     c.getPlayer().dropMessage(1, "您的背包是满的，请整理下背包。");
                 }
-                c.getSession().write(NPCPacket.confirmShopTransaction(MapleShopResponse.购买道具完成, this, c, -1));
+                c.sendPacket(NPCPacket.confirmShopTransaction(MapleShopResponse.购买道具完成, this, c, -1));
             } else {
                 c.getPlayer().dropMessage(1, "钱不够了啊！");
             }
@@ -147,7 +147,7 @@ public class MapleShop {
         }
         if (item.getItemId() == 4000463) {
             c.getPlayer().dropMessage(1, "该道具无法卖出。");
-            c.getSession().write(NPCPacket.confirmShopTransaction(MapleShopResponse.卖出道具完成, this, c, -1));
+            c.sendPacket(NPCPacket.confirmShopTransaction(MapleShopResponse.卖出道具完成, this, c, -1));
             return;
         }
 
@@ -158,7 +158,7 @@ public class MapleShop {
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         if (ii.cantSell(item.getItemId()) || ItemConstants.isPet(item.getItemId())) {
             c.getPlayer().dropMessage(1, "该道具无法卖出1。");
-            c.getSession().write(NPCPacket.confirmShopTransaction(MapleShopResponse.卖出道具完成, this, c, -1));
+            c.sendPacket(NPCPacket.confirmShopTransaction(MapleShopResponse.卖出道具完成, this, c, -1));
             return;
         }
         if (quantity <= iQuant && (iQuant > 0 || ItemConstants.is飞镖道具(item.getItemId()) || ItemConstants.is子弹道具(item.getItemId()))) {
@@ -173,7 +173,7 @@ public class MapleShop {
             if ((price != -1.0D) && (recvMesos > 0)) {
                 c.getPlayer().gainMeso(recvMesos, false);
             }
-            c.getSession().write(NPCPacket.confirmShopTransaction(MapleShopResponse.卖出道具完成, this, c, -1));
+            c.sendPacket(NPCPacket.confirmShopTransaction(MapleShopResponse.卖出道具完成, this, c, -1));
         }
     }
 
@@ -197,12 +197,12 @@ public class MapleShop {
             int price = (int) Math.round(ii.getPrice(item.getItemId()) * (slotMax - item.getQuantity()));
             if (c.getPlayer().getMeso() >= price) {
                 item.setQuantity(slotMax);
-                //c.getSession().write(InventoryPacket.modifyInventory(false, Collections.singletonList(new ModifyInventory(1, item))));
-                c.getSession().write(InventoryPacket.updateInventorySlot(MapleInventoryType.USE, item));
+                //c.sendPacket(InventoryPacket.modifyInventory(false, Collections.singletonList(new ModifyInventory(1, item))));
+                c.sendPacket(InventoryPacket.updateInventorySlot(MapleInventoryType.USE, item));
                 c.getPlayer().gainMeso(-price, false, false);
-                c.getSession().write(NPCPacket.confirmShopTransaction(MapleShopResponse.充值飞镖完成, this, c, -1));
+                c.sendPacket(NPCPacket.confirmShopTransaction(MapleShopResponse.充值飞镖完成, this, c, -1));
             } else {
-                c.getSession().write(NPCPacket.confirmShopTransaction(MapleShopResponse.充值金币不够, this, c, -1));
+                c.sendPacket(NPCPacket.confirmShopTransaction(MapleShopResponse.充值金币不够, this, c, -1));
             }
         }
     }

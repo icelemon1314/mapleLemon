@@ -38,7 +38,7 @@ public class CashShopOperation {
         c.updateLoginState(MapleClient.LOGIN_SERVER_TRANSITION, c.getSessionIPAddress());
         String s = c.getSessionIPAddress();
         LoginServer.addIPAuth(s.substring(s.indexOf('/') + 1, s.length()));
-        c.getSession().write(MaplePacketCreator.getChannelChange(c, Integer.parseInt(toch.getIP().split(":")[1])));
+        c.sendPacket(MaplePacketCreator.getChannelChange(c, Integer.parseInt(toch.getIP().split(":")[1])));
         chr.saveToDB(false, true);
         c.setPlayer(null);
         c.setReceiving(false);
@@ -81,19 +81,19 @@ public class CashShopOperation {
         }
         c.updateLoginState(MapleClient.LOGIN_LOGGEDIN, c.getSessionIPAddress());
         CashShopServer.getPlayerStorage().registerPlayer(chr);
-        c.getSession().write(MTSCSPacket.warpchartoCS(c));
+        c.sendPacket(MTSCSPacket.warpchartoCS(c));
 
-        c.getSession().write(MTSCSPacket.商城道具栏信息(c));
+        c.sendPacket(MTSCSPacket.商城道具栏信息(c));
         List gifts = chr.getCashInventory().loadGifts();
-//        c.getSession().write(MTSCSPacket.商城礼物信息(c, gifts));
-//        c.getSession().write(MTSCSPacket.商城购物车(c.getPlayer(), false));
+//        c.sendPacket(MTSCSPacket.商城礼物信息(c, gifts));
+//        c.sendPacket(MTSCSPacket.商城购物车(c.getPlayer(), false));
 
-        c.getSession().write(MTSCSPacket.刷新点券信息(c.getPlayer()));
+        c.sendPacket(MTSCSPacket.刷新点券信息(c.getPlayer()));
 //        c.getPlayer().getCashInventory().checkExpire(c);
     }
 
     public static void CSUpdate(MapleClient c) {
-        c.getSession().write(MTSCSPacket.刷新点券信息(c.getPlayer()));
+
     }
 
 }

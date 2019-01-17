@@ -14,7 +14,7 @@ public class ViewCharHandler {
     public static void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         Map<Byte, List> worlds = new HashMap();
         List<MapleCharacter> chars = c.loadCharacters(0);
-        c.getSession().write(LoginPacket.showAllCharacter(chars.size()));
+//        c.sendPacket(LoginPacket.showAllCharacter(chars.size()));
         for (MapleCharacter chr : chars) {
             if (chr != null) {
                 ArrayList chrr;
@@ -28,7 +28,7 @@ public class ViewCharHandler {
             }
         }
         for (Map.Entry w : worlds.entrySet()) {
-            c.getSession().write(LoginPacket.showAllCharacterInfo(((Byte) w.getKey()), (List) w.getValue(), c.getSecondPassword()));
+//            c.sendPacket(LoginPacket.showAllCharacterInfo(((Byte) w.getKey()), (List) w.getValue(), c.getSecondPassword()));
         }
     }
 }

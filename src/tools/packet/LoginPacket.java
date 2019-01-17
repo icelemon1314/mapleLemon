@@ -40,25 +40,14 @@ public class LoginPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] getLoginAUTH() {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(13);
-
-        mplew.write(SendPacketOpcode.LOGIN_AUTH.getValue());
-        //mplew.writeMapleAsciiString("MapLogin" + (Randomizer.nextInt(3) + 1));
-        String[] a = {"MapLogin", "MapLogin1", "MapLogin2", "MapLogin3", "MapLogin4", "MapLogin5"};
-        mplew.writeMapleAsciiString(a[(int) (Math.random() * a.length)]);
-        mplew.writeInt(GameConstants.getCurrentDate());
-        return mplew.getPacket();
-    }
-
-    public static byte[] licenseResult() {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.LICENSE_RESULT.getValue());
-        mplew.write(1);
-
-        return mplew.getPacket();
-    }
+//    public static byte[] licenseResult() {
+//        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+//
+//        mplew.write(SendPacketOpcode.LICENSE_RESULT.getValue());
+//        mplew.write(1);
+//
+//        return mplew.getPacket();
+//    }
 
     /**
      * 发送选择性别的包
@@ -155,7 +144,6 @@ public class LoginPacket {
 
     /**
      * 检查是否需要排队
-     * @param client
      * @return
      */
     public static byte[] checkUserLimit() {
@@ -164,16 +152,6 @@ public class LoginPacket {
         mplew.write(0x03);
         mplew.write(4);
         mplew.write(0);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] getEjectWeb(byte i, String link) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.EJECT_WEB.getValue());
-        mplew.write(i);
-        mplew.writeMapleAsciiString(link);
 
         return mplew.getPacket();
     }
@@ -188,36 +166,36 @@ public class LoginPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] secondPwError(byte mode) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(3);
-
-        mplew.write(SendPacketOpcode.SECONDPW_ERROR.getValue());
-        mplew.write(mode);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] enableRecommended() {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.ENABLE_RECOMMENDED.getValue());
-        mplew.write(0);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] sendRecommended(int world, String message) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SEND_RECOMMENDED.getValue());
-        mplew.write((message != null) && (GameConstants.GMS) ? 1 : 0);
-        if ((message != null) && (GameConstants.GMS)) {
-            mplew.writeInt(world);
-            mplew.writeMapleAsciiString(message);
-        }
-
-        return mplew.getPacket();
-    }
+//    public static byte[] secondPwError(byte mode) {
+//        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(3);
+//
+//        mplew.write(SendPacketOpcode.SECONDPW_ERROR.getValue());
+//        mplew.write(mode);
+//
+//        return mplew.getPacket();
+//    }
+//
+//    public static byte[] enableRecommended() {
+//        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+//
+//        mplew.write(SendPacketOpcode.ENABLE_RECOMMENDED.getValue());
+//        mplew.write(0);
+//
+//        return mplew.getPacket();
+//    }
+//
+//    public static byte[] sendRecommended(int world, String message) {
+//        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+//
+//        mplew.write(SendPacketOpcode.SEND_RECOMMENDED.getValue());
+//        mplew.write((message != null) && (GameConstants.GMS) ? 1 : 0);
+//        if ((message != null) && (GameConstants.GMS)) {
+//            mplew.writeInt(world);
+//            mplew.writeMapleAsciiString(message);
+//        }
+//
+//        return mplew.getPacket();
+//    }
 
     /**
      * 服务器列表
@@ -280,23 +258,23 @@ public class LoginPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] EventCheck() {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.EVENT_CHECK.getValue());
-        mplew.write(HexTool.getByteArrayFromHexString("00 05 00 00 10 40 00 46 E5 58 00 57 F5 98 00 04 00 00 00 5F F5 98 00 04 00 00 00 6C F5 98 00 94 CA 07 00 D0 C3 A0 00 1C 16 01 00"));
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] getChannelSelected() {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.CHANNEL_SELECTED.getValue());
-        mplew.writeInt(3);
-
-        return mplew.getPacket();
-    }
+//    public static byte[] EventCheck() {
+//        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+//
+//        mplew.write(SendPacketOpcode.EVENT_CHECK.getValue());
+//        mplew.write(HexTool.getByteArrayFromHexString("00 05 00 00 10 40 00 46 E5 58 00 57 F5 98 00 04 00 00 00 5F F5 98 00 04 00 00 00 6C F5 98 00 94 CA 07 00 D0 C3 A0 00 1C 16 01 00"));
+//
+//        return mplew.getPacket();
+//    }
+//
+//    public static byte[] getChannelSelected() {
+//        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+//
+//        mplew.write(SendPacketOpcode.CHANNEL_SELECTED.getValue());
+//        mplew.writeInt(3);
+//
+//        return mplew.getPacket();
+//    }
 
     /**
      * 角色列表
@@ -404,41 +382,41 @@ public class LoginPacket {
         mplew.write(0);
     }
 
-    public static byte[] showAllCharacter(int chars) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.ALL_CHARLIST.getValue());
-        mplew.write(1);
-        mplew.writeInt(chars);
-        mplew.writeInt(chars + (3 - chars % 3));
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] showAllCharacterInfo(int worldid, List<MapleCharacter> chars, String pic) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.ALL_CHARLIST.getValue());
-        mplew.write(chars.isEmpty() ? 5 : 0);
-        mplew.write(worldid);
-        mplew.write(chars.size());
-        for (MapleCharacter chr : chars) {
-            addCharEntry(mplew, chr);
-        }
-        mplew.write(pic.equals("") ? 2 : pic == null ? 0 : 1);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] ShowAccCash(int ACash, int mPoints) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SHOW_ACC_CASH.getValue());
-        mplew.writeInt(ACash);
-        mplew.writeInt(mPoints);
-
-        return mplew.getPacket();
-    }
+//    public static byte[] showAllCharacter(int chars) {
+//        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+//
+//        mplew.write(SendPacketOpcode.ALL_CHARLIST.getValue());
+//        mplew.write(1);
+//        mplew.writeInt(chars);
+//        mplew.writeInt(chars + (3 - chars % 3));
+//
+//        return mplew.getPacket();
+//    }
+//
+//    public static byte[] showAllCharacterInfo(int worldid, List<MapleCharacter> chars, String pic) {
+//        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+//
+//        mplew.write(SendPacketOpcode.ALL_CHARLIST.getValue());
+//        mplew.write(chars.isEmpty() ? 5 : 0);
+//        mplew.write(worldid);
+//        mplew.write(chars.size());
+//        for (MapleCharacter chr : chars) {
+//            addCharEntry(mplew, chr);
+//        }
+//        mplew.write(pic.equals("") ? 2 : pic == null ? 0 : 1);
+//
+//        return mplew.getPacket();
+//    }
+//
+//    public static byte[] ShowAccCash(int ACash, int mPoints) {
+//        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+//
+//        mplew.write(SendPacketOpcode.SHOW_ACC_CASH.getValue());
+//        mplew.writeInt(ACash);
+//        mplew.writeInt(mPoints);
+//
+//        return mplew.getPacket();
+//    }
 
     public static byte[] RegisterInfo(boolean isAllow){
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();

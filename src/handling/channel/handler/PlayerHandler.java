@@ -112,28 +112,18 @@ public class PlayerHandler {
 
     // 坐椅子
     public static void UseChair(int itemId, MapleClient c, MapleCharacter chr) {
-        // 19 0A 00
-        // 19 FF FF 取消
-        if ((chr == null) || (chr.getMap() == null)) {
-            return;
-        }
-
-        chr.setChair(itemId);
-        c.getSession().write(MaplePacketCreator.showChair(c.getPlayer().getId(),itemId));
-        chr.getMap().broadcastMessage(chr, MaplePacketCreator.showChair(chr.getId(), itemId), false);
-        c.getSession().write(MaplePacketCreator.enableActions());
     }
 
     public static void CancelChair(short id, MapleClient c, MapleCharacter chr) {
         if (id == -1) {
             chr.setChair(0);
-            c.getSession().write(MaplePacketCreator.cancelChair(-1, chr.getId()));
+            c.sendPacket(MaplePacketCreator.cancelChair(-1, chr.getId()));
             if (chr.getMap() != null) {
                 chr.getMap().broadcastMessage(chr, MaplePacketCreator.showChair(chr.getId(), 0), false);
             }
         } else {
             chr.setChair(id);
-            c.getSession().write(MaplePacketCreator.cancelChair(id, chr.getId()));
+            c.sendPacket(MaplePacketCreator.cancelChair(id, chr.getId()));
         }
     }
 
@@ -144,30 +134,11 @@ public class PlayerHandler {
      * @param chr
      */
     public static void TrockAddMap(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        byte type = slea.readByte();
-        if (type == 0) { // 删除地图
-            int mapId = slea.readInt();
-            chr.deleteFromRegRocks(mapId);
-            c.getSession().write(MTSCSPacket.getTrockRefresh(chr, (byte)1, true));
-        } else if (type == 1) {
-            if (!FieldLimitType.VipRock.check(chr.getMap().getFieldLimit())) {
-                chr.addRegRockMap();
-                c.getSession().write(MTSCSPacket.getTrockRefresh(chr, (byte)1, false));
-            } else {
-                chr.dropMessage(1, "你可能没有保存此地图.");
-            }
-        }
+
     }
 
     public static void CharInfoRequest(int objectid, MapleClient c, MapleCharacter chr) {
-        if ((chr == null) || (chr.getMap() == null)) {
-            return;
-        }
-        MapleCharacter player = chr.getMap().getCharacterById(objectid);
-        c.getSession().write(MaplePacketCreator.enableActions());
-        if ((player != null)) {
-            c.getSession().write(MaplePacketCreator.charInfo(player, chr.getId() == objectid));
-        }
+
     }
 
     public static void UseItemEffect(int itemId, MapleClient c, MapleCharacter chr) {
@@ -176,7 +147,7 @@ public class PlayerHandler {
         } else {
             Item toUse = chr.getInventory(MapleInventoryType.CASH).findById(itemId);
             if ((toUse == null) || (toUse.getItemId() != itemId) || (toUse.getQuantity() < 1)) {
-                c.getSession().write(MaplePacketCreator.enableActions());
+                c.sendPacket(MaplePacketCreator.enableActions());
                 return;
             }
             if (itemId != 5510000) {
@@ -193,7 +164,7 @@ public class PlayerHandler {
         } else {
             Item toUse = chr.getInventory(MapleInventoryType.SETUP).findById(itemId);
             if ((toUse == null) || (toUse.getItemId() != itemId) || (toUse.getQuantity() < 1)) {
-                c.getSession().write(MaplePacketCreator.enableActions());
+                c.sendPacket(MaplePacketCreator.enableActions());
                 return;
             }
             if (itemId / 10000 == 370) {
@@ -209,28 +180,7 @@ public class PlayerHandler {
     }
 
     public static void CancelBuffHandler(int sourceid, MapleCharacter chr) {
-        if ((chr == null) || (chr.getMap() == null)) {
-            return;
-        }
-        Skill skill = SkillFactory.getSkill(sourceid);
-        if (chr.isShowPacket()) {
-            chr.dropSpouseMessage(10, "收到取消技能BUFF 技能ID " + sourceid + " 技能名字 " + SkillFactory.getSkillName(sourceid));
-        }
 
-        if (skill == null) {
-            return;
-        }
-        if (skill.isChargeSkill()) {
-            chr.setKeyDownSkill_Time(0L);
-            chr.getMap().broadcastMessage(chr, MaplePacketCreator.skillCancel(chr, sourceid), false);
-        } else {
-            if (sourceid == 3121013) {
-                chr.getClient().getSession().write(MaplePacketCreator.skillCancel(chr, sourceid));
-            } else {
-                chr.cancelEffect(skill.getEffect(1), false, -1L);
-            }
-        }
-        chr.cancelEffect(skill.getEffect(1), false, -1L);
     }
 
     public static void CancelMech(SeekableLittleEndianAccessor slea, MapleCharacter chr) {
@@ -266,32 +216,12 @@ public class PlayerHandler {
     }
 
     public static void SkillEffect(SeekableLittleEndianAccessor slea, MapleCharacter chr) {
-        // 33 39 41 40 00 05 A9 06
-        int skillId = slea.readInt();
-        byte level = slea.readByte();
-        byte display = slea.readByte();
-        byte direction = slea.readByte();
-//        byte speed = slea.readByte();
-        Point position = null;
-        if (slea.available() == 4L) {
-            position = slea.readPos();
-        } else if (slea.available() == 8) {
-            position = slea.readPos();
-        }
-        Skill skill = SkillFactory.getSkill(skillId);
-        if ((chr == null) || (skill == null) || (chr.getMap() == null)) {
-            return;
-        }
-        int skilllevel_serv = chr.getTotalSkillLevel(skill);
-        if ((skilllevel_serv > 0) && (skilllevel_serv == level) && (skill.isChargeSkill())) {
-            chr.setKeyDownSkill_Time(System.currentTimeMillis());
-            chr.getMap().broadcastMessage(chr, MaplePacketCreator.skillEffect(chr.getId(), skillId, level, display, direction, (byte)1, position), false);
-        }
+
     }
 
     public static void specialAttack(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         if ((chr == null) || (chr.getMap() == null)) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         int pos_x = slea.readInt();
@@ -308,7 +238,7 @@ public class PlayerHandler {
             System.err.println("[SpecialAttack] - 技能ID: " + skillId + " 技能等级: " + skilllevel);
         }
         if ((skill == null) || (skilllevel <= 0)) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         chr.getMap().broadcastMessage(chr, MaplePacketCreator.showBuffeffect(chr, skillId, 1, chr.getLevel(), skilllevel), false);
@@ -318,7 +248,7 @@ public class PlayerHandler {
     public static void AfterSkill(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         int skillid = slea.readInt();
         if ((chr == null) || (chr.hasBlockedInventory()) || (chr.getMap() == null)) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
     }
@@ -330,101 +260,7 @@ public class PlayerHandler {
      * @param chr
      */
     public static void SpecialSkill(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        // 31 CE CC 10 00 01 80 00 00
-        // 31 2B 46 0F 00 14 00 00
-        // 31 BC BC 21 00 04 01 A6 86 01 00 58 02
-        // 31 5A 43 23 00 14 49 FB 16 08  时空门
-        // 31 39 41 40 00 05 00 00
-        if ((chr == null) || (chr.hasBlockedInventory()) || (chr.getMap() == null)) {
-            c.getSession().write(MaplePacketCreator.enableActions());
-            return;
-        }
-        int skillid = slea.readInt();
-        int skillLevel = slea.readByte();
-        if (chr.isShowPacket()) {
-            chr.dropMessage(5,"[SpecialSkill] - 技能ID: " + skillid + " 技能等级: " + skillLevel);
-        }
-        Point pos = null;
-        if (slea.available() == 4) {
-            pos = new Point(slea.readShort(), slea.readShort());
-        }
-        Skill skill = SkillFactory.getSkill(skillid);
-        if ((skill == null)) {
-            chr.dropMessage(5,"[SpecialSkill] -   不存在的技能ID" + skillid);
-            c.getSession().write(MaplePacketCreator.enableActions());
-            return;
-        }
-        skillLevel = chr.getTotalSkillLevel(skillid);
-        MapleStatEffect effect = skill.getEffect(skillLevel); // 获取技能效果
-        if ((effect.getCooldown(chr) > 0) && (!chr.isGM())) {
-            if (chr.skillisCooling(skillid)) {//TODO 修复客户端冷却时间不一致
-                c.getSession().write(MaplePacketCreator.enableActions());
-                return;
-            }
-            c.getSession().write(MaplePacketCreator.skillCooldown(skillid, effect.getCooldown(chr)));
-            chr.addCooldown(skillid, System.currentTimeMillis(), effect.getCooldown(chr) * 1000);
-        }
-        FileoutputUtil.log("看是否有特需处理的BUFF");
-        if (effect.is时空门()) {
-            FileoutputUtil.log("释放时空们");
-            if (!FieldLimitType.MysticDoor.check(chr.getMap().getFieldLimit())) {
-                effect.applyTo(c.getPlayer(), pos);
-            } else {
-                c.getSession().write(MaplePacketCreator.enableActions());
-            }
-        } else {
-//            int mountid = MapleStatEffect.parseMountInfo(c.getPlayer(), skill.getId());
-//            if ((mountid != 0) && (mountid != GameConstants.getMountItem(skill.getId(), chr)) && (!chr.isIntern()) && (chr.getInventory(MapleInventoryType.EQUIPPED).getItem((short) -122) == null)
-//                    && (!GameConstants.isMountItemAvailable(mountid, chr.getJob()))) {
-//                c.getSession().write(MaplePacketCreator.enableActions());
-//                return;
-//            }
-            FileoutputUtil.log("释放技能效果！");
-            effect.applyTo(chr, pos);
-        }
-    }
 
-    /**
-     * 处理攻击包
-     * @param slea
-     * @param c
-     * @param header
-     */
-    public static void 攻击处理(SeekableLittleEndianAccessor slea, MapleClient c, RecvPacketOpcode header) {
-        MapleCharacter chr = c.getPlayer();
-        if (chr == null) {
-            return;
-        }
-        if (chr.hasBlockedInventory() || chr.getMap() == null) {
-            chr.dropMessage(5, "现在还不能进行攻击。");
-            c.getSession().write(MaplePacketCreator.enableActions());
-            return;
-        }
-        if (!chr.isAdmin() && chr.getMap().isMarketMap()) {
-            chr.dropMessage(5, "在自由市场内无法使用技能。");
-            c.getSession().write(MaplePacketCreator.enableActions());
-            return;
-        }
-
-        switch (header) {
-            case CLOSE_RANGE_ATTACK://近战攻击
-                PlayerHandler.closeRangeAttack(slea, c, chr);
-                break;
-            case RANGED_ATTACK://远程攻击
-                PlayerHandler.rangedAttack(slea, c, chr);
-                break;
-            case MAGIC_ATTACK://魔法攻击
-                PlayerHandler.MagicDamage(slea, c, chr);
-                break;
-            case SPECIAL_MAGIC_ATTACK:
-                slea.skip(12);
-                PlayerHandler.MagicDamage(slea, c, chr);
-                break;
-            case SUMMON_ATTACK:
-                SummonHandler.SummonAttack(slea, c, chr);
-                break;
-        }
-        chr.monsterMultiKill();
     }
 
     public static void closeRangeAttack(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
@@ -436,7 +272,7 @@ public class PlayerHandler {
         AttackInfo attack = DamageParse.parseCloseRangeAttack(slea, chr);
         if (attack == null) {
             chr.dropMessage(5, "攻击出现错误。");
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         boolean mirror = chr.getBuffedValue(MapleBuffStat.影分身) != null;
@@ -453,7 +289,7 @@ public class PlayerHandler {
             skill = SkillFactory.getSkill(attack.skillId);
             if (skill == null) {
                 chr.dropMessage(5, "获取技能失败！"+attack.skillId);
-                c.getSession().write(MaplePacketCreator.enableActions());
+                c.sendPacket(MaplePacketCreator.enableActions());
                 return;
             }
 
@@ -464,7 +300,7 @@ public class PlayerHandler {
                     chr.dropMessage(5, "近距离攻击效果为空. 使用技能: " + skill.getId() + " - " + skill.getName() + " 技能等级: " + skillLevel);
                 }
                 FileoutputUtil.log(FileoutputUtil.SpecialSkill_log, "近距离攻击效果为空 玩家[" + chr.getName() + " 职业: " + getJobName(chr.getJob()) + "(" + chr.getJob() + ")] 使用技能: " + skill.getId() + " - " + skill.getName() + " 技能等级: " + skillLevel);
-                c.getSession().write(MaplePacketCreator.enableActions());
+                c.sendPacket(MaplePacketCreator.enableActions());
                 return;
             }
             attackCount = effect.getAttackCount(chr);
@@ -500,11 +336,11 @@ public class PlayerHandler {
             if (effect.getCooldown(chr) > 0 && !被动攻击) {
                 if (chr.skillisCooling(attack.skillId) && NotEffectforAttack(attack.skillId)) {
                     chr.dropMessage(5, "技能由于冷却时间限制，暂时无法使用。");
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
                 if (!chr.skillisCooling(attack.skillId)) {
-                    c.getSession().write(MaplePacketCreator.skillCooldown(attack.skillId, effect.getCooldown(chr)));
+                    c.sendPacket(MaplePacketCreator.skillCooldown(attack.skillId, effect.getCooldown(chr)));
                     chr.addCooldown(attack.skillId, System.currentTimeMillis(), effect.getCooldown(chr) * 1000);
                 }
             }
@@ -565,7 +401,7 @@ public class PlayerHandler {
             if (chr.isShowPacket()) {
                 chr.dropSpouseMessage(25, "[RangedAttack] - 远距离攻击封包解析返回为空.");
             }
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         int bulletCount = 1;
@@ -577,7 +413,7 @@ public class PlayerHandler {
         if (attack.skillId != 0) {
             skill = SkillFactory.getSkill(attack.skillId); //暂时这样修改
             if (skill == null) {
-                c.getSession().write(MaplePacketCreator.enableActions());
+                c.sendPacket(MaplePacketCreator.enableActions());
                 return;
             }
             skillLevel = chr.getTotalSkillLevel(attack.skillId);
@@ -587,7 +423,7 @@ public class PlayerHandler {
                     chr.dropMessage(5, "近距离攻击效果为空. 使用技能: " + skill.getId() + " - " + skill.getName() + " 技能等级: " + skillLevel);
                 }
                 FileoutputUtil.log(FileoutputUtil.SpecialSkill_log, "远距离攻击效果为空 玩家[" + chr.getName() + " 职业: " + getJobName(chr.getJob()) + "(" + chr.getJob() + ")] 使用技能: " + skill.getId() + " - " + skill.getName() + " 技能等级: " + skillLevel);
-                c.getSession().write(MaplePacketCreator.enableActions());
+                c.sendPacket(MaplePacketCreator.enableActions());
                 return;
             }
             if (GameConstants.isEventMap(chr.getMapId())) {
@@ -606,10 +442,10 @@ public class PlayerHandler {
             bulletCount = Math.max(effect.getBulletCount(chr), effect.getAttackCount(chr));
             if ((effect.getCooldown(chr) > 0) && (((attack.skillId != 35111004) && (attack.skillId != 35121013)))) {
                 if (chr.skillisCooling(attack.skillId)) {
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
-                c.getSession().write(MaplePacketCreator.skillCooldown(attack.skillId, effect.getCooldown(chr)));
+                c.sendPacket(MaplePacketCreator.skillCooldown(attack.skillId, effect.getCooldown(chr)));
                 chr.addCooldown(attack.skillId, System.currentTimeMillis(), effect.getCooldown(chr) * 1000);
             }
         }
@@ -643,9 +479,9 @@ public class PlayerHandler {
                     MapleStatEffect eff = expert.getEffect(chr.getTotalSkillLevel(expert));
                     if (eff.makeChanceResult()) {
                         item.setQuantity((short) (item.getQuantity() + 1));
-                        c.getSession().write(InventoryPacket.modifyInventory(false, Collections.singletonList(new ModifyInventory(1, item))));
+                        c.sendPacket(InventoryPacket.modifyInventory(false, Collections.singletonList(new ModifyInventory(1, item))));
                         bulletConsume = 0;
-                        c.getSession().write(InventoryPacket.getInventoryStatus());
+                        c.sendPacket(InventoryPacket.getInventoryStatus());
                     }
                 }
             }
@@ -705,93 +541,16 @@ public class PlayerHandler {
     }
 
     /**
-     * 魔法攻击
-     * @param slea
-     * @param c
-     * @param chr
-     */
-    public static void MagicDamage(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        AttackInfo attack = DamageParse.parseMagicDamage(slea, chr);
-        if (attack == null) {
-            c.getSession().write(MaplePacketCreator.enableActions());
-            return;
-        }
-        Skill skill = SkillFactory.getSkill(attack.skillId);
-        if (skill == null) {
-            c.getSession().write(MaplePacketCreator.enableActions());
-            return;
-        }
-        int skillLevel = chr.getTotalSkillLevel(skill);
-        MapleStatEffect effect = attack.getAttackEffect(chr, skillLevel, skill);
-        if (effect == null) {
-            if (chr.isShowPacket()) {
-                chr.dropMessage(5, "魔法攻击效果为空. 使用技能: " + skill.getId() + " - " + skill.getName() + " 技能等级: " + skillLevel);
-            }
-            FileoutputUtil.log(FileoutputUtil.SpecialSkill_log, "魔法攻击效果为空 玩家[" + chr.getName() + " 职业: " + getJobName(chr.getJob()) + "(" + chr.getJob() + ")] 使用技能: " + skill.getId() + " - " + skill.getName() + " 技能等级: " + skillLevel);
-            return;
-        }
-        attack = DamageParse.Modify_AttackCrit(attack, chr, 3, effect);
-        if (GameConstants.isEventMap(chr.getMapId())) {
-            for (MapleEventType t : MapleEventType.values()) {
-                MapleEvent e = ChannelServer.getInstance(chr.getClient().getChannel()).getEvent(t);
-                if ((e.isRunning()) && (!chr.isGM())) {
-                    for (int i : e.getType().mapids) {
-                        if (chr.getMapId() == i) {
-                            chr.dropMessage(5, "无法在这个地方使用.");
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-        double maxdamage = chr.getStat().getCurrentMaxBaseDamage() * (effect.getDamage() + chr.getStat().getDamageIncrease(attack.skillId)) / 100.0D;
-        if (GameConstants.isPyramidSkill(attack.skillId)) {
-            maxdamage = 1.0D;
-        } else if ((GameConstants.is新手职业(skill.getId() / 10000)) && (skill.getId() % 10000 == 1000)) {
-            maxdamage = 40.0D;
-        }
-        if (effect.getCooldown(chr) > 0) {
-            if (chr.skillisCooling(attack.skillId)) {
-                c.getSession().write(MaplePacketCreator.enableActions());
-                return;
-            }
-            c.getSession().write(MaplePacketCreator.skillCooldown(attack.skillId, effect.getCooldown(chr)));
-            chr.addCooldown(attack.skillId, System.currentTimeMillis(), effect.getCooldown(chr) * 1000);
-        }
-        if (!chr.isHidden()) {
-            chr.getMap().broadcastMessage(chr, MaplePacketCreator.magicAttack(chr, skillLevel, 0, attack), chr.getTruePosition());
-        } else {
-            chr.getMap().broadcastGMMessage(chr, MaplePacketCreator.magicAttack(chr, skillLevel, 0, attack), false);
-        }
-        DamageParse.applyAttackMagic(attack, skill, c.getPlayer(), effect, maxdamage);
-    }
-
-    /**
      * 玩家丢钱出来
      * @param meso
      * @param chr
      */
     public static void DropMeso(int meso, MapleCharacter chr) {
-        if ((!chr.isAlive()) || (meso < 10) || (meso > 50000) || (meso > chr.getMeso())) {
-            chr.getClient().getSession().write(MaplePacketCreator.enableActions());
-            return;
-        }
-        chr.gainMeso(-meso, false, true);
-        chr.getMap().spawnMesoDrop(meso, chr.getTruePosition(), chr, chr, true, (byte) 0);
-        //chr.getCheatTracker().checkDrop(true);
+
     }
 
     public static void ChangeEmotion(int emote, MapleCharacter chr) {
-        if (emote > 7) {
-            int emoteid = 5159992 + emote;
-            MapleInventoryType type = ItemConstants.getInventoryType(emoteid);
-            if (chr.getInventory(type).findById(emoteid) == null) {
-                return;
-            }
-        }
-        if ((emote > 0) && (chr != null) && (chr.getMap() != null) && (!chr.isHidden())) {
-            chr.getMap().broadcastMessage(chr, MaplePacketCreator.facialExpression(chr, emote), false);
-        }
+
     }
 
     /**
@@ -800,31 +559,7 @@ public class PlayerHandler {
      * @param chr
      */
     public static void Heal(SeekableLittleEndianAccessor slea, MapleCharacter chr) {
-        // 2F 00 14 00 00 0A 00 00 00 00 8E 9D 5C 00
-        if (chr == null) {
-            return;
-        }
-        slea.skip(4);
-        int healHP = slea.readShort();
-        int healMP = slea.readShort();
-        PlayerStats stats = chr.getStat();
-        if (stats.getHp() <= 0 || healHP > 100 || healMP > 100) {
-            return;
-        }
-        long now = System.currentTimeMillis();
-        if ((healHP != 0) && (chr.canHP(now + 1000L))) {
-//            if (healHP > stats.getHealHP()) {
-//                healHP = (int) stats.getHealHP();
-//            }
-            chr.addHP(healHP);
-        }
-        if ((healMP != 0) && (chr.canMP(now + 1000L))) {
-            // @TODO 限制每次恢复的MP
-//            if (healMP > stats.getHealMP()) {
-//                healMP = (int) stats.getHealMP();
-//            }
-            chr.addMP(healMP);
-        }
+
     }
 
     /**
@@ -834,39 +569,7 @@ public class PlayerHandler {
      * @param chr
      */
     public static void MovePlayer(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        if (chr == null) {
-            return;
-        }
-        slea.readByte();
-        Point Original_Pos = chr.getPosition();
-        slea.readShort(); // position
-        slea.readShort();
-        List res;
-        try {
-            res = MovementParse.parseMovement(slea, 1, chr);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            FileoutputUtil.log("AIOBE Type1:\r\n" + slea.toString(true));
-            return;
-        }
-        if ((res != null) && (chr.getMap() != null)) {
-            if (slea.available() != 10) {
-                FileoutputUtil.log("玩家" + chr.getName() + "(" + MapleJob.getName(MapleJob.getById(chr.getJob())) + ") slea.available != 8 (角色移动出错) 剩余封包长度: " + slea.available());
-                FileoutputUtil.log(FileoutputUtil.Movement_Char, "slea.available != 8 (角色移动出错) 封包: " + slea.toString(true));
-                return;
-            }
-            MapleMap map = c.getPlayer().getMap();
-            slea.skip(2);
-            if (chr.isHidden()) {
-                chr.setLastRes(res);
-                chr.getMap().broadcastGMMessage(chr, MaplePacketCreator.movePlayer(chr.getId(), slea), false);
-            } else {
-                chr.getMap().broadcastMessage(chr, MaplePacketCreator.movePlayer(chr.getId(), slea), false);
-            }
 
-            MovementParse.updatePosition(res, chr, 0);
-            Point pos = chr.getTruePosition();
-            map.movePlayer(chr, pos);
-        }
     }
 
     /**
@@ -876,15 +579,7 @@ public class PlayerHandler {
      * @param chr
      */
     public static void ChangeMapSpecial(String portal_name, MapleClient c, MapleCharacter chr) {
-        if ((chr == null) || (chr.getMap() == null)) {
-            return;
-        }
-        MaplePortal portal = chr.getMap().getPortal(portal_name);
-        if ((portal != null) && (!chr.hasBlockedInventory())) {
-            portal.enterPortal(c);
-        } else {
-            c.getSession().write(MaplePacketCreator.enableActions());
-        }
+
     }
 
     /**
@@ -925,7 +620,7 @@ public class PlayerHandler {
                 FileoutputUtil.log("执行传送口脚本："+portal.getScriptName());
                 portal.enterPortal(c);
             } else {
-                c.getSession().write(MaplePacketCreator.enableActions());
+                c.sendPacket(MaplePacketCreator.enableActions());
             }
         }
     }
@@ -948,13 +643,13 @@ public class PlayerHandler {
     }
 
     public static void snowBall(SeekableLittleEndianAccessor slea, MapleClient c) {
-        c.getSession().write(MaplePacketCreator.enableActions());
+        c.sendPacket(MaplePacketCreator.enableActions());
     }
 
     public static void leftKnockBack(SeekableLittleEndianAccessor slea, MapleClient c) {
         if (c.getPlayer().getMapId() / 10000 == 10906) {
-            c.getSession().write(MaplePacketCreator.leftKnockBack());
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.leftKnockBack());
+            c.sendPacket(MaplePacketCreator.enableActions());
         }
     }
 
@@ -984,23 +679,23 @@ public class PlayerHandler {
                         }
                     } else {
                         chr.dropMessage(1, "重新领取勋章出现错误");
-                        c.getSession().write(MaplePacketCreator.enableActions());
+                        c.sendPacket(MaplePacketCreator.enableActions());
                         return;
                     }
                 }
                 if (chr.getMeso() < price) {
                     chr.dropMessage(1, "本次重新需要金币: " + price + "\r\n请检查金币是否足够");
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
                 chr.gainMeso(-price, true, true);
                 MapleInventoryManipulator.addById(c, itemId, (short) 1, "");
-                c.getSession().write(MaplePacketCreator.updateMedalQuestInfo((byte) 0, itemId));
+                c.sendPacket(MaplePacketCreator.updateMedalQuestInfo((byte) 0, itemId));
             } else {
-                c.getSession().write(MaplePacketCreator.updateMedalQuestInfo((byte) 3, itemId));
+                c.sendPacket(MaplePacketCreator.updateMedalQuestInfo((byte) 3, itemId));
             }
         } else {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
         }
     }
 
@@ -1021,7 +716,7 @@ public class PlayerHandler {
             return;
         }
         String msg = "欢迎来到#b蓝蜗牛区（仿官方）#k\r\n\r\n祝您玩的愉快！";
-        c.getSession().write(MaplePacketCreator.sendHint(msg, 250, 5));
+        c.sendPacket(MaplePacketCreator.sendHint(msg, 250, 5));
         int exp = c.getChannelServer().getExpRate(c.getWorld());
         if (exp > 1) {
             chr.dropSpouseMessage(20, "[系统提示] 当前服务器处于"+exp+"倍经验活动中，祝您玩的愉快！");
@@ -1029,7 +724,7 @@ public class PlayerHandler {
         if (c.getChannelServer().getAutoGain() >= 2) {
             chr.dropSpouseMessage(25, "[系统提示] 在线时间奖励双倍活动正在举行.");
         }
-        c.getSession().write(MaplePacketCreator.showPlayerCash(chr));
+        c.sendPacket(MaplePacketCreator.showPlayerCash(chr));
         /*if ((GameConstants.is新骑士团(chr.getJob())) && (chr.getLevel() >= 10)) {
          if (chr.getPQLog("骑士团能力修复", 1) == 0) {
          chr.resetStats(4, 4, 4, 4, true);
@@ -1063,7 +758,7 @@ public class PlayerHandler {
 
     public static void ChangeMarketMap(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         if ((chr == null) || (chr.getMap() == null) || (chr.hasBlockedInventory())) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         int chc = slea.readByte() + 1;
@@ -1083,7 +778,7 @@ public class PlayerHandler {
                 chr.changeMap(to, to.getPortal(0));
             }
         } else {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
         }
     }
 
@@ -1130,7 +825,7 @@ public class PlayerHandler {
 
     public static void quickBuyCashShopItem(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         if ((chr == null) || (chr.getMap() == null)) {
-            //c.getSession().write(MaplePacketCreator.enableActions());
+            //c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         int accId = slea.readInt();
@@ -1139,7 +834,7 @@ public class PlayerHandler {
         int cssn = slea.readInt();
         int toCharge = slea.readByte() == 1 ? 1 : 2;
         if ((chr.getId() != playerId) || (chr.getAccountID() != accId)) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         switch (mode) {
@@ -1148,7 +843,7 @@ public class PlayerHandler {
                     chr.modifyCSPoints(toCharge, -600, false);
                     chr.getStorage().increaseSlots((byte) 4);
                     chr.getStorage().saveToDB();
-                    c.getSession().write(MaplePacketCreator.playerCashUpdate(mode, toCharge, chr));
+                    c.sendPacket(MaplePacketCreator.playerCashUpdate(mode, toCharge, chr));
                 } else {
                     chr.dropMessage(5, "扩充失败，点券余额不足或者仓库栏位已超过上限。");
                 }
@@ -1164,7 +859,7 @@ public class PlayerHandler {
                     if ((chr.getCSPoints(toCharge) >= 600) && (chr.getInventory(tpye).getSlotLimit() < 93)) {
                         chr.modifyCSPoints(toCharge, -600, false);
                         chr.getInventory(tpye).addSlot((byte) 4);
-                        c.getSession().write(MaplePacketCreator.playerCashUpdate(mode, toCharge, chr));
+                        c.sendPacket(MaplePacketCreator.playerCashUpdate(mode, toCharge, chr));
                     } else {
                         chr.dropMessage(1, "扩充失败，点券余额不足或者栏位已超过上限。");
                     }
@@ -1188,7 +883,7 @@ public class PlayerHandler {
 
     public static void SpawnArrowsTurret(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         if ((chr == null) || (chr.hasBlockedInventory()) || (chr.getMap() == null)) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         byte side = slea.readByte();
@@ -1209,7 +904,7 @@ public class PlayerHandler {
 
     public static void ArrowsTurretAttack(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         if ((chr == null) || (chr.hasBlockedInventory()) || (chr.getMap() == null)) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         int startime = (int) System.currentTimeMillis();

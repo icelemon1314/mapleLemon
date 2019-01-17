@@ -111,14 +111,14 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         if (sels.length < 3) {
             return;
         }
-        c.getSession().write(NPCPacket.sendNPCAskMenu(id,sel));
+        c.sendPacket(NPCPacket.sendNPCAskMenu(id,sel));
     }
 
     public void sendStyle(String text,int styles[]){
         if (styles.length <= 0) {
             return;
         }
-        c.getSession().write(NPCPacket.sendNPCAskAvatar(id,text,styles));
+        c.sendPacket(NPCPacket.sendNPCAskAvatar(id,text,styles));
     }
 
     public void sendNext(String text) {
@@ -130,7 +130,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimple(text);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCSay(id, text, false,true));
+        this.c.sendPacket(NPCPacket.sendNPCSay(id, text, false,true));
     }
 
     public void sendPlayerToNpc(String text) {
@@ -154,7 +154,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimpleS(text, type);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCSay(this.id, text, false,true));
+        this.c.sendPacket(NPCPacket.sendNPCSay(this.id, text, false,true));
     }
 
     public void sendPrev(String text) {
@@ -166,7 +166,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimple(text);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCSay(id,text, true,false));
+        this.c.sendPacket(NPCPacket.sendNPCSay(id,text, true,false));
     }
 
     public void sendPrevS(String text, byte type) {
@@ -178,7 +178,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimpleS(text, type);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCSay(this.id,text, true,false));
+        this.c.sendPacket(NPCPacket.sendNPCSay(this.id,text, true,false));
     }
 
     public void sendNextPrev(String text) {
@@ -190,7 +190,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimple(text);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCSay(id, text, true,true));
+        this.c.sendPacket(NPCPacket.sendNPCSay(id, text, true,true));
     }
 
     public void PlayerToNpc(String text) {
@@ -210,7 +210,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimpleS(text, type);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCSay(this.id, text, true,true));
+        this.c.sendPacket(NPCPacket.sendNPCSay(this.id, text, true,true));
     }
 
     public void sendNextPrevS(String text, byte type, int idd, int npcid) {
@@ -218,7 +218,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimpleS(text, type);
             return;
         }
-        c.getSession().write(NPCPacket.sendNPCSay(npcid, text, true,true));
+        c.sendPacket(NPCPacket.sendNPCSay(npcid, text, true,true));
     }
 
     public void sendOk(String text) {
@@ -230,7 +230,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimple(text);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCSay(id,text));
+        this.c.sendPacket(NPCPacket.sendNPCSay(id,text));
     }
 
     public void sendOkS(String text, byte type) {
@@ -242,7 +242,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimpleS(text, type);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCSay(this.id, text));
+        this.c.sendPacket(NPCPacket.sendNPCSay(this.id, text));
     }
 
     public void sendYesNo(String text) {
@@ -254,7 +254,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimple(text);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCAskYesNo(id, text));
+        this.c.sendPacket(NPCPacket.sendNPCAskYesNo(id, text));
     }
 
     public void sendYesNoS(String text, byte type) {
@@ -266,7 +266,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimpleS(text, type);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCAskYesNo(this.id,text));
+        this.c.sendPacket(NPCPacket.sendNPCAskYesNo(this.id,text));
     }
 
     public void sendSimple(String text) {
@@ -278,7 +278,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendNext(text);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendChoose(id,text));
+        this.c.sendPacket(NPCPacket.sendChoose(id,text));
     }
 
     public void sendSimpleS(String text, byte type) {
@@ -290,7 +290,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendNextS(text, type);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCSay(this.id, text));
+        this.c.sendPacket(NPCPacket.sendNPCSay(this.id, text));
     }
 
     public void sendGetNumber(String text, int def, int min, int max) {
@@ -298,7 +298,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimple(text);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCAskNumber(this.id,text, def, min, max));
+        this.c.sendPacket(NPCPacket.sendNPCAskNumber(this.id,text, def, min, max));
     }
 
     public void sendGetText(String text) {
@@ -310,7 +310,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimple(text);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCAskText(id, text));
+        this.c.sendPacket(NPCPacket.sendNPCAskText(id, text));
     }
 
     public void setGetText(String text) {
@@ -326,7 +326,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimple(text);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCSay(this.id,text));
+        this.c.sendPacket(NPCPacket.sendNPCSay(this.id,text));
     }
 
     public void sendPlayerNext(String text) {
@@ -334,7 +334,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimple(text);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCSay(this.id,text, false,true));
+        this.c.sendPacket(NPCPacket.sendNPCSay(this.id,text, false,true));
     }
 
     public void sendPlayerNextPrev(String text) {
@@ -342,7 +342,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendSimple(text);
             return;
         }
-        this.c.getSession().write(NPCPacket.sendNPCSay(this.id, text, true,true));
+        this.c.sendPacket(NPCPacket.sendNPCSay(this.id, text, true,true));
     }
 
     public void sendRevivePet(String text) {
@@ -358,7 +358,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             return;
         }
 
-        this.c.getSession().write(NPCPacket.sendNPCSay(this.id, text));
+        this.c.sendPacket(NPCPacket.sendNPCSay(this.id, text));
     }
 
     public void setHair(int hair) {
@@ -436,12 +436,12 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             @Override
             public void run() {
                 try {
-                    c.getSession().write(UIPacket.getDirectionStatus(true));
-                    c.getSession().write(UIPacket.IntroEnableUI(1));
-                    c.getSession().write(MaplePacketCreator.environmentChange("advStory/whistle", 5));
-                    c.getSession().write(UIPacket.getDirectionInfo(1, 208));
+                    c.sendPacket(UIPacket.getDirectionStatus(true));
+                    c.sendPacket(UIPacket.IntroEnableUI(1));
+                    c.sendPacket(MaplePacketCreator.environmentChange("advStory/whistle", 5));
+                    c.sendPacket(UIPacket.getDirectionInfo(1, 208));
                     Thread.sleep(208);
-                    c.getSession().write(UIPacket.ShowWZEffect("Effect/Direction3.img/adventureStory/Scene2"));
+                    c.sendPacket(UIPacket.ShowWZEffect("Effect/Direction3.img/adventureStory/Scene2"));
                     Thread.sleep(3000);
                     sendNextS("看来现在船要出发了！", (byte) 1);
                     Thread.sleep(208);
@@ -652,7 +652,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         if (broadcast) {
             this.c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.showEffect(effect));
         } else {
-            this.c.getSession().write(MaplePacketCreator.showEffect(effect));
+            this.c.sendPacket(MaplePacketCreator.showEffect(effect));
         }
     }
 
@@ -660,7 +660,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         if (broadcast) {
             this.c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.playSound(sound));
         } else {
-            this.c.getSession().write(MaplePacketCreator.playSound(sound));
+            this.c.sendPacket(MaplePacketCreator.playSound(sound));
         }
     }
 
@@ -668,7 +668,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         if (broadcast) {
             this.c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.environmentChange(env, 2));
         } else {
-            this.c.getSession().write(MaplePacketCreator.environmentChange(env, 2));
+            this.c.sendPacket(MaplePacketCreator.environmentChange(env, 2));
         }
     }
 
@@ -862,7 +862,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     }
 
     public void genericGuildMessage(int code) {
-        this.c.getSession().write(GuildPacket.genericGuildMessage((byte) code));
+        this.c.sendPacket(GuildPacket.genericGuildMessage((byte) code));
     }
 
     public void disbandGuild() {
@@ -879,7 +879,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
     public void increaseGuildCapacity(boolean trueMax, long meso) {
         if ((this.c.getPlayer().getMeso() < meso) && (!trueMax)) {
-            this.c.getSession().write(MaplePacketCreator.serverMessageRedText(new StringBuilder().append("金币不足.要金币: ").append(meso).toString()));
+            this.c.sendPacket(MaplePacketCreator.serverMessageRedText(new StringBuilder().append("金币不足.要金币: ").append(meso).toString()));
             return;
         }
         int gid = this.c.getPlayer().getGuildId();
@@ -904,7 +904,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     }
 
     public void displayGuildRanks(boolean show) {
-        this.c.getSession().write(GuildPacket.showGuildRanks(this.id, MapleGuildRanking.getInstance().getRank(), show));
+        this.c.sendPacket(GuildPacket.showGuildRanks(this.id, MapleGuildRanking.getInstance().getRank(), show));
     }
 
     public int getCreateGuildCost() {
@@ -994,42 +994,42 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
     public void openDuey() {
         this.c.getPlayer().setConversation(2);
-        this.c.getSession().write(MaplePacketCreator.sendDuey((byte) 9, null));
+        this.c.sendPacket(MaplePacketCreator.sendDuey((byte) 9, null));
     }
 
     public void openMerchantItemStore() {
         this.c.getPlayer().setConversation(3);
-        this.c.getSession().write(PlayerShopPacket.merchItemStore((byte) 40));
+        this.c.sendPacket(PlayerShopPacket.merchItemStore((byte) 40));
     }
 
     public void sendPVPWindow() {
-        this.c.getSession().write(MaplePacketCreator.sendPVPWindow(0));
-        this.c.getSession().write(MaplePacketCreator.sendPVPMaps());
+        this.c.sendPacket(MaplePacketCreator.sendPVPWindow(0));
+        this.c.sendPacket(MaplePacketCreator.sendPVPMaps());
     }
 
     public void sendPartyWindow() {
-        this.c.getSession().write(MaplePacketCreator.sendPartyWindow(this.id));
+        this.c.sendPacket(MaplePacketCreator.sendPartyWindow(this.id));
     }
 
     public void sendPartyWindow(int id) {
-        this.c.getSession().write(MaplePacketCreator.sendPartyWindow(id));
+        this.c.sendPacket(MaplePacketCreator.sendPartyWindow(id));
     }
 
     public void sendRepairWindow() {
-        this.c.getSession().write(MaplePacketCreator.sendRepairWindow(this.id));
+        this.c.sendPacket(MaplePacketCreator.sendRepairWindow(this.id));
     }
 
     public void sendProfessionWindow() {
-        this.c.getSession().write(MaplePacketCreator.sendProfessionWindow(0));
+        this.c.sendPacket(MaplePacketCreator.sendProfessionWindow(0));
     }
 
     public void sendEventWindow() {
-        this.c.getSession().write(MaplePacketCreator.sendEventWindow(0));
+        this.c.sendPacket(MaplePacketCreator.sendEventWindow(0));
     }
 
     public void sendLinkSkillWindow(int skillId) {
         if (hasSkill(skillId)) {
-            this.c.getSession().write(MaplePacketCreator.sendLinkSkillWindow(skillId));
+            this.c.sendPacket(MaplePacketCreator.sendLinkSkillWindow(skillId));
         }
     }
 
@@ -1094,7 +1094,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         statup.put(MapleStat.MP, (long) this.c.getPlayer().getMaxMpForSever());
         statup.put(MapleStat.MAXMP, (long) this.c.getPlayer().getMaxMpForSever());
         this.c.getPlayer().getStat().recalcLocalStats(this.c.getPlayer());
-        this.c.getSession().write(MaplePacketCreator.updatePlayerStats(statup, this.c.getPlayer()));
+        this.c.sendPacket(MaplePacketCreator.updatePlayerStats(statup, this.c.getPlayer()));
     }
 
     public Triple<String, Map<Integer, String>, Long> getSpeedRun(String typ) {
@@ -1386,7 +1386,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
 
     public void sendRPS() {
-        this.c.getSession().write(MaplePacketCreator.getRPSMode((byte) 8, -1, -1, -1));
+        this.c.sendPacket(MaplePacketCreator.getRPSMode((byte) 8, -1, -1, -1));
     }
 
     public void setQuestRecord(Object ch, int questid, String data) {
@@ -1441,7 +1441,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
     public void putKey(int key, int type, int action) {
         getPlayer().changeKeybinding(key, (byte) type, action);
-        getClient().getSession().write(MaplePacketCreator.getKeymap(getPlayer()));
+        getClient().sendPacket(MaplePacketCreator.getKeymap(getPlayer()));
     }
     public void doRing(String name, int itemid) {
         PlayersHandler.DoRing(getClient(), name, itemid);
@@ -1675,7 +1675,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     }
 
     public void sendUltimateExplorer() {
-        getClient().getSession().write(MaplePacketCreator.ultimateExplorer());
+        getClient().sendPacket(MaplePacketCreator.ultimateExplorer());
     }
 
     public String getRankingInformation(int job) {
@@ -1711,7 +1711,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     }
 
     public void sendPendant(boolean b) {
-        this.c.getSession().write(MaplePacketCreator.pendantSlot(b));
+        this.c.sendPacket(MaplePacketCreator.pendantSlot(b));
     }
 
     public Triple<Integer, Integer, Integer> getCompensation() {
@@ -1749,11 +1749,11 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     }
 
     public void testPacket(String testmsg) {
-        this.c.getSession().write(MaplePacketCreator.testPacket(testmsg));
+        this.c.sendPacket(MaplePacketCreator.testPacket(testmsg));
     }
 
     public void testPacket(String op, String msg) {
-        this.c.getSession().write(MaplePacketCreator.testPacket(op, msg));
+        this.c.sendPacket(MaplePacketCreator.testPacket(op, msg));
     }
 
     public short getSpace(byte type) {
@@ -1979,7 +1979,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         } else {
             this.c.getPlayer().dropMessage(1, new StringBuilder().append("暂时无法使用这个骑宠的技能\r\n我的道具ID为: ").append(itemId).toString());
         }
-        this.c.getSession().write(MaplePacketCreator.enableActions());
+        this.c.sendPacket(MaplePacketCreator.enableActions());
     }
 
     public boolean checkLevelAndItem(int minLevel, int maxLevel, int itemId) {
@@ -2033,7 +2033,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         if (broadcast) {
             c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.environmentChange(env, info));
         } else {
-            c.getSession().write(MaplePacketCreator.environmentChange(env, info));
+            c.sendPacket(MaplePacketCreator.environmentChange(env, info));
         }
     }
 
@@ -2043,7 +2043,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     }
 
     public void directionEffect(String data, int value, int x, int y, int npc) {
-        c.getSession().write(UIPacket.getDirectionEffect(data, value, x, y, npc));
+        c.sendPacket(UIPacket.getDirectionEffect(data, value, x, y, npc));
     }
 
     /**

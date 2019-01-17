@@ -23,20 +23,8 @@ public class GenericLittleEndianWriter implements LittleEndianWriter {
         this.bos = bos;
     }
 
-    private void log(byte str) {
-        log(HexTool.toString(str) + " ");
-    }
-
-    private void log(String str) {
-        if (!handling.SendPacketOpcode.record) {
-            return;
-        }
-        FileoutputUtil.log(FileoutputUtil.Packet_Record, str);
-    }
-
     private void baosWrite(byte b) {
         bos.writeByte(b);
-        log(b);
     }
 
     @Override
@@ -44,8 +32,6 @@ public class GenericLittleEndianWriter implements LittleEndianWriter {
         for (int x = 0; x < i; x++) {
             baosWrite((byte) 0);
         }
-        log("(长度:" + i + ")");
-        log("\r\n");
 //        write(new byte[i]);
     }
 
@@ -54,34 +40,28 @@ public class GenericLittleEndianWriter implements LittleEndianWriter {
         for (int x = 0; x < b.length; x++) {
             baosWrite(b[x]);
         }
-        log("(长度:" + b.length + ")");
-        log("\r\n");
     }
 
     @Override
     public void write(byte b) {
         baosWrite(b);
-        log("\r\n");
     }
 
     @Override
     public void write(int b) {
         baosWrite((byte) b);
-        log("\r\n");
     }
 
     @Override
     public void writeShort(short i) {
         baosWrite((byte) (i & 0xFF));
         baosWrite((byte) (i >>> 8 & 0xFF));
-        log("\r\n");
     }
 
     @Override
     public void writeShort(int i) {
         baosWrite((byte) (i & 0xFF));
         baosWrite((byte) (i >>> 8 & 0xFF));
-        log("\r\n");
     }
 
     @Override
@@ -90,7 +70,6 @@ public class GenericLittleEndianWriter implements LittleEndianWriter {
         baosWrite((byte) (i >>> 8 & 0xFF));
         baosWrite((byte) (i >>> 16 & 0xFF));
         baosWrite((byte) (i >>> 24 & 0xFF));
-        log("\r\n");
     }
 
     @Override
@@ -99,13 +78,11 @@ public class GenericLittleEndianWriter implements LittleEndianWriter {
         baosWrite((byte) (int) (l >>> 40 & 0xFF));
         baosWrite((byte) (int) (l >>> 48 & 0xFF));
         baosWrite((byte) (int) (l >>> 56 & 0xFF));
-        log("\r\n");
     }
 
     @Override
     public void writeAsciiString(String s) {
         write(s.getBytes(ASCII));
-        log("\r\n");
     }
 
     @Override
@@ -117,8 +94,6 @@ public class GenericLittleEndianWriter implements LittleEndianWriter {
         for (int i = s.getBytes(ASCII).length; i < max; i++) {
             baosWrite((byte) 0);
         }
-        log("(长度:" + (max - s.getBytes(ASCII).length) + ")");
-        log("\r\n\r\n");
     }
 
     @Override
@@ -130,8 +105,6 @@ public class GenericLittleEndianWriter implements LittleEndianWriter {
         for (int x = s.getBytes().length; x < 12; x++) {
             baosWrite((byte) 0);
         }
-        log("(长度:" + (12 - s.getBytes(ASCII).length) + ")");
-        log("\r\n\r\n");
     }
 
     @Override
@@ -195,7 +168,6 @@ public class GenericLittleEndianWriter implements LittleEndianWriter {
         baosWrite((byte) (int) (l >>> 40 & 0xFF));
         baosWrite((byte) (int) (l >>> 48 & 0xFF));
         baosWrite((byte) (int) (l >>> 56 & 0xFF));
-        log("\r\n");
     }
 
     @Override
@@ -208,7 +180,6 @@ public class GenericLittleEndianWriter implements LittleEndianWriter {
         baosWrite((byte) (int) (l >>> 8 & 0xFF));
         baosWrite((byte) (int) (l >>> 16 & 0xFF));
         baosWrite((byte) (int) (l >>> 24 & 0xFF));
-        log("\r\n");
     }
 
     @Override

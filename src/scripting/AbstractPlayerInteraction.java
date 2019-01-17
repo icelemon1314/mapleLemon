@@ -127,7 +127,7 @@ public abstract class AbstractPlayerInteraction {
             FileoutputUtil.log("准备地图内传送："+mapId);
             Point portalPos = new Point(this.c.getPlayer().getMap().getPortal(portal).getPosition());
             if (portalPos.distanceSq(getPlayer().getTruePosition()) < 90000.0D) {
-                this.c.getSession().write(MaplePacketCreator.instantMapWarp((byte) portal));
+                this.c.sendPacket(MaplePacketCreator.instantMapWarp((byte) portal));
                 this.c.getPlayer().getMap().movePlayer(this.c.getPlayer(), portalPos);
             } else {
                 this.c.getPlayer().changeMap(mapz, mapz.getPortal(portal));
@@ -146,7 +146,7 @@ public abstract class AbstractPlayerInteraction {
         if (mapId == this.c.getPlayer().getMapId()) {
             Point portalPos = new Point(this.c.getPlayer().getMap().getPortal(portal).getPosition());
             if (portalPos.distanceSq(getPlayer().getTruePosition()) < 90000.0D) {
-                this.c.getSession().write(MaplePacketCreator.instantMapWarp((byte) this.c.getPlayer().getMap().getPortal(portal).getId()));
+                this.c.sendPacket(MaplePacketCreator.instantMapWarp((byte) this.c.getPlayer().getMap().getPortal(portal).getId()));
                 this.c.getPlayer().getMap().movePlayer(this.c.getPlayer(), new Point(this.c.getPlayer().getMap().getPortal(portal).getPosition()));
             } else {
                 this.c.getPlayer().changeMap(mapz, mapz.getPortal(portal));
@@ -164,7 +164,7 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void playPortalSE() {
-        this.c.getSession().write(MaplePacketCreator.showOwnBuffEffect(0, 8, 1, 1));//7+1 119
+        this.c.sendPacket(MaplePacketCreator.showOwnBuffEffect(0, 8, 1, 1));//7+1 119
     }
 
     private MapleMap getWarpMap(int mapId) {
@@ -444,7 +444,7 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void showQuestMsg(String msg) {
-        this.c.getSession().write(MaplePacketCreator.showQuestMsg(msg));
+        this.c.sendPacket(MaplePacketCreator.showQuestMsg(msg));
     }
 
     public void forceStartQuest(int questId, String data) {
@@ -626,7 +626,7 @@ public abstract class AbstractPlayerInteraction {
                 if (pet != null) {
                     item.setPet(pet);
                     c.getPlayer().getInventory(type).addItem(item);
-                    c.getSession().write(InventoryPacket.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, item))));
+                    c.sendPacket(InventoryPacket.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, item))));
                 }
                 return;
             }
@@ -659,12 +659,12 @@ public abstract class AbstractPlayerInteraction {
         } else {
             MapleInventoryManipulator.removeById(cg, ItemConstants.getInventoryType(itemId), itemId, -quantity, true, false);
         }
-        cg.getSession().write(MaplePacketCreator.getShowItemGain(itemId, quantity, true));
+        cg.sendPacket(MaplePacketCreator.getShowItemGain(itemId, quantity, true));
     }
 
     public boolean removeItem(int itemId) {
         if (MapleInventoryManipulator.removeById_Lock(this.c, ItemConstants.getInventoryType(itemId), itemId)) {
-            this.c.getSession().write(MaplePacketCreator.getShowItemGain(itemId, (short) -1, true));
+            this.c.sendPacket(MaplePacketCreator.getShowItemGain(itemId, (short) -1, true));
             return true;
         }
         return false;
@@ -713,7 +713,7 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void topMessage(String message) {
-        this.c.getSession().write(UIPacket.getTopMsg(message));
+        this.c.sendPacket(UIPacket.getTopMsg(message));
     }
 
     public void topMsg(String message) {
@@ -903,7 +903,7 @@ public abstract class AbstractPlayerInteraction {
             } else {
                 MapleInventoryManipulator.removeById(chr.getClient(), ItemConstants.getInventoryType(itemId), itemId, -quantity, true, false);
             }
-            chr.getClient().getSession().write(MaplePacketCreator.getShowItemGain(itemId, quantity, true));
+            chr.getClient().sendPacket(MaplePacketCreator.getShowItemGain(itemId, quantity, true));
         }
     }
 
@@ -1039,7 +1039,7 @@ public abstract class AbstractPlayerInteraction {
             int possesed = chr.getInventory(ItemConstants.getInventoryType(itemId)).countById(itemId);
             if (possesed > 0) {
                 MapleInventoryManipulator.removeById(this.c, ItemConstants.getInventoryType(itemId), itemId, possesed, true, false);
-                chr.getClient().getSession().write(MaplePacketCreator.getShowItemGain(itemId, (short) (-possesed), true));
+                chr.getClient().sendPacket(MaplePacketCreator.getShowItemGain(itemId, (short) (-possesed), true));
             }
         }
     }
@@ -1057,7 +1057,7 @@ public abstract class AbstractPlayerInteraction {
 
 //    public void useItem(int itemId) {
 //        MapleItemInformationProvider.getInstance().getItemEffect(itemId).applyTo(this.c.getPlayer());
-//        this.c.getSession().write(UIPacket.getStatusMsg(itemId));
+//        this.c.sendPacket(UIPacket.getStatusMsg(itemId));
 //    }
 
     public void cancelItem(int itemId) {
@@ -1076,7 +1076,7 @@ public abstract class AbstractPlayerInteraction {
         MaplePet pet = getPlayer().getSpawnPet();
         if (pet != null) {
             pet.setCloseness(pet.getCloseness() + closeness * getChannelServer().getTraitRate());
-            getClient().getSession().write(PetPacket.updatePet(pet, getPlayer().getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
+            getClient().sendPacket(PetPacket.updatePet(pet, getPlayer().getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
         }
     }
 
@@ -1084,7 +1084,7 @@ public abstract class AbstractPlayerInteraction {
         MaplePet pets = getPlayer().getSpawnPets();
         if ((pets != null) && (pets.getSummoned())) {
             pets.setCloseness(pets.getCloseness() + closeness);
-            getClient().getSession().write(PetPacket.updatePet(pets, getPlayer().getInventory(MapleInventoryType.CASH).getItem((short) (byte) pets.getInventoryPosition()), false));
+            getClient().sendPacket(PetPacket.updatePet(pets, getPlayer().getInventory(MapleInventoryType.CASH).getItem((short) (byte) pets.getInventoryPosition()), false));
         }
     }
 
@@ -1173,23 +1173,23 @@ public abstract class AbstractPlayerInteraction {
         if (!this.c.getPlayer().hasSummon()) {
             playerSummonHint(true);
         }
-        this.c.getSession().write(UIPacket.summonMessage(msg));
+        this.c.sendPacket(UIPacket.summonMessage(msg));
     }
 
     public void summonMsg(int type) {
         if (!this.c.getPlayer().hasSummon()) {
             playerSummonHint(true);
         }
-        this.c.getSession().write(UIPacket.summonMessage(type));
+        this.c.sendPacket(UIPacket.summonMessage(type));
     }
 
     public void showInstruction(String msg, int width, int height) {
-        this.c.getSession().write(MaplePacketCreator.sendHint(msg, width, height));
+        this.c.sendPacket(MaplePacketCreator.sendHint(msg, width, height));
     }
 
     public void playerSummonHint(boolean summon) {
         this.c.getPlayer().setHasSummon(summon);
-        this.c.getSession().write(UIPacket.summonHelper(summon));
+        this.c.sendPacket(UIPacket.summonHelper(summon));
     }
 
     public String getInfoQuest(int questId) {
@@ -1208,27 +1208,27 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public final void ShowWZEffect(final String data) {
-        c.getSession().write(UIPacket.TutInstructionalBalloon(data));
+        c.sendPacket(UIPacket.TutInstructionalBalloon(data));
     }
 
     public final void showWZEffect(String data) {
-        this.c.getSession().write(UIPacket.ShowWZEffect(data));
+        this.c.sendPacket(UIPacket.ShowWZEffect(data));
     }
 
     public final void showWZEffect(final int type, final String data) {
-        c.getSession().write(UIPacket.ShowWZEffect(type, data));
+        c.sendPacket(UIPacket.ShowWZEffect(type, data));
     }
 
     public final void EarnTitleMsg(String data) {
-        this.c.getSession().write(UIPacket.EarnTitleMsg(data));
+        this.c.sendPacket(UIPacket.EarnTitleMsg(data));
     }
 
     public void showEffect(String effect) {
-        this.c.getSession().write(MaplePacketCreator.showEffect(effect));
+        this.c.sendPacket(MaplePacketCreator.showEffect(effect));
     }
 
     public void playSound(String sound) {
-        this.c.getSession().write(MaplePacketCreator.playSound(sound));
+        this.c.sendPacket(MaplePacketCreator.playSound(sound));
     }
 
     public void startMapEffect(String msg, int itemId) {
@@ -1236,34 +1236,34 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void showMapEffect(String path) {
-        getClient().getSession().write(UIPacket.MapEff(path));
+        getClient().sendPacket(UIPacket.MapEff(path));
     }
 
     public void EnableUI(short i) {
-        this.c.getSession().write(UIPacket.IntroEnableUI(i));
+        this.c.sendPacket(UIPacket.IntroEnableUI(i));
     }
 
     public void DisableUI(boolean enabled) {
-        this.c.getSession().write(UIPacket.IntroDisableUI(enabled));
+        this.c.sendPacket(UIPacket.IntroDisableUI(enabled));
     }
 
     public void introDisableUI(boolean enabled) {
-        this.c.getSession().write(UIPacket.IntroDisableUI(enabled));
+        this.c.sendPacket(UIPacket.IntroDisableUI(enabled));
     }
 
     public void MovieClipIntroUI(boolean enabled) {
-        this.c.getSession().write(UIPacket.IntroDisableUI(enabled));
-        this.c.getSession().write(UIPacket.IntroLock(enabled));
+        this.c.sendPacket(UIPacket.IntroDisableUI(enabled));
+        this.c.sendPacket(UIPacket.IntroLock(enabled));
     }
 
     public void lockUI() {
-        this.c.getSession().write(UIPacket.IntroDisableUI(true));
-        this.c.getSession().write(UIPacket.IntroLock(true));
+        this.c.sendPacket(UIPacket.IntroDisableUI(true));
+        this.c.sendPacket(UIPacket.IntroLock(true));
     }
 
     public void unlockUI() {
-        this.c.getSession().write(UIPacket.IntroDisableUI(false));
-        this.c.getSession().write(UIPacket.IntroLock(false));
+        this.c.sendPacket(UIPacket.IntroDisableUI(false));
+        this.c.sendPacket(UIPacket.IntroLock(false));
     }
 
     public MapleInventoryType getInvType(int i) {
@@ -1376,7 +1376,7 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void trembleEffect(int type, int delay) {
-        this.c.getSession().write(MaplePacketCreator.trembleEffect(type, delay));
+        this.c.sendPacket(MaplePacketCreator.trembleEffect(type, delay));
     }
 
     public int nextInt(int arg0) {
@@ -1404,13 +1404,13 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void sendDirectionStatus(int key, int value) {
-        this.c.getSession().write(UIPacket.getDirectionInfo(key, value));
-        this.c.getSession().write(UIPacket.getDirectionStatus(true));
+        this.c.sendPacket(UIPacket.getDirectionInfo(key, value));
+        this.c.sendPacket(UIPacket.getDirectionStatus(true));
     }
 
     public void sendDirectionInfo(String data) {
-        this.c.getSession().write(UIPacket.getDirectionInfo(data, 2000, 0, -100, 0));
-        this.c.getSession().write(UIPacket.getDirectionInfo(1, 2000));
+        this.c.sendPacket(UIPacket.getDirectionInfo(data, 2000, 0, -100, 0));
+        this.c.sendPacket(UIPacket.getDirectionInfo(1, 2000));
     }
 
     public int getPQLog(String pqName) {
@@ -1476,11 +1476,11 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void getClock(int time) {
-        this.c.getSession().write(MaplePacketCreator.getClock(time));
+        this.c.sendPacket(MaplePacketCreator.getClock(time));
     }
 
     public void openWeb(String web) {
-        this.c.getSession().write(MaplePacketCreator.openWeb(web));
+        this.c.sendPacket(MaplePacketCreator.openWeb(web));
     }
 
     public boolean isCanPvp() {
@@ -1488,7 +1488,7 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void showDoJangRank() {
-        this.c.getSession().write(MaplePacketCreator.showDoJangRank());
+        this.c.sendPacket(MaplePacketCreator.showDoJangRank());
     }
 
     public int MarrageChecking() {
@@ -1569,14 +1569,14 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void spouseMessage(int op, String msg) {
-        this.c.getSession().write(MaplePacketCreator.spouseMessage(op, msg));
+        this.c.sendPacket(MaplePacketCreator.spouseMessage(op, msg));
     }
 
     public void sendPolice(String text, boolean dc) {
         if (dc) {
             this.c.getPlayer().sendPolice(text);
         } else {
-            this.c.getSession().write(MaplePacketCreator.sendPolice(text));
+            this.c.sendPacket(MaplePacketCreator.sendPolice(text));
         }
     }
 
@@ -1714,60 +1714,60 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void sendRemoveNPC(int oid) {
-        c.getSession().write(NPCPacket.removeNPC(oid));
+        c.sendPacket(NPCPacket.removeNPC(oid));
     }
 
     public void sendDirectionFacialExpression(int expression, int duration) {
-        c.getSession().write(UIPacket.getDirectionFacialExpression(expression, duration));
+        c.sendPacket(UIPacket.getDirectionFacialExpression(expression, duration));
     }
 
     public void introEnableUI(int wtf) {
-        c.getSession().write(UIPacket.IntroEnableUI(wtf));
+        c.sendPacket(UIPacket.IntroEnableUI(wtf));
     }
 
     public void getDirectionStatus(boolean enable) {
-        c.getSession().write(UIPacket.getDirectionStatus(enable));
+        c.sendPacket(UIPacket.getDirectionStatus(enable));
     }
 
     public void playMovie(String data, boolean show) {
-        c.getSession().write(UIPacket.playMovie(data, show));
+        c.sendPacket(UIPacket.playMovie(data, show));
     }
 
     public void sendDirectionStatus(int key, int value, boolean direction) {
-        c.getSession().write(UIPacket.getDirectionInfo(key, value));
-        c.getSession().write(UIPacket.getDirectionStatus(direction));
+        c.sendPacket(UIPacket.getDirectionInfo(key, value));
+        c.sendPacket(UIPacket.getDirectionStatus(direction));
     }
 
     public void getDirectionInfo(String data, int value, int x, int y, int a, int b) {
-        c.getSession().write(UIPacket.getDirectionInfo(data, value, x, y, a, b));
+        c.sendPacket(UIPacket.getDirectionInfo(data, value, x, y, a, b));
     }
 
     public void getDirectionInfo(byte type, int value) {
-        c.getSession().write(UIPacket.getDirectionInfo(type, value));
+        c.sendPacket(UIPacket.getDirectionInfo(type, value));
     }
 
     public void getDirectionInfoNew(byte type, int x, int y, int z) {
-        c.getSession().write(UIPacket.getDirectionInfoNew(type, x, y, z));
+        c.sendPacket(UIPacket.getDirectionInfoNew(type, x, y, z));
     }
 
     public void getDirectionInfoNew(byte type, int value) {
-        c.getSession().write(UIPacket.getDirectionInfoNew(type, value));
+        c.sendPacket(UIPacket.getDirectionInfoNew(type, value));
     }
 
     public void getDIRECTION_INFO(int value, int s, String data) {
-        c.getSession().write(UIPacket.getDIRECTION_INFO(data, value, s));
+        c.sendPacket(UIPacket.getDIRECTION_INFO(data, value, s));
     }
 
     public void getDirectionEffect(String data, int value, int x, int y) {
-        c.getSession().write(UIPacket.getDirectionEffect(data, value, x, y));
+        c.sendPacket(UIPacket.getDirectionEffect(data, value, x, y));
     }
 
     public void sendPyramidEnergy(String object, String amount) {
-        c.getSession().write(MaplePacketCreator.sendPyramidEnergy(object, amount));
+        c.sendPacket(MaplePacketCreator.sendPyramidEnergy(object, amount));
     }
 
     public void spawnPortal() {
-        c.getSession().write(MaplePacketCreator.spawnPortal(999999999, 999999999, 0, null));
+        c.sendPacket(MaplePacketCreator.spawnPortal(999999999, 999999999, 0, null));
     }
 
     public void spawnNPCRequestController(int npcid, int x, int y, int cy) {
@@ -1786,7 +1786,7 @@ public abstract class AbstractPlayerInteraction {
         npc.setCustom(true);
         npc.setObjectId(npcid);
         npcRequestController.put(new Pair(npcid, c), npc);
-        c.getSession().write(NPCPacket.spawnNPCRequestController(npc, true));//isMiniMap
+        c.sendPacket(NPCPacket.spawnNPCRequestController(npc, true));//isMiniMap
     }
 
     public void setNPCSpecialAction(int npcid, String action) {
@@ -1796,7 +1796,7 @@ public abstract class AbstractPlayerInteraction {
         } else {
             return;
         }
-        c.getSession().write(NPCPacket.setNPCSpecialAction(npc.getObjectId(), action));
+        c.sendPacket(NPCPacket.setNPCSpecialAction(npc.getObjectId(), action));
     }
 
     public void updateNPCSpecialAction(int npcid, int value, int x, int y) {
@@ -1806,7 +1806,7 @@ public abstract class AbstractPlayerInteraction {
         } else {
             return;
         }
-        c.getSession().write(NPCPacket.NPCSpecialAction(npc.getObjectId(), value, x, y));
+        c.sendPacket(NPCPacket.NPCSpecialAction(npc.getObjectId(), value, x, y));
     }
 
     public void getNPCDirectionEffect(int npcid, String data, int value, int x, int y) {
@@ -1816,7 +1816,7 @@ public abstract class AbstractPlayerInteraction {
         } else {
             return;
         }
-        c.getSession().write(UIPacket.getDirectionEffect(data, value, x, y, npc.getObjectId()));
+        c.sendPacket(UIPacket.getDirectionEffect(data, value, x, y, npc.getObjectId()));
     }
 
     public void removeNPCRequestController(int npcid) {
@@ -1826,13 +1826,13 @@ public abstract class AbstractPlayerInteraction {
         } else {
             return;
         }
-        c.getSession().write(NPCPacket.spawnNPCRequestController(npc.getObjectId()));
-        c.getSession().write(NPCPacket.removeNPC(npc.getObjectId()));
+        c.sendPacket(NPCPacket.spawnNPCRequestController(npc.getObjectId()));
+        c.sendPacket(NPCPacket.removeNPC(npc.getObjectId()));
         npcRequestController.remove(new Pair(npcid, c));
     }
 
     public void enableActions() {
-        c.getSession().write(MaplePacketCreator.enableActions());
+        c.sendPacket(MaplePacketCreator.enableActions());
     }
 
     public void spawnReactorOnGroundBelow(int id, int x, int y) {
@@ -1846,7 +1846,7 @@ public abstract class AbstractPlayerInteraction {
         } else {
             return;
         }
-        c.getSession().write(NPCPacket.removeNPCController(npc.getObjectId()));
+        c.sendPacket(NPCPacket.removeNPCController(npc.getObjectId()));
     }
 
     public void setDirection(int z) {
@@ -1874,7 +1874,7 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void sendUIWindow(final int type, final int npc) {
-        c.getSession().write(UIPacket.openUIOption(type, npc));
+        c.sendPacket(UIPacket.openUIOption(type, npc));
     }
 
     public void deleteChrSkills() {
@@ -1887,7 +1887,7 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void instantMapWarp(byte portal) {
-        this.c.getSession().write(MaplePacketCreator.instantMapWarp((byte) portal));
+        this.c.sendPacket(MaplePacketCreator.instantMapWarp((byte) portal));
     }
 
     public void EventGainNX() {
@@ -1922,6 +1922,6 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void FreeTransfer() {
-        this.c.getSession().write(UIPacket.openUI(0xA7));
+        this.c.sendPacket(UIPacket.openUI(0xA7));
     }
 }

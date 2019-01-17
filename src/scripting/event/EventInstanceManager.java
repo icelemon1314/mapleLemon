@@ -145,9 +145,9 @@ public class EventInstanceManager {
             int timesend = (int) time / 1000;
             for (MapleCharacter chr : getPlayers()) {
                 if (this.name.startsWith("PVP")) {
-                    chr.getClient().getSession().write(MaplePacketCreator.getPVPClock(Integer.parseInt(getProperty("type")), timesend));
+                    chr.getClient().sendPacket(MaplePacketCreator.getPVPClock(Integer.parseInt(getProperty("type")), timesend));
                 } else {
-                    chr.getClient().getSession().write(MaplePacketCreator.getClock(timesend));
+                    chr.getClient().sendPacket(MaplePacketCreator.getClock(timesend));
                 }
             }
             timeOut(time, this);
@@ -167,7 +167,7 @@ public class EventInstanceManager {
         }
         int timesend = (int) time / 1000;
         for (MapleCharacter chr : getPlayers()) {
-            chr.getClient().getSession().write(MaplePacketCreator.getClock(timesend));
+            chr.getClient().sendPacket(MaplePacketCreator.getClock(timesend));
         }
     }
 
@@ -176,7 +176,7 @@ public class EventInstanceManager {
             return;
         }
         for (MapleCharacter chr : getPlayers()) {
-            chr.getClient().getSession().write(MaplePacketCreator.stopClock());
+            chr.getClient().sendPacket(MaplePacketCreator.stopClock());
         }
     }
 
@@ -590,7 +590,7 @@ public class EventInstanceManager {
             return;
         }
         for (MapleCharacter chr : getPlayers()) {
-            chr.getClient().getSession().write(packet);
+            chr.getClient().sendPacket(packet);
         }
     }
 
@@ -600,7 +600,7 @@ public class EventInstanceManager {
         }
         for (MapleCharacter chr : getPlayers()) {
             if (chr.getTeam() == team) {
-                chr.getClient().getSession().write(packet);
+                chr.getClient().sendPacket(packet);
             }
         }
     }

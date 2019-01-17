@@ -27,7 +27,7 @@ public class GuildHandler {
         MapleCharacter cfrom = c.getChannelServer().getPlayerStorage().getCharacterByName(from);
         if ((cfrom != null) && (invited.remove(c.getPlayer().getName().toLowerCase()) != null)) {
             cfrom.dropMessage(5, "\"" + c.getPlayer().getName() + "\"拒绝了家族邀请.");
-//            cfrom.getClient().getSession().write(GuildPacket.denyGuildInvitation(c.getPlayer().getName()));
+//            cfrom.getClient().sendPacket(GuildPacket.denyGuildInvitation(c.getPlayer().getName()));
         }
     }
 
@@ -44,7 +44,7 @@ public class GuildHandler {
     public static final void JoinGuildCancel(final MapleClient c) {
         c.getPlayer().setGuildId(MapleGuild.getJoinGuildId(c.getPlayer().getId()));
         WorldGuildService.getInstance().removeGuildJoinMember(c.getPlayer().getMGC());
-        c.getSession().write(GuildPacket.removeGuildJoin(c.getPlayer().getId()));
+        c.sendPacket(GuildPacket.removeGuildJoin(c.getPlayer().getId()));
         c.getPlayer().setGuildId(0);
     }
 
@@ -60,7 +60,7 @@ public class GuildHandler {
             chr.setGuildId(0);
             return;
         }
-        chr.getClient().getSession().write(GuildPacket.showGuildInfo(chr));
+        chr.getClient().sendPacket(GuildPacket.showGuildInfo(chr));
         chr.saveGuildStatus();
         respawnPlayer(chr);
     }
@@ -73,7 +73,7 @@ public class GuildHandler {
             byte[] packet = GuildPacket.removeGuildJoin(cid);
             MapleCharacter chr = c.getChannelServer().getPlayerStorage().getCharacterById(cid);
             if (chr != null) {
-                chr.getClient().getSession().write(packet);
+                chr.getClient().sendPacket(packet);
             }
             guild.broadcast(packet);
         }
@@ -113,7 +113,7 @@ public class GuildHandler {
         int eff;
         switch (mode) {
             case 0:
-                c.getSession().write(GuildPacket.showGuildInfo(chr));
+                c.sendPacket(GuildPacket.showGuildInfo(chr));
                 break;
             case 0x01: // 接受邀请
                 if (c.getPlayer().getGuildId() > 0) {
@@ -121,16 +121,16 @@ public class GuildHandler {
                 }
             case 0x02: // 显示公会
                 guildId = slea.readInt();
-                c.getSession().write(GuildPacket.GuildReceipt(guildId));
+//                c.sendPacket(GuildPacket.GuildReceipt(guildId));
                 break;
             case 0x04: // 创建判断家族名字
                 GuildName = slea.readMapleAsciiString();
 
                 if (!isGuildNameAcceptable(GuildName)) {
-                    c.getSession().write(GuildPacket.genericGuildMessage((byte) 0x33));
+                    c.sendPacket(GuildPacket.genericGuildMessage((byte) 0x33));
                     return;
                 }
-                c.getSession().write(GuildPacket.createGuildNotice(GuildName));
+                c.sendPacket(GuildPacket.createGuildNotice(GuildName));
                 break;
             case 0x07: // 邀请
                 if ((chr.getGuildId() <= 0) || (chr.getGuildRank() > 2)) {
@@ -144,7 +144,7 @@ public class GuildHandler {
                 }
                 final MapleGuildResponse mgr = MapleGuild.sendInvite(c, name);
                 if (mgr != null) {
-                    c.getSession().write(mgr.getPacket());
+                    c.sendPacket(mgr.getPacket());
                 } else {
                     c.getPlayer().dropMessage(5, "已邀请'" + name + "'加入公会。");
                 }
@@ -163,7 +163,7 @@ public class GuildHandler {
 //                    cfrom.setGuildId(0);
 //                    return;
 //                }
-//                cfrom.getClient().getSession().write(GuildPacket.showGuildInfo(cfrom));
+//                cfrom.getClient().sendPacket(GuildPacket.showGuildInfo(cfrom));
 //                cfrom.saveGuildStatus();
 //                respawnPlayer(cfrom);
 //                if (invited.containsKey(name)) {
@@ -172,7 +172,7 @@ public class GuildHandler {
 //                }
 //                MapleGuildResponse mgr = MapleGuild.sendInvite(c, name);
 //                if (mgr != null) {
-//                    c.getSession().write(mgr.getPacket());
+//                    c.sendPacket(mgr.getPacket());
 //                } else {
 //                    invited.put(name, new Pair(chr.getGuildId(), currentTime + 300000L));
 //                }
@@ -184,7 +184,7 @@ public class GuildHandler {
                     return;
                 }
                 WorldGuildService.getInstance().leaveGuild(chr.getMGC());
-                c.getSession().write(GuildPacket.showGuildInfo(null));
+                c.sendPacket(GuildPacket.showGuildInfo(null));
                 break;
             case 0x0C: // 驱逐
                 cid = slea.readInt();
@@ -241,14 +241,14 @@ public class GuildHandler {
                 switch (slea.readByte()) {
                     case 0:// 名字搜寻
                         String keyWord = slea.readMapleAsciiString();
-                        c.getSession().write(GuildPacket.showSearchGuilds(MapleGuild.searchGuild(keyWord)));
+                        c.sendPacket(GuildPacket.showSearchGuilds(MapleGuild.searchGuild(keyWord)));
                         break;
                     case 1:// 条件搜寻
                         int[] keyWords = new int[6];
                         for (int i = 0 ; i < 6 ; i++) {
                             keyWords[i] = slea.readByte() & 0xFF;
                         }
-                        c.getSession().write(GuildPacket.showSearchGuilds(MapleGuild.searchGuild(keyWords)));
+                        c.sendPacket(GuildPacket.showSearchGuilds(MapleGuild.searchGuild(keyWords)));
                         break;
                 }
                 break;
@@ -274,14 +274,14 @@ public class GuildHandler {
                     c.getPlayer().setGuildRank((byte) 1);
                     c.getPlayer().saveGuildStatus();
                     WorldGuildService.getInstance().setGuildMemberOnline(c.getPlayer().getMGC(), true, c.getChannel());
-                    //c.getSession().write(GuildPacket.showGuildInfo(c.getPlayer()));
-                    c.getSession().write(GuildPacket.newGuildInfo(c.getPlayer()));
+                    //c.sendPacket(GuildPacket.showGuildInfo(c.getPlayer()));
+                    c.sendPacket(GuildPacket.newGuildInfo(c.getPlayer()));
                     WorldGuildService.getInstance().gainGP(c.getPlayer().getGuildId(), 500, c.getPlayer().getId());
                     MapleGuildRanking.getInstance().load(true);
                     //c.getPlayer().dropMessage(1, "恭喜你成功创建家族.");
                     //respawnPlayer(c.getPlayer());
                 } else if (创建 == 0) {
-                    c.getSession().write(GuildPacket.genericGuildMessage((byte) 0x3B));
+                    c.sendPacket(GuildPacket.genericGuildMessage((byte) 0x3B));
                 }
                 break;
             default:

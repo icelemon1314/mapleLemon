@@ -94,11 +94,11 @@ public class MapleDoor extends MapleMapObject {
             return;
         }
         if ((this.target.getId() == client.getPlayer().getMapId()) || (getOwnerId() == client.getPlayer().getId()) || ((getOwner() != null) && (getOwner().getParty() != null) && (client.getPlayer().getParty() != null) && (getOwner().getParty().getId() == client.getPlayer().getParty().getId()))) {
-            client.getSession().write(MaplePacketCreator.spawnDoor(getOwnerId(), getSkill(), this.target.getId() == client.getPlayer().getMapId() ? this.targetPosition : this.townPortal.getPosition(), this.target.getId() == client.getPlayer().getMapId() ? first : false));
+            client.sendPacket(MaplePacketCreator.spawnDoor(getOwnerId(), getSkill(), this.target.getId() == client.getPlayer().getMapId() ? this.targetPosition : this.townPortal.getPosition(), this.target.getId() == client.getPlayer().getMapId() ? first : false));
             if ((getOwner() != null) && (getOwner().getParty() != null) && (client.getPlayer().getParty() != null) && ((getOwnerId() == client.getPlayer().getId()) || (getOwner().getParty().getId() == client.getPlayer().getParty().getId()))) {
-                client.getSession().write(PartyPacket.partyPortal(this.town.getId(), this.target.getId(), this.skillId, this.target.getId() == client.getPlayer().getMapId() ? this.targetPosition : this.townPortal.getPosition(), first));
+                client.sendPacket(PartyPacket.partyPortal(this.town.getId(), this.target.getId(), this.skillId, this.target.getId() == client.getPlayer().getMapId() ? this.targetPosition : this.townPortal.getPosition(), first));
             }
-            client.getSession().write(MaplePacketCreator.spawnPortal(this.town.getId(), this.target.getId(), this.skillId, this.target.getId() == client.getPlayer().getMapId() ? this.targetPosition : this.townPortal.getPosition()));
+            client.sendPacket(MaplePacketCreator.spawnPortal(this.town.getId(), this.target.getId(), this.skillId, this.target.getId() == client.getPlayer().getMapId() ? this.targetPosition : this.townPortal.getPosition()));
         }
     }
 
@@ -108,11 +108,11 @@ public class MapleDoor extends MapleMapObject {
             return;
         }
         if ((this.target.getId() == client.getPlayer().getMapId()) || (getOwnerId() == client.getPlayer().getId()) || ((getOwner() != null) && (getOwner().getParty() != null) && (client.getPlayer().getParty() != null) && (getOwner().getParty().getId() == client.getPlayer().getParty().getId()))) {
-            client.getSession().write(MaplePacketCreator.removeDoor(getOwnerId(), false));
+            client.sendPacket(MaplePacketCreator.removeDoor(getOwnerId(), false));
             if ((getOwner() != null) && (getOwner().getParty() != null) && (client.getPlayer().getParty() != null) && ((getOwnerId() == client.getPlayer().getId()) || (getOwner().getParty().getId() == client.getPlayer().getParty().getId()))) {
-                client.getSession().write(PartyPacket.partyPortal(999999999, 999999999, 0, new Point(-1, -1), false));
+                client.sendPacket(PartyPacket.partyPortal(999999999, 999999999, 0, new Point(-1, -1), false));
             }
-            client.getSession().write(MaplePacketCreator.spawnPortal(999999999, 999999999, 0, null));
+            client.sendPacket(MaplePacketCreator.spawnPortal(999999999, 999999999, 0, null));
         }
     }
 
@@ -124,7 +124,7 @@ public class MapleDoor extends MapleMapObject {
                 chr.changeMap(this.town, this.townPortal);
             }
         } else {
-            chr.getClient().getSession().write(MaplePacketCreator.enableActions());
+            chr.getClient().sendPacket(MaplePacketCreator.enableActions());
         }
     }
 

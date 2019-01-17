@@ -13,14 +13,14 @@ public class ShowAccCash {
         int accId = slea.readInt();
         if (c.getAccID() == accId) {
             if (c.getPlayer() != null) {
-                c.getSession().write(MaplePacketCreator.showPlayerCash(c.getPlayer()));
+                c.sendPacket(MaplePacketCreator.showPlayerCash(c.getPlayer()));
             } else {
                 Pair cashInfo = MapleCharacterUtil.getCashByAccId(accId);
                 if (cashInfo == null) {
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
-                c.getSession().write(LoginPacket.ShowAccCash(((Integer) cashInfo.getLeft()), ((Integer) cashInfo.getRight())));
+//                c.sendPacket(LoginPacket.ShowAccCash(((Integer) cashInfo.getLeft()), ((Integer) cashInfo.getRight())));
             }
         }
     }

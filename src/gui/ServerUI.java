@@ -2497,7 +2497,7 @@ public class ServerUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "未选择角色或者选择的角色是离线状态或不存在。");
         } else {
             player.gainItem(item, quan, "服务器控制台发送道具");
-            player.getClient().getSession().write(MaplePacketCreator.serverMessagePopUp("恭喜！获得了管理员赠送的礼物。"));
+            player.getClient().sendPacket(MaplePacketCreator.serverMessagePopUp("恭喜！获得了管理员赠送的礼物。"));
             JOptionPane.showMessageDialog(null, "操作成功。");
         }
     }//GEN-LAST:event_jButton34ActionPerformed
@@ -2507,7 +2507,7 @@ public class ServerUI extends javax.swing.JFrame {
         if (player == null) {
             JOptionPane.showMessageDialog(null, "未选择角色或者选择的角色是离线状态或不存在。");
         } else {
-            player.getClient().getSession().write(HexTool.getByteArrayFromHexString(jTextArea3.getText()));
+            player.getClient().sendPacket(HexTool.getByteArrayFromHexString(jTextArea3.getText()));
             JOptionPane.showMessageDialog(null, "操作成功。");
         }
     }//GEN-LAST:event_jButton36ActionPerformed
@@ -2517,7 +2517,7 @@ public class ServerUI extends javax.swing.JFrame {
         if (player == null) {
             JOptionPane.showMessageDialog(null, "未选择角色或者选择的角色是离线状态或不存在。");
         } else {
-            player.getClient().getSession().write(LoadPacket.getPacket());
+            player.getClient().sendPacket(LoadPacket.getPacket());
             JOptionPane.showMessageDialog(null, "操作成功。");
         }
     }//GEN-LAST:event_jButton37ActionPerformed
@@ -2581,14 +2581,14 @@ public class ServerUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton41ActionPerformed
 
     private void jButton42ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton42ActionPerformed
-        RecvPacketOpcode.reloadValues();
-        SendPacketOpcode.reloadValues();
+//        RecvPacketOpcode.reloadValues();
+//        SendPacketOpcode.reloadValues();
         JOptionPane.showMessageDialog(null, "包头加载完成。");
     }//GEN-LAST:event_jButton42ActionPerformed
 
     private void jButton43ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton43ActionPerformed
         JOptionPane.showMessageDialog(null, "从新载入数据会卡住比较久, 请点击确定继续。");
-        Start.loadData(true);
+        Start.loadMapleData(true);
         JOptionPane.showMessageDialog(null, "数据载入完成。");
     }//GEN-LAST:event_jButton43ActionPerformed
 

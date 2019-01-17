@@ -63,12 +63,12 @@ public class BuddyListHandler {
                 return;
             }
             if ((ble != null) && ((ble.getGroup().equals(groupName)) || (!ble.isVisible()))) {
-                c.getSession().write(BuddyListPacket.buddylistMessage(alias != null ? 0x18 : 0x19));
+                c.sendPacket(BuddyListPacket.buddylistMessage(alias != null ? 0x18 : 0x19));
             } else if ((ble != null) && (ble.isVisible())) {
                 ble.setGroup(groupName);
-                c.getSession().write(BuddyListPacket.updateBuddylist(buddylist.getBuddies(), 0x11, false, c.getPlayer().getId()));
+                c.sendPacket(BuddyListPacket.updateBuddylist(buddylist.getBuddies(), 0x11, false, c.getPlayer().getId()));
             } else if (buddylist.isFull()) {
-                c.getSession().write(BuddyListPacket.buddylistMessage(0x15));
+                c.sendPacket(BuddyListPacket.buddylistMessage(0x15));
             } else {
                 try {
                     CharacterIdNameBuddyCapacity charWithId = null;
@@ -89,7 +89,7 @@ public class BuddyListHandler {
                         if (channel > 0) {
                             buddyAddResult = WorldBuddyService.getInstance().requestBuddyAdd(addName, c.getChannel(), c.getPlayer().getId(), c.getPlayer().getName(), c.getPlayer().getLevel(), c.getPlayer().getJob());
                             MapleCharacter chr = ChannelServer.getInstance(channel).getPlayerStorage().getCharacterByName(addName);
-                            chr.getClient().getSession().write(BuddyListPacket.requestBuddylistAdd(c.getPlayer().getId(), c.getPlayer().getName(), -1));
+                            chr.getClient().sendPacket(BuddyListPacket.requestBuddylistAdd(c.getPlayer().getId(), c.getPlayer().getName(), -1));
                         } else {
                             Connection con = DatabaseConnection.getConnection();
                             PreparedStatement ps = con.prepareStatement("SELECT COUNT(*) as buddyCount FROM buddies WHERE characterid = ? AND pending = 0");
@@ -120,7 +120,7 @@ public class BuddyListHandler {
                         }
                         //加好友方处理
                         if (buddyAddResult == BuddyList.BuddyAddResult.好友列表已满) {//对方好友列表已满
-                            c.getSession().write(BuddyListPacket.buddylistMessage(0x16));//0x19-3
+                            c.sendPacket(BuddyListPacket.buddylistMessage(0x16));//0x19-3
                         } else {
                             int displayChannel = -1;
                             int otherCid = charWithId.getId();
@@ -138,12 +138,12 @@ public class BuddyListHandler {
                                 }
                             }
                             buddylist.put(new BuddylistEntry(charWithId.getName(), otherCid, groupName, displayChannel, true));
-                            c.getSession().write(BuddyListPacket.requestBuddylistAdd(otherCid, charWithId.getName(), displayChannel));
-                            //c.getSession().write(BuddyListPacket.updateBuddylist(buddylist.getBuddies(), 0x11, false, c.getPlayer().getId()));
-                            c.getSession().write(BuddyListPacket.buddylistPrompt(0x14, charWithId.getName()));//向charWithId.getName()发送了好友申请。
+                            c.sendPacket(BuddyListPacket.requestBuddylistAdd(otherCid, charWithId.getName(), displayChannel));
+                            //c.sendPacket(BuddyListPacket.updateBuddylist(buddylist.getBuddies(), 0x11, false, c.getPlayer().getId()));
+                            c.sendPacket(BuddyListPacket.buddylistPrompt(0x14, charWithId.getName()));//向charWithId.getName()发送了好友申请。
                         }
                     } else {//角色不存在
-                        c.getSession().write(BuddyListPacket.buddylistMessage(0x1C));//0x19+3
+                        c.sendPacket(BuddyListPacket.buddylistMessage(0x1C));//0x19+3
                     }
                 } catch (SQLException e) {
                     System.err.println("SQL THROW" + e);
@@ -155,11 +155,11 @@ public class BuddyListHandler {
             if (!buddylist.isFull() && ble != null && !ble.isVisible()) {
                 int channel = WorldFindService.getInstance().findChannel(otherCid);
                 buddylist.put(new BuddylistEntry(ble.getName(), otherCid, "未指定群组", channel, true));
-                c.getSession().write(BuddyListPacket.requestBuddylistAdd(otherCid, ble.getName(), channel));
-                //c.getSession().write(BuddyListPacket.updateBuddylist(buddylist.getBuddies(), 0x11, false, c.getPlayer().getId()));
+                c.sendPacket(BuddyListPacket.requestBuddylistAdd(otherCid, ble.getName(), channel));
+                //c.sendPacket(BuddyListPacket.updateBuddylist(buddylist.getBuddies(), 0x11, false, c.getPlayer().getId()));
                 notifyRemoteChannel(c, channel, otherCid, "未指定群组", BuddyList.BuddyOperation.添加好友);
             } else {
-                c.getSession().write(BuddyListPacket.buddylistMessage(0x16));
+                c.sendPacket(BuddyListPacket.buddylistMessage(0x16));
             }
         } else if (mode == 4) {//删除好友
             int otherCid = slea.readInt();
@@ -168,18 +168,18 @@ public class BuddyListHandler {
                 notifyRemoteChannel(c, WorldFindService.getInstance().findChannel(otherCid), otherCid, blz.getGroup(), BuddyList.BuddyOperation.删除好友);
             }
             buddylist.remove(otherCid);
-            c.getSession().write(BuddyListPacket.updateBuddylist(null, 0x22, true, otherCid));
+            c.sendPacket(BuddyListPacket.updateBuddylist(null, 0x22, true, otherCid));
         } else if (mode == 6) {//拒绝添加好友
             int fromCid = slea.readInt();
             buddylist.remove(fromCid);
-            c.getSession().write(BuddyListPacket.updateBuddylist(null, 0x22, true, fromCid));
+            c.sendPacket(BuddyListPacket.updateBuddylist(null, 0x22, true, fromCid));
             MapleCharacter from = MapleCharacter.getOnlineCharacterById(fromCid);
             if (from == null) {
                 return;
             }
             from.getBuddylist().remove(c.getPlayer().getId());
-            from.getClient().getSession().write(BuddyListPacket.updateBuddylist(null, 0x22, true, c.getPlayer().getId()));
-            from.getClient().getSession().write(BuddyListPacket.buddylistPrompt(0x29, c.getPlayer().getName()));//c.getPlayer().getName()拒绝了好友申请。
+            from.getClient().sendPacket(BuddyListPacket.updateBuddylist(null, 0x22, true, c.getPlayer().getId()));
+            from.getClient().sendPacket(BuddyListPacket.buddylistPrompt(0x29, c.getPlayer().getName()));//c.getPlayer().getName()拒绝了好友申请。
         } else if (mode == 0xA) {//增加好友上限
             int capacity = c.getPlayer().getBuddyCapacity();
             if ((capacity >= 100) || (c.getPlayer().getMeso() < 50000)) {

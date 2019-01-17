@@ -79,14 +79,14 @@ public class SuperGMCommand {
                         result += singleRetItem;
                     } else {
                         result += "\r\n#b无法载入所有物品, 因为搜索出来的数量太多了#k";
-                        c.getSession().write(NPCPacket.sendNPCSay(9010000,result));
+                        c.sendPacket(NPCPacket.sendNPCSay(9010000,result));
                         return 1;
                     }
                 }
             } else {
                 result = "找不到物品";
             }
-            c.getSession().write(NPCPacket.sendNPCSay(9010000,result));
+            c.sendPacket(NPCPacket.sendNPCSay(9010000,result));
             return 1;
         }
     }
@@ -247,12 +247,12 @@ public class SuperGMCommand {
                         if (ItemFlag.封印.check(item.getFlag())) {
                             item.setFlag((byte) (item.getFlag() - ItemFlag.封印.getValue()));
                             add = true;
-                            //c.getSession().write(CField.updateSpecialItemUse(item, type.getType()));
+                            //c.sendPacket(CField.updateSpecialItemUse(item, type.getType()));
                         }
                         if (ItemFlag.不可交易.check(item.getFlag())) {
                             item.setFlag((byte) (item.getFlag() - ItemFlag.不可交易.getValue()));
                             add = true;
-                            //c.getSession().write(CField.updateSpecialItemUse(item, type.getType()));
+                            //c.sendPacket(CField.updateSpecialItemUse(item, type.getType()));
                         }
                         if (add) {
                             eqs.put(item, type);
@@ -265,12 +265,12 @@ public class SuperGMCommand {
                     if (ItemFlag.封印.check(item.getFlag())) {
                         item.setFlag((byte) (item.getFlag() - ItemFlag.封印.getValue()));
                         add = true;
-                        //c.getSession().write(CField.updateSpecialItemUse(item, type.getType()));
+                        //c.sendPacket(CField.updateSpecialItemUse(item, type.getType()));
                     }
                     if (ItemFlag.不可交易.check(item.getFlag())) {
                         item.setFlag((byte) (item.getFlag() - ItemFlag.不可交易.getValue()));
                         add = true;
-                        //c.getSession().write(CField.updateSpecialItemUse(item, type.getType()));
+                        //c.sendPacket(CField.updateSpecialItemUse(item, type.getType()));
                     }
                     if (add) {
                         eqs.put(item, MapleInventoryType.EQUIP);
@@ -282,12 +282,12 @@ public class SuperGMCommand {
                     if (ItemFlag.封印.check(item.getFlag())) {
                         item.setFlag((byte) (item.getFlag() - ItemFlag.封印.getValue()));
                         add = true;
-                        //c.getSession().write(CField.updateSpecialItemUse(item, type.getType()));
+                        //c.sendPacket(CField.updateSpecialItemUse(item, type.getType()));
                     }
                     if (ItemFlag.不可交易.check(item.getFlag())) {
                         item.setFlag((byte) (item.getFlag() - ItemFlag.不可交易.getValue()));
                         add = true;
-                        //c.getSession().write(CField.updateSpecialItemUse(item, type.getType()));
+                        //c.sendPacket(CField.updateSpecialItemUse(item, type.getType()));
                     }
                     if (add) {
                         eqs.put(item, MapleInventoryType.EQUIP);
@@ -299,12 +299,12 @@ public class SuperGMCommand {
                     if (ItemFlag.封印.check(item.getFlag())) {
                         item.setFlag((byte) (item.getFlag() - ItemFlag.封印.getValue()));
                         add = true;
-                        //c.getSession().write(CField.updateSpecialItemUse(item, type.getType()));
+                        //c.sendPacket(CField.updateSpecialItemUse(item, type.getType()));
                     }
                     if (ItemFlag.不可交易.check(item.getFlag())) {
                         item.setFlag((byte) (item.getFlag() - ItemFlag.不可交易.getValue()));
                         add = true;
-                        //c.getSession().write(CField.updateSpecialItemUse(item, type.getType()));
+                        //c.sendPacket(CField.updateSpecialItemUse(item, type.getType()));
                     }
                     if (add) {
                         eqs.put(item, MapleInventoryType.USE);
@@ -316,12 +316,12 @@ public class SuperGMCommand {
                     if (ItemFlag.封印.check(item.getFlag())) {
                         item.setFlag((byte) (item.getFlag() - ItemFlag.封印.getValue()));
                         add = true;
-                        //c.getSession().write(CField.updateSpecialItemUse(item, type.getType()));
+                        //c.sendPacket(CField.updateSpecialItemUse(item, type.getType()));
                     }
                     if (ItemFlag.不可交易.check(item.getFlag())) {
                         item.setFlag((byte) (item.getFlag() - ItemFlag.不可交易.getValue()));
                         add = true;
-                        //c.getSession().write(CField.updateSpecialItemUse(item, type.getType()));
+                        //c.sendPacket(CField.updateSpecialItemUse(item, type.getType()));
                     }
                     if (add) {
                         eqs.put(item, MapleInventoryType.SETUP);
@@ -333,12 +333,12 @@ public class SuperGMCommand {
                     if (ItemFlag.封印.check(item.getFlag())) {
                         item.setFlag((byte) (item.getFlag() - ItemFlag.封印.getValue()));
                         add = true;
-                        //c.getSession().write(CField.updateSpecialItemUse(item, type.getType()));
+                        //c.sendPacket(CField.updateSpecialItemUse(item, type.getType()));
                     }
                     if (ItemFlag.不可交易.check(item.getFlag())) {
                         item.setFlag((byte) (item.getFlag() - ItemFlag.不可交易.getValue()));
                         add = true;
-                        //c.getSession().write(CField.updateSpecialItemUse(item, type.getType()));
+                        //c.sendPacket(CField.updateSpecialItemUse(item, type.getType()));
                     }
                     if (add) {
                         eqs.put(item, MapleInventoryType.ETC);
@@ -350,12 +350,12 @@ public class SuperGMCommand {
                     if (ItemFlag.封印.check(item.getFlag())) {
                         item.setFlag((byte) (item.getFlag() - ItemFlag.封印.getValue()));
                         add = true;
-                        //c.getSession().write(CField.updateSpecialItemUse(item, type.getType()));
+                        //c.sendPacket(CField.updateSpecialItemUse(item, type.getType()));
                     }
                     if (ItemFlag.不可交易.check(item.getFlag())) {
                         item.setFlag((byte) (item.getFlag() - ItemFlag.不可交易.getValue()));
                         add = true;
-                        //c.getSession().write(CField.updateSpecialItemUse(item, type.getType()));
+                        //c.sendPacket(CField.updateSpecialItemUse(item, type.getType()));
                     }
                     if (add) {
                         eqs.put(item, MapleInventoryType.CASH);
@@ -924,7 +924,7 @@ public class SuperGMCommand {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
-            c.getSession().write(LoadPacket.getPacket());
+            c.sendPacket(LoadPacket.getPacket());
             return 1;
         }
     }
@@ -934,7 +934,7 @@ public class SuperGMCommand {
         @Override
         public int execute(MapleClient c, String[] splitted) {
             if (splitted.length > 1) {
-                c.getSession().write(MaplePacketCreator.getPacketFromHexString(StringUtil.joinStringFrom(splitted, 1)));
+                c.sendPacket(MaplePacketCreator.getPacketFromHexString(StringUtil.joinStringFrom(splitted, 1)));
             } else {
                 c.getPlayer().dropMessage(6, "请输入数据包数据");
             }
@@ -1048,7 +1048,7 @@ public class SuperGMCommand {
         public int execute(MapleClient c, String[] splitted) {
             MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[1]);
             if (victim != null && c.getPlayer().getGMLevel() >= victim.getGMLevel()) {
-                victim.getClient().getSession().write(HexTool.getByteArrayFromHexString("1A 00")); //give_buff with no data :D
+                victim.getClient().sendPacket(HexTool.getByteArrayFromHexString("1A 00")); //give_buff with no data :D
                 return 1;
             } else {
                 c.getPlayer().dropMessage(6, "受害者不存在");
@@ -1589,7 +1589,7 @@ public class SuperGMCommand {
 
      @Override
      public int execute(MapleClient c, String[] splitted) {
-     c.getSession().write(CField.UIPacket.openUIOption(Integer.parseInt(splitted[1]), 9010000));
+     c.sendPacket(CField.UIPacket.openUIOption(Integer.parseInt(splitted[1]), 9010000));
      return 1;
      }
      }
@@ -1598,7 +1598,7 @@ public class SuperGMCommand {
 
      @Override
      public int execute(MapleClient c, String[] splitted) {
-     c.getSession().write(CField.UIPacket.openUI(Integer.parseInt(splitted[1])));
+     c.sendPacket(CField.UIPacket.openUI(Integer.parseInt(splitted[1])));
      return 1;
      }
      }*/

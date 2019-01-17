@@ -1914,7 +1914,7 @@ public class PlayerStats implements Serializable {
         }
         if (changed) {
             chr.equipChanged();
-            chr.getClient().getSession().write(MaplePacketCreator.showItemLevelupEffect());
+            chr.getClient().sendPacket(MaplePacketCreator.showItemLevelupEffect());
             chr.getMap().broadcastMessage(chr, MaplePacketCreator.showForeignItemLevelupEffect(chr.getId()), false);
         }
         return changed;

@@ -35,7 +35,7 @@ public class WorldMessengerService {
         MapleCharacter player = WorldFindService.getInstance().findCharacterByName(target);
         if ((player != null)
                 && (player.getMessenger() != null)) {
-            player.getClient().getSession().write(MessengerPacket.messengerNote(nameFrom, 5, 0));
+            player.getClient().sendPacket(MessengerPacket.messengerNote(nameFrom, 5, 0));
         }
     }
 
@@ -74,7 +74,7 @@ public class WorldMessengerService {
             if (mmc != null) {
                   MapleCharacter player = WorldFindService.getInstance().findCharacterById(mmc.getId());
                   if (player != null)   {
-                    player.getClient().getSession().write(MessengerPacket.removeMessengerPlayer(position));
+                    player.getClient().sendPacket(MessengerPacket.removeMessengerPlayer(position));
                 }
             }
         }
@@ -108,7 +108,7 @@ public class WorldMessengerService {
                   if (player != null) {
                       MapleCharacter fromplayer = ChannelServer.getInstance(fromChannel).getPlayerStorage().getCharacterByName(nameFrom);
                       if (fromplayer != null)   {
-                        player.getClient().getSession().write(MessengerPacket.updateMessengerPlayer(nameFrom, fromplayer, position, fromChannel - 1));
+                        player.getClient().sendPacket(MessengerPacket.updateMessengerPlayer(nameFrom, fromplayer, position, fromChannel - 1));
                     }
                 }
             }
@@ -130,11 +130,11 @@ public class WorldMessengerService {
                     if (!mmc.getName().equals(from)) {
                           MapleCharacter fromplayer = ChannelServer.getInstance(fromChannel).getPlayerStorage().getCharacterByName(from);
                           if (fromplayer != null) {
-                              player.getClient().getSession().write(MessengerPacket.addMessengerPlayer(from, fromplayer, position, fromChannel - 1));
-                              fromplayer.getClient().getSession().write(MessengerPacket.addMessengerPlayer(player.getName(), player, mposition, mmc.getChannel() - 1));
+                              player.getClient().sendPacket(MessengerPacket.addMessengerPlayer(from, fromplayer, position, fromChannel - 1));
+                              fromplayer.getClient().sendPacket(MessengerPacket.addMessengerPlayer(player.getName(), player, mposition, mmc.getChannel() - 1));
                         }
                     } else {
-                          player.getClient().getSession().write(MessengerPacket.joinMessenger(mposition));
+                          player.getClient().sendPacket(MessengerPacket.joinMessenger(mposition));
                     }
                 }
             }
@@ -150,7 +150,7 @@ public class WorldMessengerService {
             if ((mmc != null) && (!mmc.getName().equals(namefrom))) {
                   MapleCharacter player = WorldFindService.getInstance().findCharacterByName(mmc.getName());
                   if (player != null)   {
-                    player.getClient().getSession().write(MessengerPacket.messengerChat(chatText, postxt));
+                    player.getClient().sendPacket(MessengerPacket.messengerChat(chatText, postxt));
                 }
             }
         }
@@ -165,7 +165,7 @@ public class WorldMessengerService {
           if ((mmc != null) && (!mmc.getName().equals(namefrom))) {
               MapleCharacter player = WorldFindService.getInstance().findCharacterByName(mmc.getName());
               if (player != null)   {
-                player.getClient().getSession().write(MessengerPacket.messengerWhisper(namefrom, chatText));
+                player.getClient().sendPacket(MessengerPacket.messengerWhisper(namefrom, chatText));
             }
         }
     }
@@ -175,10 +175,10 @@ public class WorldMessengerService {
           MapleCharacter targetplayer = WorldFindService.getInstance().findCharacterByName(target);
           if ((targetplayer != null) && (fromplayer != null))   {
             if ((!targetplayer.isIntern()) || (gm)) {
-                  targetplayer.getClient().getSession().write(MessengerPacket.messengerInvite(sender, messengerId, fromChannel - 1));
-                  fromplayer.getClient().getSession().write(MessengerPacket.messengerNote(target, 4, 1));
+                  targetplayer.getClient().sendPacket(MessengerPacket.messengerInvite(sender, messengerId, fromChannel - 1));
+                  fromplayer.getClient().sendPacket(MessengerPacket.messengerNote(target, 4, 1));
             } else {
-                  fromplayer.getClient().getSession().write(MessengerPacket.messengerNote(target, 4, 0));
+                  fromplayer.getClient().sendPacket(MessengerPacket.messengerNote(target, 4, 0));
             }
         }
     }

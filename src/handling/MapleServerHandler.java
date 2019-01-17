@@ -1,6 +1,7 @@
 package handling;
 
 import client.MapleClient;
+import com.sun.scenario.effect.Reflection;
 import constants.ServerConstants;
 import handling.cashshop.CashShopServer;
 import handling.cashshop.handler.BuyCashItemHandler;
@@ -12,12 +13,10 @@ import handling.login.LoginServer;
 import handling.login.LoginWorker;
 import handling.login.handler.*;
 import handling.mina.MaplePacketDecoder;
+import handling.RecvPacketOpcode;
 import handling.world.World;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.table.DefaultTableModel;
 
@@ -25,11 +24,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import scripting.npc.NPCScriptManager;
 import server.ManagerSin;
-import tools.FileoutputUtil;
-import tools.HexTool;
-import tools.MapleAESOFB;
-import tools.MaplePacketCreator;
-import tools.Pair;
+import tools.*;
 import tools.data.input.ByteArrayByteStream;
 import tools.data.input.GenericSeekableLittleEndianAccessor;
 import tools.data.input.SeekableLittleEndianAccessor;
@@ -44,15 +39,53 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
     private static final boolean show = false;
     private final List<String> BlockIPList = new ArrayList();
     private final Map<String, Pair<Long, Byte>> tracker = new ConcurrentHashMap();
+    private Map<Byte, MaplePacketHandler> handlers;
 
     public MapleServerHandler(int channel) {
+        this.handlers = new HashMap<>();
         this.channel = channel;
+    }
+
+    private void RegisterHandlers() {
+        for(RecvPacketOpcode recvOpcode : RecvPacketOpcode.values()) {
+            String handleClass = getHandleClassPath(recvOpcode.name());
+            String className = "handling." + handleClass + ".handler." + UnderlineToHump(recvOpcode.name()) + "Handler";
+            try {
+                Class handler = Class.forName(className);
+                MaplePacketHandler mapleHandler = (MaplePacketHandler)handler.newInstance();
+                handlers.put(recvOpcode.getValue(), mapleHandler);
+            } catch (Exception e) {
+                MapleLogger.error("registerHandlers errors:" + e.getMessage());
+            }
+        }
+    }
+
+    private String UnderlineToHump(String para) {
+        StringBuilder result=new StringBuilder();
+        String[] a=para.split("_");
+        int index = 0;
+        for(String s:a){
+            if (index == 0) {
+                index++;
+                continue;
+            }
+            result.append(s.substring(0, 1).toUpperCase());
+            result.append(s.substring(1).toLowerCase());
+            index++;
+        }
+        return result.toString();
+    }
+
+    private String getHandleClassPath(String param) {
+        String[] a = param.split("_");
+        return a[0].toLowerCase();
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext session, Throwable cause) { //异常捕获
         if (cause.getMessage() != null) {
             System.err.println("[异常信息] " + cause.getMessage());
+            cause.printStackTrace();
             cause.getLocalizedMessage();
             FileoutputUtil.printError(FileoutputUtil.发现异常, cause.getMessage());
         }
@@ -138,14 +171,16 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
         session.channel().attr(MaplePacketDecoder.DECODER_STATE_KEY).set(decoderState);
 
         byte[] handShakePacket = LoginPacket.getHello(ServerConstants.MAPLE_VERSION, ivSend, ivRecv);
-        session.write(handShakePacket);
+        session.channel().writeAndFlush(handShakePacket);
 
-        byte[] hp = new byte[handShakePacket.length + 2];
-        hp[0] = (byte) 0xFF;
-        hp[1] = (byte) 0xFF;
-        for (int i = 2; i < handShakePacket.length + 2; i++) {
-            hp[i] = handShakePacket[i - 2];
-        }
+//        byte[] hp = new byte[handShakePacket.length + 2];
+//        hp[0] = (byte) 0xFF;
+//        hp[1] = (byte) 0xFF;
+//        for (int i = 2; i < handShakePacket.length + 2; i++) {
+//            hp[i] = handShakePacket[i - 2];
+//        }
+
+        RegisterHandlers();
 
         FileoutputUtil.log("[登陆服务] " + address + ", 发送握手包成功！");
         Random r = new Random();
@@ -156,31 +191,30 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext session) {
-        MapleClient client = (MapleClient) session.channel().attr(MapleClient.CLIENT_KEY);
+        MapleClient client = session.channel().attr(MapleClient.CLIENT_KEY).get();
         if (client != null) {
-            try {
-                int countRows = ManagerSin.jTable1.getRowCount();//获取当前表格总行数
-                for (int i = 0; i < countRows; i++) {
-                    int AID = (Integer) ManagerSin.jTable1.getValueAt(i, 0);
-                    if (AID == client.getAccID()) {
-                        ((DefaultTableModel) ManagerSin.jTable1.getModel()).removeRow(i);
-                        break;
-                    }
-                }
-            } catch (Exception e) {
-                FileoutputUtil.outputFileError(FileoutputUtil.GUI_Ex_Log, e);
-            }
+//            try {
+//                int countRows = ManagerSin.jTable1.getRowCount();//获取当前表格总行数
+//                for (int i = 0; i < countRows; i++) {
+//                    int AID = (Integer) ManagerSin.jTable1.getValueAt(i, 0);
+//                    if (AID == client.getAccID()) {
+//                        ((DefaultTableModel) ManagerSin.jTable1.getModel()).removeRow(i);
+//                        break;
+//                    }
+//                }
+//            } catch (Exception e) {
+//                FileoutputUtil.outputFileError(FileoutputUtil.GUI_Ex_Log, e);
+//            }
 
             try {
                 client.disconnect(true, (channel == MapleServerHandler.CASH_SHOP_SERVER));
             } finally {
                 World.Client.removeClient(client);
                 session.channel().close();
-                session.channel().attr(MapleClient.CLIENT_KEY).remove();
-                session.channel().attr(MaplePacketDecoder.DECODER_STATE_KEY).remove();
+                session.channel().attr(MapleClient.CLIENT_KEY).set(null);
+                session.channel().attr(MaplePacketDecoder.DECODER_STATE_KEY).set(null);
             }
         }
-//        super.sessionClosed(session);
     }
 
     @Override
@@ -206,22 +240,35 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
         if (client == null || !client.isReceiving()) {
             return;
         }
-        short packetId = slea.readByte();
-        for (RecvPacketOpcode recv : RecvPacketOpcode.values()) {
-            if (recv.getValue() == packetId) {
-                if (recv.NeedsChecking() && !client.isLoggedIn()) {
-                    FileoutputUtil.log("客户端没有登录，丢弃包！");
-                    return;
-                }
-                try {
-                    handlePacket(recv, slea, client);
-                } catch (InterruptedException e) {
-                    FileoutputUtil.log(FileoutputUtil.Packet_Ex, new StringBuilder().append("封包: ").append(lookupRecv(packetId)).append("\r\n").append(slea.toString(true)).toString());
-                    FileoutputUtil.outputFileError(FileoutputUtil.Packet_Ex, e);
-                }
-                return;
+        byte packetId = slea.readByte();
+
+        try {
+            MaplePacketHandler handler = handlers.get(packetId);
+            if (handler == null) {
+                MapleLogger.error("unhandler packet:" + slea.toString());
+                return ;
             }
+            handler.handlePacket(slea, client);
+        } catch (Exception e) {
+            MapleLogger.error(e.getMessage());
         }
+
+
+//        for (RecvPacketOpcode recv : RecvPacketOpcode.values()) {
+//            if (recv.getValue() == packetId) {
+//                if (recv.NeedsChecking() && !client.isLoggedIn()) {
+//                    FileoutputUtil.log("客户端没有登录，丢弃包！");
+//                    return;
+//                }
+//                try {
+//                    handlePacket(recv, slea, client);
+//                } catch (InterruptedException e) {
+//                    FileoutputUtil.log(FileoutputUtil.Packet_Ex, new StringBuilder().append("封包: ").append(lookupRecv(packetId)).append("\r\n").append(slea.toString(true)).toString());
+//                    FileoutputUtil.outputFileError(FileoutputUtil.Packet_Ex, e);
+//                }
+//                return;
+//            }
+//        }
     }
 
     private String lookupRecv(short header) {
@@ -232,29 +279,29 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
         }
         return "UNKNOWN";
     }
-
+/*
     public static void handlePacket(final RecvPacketOpcode header, final SeekableLittleEndianAccessor slea, final MapleClient c) throws InterruptedException {
         switch (header) {
-            case ENTER:
-                final byte switchs = slea.readByte();
-                if (switchs == 1) {
-                    c.getSession().write(MaplePacketCreator.enableActions());
-                }
-                break;
+//            case ENTER:
+//                final byte switchs = slea.readByte();
+//                if (switchs == 1) {
+//                    c.sendPacket(MaplePacketCreator.enableActions());
+//                }
+//                break;
             case STRANGE_DATA:
-                c.getSession().write(MaplePacketCreator.enableActions());
+                c.sendPacket(MaplePacketCreator.enableActions());
                 break;
             case PONG:
                 c.pongReceived();
                 break;
             case CLIENT_ERROR:
-                ClientErrorLogHandler.handlePacket(slea, c);
+                ClientErrorHandler.handlePacket(slea, c);
                 break;
-            case PACKET_ERROR:
-                PacketErrorHandler.handlePacket(slea, c);
-                break;
+//            case PACKET_ERROR:
+//                PacketErrorHandler.handlePacket(slea, c);
+//                break;
             case LOGIN_PASSWORD:
-                LoginPasswordHandler.handlePacket(slea, c);
+                //LoginPasswordHandler.handlePacket(slea, c);
                 break;
             case UPDATE_CHANNEL:
                 LoginWorker.updateChannel(c);
@@ -284,7 +331,7 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 MapLoginHandler.handlePacket(slea, c);
                 break;
             case GET_SERVER:
-                c.getSession().write(LoginPacket.getLoginAUTH());
+                c.sendPacket(LoginPacket.getLoginAUTH());
                 break;
             case CHARLIST_REQUEST:
                 CharlistRequestHandler.handlePacket(slea, c);
@@ -323,7 +370,7 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 WithoutSecondPasswordHandler.handlePacket(slea, c, true, true);
                 break;
             case CHAR_SELECT:
-                CharSelectedHandler.handlePacket(slea, c);
+                CharSelectHandler.handlePacket(slea, c);
                 break;
             case VIEW_SELECT_PIC:
                 WithSecondPasswordHandler.handlePacket(slea, c, true);
@@ -808,7 +855,7 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 PlayerHandler.GUIDE_TRANSFER(slea, c, c.getPlayer());//游戏向导
                 break;
             case EXIT_GAME:
-                c.getSession().write(MaplePacketCreator.exitGame());
+                c.sendPacket(MaplePacketCreator.exitGame());
                 break;
             case ARROWS_TURRET_ATTACK:
                 PlayerHandler.ArrowsTurretAttack(slea, c, c.getPlayer());
@@ -823,11 +870,11 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 PlayerHandler.UpdateMacrSkill(slea, c.getPlayer());
                 break;
             case OPEN_MAP:
-                c.getSession().write(UIPacket.openMap());
+                c.sendPacket(UIPacket.openMap());
                 break;
             default:
                 FileoutputUtil.log(new StringBuilder().append("[未处理封包] Recv ").append(header.toString()).append(" [").append(HexTool.getOpcodeToString(header.getValue())).append("]").toString());
                 break;
         }
-    }
+    }*/
 }

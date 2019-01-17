@@ -191,15 +191,15 @@ public class MapleDefender extends MapleMapObject {
 
     @Override
     public void sendSpawnData(MapleClient c) {
-        c.getSession().write(MaplePacketCreator.spawnMist(this));
+        c.sendPacket(MaplePacketCreator.spawnMist(this));
         if (!this.isMobMist && this.getSourceSkill().getId() == 36121007) {
-            c.getSession().write(MaplePacketCreator.showChair(this.getOwnerId(), 3010587));
+            c.sendPacket(MaplePacketCreator.showChair(this.getOwnerId(), 3010587));
         }
     }
 
     @Override
     public void sendDestroyData(MapleClient c) {
-        c.getSession().write(MaplePacketCreator.removeMist(getObjectId(), false));
+        c.sendPacket(MaplePacketCreator.removeMist(getObjectId(), false));
     }
 
     public boolean makeChanceResult() {

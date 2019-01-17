@@ -43,7 +43,7 @@ public class MapleMapEffect {
 
     public void sendStartData(MapleClient c) {
 
-        c.getSession().write(makeStartData());
+        c.sendPacket(makeStartData());
     }
 
     public byte[] makeStartData() {

@@ -46,11 +46,11 @@ public class MapleLove extends MapleMapObject {
 
     @Override
     public void sendSpawnData(MapleClient c) {
-        c.getSession().write(MaplePacketCreator.spawnLove(getObjectId(), this.itemid, this.owner.getName(), this.text, this.pos, this.ft));
+        c.sendPacket(MaplePacketCreator.spawnLove(getObjectId(), this.itemid, this.owner.getName(), this.text, this.pos, this.ft));
     }
 
     @Override
     public void sendDestroyData(MapleClient c) {
-        c.getSession().write(MaplePacketCreator.removeLove(getObjectId(), this.itemid));
+        c.sendPacket(MaplePacketCreator.removeLove(getObjectId(), this.itemid));
     }
 }

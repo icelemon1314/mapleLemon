@@ -88,7 +88,7 @@ public class PortalScriptManager {
         }
         if (err) {
             c.getPlayer().卡图 = c.getPlayer().getMapId();
-            c.getSession().write(NPCPacket.sendNPCSay(9010000, "你好像被卡在了奇怪的地方，这里有个东西未处理，请联系管理员反馈信息：" + portal.getScriptName() + "\r\n你现在可以点击 拍卖 或者输入 @卡图 来移动到射手村。"));
+            c.sendPacket(NPCPacket.sendNPCSay(9010000, "你好像被卡在了奇怪的地方，这里有个东西未处理，请联系管理员反馈信息：" + portal.getScriptName() + "\r\n你现在可以点击 拍卖 或者输入 @卡图 来移动到射手村。"));
         }
     }
 

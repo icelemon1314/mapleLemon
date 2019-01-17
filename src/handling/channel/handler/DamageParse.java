@@ -53,7 +53,7 @@ public class DamageParse {
                 player.dropMessage(5, "[技能攻击] 使用技能[" + attack.skillId + "]进行攻击");
             }
             if (effect == null) {
-                player.getClient().getSession().write(MaplePacketCreator.enableActions());
+                player.getClient().sendPacket(MaplePacketCreator.enableActions());
                 return;
             }
             if (GameConstants.isMulungSkill(attack.skillId)) {
@@ -185,7 +185,7 @@ public class DamageParse {
                                     String banReason = player.getName() + " 被系统封号.[异常攻击伤害值: " + eachd + ", 预计伤害: " + maxDamagePerHit + ", 怪物ID: " + monster.getId() + "] [职业: " + player.getJob() + ", 等级: " + player.getLevel() + ", 技能: " + attack.skillId + "]";
                                     if (eachd > maxDamagePerHit * 7) {
                                         FileoutputUtil.log(FileoutputUtil.攻击异常, "玩家[" + player.getName() + " 职业: " + player.getJobName() + "] 使用技能: " + theSkill.getName() + "超过系统计算攻击:" + maxDamagePerHit * 7 + " 玩家攻击:" + eachd);
-                                        player.getClient().getSession().write(MaplePacketCreator.enableActions());
+                                        player.getClient().sendPacket(MaplePacketCreator.enableActions());
                                         //AutobanManager.getInstance().autoban(player.getClient(), banReason);
                                         return;
                                     }

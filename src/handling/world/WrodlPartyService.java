@@ -91,7 +91,7 @@ public class WrodlPartyService {
             if ((ch > 0) && ((exception == null) || (partychar.getId() != exception.getId()))) {
                 MapleCharacter player = ChannelServer.getInstance(ch).getPlayerStorage().getCharacterByName(partychar.getName());
                 if (player != null) {
-                    player.getClient().getSession().write(packet);
+                    player.getClient().sendPacket(packet);
                 }
             }
         }
@@ -107,7 +107,7 @@ public class WrodlPartyService {
             if (ch > 0) {
                 MapleCharacter player = ChannelServer.getInstance(ch).getPlayerStorage().getCharacterByName(partychar.getName());
                 if ((player != null) && (!player.getName().equalsIgnoreCase(nameFrom))) {
-                    player.getClient().getSession().write(MaplePacketCreator.multiChat(nameFrom, chatText, mode));
+                    player.getClient().sendPacket(MaplePacketCreator.multiChat(nameFrom, chatText, mode));
                     if (player.getClient().isMonitored()) {
                         WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverMessageMega("[GM 信息] " + nameFrom + " said to " + player.getName() + " (组队): " + chatText));
                     }
@@ -203,7 +203,7 @@ public class WrodlPartyService {
                 MapleCharacter player = getStorage(chz).getCharacterByName(target.getName());
                 if (player != null) {
                     player.setParty(null);
-                    player.getClient().getSession().write(PartyPacket.updateParty(player.getClient().getChannel(), party, operation, target));
+                    player.getClient().sendPacket(PartyPacket.updateParty(player.getClient().getChannel(), party, operation, target));
                 }
             }
             if ((target.getId() == party.getLeader().getId()) && (party.getMembers().size() > 0)) {
@@ -234,7 +234,7 @@ public class WrodlPartyService {
                     } else {
                         chr.setParty(party);
                     }
-                    chr.getClient().getSession().write(PartyPacket.updateParty(chr.getClient().getChannel(), party, operation, target));
+                    chr.getClient().sendPacket(PartyPacket.updateParty(chr.getClient().getChannel(), party, operation, target));
                 }
             }
         }

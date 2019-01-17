@@ -3,6 +3,7 @@ package handling.login.handler;
 import client.LoginCrypto;
 import client.MapleClient;
 import database.DatabaseConnection;
+import handling.MaplePacketHandler;
 import tools.MapleLogger;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.LoginPacket;
@@ -12,23 +13,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class RegisterAccountHandler {
-
-    public static void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        c.getSession().write(LoginPacket.RegisterInfo(true));
-    }
-
-    public static void CheckAccount(SeekableLittleEndianAccessor slea, MapleClient c) {
-        String accountName = slea.readMapleAsciiString();
-        c.getSession().write(LoginPacket.CheckAccount(accountName,c.isAccountNameUsed(accountName)));
-    }
+public class RegisterAccountHandler extends MaplePacketHandler {
 
     /**
      * 注册帐号
      * @param slea
      * @param c
      */
-    public static void RegisterAccount(SeekableLittleEndianAccessor slea, MapleClient c){
+    @Override
+    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c){
     /*
        * 0A
        * 0C 00 69 63 65 6C 65 6D 6F 6E 30 30 30 31 // 用户名
@@ -81,7 +74,7 @@ public class RegisterAccountHandler {
                 MapleLogger.error("注册帐号失败！", ex);
             }
         }
-        c.getSession().write(LoginPacket.RegisterAccount(result));
+        c.sendPacket(LoginPacket.RegisterAccount(result));
     }
 
 }

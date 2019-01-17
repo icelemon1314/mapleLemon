@@ -14,14 +14,14 @@ import tools.data.input.SeekableLittleEndianAccessor;
 public class ItemMakerHandler {
     public static void UseRecipe(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         if ((chr == null) || (!chr.isAlive()) || (chr.getMap() == null) || (chr.hasBlockedInventory())) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         byte slot = (byte) slea.readShort();
         int itemId = slea.readInt();
         Item toUse = chr.getInventory(MapleInventoryType.USE).getItem((short) slot);
         if ((toUse == null) || (toUse.getQuantity() < 1) || (toUse.getItemId() != itemId) || (itemId / 10000 != 251)) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         if (MapleItemInformationProvider.getInstance().getItemEffect(toUse.getItemId()).applyTo(chr)) {
@@ -31,7 +31,7 @@ public class ItemMakerHandler {
 
     public static void MakeExtractor(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         if ((chr == null) || (!chr.isAlive()) || (chr.getMap() == null) || (chr.hasBlockedInventory())) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         int itemId = slea.readInt();
@@ -39,7 +39,7 @@ public class ItemMakerHandler {
             int fee = slea.readInt();
             Item toUse = chr.getInventory(MapleInventoryType.SETUP).findById(itemId);
             if ((toUse == null) || (toUse.getQuantity() < 1) || (itemId / 10000 != 304) || (fee <= 0) || (chr.getExtractor() != null) || (!chr.getMap().isTown())) {
-                c.getSession().write(MaplePacketCreator.enableActions());
+                c.sendPacket(MaplePacketCreator.enableActions());
                 return;
             }
             chr.setExtractor(new MapleExtractor(chr, itemId, fee, chr.getFH()));

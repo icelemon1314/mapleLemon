@@ -186,7 +186,7 @@ public class PlayerStorage {
         try {
             Iterator itr = this.nameToChar.values().iterator();
             while (itr.hasNext()) {
-                ((MapleCharacter) itr.next()).getClient().getSession().write(data);
+                ((MapleCharacter) itr.next()).getClient().sendPacket(data);
             }
         } finally {
             this.readLock.unlock();
@@ -198,7 +198,7 @@ public class PlayerStorage {
         try {
             for (MapleCharacter chr : this.nameToChar.values()) {
                 if ((chr.getClient().isLoggedIn()) && (chr.getSmega())) {
-                    chr.getClient().getSession().write(data);
+                    chr.getClient().sendPacket(data);
                 }
             }
         } finally {
@@ -211,7 +211,7 @@ public class PlayerStorage {
         try {
             for (MapleCharacter chr : this.nameToChar.values()) {
                 if ((chr.getClient().isLoggedIn()) && (chr.isIntern())) {
-                    chr.getClient().getSession().write(data);
+                    chr.getClient().sendPacket(data);
                 }
             }
         } finally {

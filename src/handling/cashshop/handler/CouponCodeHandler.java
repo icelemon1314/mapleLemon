@@ -7,6 +7,8 @@ import constants.ItemConstants;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+
+import handling.MaplePacketHandler;
 import server.MapleInventoryManipulator;
 import server.cashshop.CashItemFactory;
 import server.cashshop.CashItemInfo;
@@ -15,18 +17,19 @@ import tools.Triple;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.MTSCSPacket;
 
-public class CouponCodeHandler {
+public class CouponCodeHandler extends MaplePacketHandler {
     // 商城优惠券
-    public static void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
+    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+        MapleCharacter chr = c.getPlayer();
         String toPlayer = slea.readMapleAsciiString();
         if (toPlayer.length() > 0) {
-            c.getSession().write(MTSCSPacket.商城错误提示(22));
-            c.getSession().write(MTSCSPacket.刷新点券信息(chr));
+            c.sendPacket(MTSCSPacket.商城错误提示(22));
+            c.sendPacket(MTSCSPacket.刷新点券信息(chr));
             return;
         }
         String code = slea.readMapleAsciiString();
         if (code.length() <= 0) {
-            c.getSession().write(MTSCSPacket.刷新点券信息(chr));
+            c.sendPacket(MTSCSPacket.刷新点券信息(chr));
             return;
         }
         Triple info = null;
@@ -42,7 +45,7 @@ public class CouponCodeHandler {
                 MapleCharacterUtil.setNXCodeUsed(chr.getName(), code);
             } catch (SQLException e) {
                 FileoutputUtil.log("错误 setNXCodeUsed" + e);
-                c.getSession().write(MTSCSPacket.商城错误提示(0));
+                c.sendPacket(MTSCSPacket.商城错误提示(0));
                 return;
             }
 
@@ -58,12 +61,12 @@ public class CouponCodeHandler {
                 case 3:
                     CashItemInfo itez = CashItemFactory.getInstance().getItem(item);
                     if (itez == null) {
-                        c.getSession().write(MTSCSPacket.商城错误提示(0));
+                        c.sendPacket(MTSCSPacket.商城错误提示(0));
                         return;
                     }
                     byte slot = MapleInventoryManipulator.addId(c, itez.getId(), (byte) 1, "", "商城道具卡兑换 时间: " + FileoutputUtil.CurrentReadable_Date());
                     if (slot <= -1) {
-                        c.getSession().write(MTSCSPacket.商城错误提示(0));
+                        c.sendPacket(MTSCSPacket.商城错误提示(0));
                         return;
                     }
                     itemz.put(item, chr.getInventory(ItemConstants.getInventoryType(item)).getItem((short) slot));
@@ -74,10 +77,10 @@ public class CouponCodeHandler {
                     mesos = item;
             }
 
-            c.getSession().write(MTSCSPacket.showCouponRedeemedItem(itemz, mesos, maplePoints, c));
-            c.getSession().write(MTSCSPacket.刷新点券信息(chr));
+            c.sendPacket(MTSCSPacket.showCouponRedeemedItem(itemz, mesos, maplePoints, c));
+            c.sendPacket(MTSCSPacket.刷新点券信息(chr));
         } else {
-            c.getSession().write(MTSCSPacket.商城错误提示(info == null ? 14 : 16));
+            c.sendPacket(MTSCSPacket.商城错误提示(info == null ? 14 : 16));
         }
     }
 }

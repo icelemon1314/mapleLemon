@@ -24,7 +24,7 @@ public class UserInterfaceHandler {
             int selection = slea.readInt();
             if ((selection >= 0) && (selection <= ServerConstants.Poll_Answers.length)
                     && (MapleCharacterUtil.SetPoll(c.getAccID(), selection))) {
-                c.getSession().write(MaplePacketCreator.getPollReply("Thank you."));
+                c.sendPacket(MaplePacketCreator.getPollReply("Thank you."));
             }
         }
     }
@@ -78,6 +78,6 @@ public class UserInterfaceHandler {
                 FileoutputUtil.log("Unhandled ship object, MapID : " + mapid);
         }
 
-        c.getSession().write(MaplePacketCreator.boatPacket(effect==1?true:false));
+        c.sendPacket(MaplePacketCreator.boatPacket(effect==1?true:false));
     }
 }

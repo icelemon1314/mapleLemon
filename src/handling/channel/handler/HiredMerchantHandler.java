@@ -36,15 +36,15 @@ public class HiredMerchantHandler {
         if ((chr.getMap() != null) && (chr.getMap().allowPersonalShop())) {
             HiredMerchant merchant = World.getMerchant(chr.getAccountID(), chr.getId());
             if (merchant != null) {
-                c.getSession().write(PlayerShopPacket.sendTitleBox(8, merchant.getMapId(), merchant.getChannel() - 1));
+                c.sendPacket(PlayerShopPacket.sendTitleBox(8, merchant.getMapId(), merchant.getChannel() - 1));
             } else {
                 if (loadItemFrom_Database(chr) == null) {
                     if (packet) {
-                        c.getSession().write(PlayerShopPacket.sendTitleBox(7));
+                        c.sendPacket(PlayerShopPacket.sendTitleBox(7));
                     }
                     return true;
                 }
-                c.getSession().write(PlayerShopPacket.sendTitleBox(9));
+                c.sendPacket(PlayerShopPacket.sendTitleBox(9));
             }
         }
 
@@ -79,7 +79,7 @@ public class HiredMerchantHandler {
         }
         if (c.getChannelServer().isShutdown()) {
             chr.dropMessage(1, "服务器即将关闭维护，暂时无法进行道具取回。");
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         byte operation = slea.readByte();
@@ -87,16 +87,16 @@ public class HiredMerchantHandler {
             case 24:
                 HiredMerchant merchant = World.getMerchant(chr.getAccountID(), chr.getId());
                 if (merchant != null) {
-                    c.getSession().write(PlayerShopPacket.merchItemStore(merchant.getMapId(), merchant.getChannel() - 1));
+                    c.sendPacket(PlayerShopPacket.merchItemStore(merchant.getMapId(), merchant.getChannel() - 1));
                     chr.setConversation(0);
                 } else {
                     MerchItemPackage pack = loadItemFrom_Database(chr);
 
                     if (pack == null) {
-                        c.getSession().write(PlayerShopPacket.merchItemStore(999999999, 0));
+                        c.sendPacket(PlayerShopPacket.merchItemStore(999999999, 0));
                         chr.setConversation(0);
                     } else {
-                        c.getSession().write(PlayerShopPacket.merchItemStore_ItemData(pack));
+                        c.sendPacket(PlayerShopPacket.merchItemStore_ItemData(pack));
                     }
                 }
                 break;
@@ -104,7 +104,7 @@ public class HiredMerchantHandler {
                 if (chr.getConversation() != 3) {
                     return;
                 }
-                c.getSession().write(PlayerShopPacket.merchItemStore((byte) 42));
+                c.sendPacket(PlayerShopPacket.merchItemStore((byte) 42));
                 break;
             case 30:
                 if (chr.getConversation() != 3) {
@@ -123,7 +123,7 @@ public class HiredMerchantHandler {
                 }
                 if (!check(chr, pack)) {
                     chr.dropMessage(5, "因为背包位置不足够无法领取道具.");
-                    c.getSession().write(PlayerShopPacket.merchItem_Message((byte) 39));
+                    c.sendPacket(PlayerShopPacket.merchItem_Message((byte) 39));
                     return;
                 }
                 if (deletePackage(chr.getId())) {
@@ -136,7 +136,7 @@ public class HiredMerchantHandler {
                         MapleInventoryManipulator.addFromDrop(c, item, false);
                         FileoutputUtil.hiredMerchLog(chr.getName(), "雇佣取回获得道具: " + item.getItemId() + " - " + MapleItemInformationProvider.getInstance().getName(item.getItemId()) + " 数量: " + item.getQuantity());
                     }
-                    c.getSession().write(PlayerShopPacket.merchItem_Message((byte) 35));
+                    c.sendPacket(PlayerShopPacket.merchItem_Message((byte) 35));
                 } else {
                     chr.dropMessage(1, "发生了未知错误.");
                 }
@@ -162,15 +162,15 @@ public class HiredMerchantHandler {
                 merchant.setOpen(false);
                 merchant.removeAllVisitors(16, 0);
                 chr.setPlayerShop(merchant);
-                c.getSession().write(PlayerShopPacket.getHiredMerch(chr, merchant, false));
+                c.sendPacket(PlayerShopPacket.getHiredMerch(chr, merchant, false));
             } else {
-                c.getSession().write(PlayerShopPacket.sendTitleBox(16, 0, merchant.getChannel() - 1));
+                c.sendPacket(PlayerShopPacket.sendTitleBox(16, 0, merchant.getChannel() - 1));
             }
         } else {
             chr.dropMessage(1, "你没有开设商店");
         }
 
-        c.getSession().write(MaplePacketCreator.enableActions());
+        c.sendPacket(MaplePacketCreator.enableActions());
     }
 
     private static boolean check(MapleCharacter chr, MerchItemPackage pack) {

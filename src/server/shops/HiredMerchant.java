@@ -94,11 +94,11 @@ public class HiredMerchant extends AbstractPlayerStore {
                 FileoutputUtil.hiredMerchLog(chr != null ? chr.getName() : getOwnerName(), new StringBuilder().append("雇佣商店卖出: ").append(newItem.getItemId()).append(" - ").append(itemText).append(" 价格: ").append(theQuantity).toString());
             } else {
                 c.getPlayer().dropMessage(1, "金币不足.");
-                c.getSession().write(MaplePacketCreator.enableActions());
+                c.sendPacket(MaplePacketCreator.enableActions());
             }
         } else {
             c.getPlayer().dropMessage(1, "背包已满.");
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
         }
     }
 
@@ -155,14 +155,14 @@ public class HiredMerchant extends AbstractPlayerStore {
     @Override
     public void sendDestroyData(MapleClient client) {
         if (isAvailable()) {
-            client.getSession().write(PlayerShopPacket.destroyHiredMerchant(getOwnerId()));
+            client.sendPacket(PlayerShopPacket.destroyHiredMerchant(getOwnerId()));
         }
     }
 
     @Override
     public void sendSpawnData(MapleClient client) {
         if (isAvailable()) {
-            client.getSession().write(PlayerShopPacket.spawnHiredMerchant(this));
+            client.sendPacket(PlayerShopPacket.spawnHiredMerchant(this));
         }
     }
 
@@ -179,10 +179,10 @@ public class HiredMerchant extends AbstractPlayerStore {
     }
 
     public void sendBlackList(MapleClient c) {
-        c.getSession().write(PlayerShopPacket.MerchantBlackListView(this.blacklist));
+        c.sendPacket(PlayerShopPacket.MerchantBlackListView(this.blacklist));
     }
 
     public void sendVisitor(MapleClient c) {
-        c.getSession().write(PlayerShopPacket.MerchantVisitorView(this.visitorsList));
+        c.sendPacket(PlayerShopPacket.MerchantVisitorView(this.visitorsList));
     }
 }

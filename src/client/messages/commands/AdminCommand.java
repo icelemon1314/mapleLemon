@@ -51,7 +51,7 @@ public class AdminCommand {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
-            c.getSession().write(LoadPacket.getPacket());
+            c.sendPacket(LoadPacket.getPacket());
             return 1;
         }
     }
@@ -153,7 +153,7 @@ public class AdminCommand {
                 c.getPlayer().dropMessage(0, splitted[0] + " <封包内容>");
                 return 0;
             }
-            c.getSession().write(HexTool.getByteArrayFromHexString(StringUtil.joinStringFrom(splitted, 1)));
+            c.sendPacket(HexTool.getByteArrayFromHexString(StringUtil.joinStringFrom(splitted, 1)));
             return 1;
         }
     }

@@ -89,7 +89,7 @@ public class MaplePortal {
     public void enterPortal(MapleClient c) {
         if ((getPosition().distanceSq(c.getPlayer().getPosition()) > 40000.0D) && (!c.getPlayer().isGM()) && c.getPlayer().getMapId() != 4000010) {
             FileoutputUtil.log("玩家离传送口过远，传送口位置："+getPosition().getX()+","+getPosition().getY()+"。玩家位置："+c.getPlayer().getPosition().toString());
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         MapleMap currentmap = c.getPlayer().getMap();
@@ -107,12 +107,12 @@ public class MaplePortal {
                 if (to == null) {
                     FileoutputUtil.log("找不到地图："+getTargetMapId());
                     c.getPlayer().dropMessage(-1, "找不到地图："+getTargetMapId());
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
                 if ((!c.getPlayer().isGM())&& (to.getLevelLimit() > 0) && (to.getLevelLimit() > c.getPlayer().getLevel())) {
                     c.getPlayer().dropMessage(-1, "You are too low of a level to enter this place.");
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
                 FileoutputUtil.log("传送地图正常："+getTarget());
@@ -120,7 +120,7 @@ public class MaplePortal {
             }
         }
         if ((c != null) && (c.getPlayer() != null) && (c.getPlayer().getMap() == currentmap)) {
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
         }
     }
 

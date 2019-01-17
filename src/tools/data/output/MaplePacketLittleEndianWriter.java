@@ -20,8 +20,8 @@ public class MaplePacketLittleEndianWriter extends GenericLittleEndianWriter {
         return baos.toByteArray();
     }
 
-    @Override
-    public String toString() {
-        return HexTool.toString(baos.toByteArray());
-    }
+    //@Override
+    //public String toString() {
+    //    return HexTool.toString(baos.toByteArray());
+    //}
 }

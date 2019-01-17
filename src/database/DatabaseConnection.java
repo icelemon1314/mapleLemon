@@ -90,7 +90,7 @@ public class DatabaseConnection {
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUsername(ServerConstants.SQL_USER);
         dataSource.setPassword(ServerConstants.SQL_PASSWORD);
-        dataSource.setUrl("jdbc:mysql://" + ServerConstants.SQL_IP + ":" + ServerConstants.SQL_PORT + "/" + ServerConstants.SQL_DATABASE + "?autoReconnect=true&characterEncoding=GBK");
+        dataSource.setUrl("jdbc:mysql://" + ServerConstants.SQL_IP + ":" + ServerConstants.SQL_PORT + "/" + ServerConstants.SQL_DATABASE + "?autoReconnect=true&characterEncoding=GBK&zeroDateTimeBehavior=convertToNull");
         dataSource.setInitialSize(10);
         dataSource.setMinIdle(1);
         dataSource.setMaxActive(100);

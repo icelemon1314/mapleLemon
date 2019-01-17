@@ -265,9 +265,9 @@ public final class PlayerNPC extends MapleNPC {
 
     @Override
     public void sendSpawnData(MapleClient client) {
-        client.getSession().write(NPCPacket.spawnNPC(this, true));
-        client.getSession().write(NPCPacket.spawnPlayerNPC(this));
-        client.getSession().write(NPCPacket.spawnNPCRequestController(this, true));
+        client.sendPacket(NPCPacket.spawnNPC(this, true));
+        client.sendPacket(NPCPacket.spawnPlayerNPC(this));
+        client.sendPacket(NPCPacket.spawnNPCRequestController(this, true));
     }
 
     public MapleNPC getNPCFromWZ() {

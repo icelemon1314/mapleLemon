@@ -33,6 +33,6 @@ public class DeleteCharHandler {
             state = (byte) c.deleteCharacter(charId);
         }
         ServerUI.getInstance().removeCharTable(charId);
-        c.getSession().write(LoginPacket.deleteCharResponse(charId, state));
+        c.sendPacket(LoginPacket.deleteCharResponse(charId, state));
     }
 }

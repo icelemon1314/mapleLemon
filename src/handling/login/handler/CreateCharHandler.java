@@ -7,6 +7,7 @@ import client.inventory.Item;
 import client.inventory.MapleInventory;
 import client.inventory.MapleInventoryType;
 import gui.ServerUI;
+import handling.MaplePacketHandler;
 import handling.login.LoginInformationProvider;
 import server.MapleItemInformationProvider;
 import server.ServerProperties;
@@ -14,9 +15,9 @@ import tools.FileoutputUtil;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.LoginPacket;
 
-public class CreateCharHandler {
+public class CreateCharHandler extends MaplePacketHandler {
 
-    public static void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         if (!c.isLoggedIn()) {
             c.getSession().close();
             return;
@@ -37,7 +38,7 @@ public class CreateCharHandler {
         for (int i : items) {
             if (!LoginInformationProvider.getInstance().isEligibleItem(i)) {
                 FileoutputUtil.log("[作弊] 新建角色装备检测失败 名字: " + name + " 道具ID: " + i + " - " + li.getName(i));
-                c.getSession().write(LoginPacket.charNameResponse(name, (byte) 3));
+                c.sendPacket(LoginPacket.charNameResponse(name, (byte) 3));
                 return;
             }
         }
@@ -96,11 +97,11 @@ public class CreateCharHandler {
          }*/
         if ((MapleCharacterUtil.canCreateChar(name, c.isGm())) && ((!LoginInformationProvider.getInstance().isForbiddenName(name)) || (c.isGm())) && ((c.isGm()) || (c.canMakeCharacter(c.getWorld())))) {
             MapleCharacter.saveNewCharToDB(newchar);
-            c.getSession().write(LoginPacket.addNewCharEntry(newchar, true));
+            c.sendPacket(LoginPacket.addNewCharEntry(newchar, true));
             c.createdChar(newchar.getId());
 //            ServerUI.getInstance().addCharTable(newchar); // 报错，先注释掉
         } else {
-            c.getSession().write(LoginPacket.addNewCharEntry(newchar, false));
+            c.sendPacket(LoginPacket.addNewCharEntry(newchar, false));
         }
     }
 }

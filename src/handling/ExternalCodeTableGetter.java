@@ -33,7 +33,7 @@ public class ExternalCodeTableGetter {
             int base = 0;
             String offset;
             if (args.length == 2) {
-                base = ((WritableIntValueHolder) valueOf(args[0], values)).getValue();
+                base = (valueOf(args[0], values)).getValue();
                 if (base == def) {
                     base = getValue(args[0], values, def);
                 }

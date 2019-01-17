@@ -252,14 +252,14 @@ public class PlayerCommand {
                         result += singleRetItem;
                     } else {
                         result += "\r\n#b无法载入所有物品, 因为搜索出来的数量太多了#k";
-                        c.getSession().write(NPCPacket.sendNPCSay(9010000,result));
+                        c.sendPacket(NPCPacket.sendNPCSay(9010000,result));
                         return 1;
                     }
                 }
             } else {
                 result = "找不到物品";
             }
-            c.getSession().write(NPCPacket.sendNPCSay(9010000, result));
+            c.sendPacket(NPCPacket.sendNPCSay(9010000, result));
             return 1;
         }
     }
@@ -268,7 +268,7 @@ public class PlayerCommand {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
-            c.getSession().write(LoadPacket.getPacket());
+            c.sendPacket(LoadPacket.getPacket());
             return 1;
         }
     }

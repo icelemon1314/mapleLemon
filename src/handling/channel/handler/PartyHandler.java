@@ -121,14 +121,14 @@ public class PartyHandler {
                     String 组队名称 = slea.readMapleAsciiString();
                     party = partyService.createParty(partyPlayer, 非公开组队, 组队名称);
                     c.getPlayer().setParty(party);
-                    c.getSession().write(PartyPacket.partyCreated(party));
+                    c.sendPacket(PartyPacket.partyCreated(party));
                 } else {
                     if (party.getExpeditionId() > 0) {
                         c.getPlayer().dropMessage(5, "加入远征队伍的状态下无法进行此操作。");
                         return;
                     }
                     if ((partyPlayer.equals(party.getLeader())) && (party.getMembers().size() == 1)) {
-                        c.getSession().write(PartyPacket.partyCreated(party));
+                        c.sendPacket(PartyPacket.partyCreated(party));
                     } else {
                         c.getPlayer().dropMessage(5, "你已经存在一个队伍中，无法创建！");
                     }
@@ -183,7 +183,7 @@ public class PartyHandler {
                 if (party == null) {
                     party = partyService.createParty(partyPlayer, false, c.getPlayer().getName() + "的组队");
                     c.getPlayer().setParty(party);
-                    c.getSession().write(PartyPacket.partyCreated(party));
+                    c.sendPacket(PartyPacket.partyCreated(party));
                 }
                 String theName = slea.readMapleAsciiString();
                 int theCh = WorldFindService.getInstance().findChannel(theName);
@@ -197,8 +197,8 @@ public class PartyHandler {
                         } else if (invited.getQuestNoAdd(MapleQuest.getInstance(122901)) != null) {
                             c.getPlayer().dropMessage(5, new StringBuilder().append("'").append(theName).append("'玩家处于拒绝组队状态。").toString());
                         } else if (party.getMembers().size() < 6) {
-                            c.getSession().write(PartyPacket.partyStatusMessage(0x20, invited.getName()));//0x1F+1 119ok
-                            invited.getClient().getSession().write(PartyPacket.partyInvite(c.getPlayer()));
+                            c.sendPacket(PartyPacket.partyStatusMessage(0x20, invited.getName()));//0x1F+1 119ok
+                            invited.getClient().sendPacket(PartyPacket.partyInvite(c.getPlayer()));
                         } else {
                             c.getPlayer().dropMessage(5, "组队成员已满");
                         }
@@ -263,8 +263,8 @@ public class PartyHandler {
                         }
                         MapleCharacter cfrom = c.getPlayer().getMap().getCharacterById(party.getLeader().getId());
                         if ((cfrom != null) && (cfrom.getQuestNoAdd(MapleQuest.getInstance(122900)) == null)) {
-                            c.getSession().write(PartyPacket.partyStatusMessage(0x42, c.getPlayer().getName()));//0x41+1 119ok
-                            cfrom.getClient().getSession().write(PartyPacket.partyRequestInvite(c.getPlayer()));
+                            c.sendPacket(PartyPacket.partyStatusMessage(0x42, c.getPlayer().getName()));//0x41+1 119ok
+                            cfrom.getClient().sendPacket(PartyPacket.partyRequestInvite(c.getPlayer()));
                         } else {
                             c.getPlayer().dropMessage(5, "没有在该地图找此队伍的队长.");
                         }
@@ -324,9 +324,9 @@ public class PartyHandler {
                 } else {
                     MapleSidekick s = WorldSidekickService.getInstance().getSidekick(sid);
                     c.getPlayer().setSidekick(s);
-                    c.getSession().write(PartyPacket.updateSidekick(c.getPlayer(), s, true));
+                    c.sendPacket(PartyPacket.updateSidekick(c.getPlayer(), s, true));
                     party.setSidekick(s);
-                    party.getClient().getSession().write(PartyPacket.updateSidekick(party, s, true));
+                    party.getClient().sendPacket(PartyPacket.updateSidekick(party, s, true));
                 }
             } else {
                 c.getPlayer().dropMessage(5, "The sidekick you are trying to join does not exist");
@@ -343,7 +343,7 @@ public class PartyHandler {
                 }
                 MapleCharacter other = c.getPlayer().getMap().getCharacterByName(slea.readMapleAsciiString());
                 if ((other.getSidekick() == null) && (MapleSidekick.checkLevels(c.getPlayer().getLevel(), other.getLevel()))) {
-                    other.getClient().getSession().write(PartyPacket.sidekickInvite(c.getPlayer()));
+                    other.getClient().sendPacket(PartyPacket.sidekickInvite(c.getPlayer()));
                     c.getPlayer().dropMessage(1, new StringBuilder().append("You have sent the sidekick invite to ").append(other.getName()).append(".").toString());
                 }
                 break;
@@ -358,7 +358,7 @@ public class PartyHandler {
     public static void MemberSearch(SeekableLittleEndianAccessor slea, MapleClient c) {
         if ((c.getPlayer().isInBlockedMap()) || (FieldLimitType.VipRock.check(c.getPlayer().getMap().getFieldLimit()))) {
             c.getPlayer().dropMessage(5, "无法在这个地方进行搜索。");
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         List members = new ArrayList();
@@ -367,13 +367,13 @@ public class PartyHandler {
                 members.add(chr);
             }
         }
-        c.getSession().write(PartyPacket.showMemberSearch(members));
+        c.sendPacket(PartyPacket.showMemberSearch(members));
     }
 
     public static void PartySearch(SeekableLittleEndianAccessor slea, MapleClient c) {
         if ((c.getPlayer().isInBlockedMap()) || (FieldLimitType.VipRock.check(c.getPlayer().getMap().getFieldLimit()))) {
             c.getPlayer().dropMessage(5, "无法在这个地方进行搜索。");
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         List parties = new ArrayList();
@@ -385,7 +385,7 @@ public class PartyHandler {
                 parties.add(chr.getParty());
             }
         }
-        c.getSession().write(PartyPacket.showPartySearch(parties));
+        c.sendPacket(PartyPacket.showPartySearch(parties));
     }
 
 }

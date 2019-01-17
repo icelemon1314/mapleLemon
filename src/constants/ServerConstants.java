@@ -37,7 +37,7 @@ public class ServerConstants implements Runnable {
 
     public static int SHARK_VERSION = 0x2021;
     // 连接满了后，还可以临时存放多少个链接
-    public static int MAXIMUM_CONNECTIONS=64;
+    public static int MAXIMUM_CONNECTIONS=1024;
     public static boolean USE_FIXED_IV = true;
     public static boolean USE_LOCALHOST = false;
     public static final int MIN_MTS = 150;

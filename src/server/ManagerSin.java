@@ -885,7 +885,7 @@ public class ManagerSin extends javax.swing.JFrame {
             for (MapleCharacter player : cserv.getPlayerStorage().getAllCharacters()) {
                 if (val_targ == player.getClient().getAccID()) {
                     player.gainItem(item, quan, false, -1, "服务端控制台发送物品");
-                    player.getClient().getSession().write(MaplePacketCreator.serverMessageRedText("恭喜！获得了运营员赠送的礼物。"));
+                    player.getClient().sendPacket(MaplePacketCreator.serverMessageRedText("恭喜！获得了运营员赠送的礼物。"));
                 }
             }
         }
@@ -988,7 +988,7 @@ public class ManagerSin extends javax.swing.JFrame {
         for (ChannelServer cserv : ChannelServer.getAllInstances()) {
             for (MapleCharacter player : cserv.getPlayerStorage().getAllCharacters()) {
                 if (val_targ == player.getClient().getAccID()) {
-                    player.getClient().getSession().write(MaplePacketCreator.serverMessagePopUp("[通知] 你已经被运营员强制踢下线！"));
+                    player.getClient().sendPacket(MaplePacketCreator.serverMessagePopUp("[通知] 你已经被运营员强制踢下线！"));
                     player.getClient().disconnect(true, player.getClient().getChannel() == -10);
                     player.getClient().getSession().close();
                     break;
@@ -998,8 +998,8 @@ public class ManagerSin extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
-        SendPacketOpcode.reloadValues();
-        RecvPacketOpcode.reloadValues();
+//        SendPacketOpcode.reloadValues();
+//        RecvPacketOpcode.reloadValues();
         InteractionOpcode.reloadValues();
         CashShopOpcode.reloadValues();
         JOptionPane.showMessageDialog(null, "已重置包头。");

@@ -454,7 +454,7 @@ public class InternCommand {
                                 break;
                             }
                             sb.append(singleRetNpc);
-                            //c.getSession().write(NPCPacket.getNPCTalk(9010000, (byte) 0, retNpcs.toString(), "00 00", (byte) 0, 9010000));
+                            //c.sendPacket(NPCPacket.getNPCTalk(9010000, (byte) 0, retNpcs.toString(), "00 00", (byte) 0, 9010000));
                             //c.getPlayer().dropMessage(6, singleRetNpc);
                         }
                     } else {
@@ -482,7 +482,7 @@ public class InternCommand {
                                 break;
                             }
                             sb.append(singleRetMap);
-                            //c.getSession().write(NPCPacket.getNPCTalk(9010000, (byte) 0, retMaps.toString(), "00 00", (byte) 0, 9010000));
+                            //c.sendPacket(NPCPacket.getNPCTalk(9010000, (byte) 0, retMaps.toString(), "00 00", (byte) 0, 9010000));
                             //c.getPlayer().dropMessage(6, singleRetMap);
                         }
                     } else {
@@ -507,7 +507,7 @@ public class InternCommand {
                                 break;
                             }
                             sb.append(singleRetMob);
-                            //c.getSession().write(NPCPacket.getNPCTalk(9010000, (byte) 0, retMobs.toString(), "00 00", (byte) 0, 9010000));
+                            //c.sendPacket(NPCPacket.getNPCTalk(9010000, (byte) 0, retMobs.toString(), "00 00", (byte) 0, 9010000));
                             //c.getPlayer().dropMessage(6, singleRetMob);
                         }
                     } else {
@@ -528,7 +528,7 @@ public class InternCommand {
                                 break;
                             }
                             sb.append(singleRetItem);
-                            //c.getSession().write(NPCPacket.getNPCTalk(9010000, (byte) 0, retItems.toString(), "00 00", (byte) 0, 9010000));
+                            //c.sendPacket(NPCPacket.getNPCTalk(9010000, (byte) 0, retItems.toString(), "00 00", (byte) 0, 9010000));
                             //c.getPlayer().dropMessage(6, singleRetItem);
                         }
                     } else {
@@ -548,7 +548,7 @@ public class InternCommand {
                                 break;
                             }
                             sb.append(singleRetSkill);
-                            //c.getSession().write(NPCPacket.getNPCTalk(9010000, (byte) 0, retSkills.toString(), "00 00", (byte) 0, 9010000));
+                            //c.sendPacket(NPCPacket.getNPCTalk(9010000, (byte) 0, retSkills.toString(), "00 00", (byte) 0, 9010000));
                             //    c.getPlayer().dropMessage(6, singleRetSkill);
                         }
                     } else {
@@ -574,13 +574,13 @@ public class InternCommand {
                             break;
                         }
                         sb.append(header);
-                        //c.getSession().write(NPCPacket.getNPCTalk(9010000, (byte) 0, headers.toString(), "00 00", (byte) 0, 9010000));
+                        //c.sendPacket(NPCPacket.getNPCTalk(9010000, (byte) 0, headers.toString(), "00 00", (byte) 0, 9010000));
                         //c.getPlayer().dropMessage(6, header);
                     }
                 } else {
                     c.getPlayer().dropMessage(6, "对不起, 不支持这个检索命令");
                 }
-                c.getSession().write(NPCPacket.sendNPCSay(9010000, sb.toString()));
+                c.sendPacket(NPCPacket.sendNPCSay(9010000, sb.toString()));
             }
             return 0;
         }
@@ -910,13 +910,13 @@ public class InternCommand {
      //chrs.dropMessage(0, "Event Map: " + c.getPlayer().getMap().getMapName());
      //World.Broadcast.broadcastMessage(MaplePacketCreator.broadcastMsg(25, 0, "MapleGM is hosting an event! Use the @joinevent command to join the event!"));
      //World.Broadcast.broadcastMessage(MaplePacketCreator.broadcastMsg(26, 0, "Event Map: " + c.getPlayer().getMap().getMapName()));
-     chrs.getClient().getSession().write(MaplePacketCreator.broadcastMsg(GameConstants.isEventMap(chrs.getMapId()) ? 0 : 25, c.getChannel(), "活动 : 管理员开启了一个活动, 使用 @参加活动 来加入活动吧!"));
-     chrs.getClient().getSession().write(MaplePacketCreator.broadcastMsg(GameConstants.isEventMap(chrs.getMapId()) ? 0 : 26, c.getChannel(), "活动 : 活动频道: " + c.getChannel() + " 活动地图: " + c.getPlayer().getMap().getMapName()));
+     chrs.getClient().sendPacket(MaplePacketCreator.broadcastMsg(GameConstants.isEventMap(chrs.getMapId()) ? 0 : 25, c.getChannel(), "活动 : 管理员开启了一个活动, 使用 @参加活动 来加入活动吧!"));
+     chrs.getClient().sendPacket(MaplePacketCreator.broadcastMsg(GameConstants.isEventMap(chrs.getMapId()) ? 0 : 26, c.getChannel(), "活动 : 活动频道: " + c.getChannel() + " 活动地图: " + c.getPlayer().getMap().getMapName()));
      }
      } else {
      for (MapleCharacter chrs : c.getChannelServer().getPlayerStorage().getAllCharacters()) {
      //World.Broadcast.broadcastMessage(MaplePacketCreator.broadcastMsg(22, 0, "Enteries to the GM event are closed. The event has began!"));
-     chrs.getClient().getSession().write(MaplePacketCreator.broadcastMsg(GameConstants.isEventMap(chrs.getMapId()) ? 0 : 22, c.getChannel(), "活动 : Enteries to the GM event are closed. The event has began!"));
+     chrs.getClient().sendPacket(MaplePacketCreator.broadcastMsg(GameConstants.isEventMap(chrs.getMapId()) ? 0 : 22, c.getChannel(), "活动 : Enteries to the GM event are closed. The event has began!"));
      }
      }
      return 1;
@@ -946,7 +946,7 @@ public class InternCommand {
      }
      }
      for (MapleCharacter chrs : c.getChannelServer().getPlayerStorage().getAllCharacters()) {
-     chrs.getClient().getSession().write(MaplePacketCreator.broadcastMsg(GameConstants.isEventMap(chrs.getMapId()) ? 0 : 22, c.getChannel(), "活动 : 炸弹人活动已经开始了!"));
+     chrs.getClient().sendPacket(MaplePacketCreator.broadcastMsg(GameConstants.isEventMap(chrs.getMapId()) ? 0 : 22, c.getChannel(), "活动 : 炸弹人活动已经开始了!"));
      }
      player.getMap().broadcastMessage(CField.getClock(60));
      }
@@ -976,7 +976,7 @@ public class InternCommand {
      }
      }
      for (MapleCharacter chrs : c.getChannelServer().getPlayerStorage().getAllCharacters()) {
-     chrs.getClient().getSession().write(MaplePacketCreator.broadcastMsg(GameConstants.isEventMap(chrs.getMapId()) ? 0 : 22, c.getChannel(), "活动 : 炸弹人活动已经结束, 胜利者是: " + winner));
+     chrs.getClient().sendPacket(MaplePacketCreator.broadcastMsg(GameConstants.isEventMap(chrs.getMapId()) ? 0 : 22, c.getChannel(), "活动 : 炸弹人活动已经结束, 胜利者是: " + winner));
      }
      }
      return 1;

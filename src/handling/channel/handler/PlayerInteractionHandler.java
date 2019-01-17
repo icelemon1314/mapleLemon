@@ -35,7 +35,7 @@ public class PlayerInteractionHandler {
         InteractionOpcode action = InteractionOpcode.getByAction(mode);
         if (chr == null || (action == null)) {
             FileoutputUtil.log("玩家互动未知的操作类型: " + mode + " " + slea.toString());
-            c.getSession().write(MaplePacketCreator.enableActions());
+            c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         chr.setScrolledPosition((short) 0);
@@ -46,7 +46,7 @@ public class PlayerInteractionHandler {
             case 创建:
                 if ((chr.getPlayerShop() != null) || (c.getChannelServer().isShutdown()) || (chr.hasBlockedInventory())) {
                     chr.dropMessage(1, "现在还不能进行.");
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
                 byte createType = slea.readByte();
@@ -58,12 +58,12 @@ public class PlayerInteractionHandler {
                     }
                     if ((!chr.getMap().getMapObjectsInRange(chr.getTruePosition(), 20000.0D, Arrays.asList(new MapleMapObjectType[]{MapleMapObjectType.SHOP, MapleMapObjectType.HIRED_MERCHANT})).isEmpty()) || (!chr.getMap().getPortalsInRange(chr.getTruePosition(), 20000.0D).isEmpty())) {
                         chr.dropMessage(1, "无法在这个地方使用.");
-                        c.getSession().write(MaplePacketCreator.enableActions());
+                        c.sendPacket(MaplePacketCreator.enableActions());
                         return;
                     }
                     if (((createType == 1) || (createType == 2)) && ((FieldLimitType.Minigames.check(chr.getMap().getFieldLimit())) || (chr.getMap().allowPersonalShop()))) {
                         chr.dropMessage(1, "无法在这个地方使用.");
-                        c.getSession().write(MaplePacketCreator.enableActions());
+                        c.sendPacket(MaplePacketCreator.enableActions());
                         return;
                     }
 
@@ -95,12 +95,12 @@ public class PlayerInteractionHandler {
                             MaplePlayerShop mps = new MaplePlayerShop(chr, shop.getItemId(), desc);
                             chr.setPlayerShop(mps);
                             chr.getMap().addMapObject(mps);
-                            c.getSession().write(PlayerShopPacket.getPlayerStore(chr, true));
+                            c.sendPacket(PlayerShopPacket.getPlayerStore(chr, true));
                         } else if (HiredMerchantHandler.UseHiredMerchant(chr.getClient(), false)) {
                             HiredMerchant merch = new HiredMerchant(chr, shop.getItemId(), desc);
                             chr.setPlayerShop(merch);
                             chr.getMap().addMapObject(merch);
-                            c.getSession().write(PlayerShopPacket.getHiredMerch(chr, merch, true));
+                            c.sendPacket(PlayerShopPacket.getHiredMerch(chr, merch, true));
                         }
                     }
                 }
@@ -111,7 +111,7 @@ public class PlayerInteractionHandler {
                 }
                 MapleCharacter chrr = chr.getMap().getCharacterById(slea.readInt());
                 if ((chrr == null) || (c.getChannelServer().isShutdown()) || (chrr.hasBlockedInventory())) {
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
                 MapleTrade.inviteTrade(chr, chrr);
@@ -121,7 +121,7 @@ public class PlayerInteractionHandler {
                 break;
             case 访问:
                 if (c.getChannelServer().isShutdown()) {
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
                 if ((chr.getTrade() != null) && (chr.getTrade().getPartner() != null) && (!chr.getTrade().inTrade())) {
@@ -143,7 +143,7 @@ public class PlayerInteractionHandler {
                                 merchant.setOpen(false);
                                 merchant.removeAllVisitors(18, 1);
                                 chr.setPlayerShop(ips);
-                                c.getSession().write(PlayerShopPacket.getHiredMerch(chr, merchant, false));
+                                c.sendPacket(PlayerShopPacket.getHiredMerch(chr, merchant, false));
                             } else if ((!merchant.isOpen()) || (!merchant.isAvailable())) {
                                 chr.dropMessage(1, "主人正在整理商店物品\r\n请稍后再度光临！");
                             } else if (ips.getFreeSlot() == -1) {
@@ -153,13 +153,13 @@ public class PlayerInteractionHandler {
                             } else {
                                 chr.setPlayerShop(ips);
                                 merchant.addVisitor(chr);
-                                c.getSession().write(PlayerShopPacket.getHiredMerch(chr, merchant, false));
+                                c.sendPacket(PlayerShopPacket.getHiredMerch(chr, merchant, false));
                             }
 
                         } else if (((ips instanceof MaplePlayerShop)) && (((MaplePlayerShop) ips).isBanned(chr.getName()))) {
                             chr.dropMessage(1, "你被禁止进入该店铺");
                         } else if ((ips.getFreeSlot() < 0) || (ips.getVisitorSlot(chr) > -1) || (!ips.isOpen()) || (!ips.isAvailable())) {
-                            c.getSession().write(PlayerShopPacket.getMiniGameFull());
+                            c.sendPacket(PlayerShopPacket.getMiniGameFull());
                         } else {
                             if ((slea.available() > 0L) && (slea.readByte() > 0)) {
                                 String pass = slea.readMapleAsciiString();
@@ -176,7 +176,7 @@ public class PlayerInteractionHandler {
                             if ((ips instanceof MapleMiniGame)) {
                                 ((MapleMiniGame) ips).send(c);
                             } else {
-                                c.getSession().write(PlayerShopPacket.getPlayerStore(chr, false));
+                                c.sendPacket(PlayerShopPacket.getPlayerStore(chr, false));
                             }
                         }
                     }
@@ -229,7 +229,7 @@ public class PlayerInteractionHandler {
                 if (chr.getMap().allowPersonalShop()) {
                     if (c.getChannelServer().isShutdown()) {
                         chr.dropMessage(1, "服务器即将关闭维护，暂时无法进行此操作。.");
-                        c.getSession().write(MaplePacketCreator.enableActions());
+                        c.sendPacket(MaplePacketCreator.enableActions());
                         shop.closeShop(shop.getShopType() == 1, false);
                         return;
                     }
@@ -268,7 +268,7 @@ public class PlayerInteractionHandler {
                 boolean canTrade = true;
                 if (item.getItemId() == 4000463 && !canTrade) {
                     chr.dropMessage(1, "该道具无法进行交易.");
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                 } else if ((quantity <= item.getQuantity() && quantity >= 0) || ItemConstants.is飞镖道具(item.getItemId()) || ItemConstants.is子弹道具(item.getItemId())) {
                     chr.getTrade().setItems(c, item, targetSlot, quantity);
                 }
@@ -303,7 +303,7 @@ public class PlayerInteractionHandler {
                 int price = slea.readInt();
                 if ((price <= 0) || (bundles <= 0) || (perBundle <= 0)) {
                     chr.dropMessage(1, "添加物品出现错误(1)");
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
                 shop = chr.getPlayerShop();
@@ -323,21 +323,21 @@ public class PlayerInteractionHandler {
                 if (ivItem.getQuantity() >= bundles_perbundle) {
                     short flag = ivItem.getFlag();
                     if (ItemFlag.封印.check(flag)) {
-                        c.getSession().write(MaplePacketCreator.enableActions());
+                        c.sendPacket(MaplePacketCreator.enableActions());
                         return;
                     }
                     if (ItemFlag.不可交易.check(flag) && !ItemFlag.KARMA_USE.check(flag)) {
-                        c.getSession().write(MaplePacketCreator.enableActions());
+                        c.sendPacket(MaplePacketCreator.enableActions());
                         return;
                     }
                     if ((ii.isDropRestricted(ivItem.getItemId()) || ii.isAccountShared(ivItem.getItemId())) && !ItemFlag.KARMA_USE.check(flag)) {
-                        c.getSession().write(MaplePacketCreator.enableActions());
+                        c.sendPacket(MaplePacketCreator.enableActions());
                         return;
                     }
 
                     if (ivItem.getItemId() == 4000463) {
                         chr.dropMessage(1, "该道具无法进行贩卖.");
-                        c.getSession().write(MaplePacketCreator.enableActions());
+                        c.sendPacket(MaplePacketCreator.enableActions());
                         return;
                     }
                     if ((bundles_perbundle >= 50) && (ivItem.getItemId() == 2340000)) {
@@ -345,7 +345,7 @@ public class PlayerInteractionHandler {
                     }
                     if (ItemConstants.getLowestPrice(ivItem.getItemId()) > price) {
                         c.getPlayer().dropMessage(1, "The lowest you can sell this for is " + ItemConstants.getLowestPrice(ivItem.getItemId()));
-                        c.getSession().write(MaplePacketCreator.enableActions());
+                        c.sendPacket(MaplePacketCreator.enableActions());
                         return;
                     }
                     if ((ItemConstants.is飞镖道具(ivItem.getItemId())) || (ItemConstants.is子弹道具(ivItem.getItemId()))) {
@@ -358,7 +358,7 @@ public class PlayerInteractionHandler {
                         sellItem.setQuantity(perBundle);
                         shop.addItem(new MaplePlayerShopItem(sellItem, bundles, price));
                     }
-                    c.getSession().write(PlayerShopPacket.shopItemUpdate(shop));
+                    c.sendPacket(PlayerShopPacket.shopItemUpdate(shop));
                 } else {
                     chr.dropMessage(1, "添加物品的数量错误。如果是飞镖，子弹之类请充了后在进行贩卖。");
                 }
@@ -377,13 +377,13 @@ public class PlayerInteractionHandler {
                 shop = chr.getPlayerShop();
                 if ((shop == null) || (shop.isOwner(chr)) || ((shop instanceof MapleMiniGame)) || (item1 >= shop.getItems().size())) {
                     chr.dropMessage(1, "购买道具出现错误(1)");
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
                 MaplePlayerShopItem tobuy = (MaplePlayerShopItem) shop.getItems().get(item1);
                 if (tobuy == null) {
                     chr.dropMessage(1, "购买道具出现错误(2)");
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
                 check = tobuy.bundles * quantity;
@@ -391,17 +391,17 @@ public class PlayerInteractionHandler {
                 long check3 = tobuy.item.getQuantity() * quantity;
                 if ((check <= 0L) || (check2 > 9999999999L) || (check2 <= 0L) || (check3 > 32767L) || (check3 < 0L)) {
                     chr.dropMessage(1, "购买道具出现错误(3)");
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
                 if (chr.getMeso() - check2 < 0L) {
-                    c.getSession().write(PlayerShopPacket.Merchant_Buy_Error((byte) 2));
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(PlayerShopPacket.Merchant_Buy_Error((byte) 2));
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
                 if ((tobuy.bundles < quantity) || ((tobuy.bundles % quantity != 0) && (ItemConstants.isEquip(tobuy.item.getItemId()))) || (chr.getMeso() - check2 > 9999999999L) || (shop.getMeso() + check2 < 0L) || (shop.getMeso() + check2 > 9999999999L)) {
                     chr.dropMessage(1, "购买道具出现错误(4)");
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
                 if ((quantity >= 50) && (tobuy.item.getItemId() == 2340000)) {
@@ -428,7 +428,7 @@ public class PlayerInteractionHandler {
                                 merchant.setOpen(false);
                                 merchant.removeAllVisitors(18, 1);
                                 chr.setPlayerShop(ips);
-                                c.getSession().write(PlayerShopPacket.getHiredMerch(chr, merchant, false));
+                                c.sendPacket(PlayerShopPacket.getHiredMerch(chr, merchant, false));
                             } else if ((!merchant.isOpen()) || (!merchant.isAvailable())) {
                                 chr.dropMessage(1, "主人正在整理商店物品\r\n请稍后再度光临！");
                             } else if (ips.getFreeSlot() == -1) {
@@ -439,7 +439,7 @@ public class PlayerInteractionHandler {
                         }
                     }
                 } else {
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                 }
                 break;
             case 移除物品:
@@ -474,7 +474,7 @@ public class PlayerInteractionHandler {
                     }
                 }
 
-                c.getSession().write(PlayerShopPacket.shopItemUpdate(shop1));
+                c.sendPacket(PlayerShopPacket.shopItemUpdate(shop1));
                 break;
             case 打开:
                 // c.getPlayer().haveItem(mode, 1, false, true)
@@ -485,7 +485,7 @@ public class PlayerInteractionHandler {
                 if (chr.getMap().allowPersonalShop()) {
                     if (c.getChannelServer().isShutdown()) {
                         chr.dropMessage(1, "服务器即将关闭维护，暂时无法进行此操作。.");
-                        c.getSession().write(MaplePacketCreator.enableActions());
+                        c.sendPacket(MaplePacketCreator.enableActions());
                         shop.closeShop(shop.getShopType() == 1, false);
                         return;
                     }
@@ -519,7 +519,7 @@ public class PlayerInteractionHandler {
                     shop.getMessages().clear();
                     shop.removeAllVisitors(-1, -1);
                 }
-                c.getSession().write(MaplePacketCreator.enableActions());
+                c.sendPacket(MaplePacketCreator.enableActions());
                 break;
             case 雇佣商店_整理:
                 IMaplePlayerShop imps = chr.getPlayerShop();
@@ -537,23 +537,23 @@ public class PlayerInteractionHandler {
                     FileoutputUtil.hiredMerchLog(chr.getName(), "雇佣整理获得金币: " + imps.getMeso());
                     imps.setMeso(0);
                 }
-                c.getSession().write(PlayerShopPacket.shopItemUpdate(imps));
+                c.sendPacket(PlayerShopPacket.shopItemUpdate(imps));
                 break;
             case 雇佣商店_关闭:
                 IMaplePlayerShop merchant = chr.getPlayerShop();
                 if ((merchant != null) && (merchant.getShopType() == 1) && (merchant.isOwner(chr))) {
-                    c.getSession().write(PlayerShopPacket.hiredMerchantOwnerLeave());
+                    c.sendPacket(PlayerShopPacket.hiredMerchantOwnerLeave());
                     merchant.removeAllVisitors(-1, -1);
                     chr.setPlayerShop(null);
                     merchant.closeShop(true, true);
                 } else {
                     chr.dropMessage(1, "关闭商店出现未知错误.");
-                    c.getSession().write(MaplePacketCreator.enableActions());
+                    c.sendPacket(MaplePacketCreator.enableActions());
                 }
                 break;
             case 雇佣商店_错误提示:
                 chr.dropMessage(1, "暂不支持管理员修改雇佣商店的名字.");
-                c.getSession().write(MaplePacketCreator.enableActions());
+                c.sendPacket(MaplePacketCreator.enableActions());
                 break;
             case 雇佣商店_查看访问名单:
                 merchant = chr.getPlayerShop();
@@ -592,7 +592,7 @@ public class PlayerInteractionHandler {
                 if (((HiredMerchant) merchant).canChangeName()) {
                     merchant.setDescription(desc);
                 } else {
-                    c.getSession().write(MaplePacketCreator.craftMessage("还不能变更名称，还需要等待" + ((HiredMerchant) merchant).getChangeNameTimeLeft() + "秒。"));
+                    c.sendPacket(MaplePacketCreator.craftMessage("还不能变更名称，还需要等待" + ((HiredMerchant) merchant).getChangeNameTimeLeft() + "秒。"));
                 }
                 break;
             case GIVE_UP:
@@ -665,7 +665,7 @@ public class PlayerInteractionHandler {
                 if (game.isOwner(chr)) {
                     game.broadcastToVisitors(PlayerShopPacket.getMiniGameRequestTie(), false);
                 } else {
-                    game.getMCOwner().getClient().getSession().write(PlayerShopPacket.getMiniGameRequestTie());
+                    game.getMCOwner().getClient().sendPacket(PlayerShopPacket.getMiniGameRequestTie());
                 }
                 game.setRequestedTie(game.getVisitorSlot(chr));
                 break;
@@ -747,7 +747,7 @@ public class PlayerInteractionHandler {
                     if (game.isOwner(chr)) {
                         game.broadcastToVisitors(PlayerShopPacket.getMatchCardSelect(turn, slot2, fs, turn), false);
                     } else {
-                        game.getMCOwner().getClient().getSession().write(PlayerShopPacket.getMatchCardSelect(turn, slot2, fs, turn));
+                        game.getMCOwner().getClient().sendPacket(PlayerShopPacket.getMatchCardSelect(turn, slot2, fs, turn));
                     }
                     game.setTurn(0);
                     return;
@@ -779,7 +779,7 @@ public class PlayerInteractionHandler {
                 if (ServerProperties.ShowPacket()) {
                     FileoutputUtil.log("玩家互动未知的操作类型: 0x" + StringUtil.getLeftPaddedStr(Integer.toHexString(mode).toUpperCase(), '0', 2) + " " + slea.toString());
                 }
-                c.getSession().write(MaplePacketCreator.enableActions());
+                c.sendPacket(MaplePacketCreator.enableActions());
         }
     }
 }

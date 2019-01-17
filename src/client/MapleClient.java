@@ -230,7 +230,7 @@ public class MapleClient implements Serializable {
 
     private Calendar getTempBanCalendar(ResultSet rs) throws SQLException {
         Calendar lTempban = Calendar.getInstance();
-        if (rs.getLong("tempban") == 0L) {
+        if (rs.getTimestamp("tempban") == null) {
             lTempban.setTimeInMillis(0L);
             return lTempban;
         }
@@ -403,7 +403,7 @@ public class MapleClient implements Serializable {
             for (final MapleCharacter mch : cserv.getPlayerStorage().getAllCharacters()) {
                 if (mch.getAccountID() == accId) {
                     try {
-                        mch.getClient().getSession().write(MaplePacketCreator.serverMessagePopUp("当前账号在别的地方登录了\r\n若不是你本人操作请及时更改密码。"));
+                        mch.getClient().sendPacket(MaplePacketCreator.serverMessagePopUp("当前账号在别的地方登录了\r\n若不是你本人操作请及时更改密码。"));
                         mch.getClient().disconnect(true, mch.getClient().getChannel() == -10);
                         Thread closeSession = new Thread() {
                             @Override
@@ -975,7 +975,7 @@ public class MapleClient implements Serializable {
 
     public void sendPing() {
         this.lastPing = System.currentTimeMillis();
-        getSession().write(LoginPacket.getPing());
+        sendPacket(LoginPacket.getPing());
 
         PingTimer.getInstance().schedule(new Runnable() {
             @Override
@@ -1472,5 +1472,20 @@ public class MapleClient implements Serializable {
             this.name = name;
             this.id = id;
         }
+    }
+
+    public void sendPacket(byte[] packet){
+        if(packet == null){
+            throw new IllegalArgumentException("packet cannot be null");
+        }
+        if(packet.length == 0){
+            return;//We don't want to bother netty
+        }
+//        connectionLock.lock();
+//        try{
+            this.session.writeAndFlush(packet);
+//        }finally{
+//            connectionLock.unlock();
+//        }
     }
 }

@@ -962,7 +962,7 @@ public class MapleGuild
         if (mc.getGuildId() > 0) {
             return MapleGuildResponse.ALREADY_IN_GUILD;
         }
-        mc.getClient().getSession().write(GuildPacket.guildInvite(c.getPlayer().getGuildId(), c.getPlayer().getName(), c.getPlayer().getLevel(), c.getPlayer().getJob()));
+        mc.getClient().sendPacket(GuildPacket.guildInvite(c.getPlayer().getGuildId(), c.getPlayer().getName(), c.getPlayer().getLevel(), c.getPlayer().getJob()));
         return null;
     }
 

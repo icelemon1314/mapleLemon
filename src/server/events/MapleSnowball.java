@@ -124,7 +124,7 @@ public class MapleSnowball extends MapleEvent {
 
         public void broadcast(MapleMap map, int message) {
             for (MapleCharacter chr : map.getCharactersThreadsafe()) {
-                chr.getClient().getSession().write(MaplePacketCreator.snowballMessage(this.team, message));
+                chr.getClient().sendPacket(MaplePacketCreator.snowballMessage(this.team, message));
             }
         }
 
@@ -147,8 +147,8 @@ public class MapleSnowball extends MapleEvent {
                     chr.getMap().broadcastMessage(MaplePacketCreator.hitSnowBall(team, damage, 0, 1));
                     if (damage == 0) {
                         if (Math.random() < 0.2D) {
-                            chr.getClient().getSession().write(MaplePacketCreator.leftKnockBack());
-                            chr.getClient().getSession().write(MaplePacketCreator.enableActions());
+                            chr.getClient().sendPacket(MaplePacketCreator.leftKnockBack());
+                            chr.getClient().sendPacket(MaplePacketCreator.enableActions());
                         }
                     } else {
                         ball.setPositionX(ball.getPosition() + 1);

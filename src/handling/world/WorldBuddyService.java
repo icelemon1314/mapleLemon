@@ -19,7 +19,7 @@ public class WorldBuddyService {
             if (ch > 0) {
                 MapleCharacter chr = ChannelServer.getInstance(ch).getPlayerStorage().getCharacterById(characterId);
                 if ((chr != null) && (chr.getBuddylist().containsVisible(chrIdFrom))) {
-                    chr.getClient().getSession().write(MaplePacketCreator.multiChat(nameFrom, chatText, 0));
+                    chr.getClient().sendPacket(MaplePacketCreator.multiChat(nameFrom, chatText, 0));
                     if (chr.getClient().isMonitored()) {
                         WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverMessageNotice("[GM 信息] " + nameFrom + " said to " + chr.getName() + " (好友): " + chatText));
                     }
@@ -46,7 +46,7 @@ public class WorldBuddyService {
                         ble.setChannel(channel);
                         mcChannel = channel - 1;
                     }
-                    chr.getClient().getSession().write(BuddyListPacket.updateBuddyChannel(ble.getCharacterId(), mcChannel, chr.getClient().getAccID()));
+                    chr.getClient().sendPacket(BuddyListPacket.updateBuddyChannel(ble.getCharacterId(), mcChannel, chr.getClient().getAccID()));
                 }
             }
         }
@@ -64,14 +64,14 @@ public class WorldBuddyService {
                             break;
                         }
                         buddylist.put(new BuddylistEntry(name, chrIdFrom, group, channel, true));
-                        addChar.getClient().getSession().write(BuddyListPacket.updateBuddyChannel(chrIdFrom, channel - 1, addChar.getClient().getAccID()));
+                        addChar.getClient().sendPacket(BuddyListPacket.updateBuddyChannel(chrIdFrom, channel - 1, addChar.getClient().getAccID()));
                         break;
                     case 删除好友:
                         if (!buddylist.contains(chrIdFrom)) {
                             break;
                         }
                         buddylist.put(new BuddylistEntry(name, chrIdFrom, group, -1, buddylist.get(chrIdFrom).isVisible()));
-                        addChar.getClient().getSession().write(BuddyListPacket.updateBuddyChannel(chrIdFrom, -1, addChar.getClient().getAccID()));
+                        addChar.getClient().sendPacket(BuddyListPacket.updateBuddyChannel(chrIdFrom, -1, addChar.getClient().getAccID()));
                 }
             }
         }

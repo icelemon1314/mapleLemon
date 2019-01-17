@@ -81,7 +81,7 @@ public class DebugWindow extends JFrame {
         this.jTextArea1.setText(null);
         this.jLabel1.setText(null);
         if ((this.c != null) && (data.length >= 2)) {
-            this.c.getSession().write(MaplePacketCreator.testPacket(data));
+            this.c.sendPacket(MaplePacketCreator.testPacket(data));
             this.jLabel1.setText("发送成功，发送的封包长度: " + data.length);
         } else {
             this.jLabel1.setText("发送失败，发送的封包长度: " + data.length);
