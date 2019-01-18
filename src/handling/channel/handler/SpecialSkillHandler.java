@@ -7,7 +7,8 @@ import client.SkillFactory;
 import handling.MaplePacketHandler;
 import server.MapleStatEffect;
 import server.maps.FieldLimitType;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 
@@ -50,12 +51,12 @@ public class SpecialSkillHandler extends MaplePacketHandler {
                 c.sendPacket(MaplePacketCreator.enableActions());
                 return;
             }
-            c.sendPacket(MaplePacketCreator.skillCooldown(skillid, effect.getCooldown(chr)));
+//            c.sendPacket(MaplePacketCreator.skillCooldown(skillid, effect.getCooldown(chr)));
             chr.addCooldown(skillid, System.currentTimeMillis(), effect.getCooldown(chr) * 1000);
         }
-        FileoutputUtil.log("看是否有特需处理的BUFF");
+        MapleLogger.info("看是否有特需处理的BUFF");
         if (effect.is时空门()) {
-            FileoutputUtil.log("释放时空们");
+            MapleLogger.info("释放时空们");
             if (!FieldLimitType.MysticDoor.check(chr.getMap().getFieldLimit())) {
                 effect.applyTo(c.getPlayer(), pos);
             } else {
@@ -68,7 +69,7 @@ public class SpecialSkillHandler extends MaplePacketHandler {
 //                c.sendPacket(MaplePacketCreator.enableActions());
 //                return;
 //            }
-            FileoutputUtil.log("释放技能效果！");
+            MapleLogger.info("释放技能效果！");
             effect.applyTo(chr, pos);
         }
     }

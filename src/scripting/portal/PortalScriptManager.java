@@ -17,7 +17,8 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import server.MaplePortal;
 import tools.EncodingDetect;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.packet.NPCPacket;
 
 public class PortalScriptManager {
@@ -47,7 +48,7 @@ public class PortalScriptManager {
             compiled.eval();
         } catch (Exception e) {
             System.err.println("请检查传送点脚本名为:(" + scriptName + ".js)的文件." + e);
-            FileoutputUtil.log(FileoutputUtil.Portal_ScriptEx_Log, "请检查传送点脚本名为:(" + scriptName + ".js)的文件. " + e);
+            MapleLogger.info("请检查传送点脚本名为:(" + scriptName + ".js)的文件. " + e);
         } finally {
             if (fr != null) {
                 try {
@@ -77,14 +78,14 @@ public class PortalScriptManager {
                 if (c.getPlayer().isShowPacket()) {
                     c.getPlayer().dropMessage(5, "执行地图脚本过程中发生错误.请检查传送点脚本名为:( " + portal.getScriptName() + ".js)的文件，错误信息：" + e);
                 }
-                FileoutputUtil.log(FileoutputUtil.Portal_ScriptEx_Log, "执行地图脚本过程中发生错误.请检查传送点脚本名为:( " + portal.getScriptName() + ".js)的文件.\r\n错误信息:" + e);
+                MapleLogger.info("执行地图脚本过程中发生错误.请检查传送点脚本名为:( " + portal.getScriptName() + ".js)的文件.\r\n错误信息:" + e);
             }
         } else {
             err = true;
             if (c.getPlayer().isShowPacket()) {
                 c.getPlayer().dropMessage(5, "未找到传送点脚本名为:(" + portal.getScriptName() + ".js)的文件 在地图 " + c.getPlayer().getMapId() + " - " + c.getPlayer().getMap().getMapName());
             }
-            FileoutputUtil.log(FileoutputUtil.Portal_ScriptEx_Log, "执行地图脚本过程中发生错误.未找到传送点脚本名为:(" + portal.getScriptName() + ".js)的文件 在地图 " + c.getPlayer().getMapId() + " - " + c.getPlayer().getMap().getMapName());
+            MapleLogger.info("执行地图脚本过程中发生错误.未找到传送点脚本名为:(" + portal.getScriptName() + ".js)的文件 在地图 " + c.getPlayer().getMapId() + " - " + c.getPlayer().getMap().getMapName());
         }
         if (err) {
             c.getPlayer().卡图 = c.getPlayer().getMapId();

@@ -33,7 +33,8 @@ import provider.MapleData;
 import provider.MapleDataProvider;
 import provider.MapleDataProviderFactory;
 import provider.MapleDataTool;
-import tools.FileoutputUtil;
+import tools.MapleLogger;
+
 
 public class DumpMobSkills {
 
@@ -87,10 +88,10 @@ public class DumpMobSkills {
     public void dumpMobSkills(PreparedStatement ps) throws Exception {
         if (!update) {
             delete("DELETE FROM wz_mobskilldata");
-            FileoutputUtil.log("Deleted wz_mobskilldata successfully.");
+            MapleLogger.info("Deleted wz_mobskilldata successfully.");
         }
         final MapleData skillz = skill.getData("MobSkill.img");
-        FileoutputUtil.log("Adding into wz_mobskilldata.....");
+        MapleLogger.info("Adding into wz_mobskilldata.....");
 
         for (MapleData ids : skillz.getChildren()) {
             for (MapleData lvlz : ids.getChildByPath("level").getChildren()) {
@@ -143,11 +144,11 @@ public class DumpMobSkills {
                     ps.setInt(16, 0);
                 }
                 ps.setByte(17, (byte) (MapleDataTool.getInt("summonOnce", lvlz, 0) > 0 ? 1 : 0));
-                FileoutputUtil.log("Added skill: " + id + " level " + lvl);
+                MapleLogger.info("Added skill: " + id + " level " + lvl);
                 ps.addBatch();
             }
         }
-        FileoutputUtil.log("Done wz_mobskilldata...");
+        MapleLogger.info("Done wz_mobskilldata...");
     }
 
     public int currentId() {
@@ -166,13 +167,13 @@ public class DumpMobSkills {
         int currentQuest = 0;
         try {
             final DumpMobSkills dq = new DumpMobSkills(update);
-            FileoutputUtil.log("Dumping mobskills");
+            MapleLogger.info("Dumping mobskills");
             dq.dumpMobSkills();
             hadError |= dq.isHadError();
             currentQuest = dq.currentId();
         } catch (Exception e) {
             hadError = true;
-            FileoutputUtil.log(currentQuest + " skill.");
+            MapleLogger.info(currentQuest + " skill.");
         }
         long endTime = System.currentTimeMillis();
         double elapsedSeconds = (endTime - startTime) / 1000.0;
@@ -183,6 +184,6 @@ public class DumpMobSkills {
         if (hadError) {
             withErrors = " with errors";
         }
-        FileoutputUtil.log("Finished" + withErrors + " in " + elapsedMinutes + " minutes " + elapsedSecs + " seconds");
+        MapleLogger.info("Finished" + withErrors + " in " + elapsedMinutes + " minutes " + elapsedSecs + " seconds");
     }
 }

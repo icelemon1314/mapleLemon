@@ -14,8 +14,9 @@ import server.life.MapleNPC;
 import server.life.PlayerNPC;
 import server.shop.MapleShop;
 import server.shop.MapleShopResponse;
-import tools.FileoutputUtil;
+
 import tools.HexTool;
+import tools.MapleLogger;
 import tools.Pair;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
@@ -85,16 +86,6 @@ public class NPCPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] setNPCSpecialAction(int oid, String action) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.write(SendPacketOpcode.NPC_SET_SPECIAL_ACTION.getValue());
-        mplew.writeInt(oid);
-        mplew.writeMapleAsciiString(action);
-        mplew.writeInt(0); //unknown yet
-        mplew.write(0); //unknown yet
-        return mplew.getPacket();
-    }
-
     public static byte[] NPCSpecialAction(MapleNPC life) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.NPC_ACTION.getValue());
@@ -127,71 +118,6 @@ public class NPCPacket {
         mplew.writeInt(npc);
         mplew.write(HexTool.getByteArrayFromHexString(code));
 
-        return mplew.getPacket();
-    }
-
-    public static byte[] spawnPlayerNPC(PlayerNPC npc) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.write(SendPacketOpcode.PLAYER_NPC.getValue());
-        mplew.write(npc.getF() == 1 ? 0 : 1);
-        mplew.writeInt(npc.getId());
-        mplew.writeMapleAsciiString(npc.getName());
-        mplew.write(npc.getGender());
-        mplew.write(npc.getSkin());
-        mplew.writeInt(npc.getFace());
-        mplew.writeInt(0);
-        mplew.write(0);
-        mplew.writeInt(npc.getHair());
-        Map<Byte, Integer> equip = npc.getEquips();
-        Map<Byte, Integer> myEquip = new LinkedHashMap();
-        Map<Byte, Integer> maskedEquip = new LinkedHashMap();
-        for (Entry<Byte, Integer> position : equip.entrySet()) {
-            byte pos = (byte) ((position.getKey()) * -1);
-            if ((pos < 100) && (myEquip.get(pos) == null)) {
-                myEquip.put(pos, position.getValue());
-            } else if ((pos > 100) && (pos != 111)) {
-                pos = (byte) (pos - 100);
-                if (myEquip.get(pos) != null) {
-                    maskedEquip.put(pos, myEquip.get(pos));
-                }
-                myEquip.put(pos, position.getValue());
-            } else if (myEquip.get(pos) != null) {
-                maskedEquip.put(pos, position.getValue());
-            }
-        }
-        for (Map.Entry entry : myEquip.entrySet()) {
-            mplew.write(((Byte) entry.getKey()));
-            mplew.writeInt(((Integer) entry.getValue()));
-        }
-        mplew.write(255);
-        for (Map.Entry entry : maskedEquip.entrySet()) {
-            mplew.write(((Byte) entry.getKey()));
-            mplew.writeInt(((Integer) entry.getValue()));
-        }
-        mplew.write(255);
-        Integer cWeapon = equip.get(Byte.valueOf((byte) -111));
-        if (cWeapon != null) {
-            mplew.writeInt(cWeapon);
-        } else {
-            mplew.writeInt(0);
-        }
-        for (int i = 0; i < 3; i++) {
-            mplew.writeInt(npc.getPet(i));
-        }
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] setNPCScriptable(List<Pair<Integer, String>> npcs) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.write(SendPacketOpcode.NPC_SCRIPTABLE.getValue());
-        mplew.write(npcs.size());
-        for (Pair s : npcs) {
-            mplew.writeInt(((Integer) s.left));
-            mplew.writeMapleAsciiString((String) s.right);
-            mplew.writeInt(0);
-            mplew.writeInt(2147483647);
-        }
         return mplew.getPacket();
     }
 
@@ -402,7 +328,7 @@ public class NPCPacket {
                 case 3: size[3]++; break;
                 case 4: size[4]++; break;
                 case 5: size[5]++; break;
-                default: FileoutputUtil.log("Unknown type found!"); break;
+                default: MapleLogger.info("Unknown type found!"); break;
             }
         }
 
@@ -506,17 +432,6 @@ public class NPCPacket {
         mplew.write(SendPacketOpcode.SPAWN_NPC_REQUEST_CONTROLLER.getValue());
         mplew.write(1);
         mplew.writeInt(npc);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] NPCSpecialAction(int oid, int value, int x, int y) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.write(SendPacketOpcode.NPC_UPDATE_LIMITED_INFO.getValue());
-        mplew.writeInt(oid);
-        mplew.writeInt(value);
-        mplew.writeInt(x);
-        mplew.writeInt(y);
 
         return mplew.getPacket();
     }

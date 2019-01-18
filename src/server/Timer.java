@@ -1,11 +1,13 @@
 package server;
 
+import tools.MapleLogger;
+
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import tools.FileoutputUtil;
+
 
 public abstract class Timer {
 
@@ -94,7 +96,7 @@ public abstract class Timer {
             try {
                 this.r.run();
             } catch (Throwable t) {
-                FileoutputUtil.outputFileError(this.file, t);
+                MapleLogger.error(this.file, t);
             }
         }
     }

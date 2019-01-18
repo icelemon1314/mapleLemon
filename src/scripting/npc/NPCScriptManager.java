@@ -8,7 +8,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import scripting.AbstractScriptManager;
 import scripting.ScriptType;
-import tools.FileoutputUtil;
+import tools.MapleLogger;
+
 
 public class NPCScriptManager extends AbstractScriptManager {
 
@@ -58,7 +59,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             }
         } catch (NoSuchMethodException | ScriptException e) {
             System.err.println("NPC脚本出错（ID : " + npcId + "）模式：" + npcMode + "错误内容: " + e);
-            FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "NPC脚本出错（ID : " + npcId + "）模式" + npcMode + ".\r\n错误信息：" + e);
+            MapleLogger.info("NPC脚本出错（ID : " + npcId + "）模式" + npcMode + ".\r\n错误信息：" + e);
             dispose(c);
             notice(c, npcId, npcMode);
         }
@@ -81,7 +82,7 @@ public class NPCScriptManager extends AbstractScriptManager {
                 int npcId = cm.getNpc();
                 String npcMode = cm.getScript();
                 System.err.println("NPC脚本出错（ID : " + npcId + "）模式：" + npcMode + "  错误内容：" + e);
-                FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "NPC脚本出错（ID : " + npcId + "）模式：" + npcMode + ". \r\n错误信息：" + e);
+                MapleLogger.info("NPC脚本出错（ID : " + npcId + "）模式：" + npcMode + ". \r\n错误信息：" + e);
                 dispose(c);
                 notice(c, npcId, npcMode);
             }
@@ -151,7 +152,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             ScriptEngine scriptengine = (ScriptEngine) iv;
             NPCConversationManager cm = new NPCConversationManager(c, 0, script, ScriptType.ON_USER_ENTER, iv);
             if (this.cms.containsValue(cm)) {
-                FileoutputUtil.log("无法执行脚本:已有脚本執行-" + cms.containsKey(c) + "脚本名称：" + script + c.getPlayer().getMap().getMapName());
+                MapleLogger.info("无法执行脚本:已有脚本執行-" + cms.containsKey(c) + "脚本名称：" + script + c.getPlayer().getMap().getMapName());
                 if (c.getPlayer().isShowPacket()) {
                     c.getPlayer().dropMessage(5, "无法执行脚本:已有脚本執行-" + cms.containsKey(c));
                 }
@@ -160,7 +161,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             }
             if ((iv == null) || (getInstance() == null)) {
                 if (iv == null) {
-                    FileoutputUtil.log("找不到onUserEnter脚本 :(" + script + "),所在地图(ID:" + c.getPlayer().getMapId() + ")");
+                    MapleLogger.info("找不到onUserEnter脚本 :(" + script + "),所在地图(ID:" + c.getPlayer().getMapId() + ")");
                 }
                 dispose(c);
                 return;
@@ -171,13 +172,13 @@ public class NPCScriptManager extends AbstractScriptManager {
             c.setClickedNPC();
             try {
                 iv.invokeFunction("start", new Object[0]);
-                FileoutputUtil.log("开始执行onUserEnter脚本 :(" + script + "), 所在地图(ID:" + c.getPlayer().getMapId() + ")");
+                MapleLogger.info("开始执行onUserEnter脚本 :(" + script + "), 所在地图(ID:" + c.getPlayer().getMapId() + ")");
             } catch (NoSuchMethodException nsme) {
                 iv.invokeFunction("action", new Object[]{(byte) 1, (byte) 0, (int) (byte) 0});
             }
         } catch (NoSuchMethodException | ScriptException e) {
             System.err.println("执行地图onUserEnter脚本出錯 : " + script + ". 错误内容" + e);
-            FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "执行地图onUserEnter脚本出錯 : " + script + ".\r\n错误信息：" + e);
+            MapleLogger.info("执行地图onUserEnter脚本出錯 : " + script + ".\r\n错误信息：" + e);
             dispose(c);
         }
     }
@@ -199,7 +200,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             NPCConversationManager cm = new NPCConversationManager(c, 0, script, ScriptType.ON_FIRST_USER_ENTER, iv);
             if ((iv == null) || (getInstance() == null)) {
                 if (iv == null) {
-                    FileoutputUtil.log("找不到onFirstUserEnter脚本 :" + script + ",所在地图(ID:" + c.getPlayer().getMapId() + ")");
+                    MapleLogger.info("找不到onFirstUserEnter脚本 :" + script + ",所在地图(ID:" + c.getPlayer().getMapId() + ")");
                 }
                 dispose(c);
                 return;
@@ -210,13 +211,13 @@ public class NPCScriptManager extends AbstractScriptManager {
             c.setClickedNPC();
             try {
                 iv.invokeFunction("start", new Object[0]);
-                FileoutputUtil.log("开始执行onFirstUserEnter脚本 :(" + script + "), 所在地图(ID:" + c.getPlayer().getMapId() + ")");
+                MapleLogger.info("开始执行onFirstUserEnter脚本 :(" + script + "), 所在地图(ID:" + c.getPlayer().getMapId() + ")");
             } catch (NoSuchMethodException nsme) {
                 iv.invokeFunction("action", new Object[]{(byte) 1, (byte) 0, (int) (byte) 0});
             }
         } catch (NoSuchMethodException | ScriptException e) {
             System.err.println("执行地图onFirstUserEnter脚本出錯 : " + script + ". 错误内容" + e);
-            FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "执行地图onFirstUserEnter脚本出錯 : " + script + ".\r\n错误信息：" + e);
+            MapleLogger.info("执行地图onFirstUserEnter脚本出錯 : " + script + ".\r\n错误信息：" + e);
             dispose(c);
         }
     }

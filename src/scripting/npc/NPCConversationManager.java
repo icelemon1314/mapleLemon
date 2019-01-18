@@ -431,30 +431,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         MapleShopFactory.getInstance().getShop(id).sendShop(this.c, this.id);
     }
 
-    public void showAdvanturerBoatScene() {
-        Thread scripts = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    c.sendPacket(UIPacket.getDirectionStatus(true));
-                    c.sendPacket(UIPacket.IntroEnableUI(1));
-                    c.sendPacket(MaplePacketCreator.environmentChange("advStory/whistle", 5));
-                    c.sendPacket(UIPacket.getDirectionInfo(1, 208));
-                    Thread.sleep(208);
-                    c.sendPacket(UIPacket.ShowWZEffect("Effect/Direction3.img/adventureStory/Scene2"));
-                    Thread.sleep(3000);
-                    sendNextS("看来现在船要出发了！", (byte) 1);
-                    Thread.sleep(208);
-                } catch (InterruptedException ex) {
-                }
-                NPCScriptManager.getInstance().dispose(c);
-                c.removeClickedNPC();
-                NPCScriptManager.getInstance().start(c, 10306, "ExplorerTut07");
-            }
-        };
-        scripts.start();
-    }
-
     public int gainGachaponItem(int id, int quantity) {
         return gainGachaponItem(id, quantity, new StringBuilder().append(this.c.getPlayer().getMap().getStreetName()).append(" - ").append(this.c.getPlayer().getMap().getMapName()).toString());
     }
@@ -465,7 +441,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             if (!ii.itemExists(id)) {
                 return -1;
             }
-            Item item = MapleInventoryManipulator.addbyId_Gachapon(this.c, id, (short) quantity, new StringBuilder().append("从 ").append(msg).append(" 中获得时间: ").append(FileoutputUtil.CurrentReadable_Time()).toString());
+            Item item = MapleInventoryManipulator.addbyId_Gachapon(this.c, id, (short) quantity, new StringBuilder().append("从 ").append(msg).append(" 中获得时间: ").toString());
             if (item == null) {
                 return -1;
             }
@@ -495,7 +471,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             if (!ii.itemExists(id)) {
                 return -1;
             }
-            Item item = MapleInventoryManipulator.addbyId_Gachapon(this.c, id, (short) quantity, new StringBuilder().append("从 ").append(msg).append(" 中").append(buy ? "购买" : "获得").append("时间: ").append(FileoutputUtil.CurrentReadable_Time()).toString(), period);
+            Item item = MapleInventoryManipulator.addbyId_Gachapon(this.c, id, (short) quantity, new StringBuilder().append("从 ").append(msg).append(" 中").append(buy ? "购买" : "获得").append("时间: ").toString(), period);
             if (item == null) {
                 return -1;
             }
@@ -525,22 +501,22 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     public void startQuest(int questId) {
         MapleQuestStatus tmp = getPlayer().getQuest(MapleQuest.getInstance(questId));
         if (tmp.getCustomData().isEmpty()) {
-            FileoutputUtil.log("开始纯记录任务！");
+            MapleLogger.info("开始纯记录任务！");
             tmp.setStatus((byte)MapleQuestStatus.QUEST_STARTED);
         } else {
-            FileoutputUtil.log("开始WZ任务");
+            MapleLogger.info("开始WZ任务");
             MapleQuest.getInstance(questId).start(getPlayer(), getNpc());
         }
     }
 
     public void completeQuest(int questId) {
-        FileoutputUtil.log("任务附加数据："+getPlayer().getQuest(MapleQuest.getInstance(questId)).getCustomData());
+        MapleLogger.info("任务附加数据："+getPlayer().getQuest(MapleQuest.getInstance(questId)).getCustomData());
         MapleQuestStatus tmp = getPlayer().getQuest(MapleQuest.getInstance(questId));
         if (tmp.getCustomData().isEmpty()) {
-            FileoutputUtil.log("完成纯记录任务！");
+            MapleLogger.info("完成纯记录任务！");
             getPlayer().getQuest(MapleQuest.getInstance(questId)).setStatus((byte)MapleQuestStatus.QUEST_COMPLETED);
         } else {
-            FileoutputUtil.log("完成WZ任务");
+            MapleLogger.info("完成WZ任务");
             MapleQuest.getInstance(questId).complete(getPlayer(), getNpc());
         }
     }
@@ -648,29 +624,21 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         }
     }
 
-    public void showEffect(boolean broadcast, String effect) {
-        if (broadcast) {
-            this.c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.showEffect(effect));
-        } else {
-            this.c.sendPacket(MaplePacketCreator.showEffect(effect));
-        }
-    }
-
-    public void playSound(boolean broadcast, String sound) {
-        if (broadcast) {
-            this.c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.playSound(sound));
-        } else {
-            this.c.sendPacket(MaplePacketCreator.playSound(sound));
-        }
-    }
-
-    public void environmentChange(boolean broadcast, String env) {
-        if (broadcast) {
-            this.c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.environmentChange(env, 2));
-        } else {
-            this.c.sendPacket(MaplePacketCreator.environmentChange(env, 2));
-        }
-    }
+//    public void showEffect(boolean broadcast, String effect) {
+//        if (broadcast) {
+//            this.c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.showEffect(effect));
+//        } else {
+//            this.c.sendPacket(MaplePacketCreator.showEffect(effect));
+//        }
+//    }
+//
+//    public void playSound(boolean broadcast, String sound) {
+//        if (broadcast) {
+//            this.c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.playSound(sound));
+//        } else {
+//            this.c.sendPacket(MaplePacketCreator.playSound(sound));
+//        }
+//    }
 
     public void updateBuddyCapacity(int capacity) {
         this.c.getPlayer().setBuddyCapacity((byte) capacity);
@@ -769,30 +737,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
                 squad.clear();
             }
             return ret;
-        }
-        return false;
-    }
-
-    public boolean getSquadList(String type, byte type_) {
-        try {
-            MapleSquad squad = this.c.getChannelServer().getMapleSquad(type);
-            if (squad == null) {
-                return false;
-            }
-            if ((type_ == 0) || (type_ == 3)) {
-                sendNext(squad.getSquadMemberString(type_));
-            } else if (type_ == 1) {
-                sendSimple(squad.getSquadMemberString(type_));
-            } else if (type_ == 2) {
-                if (squad.getBannedMemberSize() > 0) {
-                    sendSimple(squad.getSquadMemberString(type_));
-                } else {
-                    sendNext(squad.getSquadMemberString(type_));
-                }
-            }
-            return true;
-        } catch (NullPointerException ex) {
-            FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, ex);
         }
         return false;
     }
@@ -992,45 +936,9 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         fakeRelog();
     }
 
-    public void openDuey() {
-        this.c.getPlayer().setConversation(2);
-        this.c.sendPacket(MaplePacketCreator.sendDuey((byte) 9, null));
-    }
-
     public void openMerchantItemStore() {
         this.c.getPlayer().setConversation(3);
         this.c.sendPacket(PlayerShopPacket.merchItemStore((byte) 40));
-    }
-
-    public void sendPVPWindow() {
-        this.c.sendPacket(MaplePacketCreator.sendPVPWindow(0));
-        this.c.sendPacket(MaplePacketCreator.sendPVPMaps());
-    }
-
-    public void sendPartyWindow() {
-        this.c.sendPacket(MaplePacketCreator.sendPartyWindow(this.id));
-    }
-
-    public void sendPartyWindow(int id) {
-        this.c.sendPacket(MaplePacketCreator.sendPartyWindow(id));
-    }
-
-    public void sendRepairWindow() {
-        this.c.sendPacket(MaplePacketCreator.sendRepairWindow(this.id));
-    }
-
-    public void sendProfessionWindow() {
-        this.c.sendPacket(MaplePacketCreator.sendProfessionWindow(0));
-    }
-
-    public void sendEventWindow() {
-        this.c.sendPacket(MaplePacketCreator.sendEventWindow(0));
-    }
-
-    public void sendLinkSkillWindow(int skillId) {
-        if (hasSkill(skillId)) {
-            this.c.sendPacket(MaplePacketCreator.sendLinkSkillWindow(skillId));
-        }
     }
 
     public short getKegs() {
@@ -1320,7 +1228,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
                 for (Entry<Skill, SkillEntry> data : sDate.entrySet()) {
                     if (((Skill) data.getKey()).getId() == skillId) {
                         String txt = new StringBuilder().append("public static final int ").append(((Skill) data.getKey()).getName()).append(" = ").append(((Skill) data.getKey()).getId()).append("; //技能最大等级").append(((Skill) data.getKey()).getMaxLevel()).toString();
-                        FileoutputUtil.log(job, txt, true);
+                        MapleLogger.info(txt);
                     }
                 }
             }
@@ -1354,7 +1262,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
                 for (Map.Entry data : sDate.entrySet()) {
                     if (((Skill) data.getKey()).getId() == skillId) {
                         String txt = new StringBuilder().append("public static final int ").append(((Skill) data.getKey()).getName()).append(" = ").append(((Skill) data.getKey()).getId()).append("; //技能最大等级").append(((Skill) data.getKey()).getMaxLevel()).toString();
-                        FileoutputUtil.log(job, txt, true);
+                        MapleLogger.info(txt);
                     }
                 }
             }
@@ -1384,65 +1292,10 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return MapleInventoryManipulator.removeFromSlot(this.c, inv, (short) slot, (short) quantity, true);
     }
 
-
-    public void sendRPS() {
-        this.c.sendPacket(MaplePacketCreator.getRPSMode((byte) 8, -1, -1, -1));
-    }
-
     public void setQuestRecord(Object ch, int questid, String data) {
         ((MapleCharacter) ch).getQuestNAdd(MapleQuest.getInstance(questid)).setCustomData(data);
     }
 
-    public final void doWeddingEffect(Object ch) {
-        final MapleCharacter chr = (MapleCharacter) ch;
-        final MapleCharacter player = getPlayer();
-        WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.yellowChat(new StringBuilder().append(player.getName()).append(", 你愿意娶 ").append(chr.getName()).append(" 为妻吗？无论她将来是富有还是贫穷、或无论她将来身体健康或不适，你都愿意和她永远在一起吗？").toString()));
-        CloneTimer.getInstance().schedule(new Runnable() {
-            @Override
-            public void run() {
-                if ((chr == null) || (player == null)) {
-                    NPCConversationManager.this.warpMap(700000000, 0);
-                } else {
-                    WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.yellowChat(chr.getName() + ", 你愿意嫁给 " + player.getName() + " 吗？无论他将来是富有还是贫穷、或无论他将来身体健康或不适，你都愿意和他永远在一起吗？"));
-                }
-            }
-        }, 10000L);
-
-        CloneTimer.getInstance().schedule(new Runnable() {
-            @Override
-            public void run() {
-                if ((chr == null) || (player == null)) {
-                    if (player != null) {
-                        NPCConversationManager.this.setQuestRecord(player, 160001, "3");
-                        NPCConversationManager.this.setQuestRecord(player, 160002, "0");
-                    } else if (chr != null) {
-                        NPCConversationManager.this.setQuestRecord(chr, 160001, "3");
-                        NPCConversationManager.this.setQuestRecord(chr, 160002, "0");
-                    }
-                    NPCConversationManager.this.warpMap(700000000, 0);
-                } else {
-                    NPCConversationManager.this.setQuestRecord(player, 160001, "2");
-                    NPCConversationManager.this.setQuestRecord(chr, 160001, "2");
-                    chr.setMarriageId(player.getId());
-                    player.setMarriageId(chr.getId());
-                    NPCConversationManager.this.sendNPCText("好，我以圣灵、圣父、圣子的名义宣布：" + player.getName() + " 和 " + chr.getName() + "结为夫妻。 希望你们在 " + chr.getClient().getChannelServer().getServerName() + " 游戏中玩的愉快!", 9201002);
-                    chr.getMap().startExtendedMapEffect("现在，新郎可以亲吻新娘了。 " + player.getName() + "!", 5120006);
-                    WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.yellowChat("好，我以圣灵、圣父、圣子的名义宣布：" + player.getName() + " 和 " + chr.getName() + "结为夫妻。 希望你们在 " + chr.getClient().getChannelServer().getServerName() + " 游戏中玩的愉快!"));
-                    if (chr.getGuildId() > 0) {
-                        WorldGuildService.getInstance().guildPacket(chr.getGuildId(), MaplePacketCreator.sendMarriage(false, chr.getName()));
-                    }
-                    if (player.getGuildId() > 0) {
-                        WorldGuildService.getInstance().guildPacket(player.getGuildId(), MaplePacketCreator.sendMarriage(false, player.getName()));
-                    }
-                }
-            }
-        }, 20000L);
-    }
-
-    public void putKey(int key, int type, int action) {
-        getPlayer().changeKeybinding(key, (byte) type, action);
-        getClient().sendPacket(MaplePacketCreator.getKeymap(getPlayer()));
-    }
     public void doRing(String name, int itemid) {
         PlayersHandler.DoRing(getClient(), name, itemid);
     }
@@ -1535,7 +1388,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
     public void outputWithLogging(int mobId, String buff) {
         String file = new StringBuilder().append("drop_data\\").append(mobId).append(".sql").toString();
-        FileoutputUtil.log(file, buff, true);
+        MapleLogger.info(buff);
     }
 
     public List<BattleConstants.PokedexEntry> getAllPokedex() {
@@ -1593,75 +1446,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return BattleConstants.HoldItem.values();
     }
 
-    public void handleDivorce() {
-        if (getPlayer().getMarriageId() <= 0) {
-            sendNext("你还没结婚，怎么能离婚呢？");
-            return;
-        }
-        int chz = WorldFindService.getInstance().findChannel(getPlayer().getMarriageId());
-        MapleRing mRing = getPlayer().getMarriageRing();
-        if (chz == -1) {
-            try {
-                Connection con = DatabaseConnection.getConnection();
-                PreparedStatement ps = con.prepareStatement("UPDATE queststatus SET customData = ? WHERE characterid = ? AND (quest = ? OR quest = ?)");
-                ps.setString(1, "0");
-                ps.setInt(2, getPlayer().getMarriageId());
-                ps.setInt(3, 160001);
-                ps.setInt(4, 160002);
-                ps.executeUpdate();
-                ps.close();
-                ps = con.prepareStatement("UPDATE characters SET marriageid = ? WHERE id = ?");
-                ps.setInt(1, 0);
-                ps.setInt(2, getPlayer().getMarriageId());
-                ps.executeUpdate();
-                ps.close();
-                if (mRing != null) {
-                    ps = DatabaseConnection.getConnection().prepareStatement("DELETE FROM inventoryitems WHERE itemid = ? AND characterid = ?");
-                    ps.setInt(1, mRing.getItemId());
-                    ps.setInt(2, getPlayer().getMarriageId());
-                    ps.executeUpdate();
-                    ps.close();
-                }
-            } catch (SQLException e) {
-                outputFileError(e);
-                return;
-            }
-            if (mRing != null) {
-                getPlayer().removeAll(mRing.getItemId(), true, true);
-                MapleRing.removeRingFromDb(mRing.getRingId(), mRing.getPartnerRingId());
-                WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.yellowChat(new StringBuilder().append("[系统公告] ").append(getPlayer().getName()).append(" 和 ").append(mRing.getPartnerName()).append(" 离婚了。").toString()));
-            }
-            setQuestRecord(getPlayer(), 160001, "0");
-            setQuestRecord(getPlayer(), 160002, "0");
-            getPlayer().setMarriageId(0);
-            sendNext("离婚成功...");
-            return;
-        }
-        if (chz < -1) {
-            sendNext("请确保你的伴侣是在线的.");
-            return;
-        }
-        MapleCharacter cPlayer = ChannelServer.getInstance(chz).getPlayerStorage().getCharacterById(getPlayer().getMarriageId());
-        if (cPlayer != null) {
-            if (mRing != null) {
-                cPlayer.removeAll(mRing.getItemId(), true, true);
-                getPlayer().removeAll(mRing.getItemId(), true, true);
-                MapleRing.removeRingFromDb(mRing.getRingId(), mRing.getPartnerRingId());
-            }
-            WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.yellowChat(new StringBuilder().append("[系统公告] ").append(getPlayer().getName()).append(" 和 ").append(cPlayer.getName()).append(" 离婚了。").toString()));
-            cPlayer.dropMessage(1, "你的伴侣和你离婚了.");
-            cPlayer.setMarriageId(0);
-            setQuestRecord(cPlayer, 160001, "0");
-            setQuestRecord(getPlayer(), 160001, "0");
-            setQuestRecord(cPlayer, 160002, "0");
-            setQuestRecord(getPlayer(), 160002, "0");
-            getPlayer().setMarriageId(0);
-            sendNext("离婚成功...");
-        } else {
-            sendNext("出现了未知的错误...");
-        }
-    }
-
     public String getReadableMillis(long startMillis, long endMillis) {
         return StringUtil.getReadableMillis(startMillis, endMillis);
     }
@@ -1672,10 +1456,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         }
         int jobId = getPlayer().getJob();
         return (jobId == 1111) || (jobId == 1112) || (jobId == 1211) || (jobId == 1212) || (jobId == 1311) || (jobId == 1312) || (jobId == 1411) || (jobId == 1412) || (jobId == 1511) || (jobId == 1512);
-    }
-
-    public void sendUltimateExplorer() {
-        getClient().sendPacket(MaplePacketCreator.ultimateExplorer());
     }
 
     public String getRankingInformation(int job) {
@@ -1710,10 +1490,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return sb.toString();
     }
 
-    public void sendPendant(boolean b) {
-        this.c.sendPacket(MaplePacketCreator.pendantSlot(b));
-    }
-
     public Triple<Integer, Integer, Integer> getCompensation() {
         Triple ret = null;
         try {
@@ -1728,7 +1504,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             }
             return ret;
         } catch (SQLException e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, e);
+            MapleLogger.error("getCompensation error:", e);
         }
         return ret;
     }
@@ -1743,7 +1519,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             }
             return true;
         } catch (SQLException e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, e);
+            MapleLogger.error("deleteCompensation error:", e);
         }
         return false;
     }
@@ -2019,22 +1795,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
     public int getSec() {
         return Calendar.getInstance().get(Calendar.SECOND);
-    }
-
-    public void environmentChange(String env) {
-        environmentChange(env, 2);
-    }
-
-    public void environmentChange(String env, int info) {
-        environmentChange(false, env, info);
-    }
-
-    public void environmentChange(boolean broadcast, String env, int info) {
-        if (broadcast) {
-            c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.environmentChange(env, info));
-        } else {
-            c.sendPacket(MaplePacketCreator.environmentChange(env, info));
-        }
     }
 
     public void sendchangeMap(int mapid) {

@@ -23,7 +23,8 @@ import javax.swing.JOptionPane;
 import scripting.portal.PortalScriptManager;
 import scripting.reactor.ReactorScriptManager;
 import server.shop.MapleShopFactory;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.packet.NPCPacket;
@@ -55,7 +56,7 @@ public class ManagerSin extends javax.swing.JFrame {
                 ps.close();
             }
         } catch (SQLException ex) {
-            FileoutputUtil.log("Failed to load npc name data. " + ex);
+            MapleLogger.info("Failed to load npc name data. " + ex);
         }
 
         initComponents();
@@ -68,7 +69,7 @@ public class ManagerSin extends javax.swing.JFrame {
         for (i = 0; i < wid.getItemCount(); i++) {
             int ttt = Integer.parseInt(String.valueOf(wid.getItemAt(i)));
             if (w == ttt) {
-                //FileoutputUtil.log("经验倍率："+ exp[i]+" " + ttt );
+                //MapleLogger.info("经验倍率："+ exp[i]+" " + ttt );
                 break;
             }
         }
@@ -82,7 +83,7 @@ public class ManagerSin extends javax.swing.JFrame {
         for (i = 0; i < wid.getItemCount(); i++) {
             int ttt = Integer.parseInt(String.valueOf(wid.getItemAt(i)));
             if (w == ttt) {
-                //FileoutputUtil.log("金币爆率："+ meso[i]+" " + ttt );
+                //MapleLogger.info("金币爆率："+ meso[i]+" " + ttt );
                 break;
             }
         }
@@ -94,7 +95,7 @@ public class ManagerSin extends javax.swing.JFrame {
         for (i = 0; i < wid.getItemCount(); i++) {
             int ttt = Integer.parseInt(String.valueOf(wid.getItemAt(i)));
             if (w == ttt) {
-                //FileoutputUtil.log("物品爆率："+ drop[i]+" " + ttt );
+                //MapleLogger.info("物品爆率："+ drop[i]+" " + ttt );
                 break;
             }
         }
@@ -966,7 +967,7 @@ public class ManagerSin extends javax.swing.JFrame {
 
     private void wworldItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_wworldItemStateChanged
         int index = wworld.getSelectedIndex();
-        //FileoutputUtil.log(index);
+        //MapleLogger.info(index);
         wid.getItemAt(index);
         exprate.setText(exp[index] + "");
         mesorate.setText(meso[index] + "");

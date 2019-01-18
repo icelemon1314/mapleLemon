@@ -50,8 +50,9 @@ import server.Start;
 import server.Timer;
 import server.life.MapleLifeFactory;
 import server.quest.MapleQuest;
-import tools.FileoutputUtil;
+
 import tools.HexTool;
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.packet.NPCPacket;
 import tools.wztosql.DumpItems;
@@ -2618,7 +2619,7 @@ public class ServerUI extends javax.swing.JFrame {
         try {
             initCharacterPannel();
         } catch (Exception ex) {
-            FileoutputUtil.log("初始化角色信息出错:" + ex);
+            MapleLogger.info("初始化角色信息出错:" + ex);
         }
     }
 

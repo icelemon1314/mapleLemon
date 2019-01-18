@@ -11,8 +11,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import server.ServerProperties;
-import tools.FileoutputUtil;
+
 import tools.HexTool;
+import tools.MapleLogger;
 import tools.StringUtil;
 import tools.data.input.ByteArrayByteStream;
 import tools.data.input.GenericLittleEndianAccessor;
@@ -42,24 +43,17 @@ public class MaplePacketEncoder extends MessageToByteEncoder<Object> {
                     String pHeaderStr = Integer.toHexString(pHeader).toUpperCase();
                     pHeaderStr = StringUtil.getLeftPaddedStr(pHeaderStr, '0', 4);
                     String op = lookupRecv(pHeader);
-                    String Recv = "[服务端发送] " + op + "  [0x" + pHeaderStr + "]  (" + packetLen + "字节)  " + FileoutputUtil.CurrentReadable_Time() + "\r\n";
+                    String Recv = "[服务端发送] " + op + "  [0x" + pHeaderStr + "]  (" + packetLen + "字节)  " + System.currentTimeMillis() + "\r\n";
 
                     if (packetLen <= 60000) {
                         String RecvTo = Recv + HexTool.toString(input) + "\r\n" + HexTool.toStringFromAscii(input);
-                        FileoutputUtil.packetLog(FileoutputUtil.PacketLog, RecvTo);
                         System.out.print(Recv);
 
                         if (!ServerProperties.SendPacket(op, pHeaderStr)) {
-
-                            String SendTos = "\r\n时间：" + FileoutputUtil.CurrentReadable_Time() + "\r\n";
-                            if ((op.equals("GIVE_BUFF")) || (op.equals("CANCEL_BUFF"))) {
-                                FileoutputUtil.packetLog(FileoutputUtil.SkillBuff, SendTos + RecvTo);
-                            } else if (op.endsWith("PLAYER_INTERACTION")) {
-                                FileoutputUtil.packetLog(FileoutputUtil.玩家互动封包, SendTos + RecvTo);
-                            }
+                            String SendTos = "\r\n时间：" + System.currentTimeMillis() + "\r\n";
                         }
                     } else {
-                        FileoutputUtil.log(Recv + HexTool.toString(new byte[]{input[0], input[1]}) + "...\r\n");
+                        MapleLogger.info(Recv + HexTool.toString(new byte[]{input[0], input[1]}) + "...\r\n");
                     }
                 }
             }

@@ -29,7 +29,8 @@ import java.util.Map;
 import server.cashshop.CashItemFactory;
 import server.cashshop.CashItemInfo;
 import server.quest.MapleQuest;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.packet.InventoryPacket;
 import tools.packet.MTSCSPacket;
@@ -194,7 +195,7 @@ public class MapleInventoryManipulator {
                             pet.setInventoryPosition(newSlot);
                         }
                         //c.sendPacket(InventoryPacket.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nItem))));
-                        FileoutputUtil.log("添加新道具到背包："+nItem.getItemId());
+                        MapleLogger.info("添加新道具到背包："+nItem.getItemId());
                         c.sendPacket(InventoryPacket.addItemToInventory(nItem));
 
                         if ((ItemConstants.isRechargable(itemId)) && (quantity == 0)) {
@@ -224,7 +225,7 @@ public class MapleInventoryManipulator {
                 if (gmLog != null) {
                     nItem.setGMLog(gmLog);
                 }
-                FileoutputUtil.log("添加新道具到背包2："+nItem.getItemId());
+                MapleLogger.info("添加新道具到背包2："+nItem.getItemId());
                 c.sendPacket(InventoryPacket.addItemToInventory(nItem));
                 c.sendPacket(MaplePacketCreator.enableActions());
             }
@@ -253,7 +254,7 @@ public class MapleInventoryManipulator {
                 c.sendPacket(InventoryPacket.getShowInventoryFull());
                 return -1;
             }
-            FileoutputUtil.log("添加新装备到背包1："+nEquip.getItemId());
+            MapleLogger.info("添加新装备到背包1："+nEquip.getItemId());
             c.sendPacket(InventoryPacket.addItemToInventory(nEquip));
             c.getPlayer().checkCopyItems();
         } else {
@@ -496,7 +497,7 @@ public class MapleInventoryManipulator {
     }
 
     public static boolean addItemAndEquip(MapleClient c, int itemId, short slot, int state, boolean removeItem) {
-        return addItemAndEquip(c, itemId, slot, null, 0L, state, new StringBuilder().append("系统赠送 时间: ").append(FileoutputUtil.CurrentReadable_Date()).toString(), removeItem);
+        return addItemAndEquip(c, itemId, slot, null, 0L, state, new StringBuilder().append("系统赠送 时间: ").append(System.currentTimeMillis()).toString(), removeItem);
     }
 
     public static boolean addItemAndEquip(MapleClient c, int itemId, short slot, int state, String gmLog) {
@@ -686,7 +687,7 @@ public class MapleInventoryManipulator {
                     c.getPlayer().dropMessage(-11, new StringBuilder().append("在背包中发现复制装备[").append(ii.getName(item.getItemId())).append("]已经将其锁定。").toString());
                     String msgtext = new StringBuilder().append("玩家 ").append(c.getPlayer().getName()).append(" ID: ").append(c.getPlayer().getId()).append(" (等级 ").append(c.getPlayer().getLevel()).append(") 地图: ").append(c.getPlayer().getMapId()).append(" 在玩家背包中发现复制装备[").append(ii.getName(item.getItemId())).append("]已经将其锁定。").toString();
                     WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverMessageNotice(new StringBuilder().append("[GM 信息] ").append(msgtext).toString()));
-                    FileoutputUtil.log(FileoutputUtil.复制装备, new StringBuilder().append(msgtext).append(" 道具唯一ID: ").append(item.getEquipOnlyId()).toString());
+                    MapleLogger.info(new StringBuilder().append(msgtext).append(" 道具唯一ID: ").append(item.getEquipOnlyId()).toString());
                     locked = true;
                 } else {
                     removeFromSlot(c, MapleInventoryType.EQUIP, item.getPosition(), item.getQuantity(), true, false);
@@ -708,7 +709,7 @@ public class MapleInventoryManipulator {
                     c.getPlayer().dropMessage(-11, new StringBuilder().append("在穿戴中发现复制装备[").append(ii.getName(item.getItemId())).append("]已经将其锁定。").toString());
                     String msgtext = new StringBuilder().append("玩家 ").append(c.getPlayer().getName()).append(" ID: ").append(c.getPlayer().getId()).append(" (等级 ").append(c.getPlayer().getLevel()).append(") 地图: ").append(c.getPlayer().getMapId()).append(" 在玩家穿戴中发现复制装备[").append(ii.getName(item.getItemId())).append("]已经将其锁定。").toString();
                     WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverMessageNotice(new StringBuilder().append("[GM 信息] ").append(msgtext).toString()));
-                    FileoutputUtil.log(FileoutputUtil.复制装备, new StringBuilder().append(msgtext).append(" 道具唯一ID: ").append(item.getEquipOnlyId()).toString());
+                    MapleLogger.info(new StringBuilder().append(msgtext).append(" 道具唯一ID: ").append(item.getEquipOnlyId()).toString());
                     locked = true;
                 } else {
                     removeFromSlot(c, MapleInventoryType.EQUIPPED, item.getPosition(), item.getQuantity(), true, false);
@@ -792,7 +793,7 @@ public class MapleInventoryManipulator {
         if (((source.getItemId() == 1003142) || (source.getItemId() == 1002140) || (source.getItemId() == 1042003) || (source.getItemId() == 1062007) || (source.getItemId() == 1322013) || (source.getItemId() == 1003824))
                 && (!chr.isIntern())) {
             chr.dropMessage(1, "无法佩带此物品");
-            FileoutputUtil.log(new StringBuilder().append("[作弊] 非管理员玩家: ").append(chr.getName()).append(" 非法穿戴GM装备 ").append(source.getItemId()).toString());
+            MapleLogger.info(new StringBuilder().append("[作弊] 非管理员玩家: ").append(chr.getName()).append(" 非法穿戴GM装备 ").append(source.getItemId()).toString());
             removeById(c, MapleInventoryType.EQUIP, source.getItemId(), 1, true, false);
             AutobanManager.getInstance().autoban(chr.getClient(), "非法穿戴GM装备。");
             c.sendPacket(MaplePacketCreator.enableActions());

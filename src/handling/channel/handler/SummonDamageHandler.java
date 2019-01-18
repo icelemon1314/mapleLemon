@@ -4,7 +4,8 @@ import client.MapleCharacter;
 import client.MapleClient;
 import handling.MaplePacketHandler;
 import server.maps.MapleSummon;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.SummonPacket;
 
@@ -20,7 +21,7 @@ public class SummonDamageHandler extends MaplePacketHandler {
         }
         MapleSummon summon = chr.getSummons().get(slea.readInt());
         if ((summon == null) || (summon.getOwnerId() != chr.getId())) {
-            FileoutputUtil.log("找不到地图物体：召唤兽！");
+            MapleLogger.info("找不到地图物体：召唤兽！");
             return;
         }
         int type = slea.readByte();

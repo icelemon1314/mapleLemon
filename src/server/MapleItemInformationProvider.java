@@ -228,7 +228,7 @@ public class MapleItemInformationProvider {
                 }
             }
         } catch (SQLException ex) {
-            FileoutputUtil.log("[ItemLoader] 加载装备数据出错." + ex);
+            MapleLogger.info("[ItemLoader] 加载装备数据出错." + ex);
         }
     }
 
@@ -1213,7 +1213,7 @@ public class MapleItemInformationProvider {
         int itemID = sqlRewardData.getInt("itemid");
         if ((this.tmpInfo == null) || (this.tmpInfo.itemId != itemID)) {
             if (!this.dataCache.containsKey(itemID)) {
-                FileoutputUtil.log("[initItemRewardData] Tried to load an item while this is not in the cache: " + itemID);
+                MapleLogger.info("[initItemRewardData] Tried to load an item while this is not in the cache: " + itemID);
                 return;
             }
             this.tmpInfo = ((ItemInformation) this.dataCache.get(itemID));
@@ -1239,7 +1239,7 @@ public class MapleItemInformationProvider {
         int itemID = sqlAddData.getInt("itemid");
         if ((this.tmpInfo == null) || (this.tmpInfo.itemId != itemID)) {
             if (!this.dataCache.containsKey(itemID)) {
-                FileoutputUtil.log("[initItemAddData] Tried to load an item while this is not in the cache: " + itemID);
+                MapleLogger.info("[initItemAddData] Tried to load an item while this is not in the cache: " + itemID);
                 return;
             }
             this.tmpInfo = ((ItemInformation) this.dataCache.get(itemID));
@@ -1255,7 +1255,7 @@ public class MapleItemInformationProvider {
         int itemID = sqlEquipData.getInt("itemid");
         if ((this.tmpInfo == null) || (this.tmpInfo.itemId != itemID)) {
             if (!this.dataCache.containsKey(itemID)) {
-                FileoutputUtil.log("[initItemEquipData] Tried to load an item while this is not in the cache: " + itemID);
+                MapleLogger.info("[initItemEquipData] Tried to load an item while this is not in the cache: " + itemID);
                 return;
             }
             this.tmpInfo = ((ItemInformation) this.dataCache.get(itemID));

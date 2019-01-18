@@ -12,7 +12,8 @@ import handling.world.World;
 import handling.world.WorldMessengerService;
 import handling.world.messenger.MapleMessengerCharacter;
 import server.ManagerSin;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 
@@ -24,7 +25,7 @@ public class EnterCashShopHandler extends MaplePacketHandler {
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
         if ((chr == null) || (chr.hasBlockedInventory()) || (chr.getMap() == null) || (chr.getEventInstance() != null) || (c.getChannelServer() == null)) {
-            c.sendPacket(MaplePacketCreator.serverBlocked(2));
+//            c.sendPacket(MaplePacketCreator.serverBlocked(2));
             c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
@@ -76,7 +77,7 @@ public class EnterCashShopHandler extends MaplePacketHandler {
                 }
             }
         } catch (Exception e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.GUI_Ex_Log, e);
+            MapleLogger.error("gui error:", e);
         }
     }
 }

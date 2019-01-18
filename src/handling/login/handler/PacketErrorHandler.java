@@ -2,8 +2,7 @@ package handling.login.handler;
 
 import client.MapleClient;
 import handling.SendPacketOpcode;
-import tools.FileoutputUtil;
-import static tools.FileoutputUtil.CurrentReadable_Time;
+
 import tools.StringUtil;
 import tools.data.input.SeekableLittleEndianAccessor;
 
@@ -18,12 +17,12 @@ public class PacketErrorHandler {
             String pHeaderStr = Integer.toHexString(pHeader).toUpperCase();
             pHeaderStr = StringUtil.getLeftPaddedStr(pHeaderStr, '0', 4);
             String op = lookupRecv(pHeader);
-            String from = "\r\n------------------------ " + CurrentReadable_Time() + " ------------------------\r\n";
+            String from = "\r\n------------------------  ------------------------\r\n";
             if (c.getPlayer() != null) {
                 from += "角色: " + c.getPlayer().getName() + " 等级(" + c.getPlayer().getLevel() + ") 职业: " + c.getPlayer().getJobName() + " (" + c.getPlayer().getJob() + ") 地图: " + c.getPlayer().getMapId() + " \r\n";
             }
             String Recv = "" + op + " [" + pHeaderStr + "] (" + (badPacketSize - 4) + ")" + slea.toString();
-            FileoutputUtil.packetLog(FileoutputUtil.Packet_Error, from + Recv);
+//            FileoutputUtil.packetLog(FileoutputUtil.Packet_Error, from + Recv);
         }
     }
 

@@ -11,8 +11,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 import tools.EncodingDetect;
-import tools.FileoutputUtil;
+
 import tools.HexTool;
+import tools.MapleLogger;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
 /**
@@ -29,7 +30,7 @@ public class LoadPacket {
             packetProps.load(bf);
             bf.close();
         } catch (IOException ex) {
-            FileoutputUtil.log("读取 文件封包.txt 失败" + ex);
+            MapleLogger.info("读取 文件封包.txt 失败" + ex);
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(HexTool.getByteArrayFromHexString(packetProps.getProperty("packet")));

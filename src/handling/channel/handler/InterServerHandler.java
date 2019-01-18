@@ -30,7 +30,8 @@ import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import server.ManagerSin;
 import server.maps.FieldLimitType;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.Triple;
 import tools.data.input.SeekableLittleEndianAccessor;
@@ -89,7 +90,7 @@ public class InterServerHandler {
             c.setAccID(player.getAccountID());
             if (!c.CheckIPAddress()) {
                 c.getSession().close();
-                FileoutputUtil.log(new StringBuilder().append("检测连接地址 - 2 ").append(!c.CheckIPAddress()).toString());
+                MapleLogger.info(new StringBuilder().append("检测连接地址 - 2 ").append(!c.CheckIPAddress()).toString());
                 return;
             }
             int state = c.getLoginState();
@@ -100,7 +101,7 @@ public class InterServerHandler {
             if (!allowLogin) {
                 c.setPlayer(null);
                 c.getSession().close();
-                FileoutputUtil.log(new StringBuilder().append("检测连接地址 - 3 ").append(!allowLogin).toString());
+                MapleLogger.info(new StringBuilder().append("检测连接地址 - 3 ").append(!allowLogin).toString());
                 return;
             }
             c.updateLoginState(MapleClient.LOGIN_LOGGEDIN, c.getSessionIPAddress());
@@ -184,7 +185,7 @@ public class InterServerHandler {
 //                SkillFactory.getSkill(1010).getEffect(1).applyTo(player);
 //            }
         } catch (NumberFormatException e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.Login_Error, e);
+            MapleLogger.error("loggin error:" + e);
         }
     }
 

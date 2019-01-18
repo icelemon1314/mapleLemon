@@ -4,7 +4,7 @@ import constants.ServerConstants;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.nio.charset.Charset;
-import tools.FileoutputUtil;
+
 import tools.HexTool;
 
 public class GenericLittleEndianWriter implements LittleEndianWriter {

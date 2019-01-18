@@ -8,7 +8,8 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import scripting.AbstractScriptManager;
-import tools.FileoutputUtil;
+import tools.MapleLogger;
+
 
 public class EventScriptManager extends AbstractScriptManager {
 
@@ -44,8 +45,7 @@ public class EventScriptManager extends AbstractScriptManager {
                 ((ScriptEngine) entry.iv).put("em", entry.em);
                 entry.iv.invokeFunction("init", new Object[]{(Object) null});
             } catch (ScriptException | NoSuchMethodException ex) {
-                FileoutputUtil.log("Error initiating event: " + entry.script + ":" + ex);
-                FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, "Error initiating event: " + entry.script + ":" + ex);
+                MapleLogger.info("Error initiating event: " + entry.script + ":" + ex);
             }
         }
     }

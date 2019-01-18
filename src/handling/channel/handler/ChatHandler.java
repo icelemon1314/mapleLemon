@@ -16,7 +16,8 @@ import handling.world.WrodlPartyService;
 import handling.world.messenger.MapleMessenger;
 import handling.world.messenger.MapleMessengerCharacter;
 import handling.world.messenger.MessengerType;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.StringUtil;
 import tools.data.input.SeekableLittleEndianAccessor;
@@ -258,7 +259,7 @@ public class ChatHandler {
             case 15:
                 break;
             default:
-                FileoutputUtil.log(new StringBuilder().append("聊天招待操作( 0x").append(StringUtil.getLeftPaddedStr(Integer.toHexString(action).toUpperCase(), '0', 2)).append(" ) 未知.").toString());
+                MapleLogger.info(new StringBuilder().append("聊天招待操作( 0x").append(StringUtil.getLeftPaddedStr(Integer.toHexString(action).toUpperCase(), '0', 2)).append(" ) 未知.").toString());
         }
     }
 

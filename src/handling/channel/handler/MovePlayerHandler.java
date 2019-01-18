@@ -5,7 +5,8 @@ import client.MapleClient;
 import client.MapleJob;
 import handling.MaplePacketHandler;
 import server.maps.MapleMap;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 
@@ -29,13 +30,13 @@ public class MovePlayerHandler extends MaplePacketHandler {
         try {
             res = MovementParse.parseMovement(slea, 1, chr);
         } catch (ArrayIndexOutOfBoundsException e) {
-            FileoutputUtil.log("AIOBE Type1:\r\n" + slea.toString(true));
+            MapleLogger.info("AIOBE Type1:\r\n" + slea.toString(true));
             return;
         }
         if ((res != null) && (chr.getMap() != null)) {
             if (slea.available() != 10) {
-                FileoutputUtil.log("玩家" + chr.getName() + "(" + MapleJob.getName(MapleJob.getById(chr.getJob())) + ") slea.available != 8 (角色移动出错) 剩余封包长度: " + slea.available());
-                FileoutputUtil.log(FileoutputUtil.Movement_Char, "slea.available != 8 (角色移动出错) 封包: " + slea.toString(true));
+                MapleLogger.info("玩家" + chr.getName() + "(" + MapleJob.getName(MapleJob.getById(chr.getJob())) + ") slea.available != 8 (角色移动出错) 剩余封包长度: " + slea.available());
+                MapleLogger.info("slea.available != 8 (角色移动出错) 封包: " + slea.toString(true));
                 return;
             }
             MapleMap map = c.getPlayer().getMap();

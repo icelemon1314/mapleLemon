@@ -22,7 +22,8 @@ import java.util.Set;
 import server.AutobanManager;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.packet.InventoryPacket;
@@ -99,22 +100,22 @@ public class MapleShop {
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         MapleShopItem shopItem = findBySlotAndId(c, itemId, position);
 
-        FileoutputUtil.log("购买商店道具！");
+        MapleLogger.info("购买商店道具！");
         if ((shopItem != null) && (shopItem.getPrice() > 0)) {
-            FileoutputUtil.log("购买商店道具！");
+            MapleLogger.info("购买商店道具！");
             int price = ItemConstants.isRechargable(itemId) ? shopItem.getPrice() : shopItem.getPrice() * quantity;
             if ((price >= 0) && (c.getPlayer().getMeso() >= price)) {
                 if (MapleInventoryManipulator.checkSpace(c, itemId, quantity, "")) {
                     c.getPlayer().gainMeso(-price, false);
                     if (ItemConstants.isPet(itemId)) { // 宠物
-                        MapleInventoryManipulator.addById(c, itemId, quantity, "", MaplePet.createPet(itemId, MapleInventoryIdentifier.getInstance()), -1L, "Bought from shop " + this.id + ", " + this.npcId + " on " + FileoutputUtil.CurrentReadable_Date());
+                        MapleInventoryManipulator.addById(c, itemId, quantity, "", MaplePet.createPet(itemId, MapleInventoryIdentifier.getInstance()), -1L, "Bought from shop " + this.id + ", " + this.npcId + " on " + System.currentTimeMillis());
                     } else if (!ItemConstants.isRechargable(itemId)) { // 可冲值道具
                         int state = shopItem.getState();
                         long period = shopItem.getPeriod();
-                        MapleInventoryManipulator.addById(c, itemId, quantity, period, state, "商店购买 " + this.id + ", " + this.npcId + " 时间 " + FileoutputUtil.CurrentReadable_Date());
+                        MapleInventoryManipulator.addById(c, itemId, quantity, period, state, "商店购买 " + this.id + ", " + this.npcId + " 时间 " + System.currentTimeMillis());
                     } else {
                         quantity = ii.getSlotMax(shopItem.getItemId());
-                        MapleInventoryManipulator.addById(c, itemId, quantity, "商店购买 " + this.id + ", " + this.npcId + " 时间 " + FileoutputUtil.CurrentReadable_Date());
+                        MapleInventoryManipulator.addById(c, itemId, quantity, "商店购买 " + this.id + ", " + this.npcId + " 时间 " + System.currentTimeMillis());
                     }
                 } else {
                     c.getPlayer().dropMessage(1, "您的背包是满的，请整理下背包。");
@@ -139,7 +140,7 @@ public class MapleShop {
         }
         Item item = c.getPlayer().getInventory(type).getItem((short) slot);
         if (item == null) {
-            FileoutputUtil.log("该位置上无道具："+slot);
+            MapleLogger.info("该位置上无道具："+slot);
             return;
         }
         if (ItemConstants.is飞镖道具(item.getItemId()) || ItemConstants.is子弹道具(item.getItemId())) {

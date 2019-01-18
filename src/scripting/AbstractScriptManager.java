@@ -10,7 +10,8 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import tools.EncodingDetect;
-import tools.FileoutputUtil;
+import tools.MapleLogger;
+
 
 public abstract class AbstractScriptManager {
 
@@ -53,7 +54,7 @@ public abstract class AbstractScriptManager {
             return (Invocable) engine;
         } catch (Exception e) {
             System.err.println("Error executing script. Path: " + path + "\r\nException " + e);
-            FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Error executing script. Path: " + path + "\r\nException " + e);
+            MapleLogger.info("Error executing script. Path: " + path + "\r\nException " + e);
         }
         return null;
     }

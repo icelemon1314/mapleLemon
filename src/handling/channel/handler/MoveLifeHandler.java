@@ -6,7 +6,8 @@ import handling.MaplePacketHandler;
 import server.life.MapleMonster;
 import server.maps.MapleMap;
 import server.movement.LifeMovementFragment;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.MobPacket;
 
@@ -42,16 +43,14 @@ public class MoveLifeHandler extends MaplePacketHandler {
         try {
             res = MovementParse.parseMovement(slea, 2);
         } catch (ArrayIndexOutOfBoundsException e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.Movement_Mob, e);
-            FileoutputUtil.log(FileoutputUtil.Movement_Mob, "怪物ID " + monster.getId() + ", AIOBE Type2:\r\n" + slea.toString(true));
+            MapleLogger.error("怪物ID " + monster.getId() + ", AIOBE Type2:\r\n" + slea.toString(true));
             return;
         }
         if ((res != null) && (res.size() > 0)) {
             MapleMap map = chr.getMap();
             c.sendPacket(MobPacket.moveMonsterResponse(monster.getObjectId(), moveid, monster.getMp(), monster.isControllerHasAggro(), skillId, skillLevel));
             if (slea.available() != 1) {
-                FileoutputUtil.log("slea.available != 1 (怪物移动错误) 剩余封包长度: " + slea.available());
-                FileoutputUtil.log(FileoutputUtil.Movement_Mob, "slea.available != 36 (怪物移动错误)\r\n怪物ID: " + monster.getId() + "\r\n" + slea.toString(true));
+                MapleLogger.error("slea.available != 1 (怪物移动错误) 剩余封包长度: " + slea.available());
                 return;
             }
             MovementParse.updatePosition(res, monster, -1);

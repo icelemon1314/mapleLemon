@@ -19,7 +19,8 @@ import provider.MapleDataFileEntry;
 import provider.MapleDataProvider;
 import provider.MapleDataProviderFactory;
 import provider.MapleDataTool;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.Pair;
 
 /**
@@ -35,16 +36,16 @@ public class BuffInformation {
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        FileoutputUtil.log("Would you like to export all skills' information? <y/n>");
+        MapleLogger.info("Would you like to export all skills' information? <y/n>");
         boolean export = input.next().equalsIgnoreCase("y");
         if (export) {
             dumpSkills();
             for (Pair c : a) {
-                FileoutputUtil.log("special char " + c.getRight() + " skill " + c.getLeft());
+                MapleLogger.info("special char " + c.getRight() + " skill " + c.getLeft());
             }
         }
         while (!export) {
-            FileoutputUtil.log("Please insert skill id.");
+            MapleLogger.info("Please insert skill id.");
             int skill;
             try {
                 skill = input.nextInt();
@@ -52,17 +53,17 @@ public class BuffInformation {
                 if (!exceptions.contains(ex)) {
                     exceptions.add(ex);
                 }
-                FileoutputUtil.log("Could not parse skill id.");
+                MapleLogger.info("Could not parse skill id.");
                 return;
             }
-            FileoutputUtil.log(getSkillInformation(skill).toString());
+            MapleLogger.info(getSkillInformation(skill).toString());
         }
         if (exceptions.size() > 0) {
-            FileoutputUtil.log("Show exceptions? <y/n>");
+            MapleLogger.info("Show exceptions? <y/n>");
             boolean show = input.next().equalsIgnoreCase("y");
             if (show) {
                 for (Exception ex : exceptions) {
-                    FileoutputUtil.log(ex.toString());
+                    MapleLogger.info(ex.toString());
                 }
             }
         }
@@ -130,7 +131,7 @@ public class BuffInformation {
             if (data.getName().length() > 8) {
                 continue;
             }
-            FileoutputUtil.log("Exporting job " + data.getName().replaceAll(".img", ""));
+            MapleLogger.info("Exporting job " + data.getName().replaceAll(".img", ""));
             for (MapleData sub : prov.getData(data.getName())) {
                 if (!sub.getName().equals("skill")) {
                     continue;
@@ -144,7 +145,7 @@ public class BuffInformation {
                             }
                         }
                         if (!found) {
-                            FileoutputUtil.log("New information type found: " + sub3.getName());
+                            MapleLogger.info("New information type found: " + sub3.getName());
                         }
                         for (MapleData sub4 : sub3.getChildren()) {
                             String tab = "";
@@ -193,7 +194,7 @@ public class BuffInformation {
                             if (!exceptions.contains(ex)) {
                                 exceptions.add(ex);
                             }
-                            FileoutputUtil.log("Failed to get information of " + sub2.getName());
+                            MapleLogger.info("Failed to get information of " + sub2.getName());
                         }
                         sb = new StringBuilder();
                     }
@@ -205,7 +206,7 @@ public class BuffInformation {
         long minutes = (total / (60 * 1000));
         long seconds = (total % (60 * 1000) / 1000);
         long milliseconds = (total % 1000);
-        FileoutputUtil.log("Total time: " + minutes + " minute(s), " + seconds
+        MapleLogger.info("Total time: " + minutes + " minute(s), " + seconds
                 + " second(s), " + milliseconds + " millisecond(s).");
     }
 

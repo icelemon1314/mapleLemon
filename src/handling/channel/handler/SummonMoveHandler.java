@@ -5,7 +5,8 @@ import client.MapleClient;
 import handling.MaplePacketHandler;
 import server.maps.MapleSummon;
 import server.maps.SummonMovementType;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.SummonPacket;
 
@@ -27,7 +28,7 @@ public class SummonMoveHandler extends MaplePacketHandler {
         }
         MapleSummon sum = chr.getSummons().get(slea.readInt());
         if (sum == null) {
-            FileoutputUtil.log("找不到地图物体：召唤兽！");
+            MapleLogger.info("找不到地图物体：召唤兽！");
             return;
         }
         if ((sum.getOwnerId() != chr.getId()) || (sum.getSkillLevel() <= 0) || (sum.getMovementType() == SummonMovementType.不会移动)) {
@@ -39,8 +40,7 @@ public class SummonMoveHandler extends MaplePacketHandler {
         MovementParse.updatePosition(res, sum, 0);
         if (res.size() > 0) {
             if (slea.available() != 1L) {
-                FileoutputUtil.log("slea.available() != 1 (召唤兽移动错误) 剩余封包长度: " + slea.available());
-                FileoutputUtil.log(FileoutputUtil.Movement_Sumon, "slea.available() = " + slea.available() + " (召唤兽移动错误) 封包: " + slea.toString(true));
+                MapleLogger.error("slea.available() != 1 (召唤兽移动错误) 剩余封包长度: " + slea.available());
                 return;
             }
             chr.getMap().broadcastMessage(chr, SummonPacket.moveSummon(chr.getId(), sum.getSkillId(), pos, res), sum.getTruePosition());

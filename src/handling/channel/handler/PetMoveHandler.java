@@ -4,7 +4,8 @@ import client.MapleCharacter;
 import client.MapleClient;
 import client.inventory.MaplePet;
 import handling.MaplePacketHandler;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.PetPacket;
 
@@ -28,8 +29,7 @@ public class PetMoveHandler extends MaplePacketHandler {
         List res = MovementParse.parseMovement(slea, 3);
         if ((res != null) && (chr != null) && (!res.isEmpty()) && (chr.getMap() != null)) {
             if (slea.available() != 1) {
-                FileoutputUtil.log("slea.available != 1 (宠物移动出错) 剩余封包长度: " + slea.available());
-                FileoutputUtil.log(FileoutputUtil.Movement_Pet, "slea.available != 1 (宠物移动出错) 封包: " + slea.toString(true));
+                MapleLogger.info("slea.available != 1 (宠物移动出错) 剩余封包长度: " + slea.available());
                 return;
             }
             chr.getSpawnPet().updatePosition(res);

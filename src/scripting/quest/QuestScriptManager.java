@@ -9,7 +9,8 @@ import javax.script.ScriptException;
 import scripting.AbstractScriptManager;
 import scripting.ScriptType;
 import server.quest.MapleQuest;
-import tools.FileoutputUtil;
+import tools.MapleLogger;
+
 
 public class QuestScriptManager extends AbstractScriptManager {
 
@@ -23,19 +24,19 @@ public class QuestScriptManager extends AbstractScriptManager {
     public void startQuest(MapleClient c, int npcId, int questId) {
         try {
             if (this.qms.containsKey(c)) {
-                FileoutputUtil.log("脚本任务挂了！！！！");
+                MapleLogger.info("脚本任务挂了！！！！");
                 dispose(c);
                 return;
             }
             Invocable iv = getInvocable("quests/" + questId + ".js", c, true);
-            FileoutputUtil.log("读取脚本任务完成！！！");
+            MapleLogger.info("读取脚本任务完成！！！");
             if (iv == null) {
                 //c.getPlayer().forceCompleteQuest(questId);
                 if (c.getPlayer().isShowPacket()) {
                     c.getPlayer().dropMessage(5, "开始任务脚本不存在 NPC：" + npcId + " Quest：" + questId);
                 }
                 dispose(c);
-                FileoutputUtil.log(FileoutputUtil.Quest_ScriptEx_Log, "开始任务脚本不存在 NPC：" + npcId + " Quest：" + questId);
+                MapleLogger.info("开始任务脚本不存在 NPC：" + npcId + " Quest：" + questId);
                 return;
             }
             if (c.getPlayer().isShowPacket()) {
@@ -49,8 +50,7 @@ public class QuestScriptManager extends AbstractScriptManager {
             c.setClickedNPC();
             iv.invokeFunction("start", new Object[]{(byte) 1, (byte) 0, (int) (byte) 0});
         } catch (ScriptException | NoSuchMethodException e) {
-            System.err.println("执行任务脚本失败 任务ID: (" + questId + ")..NPCID: " + npcId + ":" + e);
-            FileoutputUtil.log(FileoutputUtil.Quest_ScriptEx_Log, "执行任务脚本失败 任务ID: (" + questId + ")..NPCID: " + npcId + ". \r\n错误信息: " + e);
+            MapleLogger.info("执行任务脚本失败 任务ID: (" + questId + ")..NPCID: " + npcId + ". \r\n错误信息: " + e);
             dispose(c);
             notice(c, questId);
         }
@@ -71,8 +71,7 @@ public class QuestScriptManager extends AbstractScriptManager {
         } catch (ScriptException | NoSuchMethodException e) {
             int npcId = qm.getNpc();
             int questId = qm.getQuest();
-            System.err.println("执行任务脚本失败 任务ID: (" + questId + ")...NPC: " + npcId + ":" + e);
-            FileoutputUtil.log(FileoutputUtil.Quest_ScriptEx_Log, "执行任务脚本失败 任务ID: (" + questId + ")..NPCID: " + npcId + ". \r\n错误信息: " + e);
+            MapleLogger.info("执行任务脚本失败 任务ID: (" + questId + ")..NPCID: " + npcId + ". \r\n错误信息: " + e);
             dispose(c);
             notice(c, questId);
         }
@@ -94,7 +93,7 @@ public class QuestScriptManager extends AbstractScriptManager {
 //                        c.getPlayer().dropMessage(5, "完成任务脚本不存在 NPC：" + npcId + " Quest：" + questId);
 //                    }
                     dispose(c);
-                    FileoutputUtil.log(FileoutputUtil.Quest_ScriptEx_Log, "完成任务脚本不存在 NPC：" + npcId + " Quest：" + questId);
+                    MapleLogger.info("完成任务脚本不存在 NPC：" + npcId + " Quest：" + questId);
                     return;
                 }
 //                if (c.getPlayer().isAdmin()) {
@@ -112,7 +111,6 @@ public class QuestScriptManager extends AbstractScriptManager {
             }
         } catch (ScriptException | NoSuchMethodException e) {
             System.err.println("执行任务脚本失败 任务ID: (" + questId + ")..NPCID: " + npcId + ":" + e);
-            FileoutputUtil.log(FileoutputUtil.Quest_ScriptEx_Log, "执行任务脚本失败 任务ID: (" + questId + ")..NPCID: " + npcId + ". \r\n错误信息: " + e);
             dispose(c);
             notice(c, questId);
         }
@@ -134,7 +132,6 @@ public class QuestScriptManager extends AbstractScriptManager {
             int npcId = qm.getNpc();
             int questId = qm.getQuest();
             System.err.println("完成任务脚本失败 任务ID (" + questId + ")...NPC: " + npcId + ":" + e);
-            FileoutputUtil.log(FileoutputUtil.Quest_ScriptEx_Log, "完成任务脚本失败 任务ID (" + questId + ")..NPCID: " + npcId + ". \r\n错误信息: " + e);
             dispose(c);
             notice(c, questId);
         }

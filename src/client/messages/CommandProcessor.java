@@ -12,6 +12,8 @@ import client.messages.commands.SuperDonatorCommand;
 import client.messages.commands.SuperGMCommand;
 import constants.ServerConstants;
 import database.DatabaseConnection;
+import tools.MapleLogger;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.sql.PreparedStatement;
@@ -19,7 +21,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import tools.FileoutputUtil;
+
 
 public class CommandProcessor {
 
@@ -103,7 +105,7 @@ public class CommandProcessor {
                 sendDisplayMessage(c, "使用命令出现错误：", type);
                 if (c.getPlayer().isGM()) {
                     sendDisplayMessage(c, new StringBuilder().append("错误: ").append(e).toString(), type);
-                    FileoutputUtil.outputFileError(FileoutputUtil.CommandErr_Log, e);
+                    MapleLogger.error("command processor error:" + e);
                 }
             }
             return true;
@@ -136,7 +138,7 @@ public class CommandProcessor {
                 } catch (ArrayIndexOutOfBoundsException x) {
                     sendDisplayMessage(c, new StringBuilder().append("使用命令出错，该命令必须带参数才能使用: ").append(x).toString(), type);
                 } catch (Exception e) {
-                    FileoutputUtil.outputFileError(FileoutputUtil.CommandEx_Log, e);
+                    MapleLogger.error("process init error:" + e);
                 }
                 if ((ret > 0) && (c.getPlayer() != null)) {
                     if (c.getPlayer().isGM()) {
@@ -163,7 +165,7 @@ public class CommandProcessor {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.CommandErr_Log, e);
+            MapleLogger.error("command log to db error:" + e);
         } finally {
             try {
                 if (ps != null) {
@@ -203,13 +205,13 @@ public class CommandProcessor {
                             }
                         }
                     } catch (InstantiationException | IllegalAccessException | SecurityException | IllegalArgumentException ex) {
-                        FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, ex);
+                        MapleLogger.error("command init error:" + ex);
                     }
                 }
                 Collections.sort(cL);
                 commandList.put(rankNeeded.getLevel(), cL);
             } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, ex);
+                MapleLogger.error("command init error:" +ex);
             }
         }
     }

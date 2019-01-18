@@ -13,7 +13,8 @@ import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.Timer.EtcTimer;
 import server.maps.MapleMapObjectType;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.packet.PlayerShopPacket;
 
@@ -90,8 +91,7 @@ public class HiredMerchant extends AbstractPlayerStore {
                 if (chr != null) {
                     chr.dropMessage(-5, new StringBuilder().append("您雇佣商店里面的道具: ").append(itemText).toString());
                 }
-                FileoutputUtil.log(new StringBuilder().append("[雇佣] ").append(chr != null ? chr.getName() : getOwnerName()).append(" 雇佣商店卖出: ").append(newItem.getItemId()).append(" - ").append(itemText).append(" 价格: ").append(theQuantity).toString());
-                FileoutputUtil.hiredMerchLog(chr != null ? chr.getName() : getOwnerName(), new StringBuilder().append("雇佣商店卖出: ").append(newItem.getItemId()).append(" - ").append(itemText).append(" 价格: ").append(theQuantity).toString());
+                MapleLogger.info(new StringBuilder().append("[雇佣] ").append(chr != null ? chr.getName() : getOwnerName()).append(" 雇佣商店卖出: ").append(newItem.getItemId()).append(" - ").append(itemText).append(" 价格: ").append(theQuantity).toString());
             } else {
                 c.getPlayer().dropMessage(1, "金币不足.");
                 c.sendPacket(MaplePacketCreator.enableActions());

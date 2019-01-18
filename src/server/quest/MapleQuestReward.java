@@ -10,7 +10,8 @@ import client.inventory.MaplePet;
 import constants.ItemConstants;
 import provider.MapleDataProvider;
 import server.MapleItemInformationProvider;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.Pair;
 
 import java.io.Serializable;
@@ -42,7 +43,7 @@ public class MapleQuestReward implements Serializable {
 		} else if (type == MapleQuestRewardType.pop){
             this.dataStore.add(new Pair(rse.getInt("id"),rse.getInt("num")));
         }else {
-            FileoutputUtil.log("暂时不支持的奖励类型："+type.toString());
+            MapleLogger.info("暂时不支持的奖励类型："+type.toString());
         }
     }
 
@@ -77,7 +78,7 @@ public class MapleQuestReward implements Serializable {
                     chr.addFame(count);
                 }
             default:
-                FileoutputUtil.log("没有处理的奖励类型：："+type);
+                MapleLogger.info("没有处理的奖励类型：："+type);
                 break;
         }
         return true;

@@ -12,7 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import tools.EncodingDetect;
-import tools.FileoutputUtil;
+import tools.MapleLogger;
+
 
 public class ServerProperties {
 
@@ -38,7 +39,7 @@ public class ServerProperties {
             props.load(bf);
             bf.close();
         } catch (IOException ex) {
-            FileoutputUtil.log("加载 " + getPath() + " 配置出错 " + ex);
+            MapleLogger.info("加载 " + getPath() + " 配置出错 " + ex);
         }
         showPacket = Boolean.parseBoolean(ServerProperties.getProperty("ShowPacket", String.valueOf(showPacket)));
         maxHp = Integer.parseInt(ServerProperties.getProperty("maxHp", String.valueOf(maxHp)));
@@ -75,50 +76,50 @@ public class ServerProperties {
             }
         }
 
-        FileoutputUtil.logToFile(getPath(), "# [配置]\r\n");
+        MapleLogger.info(getPath() + "# [配置]\r\n");
         for (String s:setting) {
-            FileoutputUtil.logToFile(getPath(), s);
+            MapleLogger.info(getPath() + s);
         }
-//        setting.forEach((s) -> FileoutputUtil.logToFile(getPath(), s));
+//        setting.forEach((s) -> MapleLogger.infoToFile(getPath(), s));
 
-        FileoutputUtil.logToFile(getPath(), "\r\n# [服务器]\r\n");
+        MapleLogger.info(getPath() + "\r\n# [服务器]\r\n");
         for (Map.Entry <String, ArrayList<String>> i:world.entrySet()) {
             if (i.getValue().isEmpty()) {
                 return;
             }
-            FileoutputUtil.logToFile(getPath(), "# " + i.getKey() + "\r\n");
+            MapleLogger.info(getPath() + "# " + i.getKey() + "\r\n");
             for (String s : i.getValue()) {
-                FileoutputUtil.logToFile(getPath(), s);
+                MapleLogger.info(getPath() + s);
             }
-//            i.getValue().forEach((s) -> FileoutputUtil.logToFile(getPath(), s));
+//            i.getValue().forEach((s) -> MapleLogger.infoToFile(getPath(), s));
         }
         /*
         world.entrySet().forEach((i) -> {
             if (i.getValue().isEmpty()) {
                 return;
             }
-            FileoutputUtil.logToFile(getPath(), "# " + i.getKey() + "\r\n");
-            i.getValue().forEach((s) -> FileoutputUtil.logToFile(getPath(), s));
+            MapleLogger.infoToFile(getPath(), "# " + i.getKey() + "\r\n");
+            i.getValue().forEach((s) -> MapleLogger.infoToFile(getPath(), s));
         });*/
 
-        FileoutputUtil.logToFile(getPath(), "\r\n# [测试机]\r\n");
+        MapleLogger.info(getPath() + "\r\n# [测试机]\r\n");
         for (Map.Entry <String, ArrayList<String>> i:tespia.entrySet()) {
             if (i.getValue().isEmpty()) {
                 return;
             }
-            FileoutputUtil.logToFile(getPath(), "# " + i.getKey() + "\r\n");
+            MapleLogger.info(getPath() + "# " + i.getKey() + "\r\n");
             for (String s : i.getValue()) {
-                FileoutputUtil.logToFile(getPath(), s);
+                MapleLogger.info(getPath() + s);
             }
-//            i.getValue().forEach((s) -> FileoutputUtil.logToFile(getPath(), s));
+//            i.getValue().forEach((s) -> MapleLogger.infoToFile(getPath(), s));
         }
         /*
         tespia.entrySet().forEach((i) -> {
             if (i.getValue().isEmpty()) {
                 return;
             }
-            FileoutputUtil.logToFile(getPath(), "# " + i.getKey() + "\r\n");
-            i.getValue().forEach((s) -> FileoutputUtil.logToFile(getPath(), s));
+            MapleLogger.infoToFile(getPath(), "# " + i.getKey() + "\r\n");
+            i.getValue().forEach((s) -> MapleLogger.infoToFile(getPath(), s));
         });*/
     }
 

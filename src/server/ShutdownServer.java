@@ -14,7 +14,7 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
-import tools.FileoutputUtil;
+
 import tools.MapleLogger;
 import tools.MaplePacketCreator;
 
@@ -29,7 +29,7 @@ public class ShutdownServer implements ShutdownServerMBean {
             instance = new ShutdownServer();
             mBeanServer.registerMBean(instance, new ObjectName("server:type=ShutdownServer"));
         } catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException e) {
-            FileoutputUtil.log("Error registering Shutdown MBean");
+            MapleLogger.info("Error registering Shutdown MBean");
         }
     }
 
@@ -51,7 +51,7 @@ public class ShutdownServer implements ShutdownServerMBean {
                 cs.closeAllMerchants();
             }
             WorldGuildService.getInstance().save();
-            FileoutputUtil.log("所有档案已保存.");
+            MapleLogger.info("所有档案已保存.");
             this.mode++;
         } else if (this.mode == 1) {
             this.mode++;
@@ -71,7 +71,7 @@ public class ShutdownServer implements ShutdownServerMBean {
             LoginServer.shutdown();
             CashShopServer.shutdown();
             //AuctionServer.shutdown(); //已注释启动拍卖
-            FileoutputUtil.log("正在关闭时钟线程...");
+            MapleLogger.info("正在关闭时钟线程...");
             Timer.WorldTimer.getInstance().stop();
             Timer.MapTimer.getInstance().stop();
             Timer.BuffTimer.getInstance().stop();
@@ -80,11 +80,11 @@ public class ShutdownServer implements ShutdownServerMBean {
             Timer.EventTimer.getInstance().stop();
             Timer.EtcTimer.getInstance().stop();
             Timer.PingTimer.getInstance().stop();
-            FileoutputUtil.log("正在关闭数据库连接...");
+            MapleLogger.info("正在关闭数据库连接...");
             DatabaseConnection.closeAll();
 
         }
-        FileoutputUtil.log("游戏服务已成功关闭");
+        MapleLogger.info("游戏服务已成功关闭");
         System.exit(0);
     }
 }

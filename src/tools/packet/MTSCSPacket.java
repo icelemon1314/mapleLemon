@@ -19,8 +19,9 @@ import java.util.Map;
 import server.cashshop.CashItemFactory;
 import server.cashshop.CashItemInfo;
 import server.cashshop.CashShop;
-import tools.FileoutputUtil;
+
 import tools.HexTool;
+import tools.MapleLogger;
 import tools.Pair;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
@@ -54,7 +55,6 @@ public class MTSCSPacket {
             }
         }
         mplew.writeShort(size);
-        FileoutputUtil.log("商城道具个数："+size);
         for (Map.Entry csInfo : cashinfo.entrySet()) {
             CashItemInfo stats = (CashItemInfo)csInfo.getValue();
             if ((int)csInfo.getKey() > 80000000) // 剩下金币包需要处理
@@ -123,7 +123,7 @@ public class MTSCSPacket {
             }
         }
 
-//        FileoutputUtil.log("写入字节数："+writeByte);
+//        MapleLogger.info("写入字节数："+writeByte);
         // 商城礼包
         mplew.writeShort(5); // Stock
         mplew.writeInt(-1); // 1 = Sold Out, 2 = Not Sold
@@ -154,26 +154,6 @@ public class MTSCSPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] addCharBox(MapleCharacter c, int itemId) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.UPDATE_CHAR_BOX.getValue());
-        mplew.writeInt(c.getId());
-        mplew.writeInt(itemId);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] removeCharBox(MapleCharacter c) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.UPDATE_CHAR_BOX.getValue());
-        mplew.writeInt(c.getId());
-        mplew.writeInt(0);
-
-        return mplew.getPacket();
-    }
-
     public static byte[] useCharm(byte charmsleft, byte daysleft) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -192,50 +172,6 @@ public class MTSCSPacket {
         mplew.write(SendPacketOpcode.SHOW_SPECIAL_EFFECT.getValue());
         mplew.write(0x18);
         mplew.writeLong(charmsleft);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] useAlienSocket(boolean start) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.ALIEN_SOCKET_CREATOR.getValue());
-        mplew.write(start ? 0 : 2);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] sendHammerData(boolean start, int hammered) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.VICIOUS_HAMMER.getValue());
-
-        mplew.write(start ? 59 : 67);//0x57
-        mplew.writeInt(0);
-        if (start) {
-            mplew.writeInt(hammered);
-        }
-        return mplew.getPacket();
-    }
-
-    public static byte[] sendHammerData(int type, int value) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.VICIOUS_HAMMER.getValue());
-
-        mplew.write(type);
-        mplew.writeInt(value);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] changePetFlag(int uniqueId, boolean added, int flagAdded) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.write(SendPacketOpcode.PET_FLAG_CHANGE.getValue());
-
-        mplew.writeLong(uniqueId);
-        mplew.write(added ? 1 : 0);
-        mplew.writeShort(flagAdded);
 
         return mplew.getPacket();
     }
@@ -265,21 +201,6 @@ public class MTSCSPacket {
             mplew.writeLong(PacketHelper.getKoreanTimestamp(notes.getLong("timestamp")));
             mplew.write(notes.getInt("gift"));
             notes.next();
-        }
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] useChalkboard(int charid, String msg) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.write(SendPacketOpcode.CHALKBOARD.getValue());
-
-        mplew.writeInt(charid);
-        if ((msg == null) || (msg.length() <= 0)) {
-            mplew.write(0);
-        } else {
-            mplew.write(1);
-            mplew.writeMapleAsciiString(msg);
         }
 
         return mplew.getPacket();
@@ -332,15 +253,6 @@ public class MTSCSPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] enableCSUse(int type) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.CS_USE.getValue());
-        mplew.write(type);
-        mplew.writeInt(0);
-
-        return mplew.getPacket();
-    }
 
     /**
      * 更新玩家点卷信息
@@ -356,17 +268,6 @@ public class MTSCSPacket {
 
         return mplew.getPacket();
     }
-
-    public static byte[] updataMeso(MapleCharacter chr) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.CS_UPDATE_MESO.getValue());
-        mplew.writeLong(MapleStat.金币.getValue());
-        mplew.writeLong(chr.getMeso());
-
-        return mplew.getPacket();
-    }
-
     /**
      * 商城道具栏信息
      * @param c
@@ -380,7 +281,7 @@ public class MTSCSPacket {
         mplew.write(0x1D);
         CashShop mci = c.getPlayer().getCashInventory();
 //        int size = 0;
-        FileoutputUtil.log("商城保管箱道具个数："+mci.getItemsSize());
+        MapleLogger.info("商城保管箱道具个数："+mci.getItemsSize());
         mplew.writeShort(mci.getItemsSize());
         for (Item itemz : mci.getInventory()) {
             mplew.writeLong(itemz.getUniqueId() > 0 ? itemz.getUniqueId() : 0L);
@@ -540,7 +441,7 @@ public class MTSCSPacket {
 
         mplew.write(SendPacketOpcode.CS_OPERATION.getValue());
         mplew.write(0x30);
-        FileoutputUtil.log("道具位置："+item.getPosition());
+        MapleLogger.info("道具位置："+item.getPosition());
         mplew.writeShort(item.getPosition());
 //        PacketHelper.addItemInfo(mplew, item);
         // 这里比较奇怪了，理论上应该和普通的背包道具是一样的哈
@@ -791,103 +692,9 @@ public class MTSCSPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] 商城提示(int 消费, int 达到, int mode) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.CS_MSG.getValue());
-
-        mplew.write(CashShopOpcode.商城提示.getValue());
-        mplew.writeInt(消费);
-        mplew.writeInt(达到);
-        mplew.write(mode);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] 热点推荐(MapleCharacter chr) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.CS_HOT.getValue());
-        int[] hotSn = {20400253, 20500121, 20600140, 20000348};
-
-        mplew.writeInt(hotSn.length);
-        for (int i = 0; i < hotSn.length; i++) {
-            mplew.writeInt(hotSn[i]);
-        }
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] 每日特卖() {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.CS_DAILY.getValue());
-        mplew.writeInt(getTime());
-        mplew.writeLong(0L);
-
-        return mplew.getPacket();
-    }
-
     public static int getTime() {
         String time = new SimpleDateFormat("yyyy-MM-dd").format(new Date()).replace("-", "");
         return Integer.valueOf(time);
-    }
-
-    public static byte[] showXmasSurprise(int idFirst, Item item, int accid) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.XMAS_SURPRISE.getValue());
-        mplew.write(230);
-        mplew.writeLong(idFirst);
-        mplew.writeInt(0);
-        addCashItemInfo(mplew, item, accid, 0);
-        mplew.writeInt(item.getItemId());
-        mplew.write(1);
-        mplew.write(1);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] getBoosterFamiliar(int cid, int familiar, int id) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.BOOSTER_FAMILIAR.getValue());
-        mplew.writeInt(cid);
-        mplew.writeInt(familiar);
-        mplew.writeLong(id);
-        mplew.write(0);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] getBoosterPack(int f1, int f2, int f3) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.BOOSTER_PACK.getValue());
-        mplew.write(215);
-        mplew.writeInt(f1);
-        mplew.writeInt(f2);
-        mplew.writeInt(f3);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] getBoosterPackClick() {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.BOOSTER_PACK.getValue());
-        mplew.write(213);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] getBoosterPackReveal() {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.BOOSTER_PACK.getValue());
-        mplew.write(214);
-
-        return mplew.getPacket();
     }
 
     /**

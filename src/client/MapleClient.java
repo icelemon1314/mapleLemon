@@ -649,7 +649,7 @@ public class MapleClient implements Serializable {
                 this.player.getMap().removePlayer(this.player);
             }
         } catch (NumberFormatException e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.Acc_Stuck, e);
+            MapleLogger.error("error:", e);
         }
     }
 
@@ -723,7 +723,6 @@ public class MapleClient implements Serializable {
                         WorldGuildService.getInstance().setGuildMemberOnline(chrg, false, -1);
                     }
                 } catch (Exception e) {
-                    FileoutputUtil.outputFileError(FileoutputUtil.Acc_Stuck, e);
                     MapleLogger.error(new StringBuilder().append(getLogMessage(this, "ERROR")).append(e).toString());
                 } finally {
                     if ((RemoveInChannelServer) && (ch != null)) {
@@ -754,7 +753,6 @@ public class MapleClient implements Serializable {
                         player.setMessenger(null);
                     }
                 } catch (Exception e) {
-                    FileoutputUtil.outputFileError(FileoutputUtil.Acc_Stuck, e);
                     MapleLogger.error(new StringBuilder().append(getLogMessage(this, "ERROR")).append(e).toString());
                 } finally {
                     if ((RemoveInChannelServer) && (ch > 0)) {
@@ -900,7 +898,6 @@ public class MapleClient implements Serializable {
             MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM pqlog WHERE characterid = ?", cid);
             return 0;
         } catch (SQLException e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.SQL_Ex_Log, e);
             MapleLogger.error("delete user error:", e);
         }
         return 1;
@@ -983,7 +980,7 @@ public class MapleClient implements Serializable {
                 if (getLatency() < 0) {
                     disconnect(true, false);
                     if (getSession().isActive()) {
-                        FileoutputUtil.log(MapleClient.getLogMessage(MapleClient.this, "PING超时."));
+                        MapleLogger.info(MapleClient.getLogMessage(MapleClient.this, "PING超时."));
                         getSession().close();
                     }
                 }

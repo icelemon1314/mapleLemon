@@ -28,7 +28,7 @@ import server.maps.MapleMap;
 import server.maps.MapleMapFactory;
 import server.quest.MapleQuest;
 import server.squad.MapleSquad;
-import tools.FileoutputUtil;
+
 import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.Pair;
@@ -78,10 +78,10 @@ public class EventInstanceManager {
             chr.setEventInstance(this);
             this.em.getIv().invokeFunction("playerEntry", new Object[]{this, chr});
         } catch (NullPointerException ex) {
-            FileoutputUtil.outputFileError(FileoutputUtil.Event_ScriptEx_Log, ex);
+            MapleLogger.error(" register player", ex);
         } catch (ScriptException | NoSuchMethodException ex) {
             MapleLogger.error(new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : playerEntry:\r\n").append(ex).toString());
-            FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : playerEntry:\r\n").append(ex).toString());
+            MapleLogger.info(new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : playerEntry:\r\n").append(ex).toString());
         }
     }
 
@@ -99,7 +99,6 @@ public class EventInstanceManager {
         } catch (NullPointerException npe) {
         } catch (ScriptException | NoSuchMethodException ex) {
             MapleLogger.error(new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : changedMap:\r\n").append(ex).toString());
-            FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : changedMap:\r\n").append(ex).toString());
         }
     }
 
@@ -117,7 +116,6 @@ public class EventInstanceManager {
                     EventInstanceManager.this.em.getIv().invokeFunction("scheduledTimeout", new Object[]{eim});
                 } catch (ScriptException | NoSuchMethodException ex) {
                     MapleLogger.error("Event name" + EventInstanceManager.this.em.getName() + ", Instance name : " + EventInstanceManager.this.name + ", method Name : scheduledTimeout:\r\n" + ex);
-                    FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, "Event name" + EventInstanceManager.this.em.getName() + ", Instance name : " + EventInstanceManager.this.name + ", method Name : scheduledTimeout:\r\n" + ex);
                 }
             }
         }, delay);
@@ -144,16 +142,11 @@ public class EventInstanceManager {
             this.eventTimer = null;
             int timesend = (int) time / 1000;
             for (MapleCharacter chr : getPlayers()) {
-                if (this.name.startsWith("PVP")) {
-                    chr.getClient().sendPacket(MaplePacketCreator.getPVPClock(Integer.parseInt(getProperty("type")), timesend));
-                } else {
-                    chr.getClient().sendPacket(MaplePacketCreator.getClock(timesend));
-                }
+                chr.getClient().sendPacket(MaplePacketCreator.getClock(timesend));
             }
             timeOut(time, this);
         } catch (NumberFormatException ex) {
             MapleLogger.error(new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : restartEventTimer:\r\n").append(ex).toString());
-            FileoutputUtil.outputFileError(FileoutputUtil.Event_ScriptEx_Log, ex);
         }
     }
 
@@ -168,15 +161,6 @@ public class EventInstanceManager {
         int timesend = (int) time / 1000;
         for (MapleCharacter chr : getPlayers()) {
             chr.getClient().sendPacket(MaplePacketCreator.getClock(timesend));
-        }
-    }
-
-    public void stopEventClock() {
-        if (this.disposed) {
-            return;
-        }
-        for (MapleCharacter chr : getPlayers()) {
-            chr.getClient().sendPacket(MaplePacketCreator.stopClock());
         }
     }
 
@@ -262,7 +246,7 @@ public class EventInstanceManager {
                 return true;
             }
         } catch (Exception ex) {
-            FileoutputUtil.outputFileError(FileoutputUtil.Event_ScriptEx_Log, ex);
+            MapleLogger.error("if error:", ex);
         } finally {
             this.wL.unlock();
         }
@@ -357,7 +341,6 @@ public class EventInstanceManager {
                 this.em.getIv().invokeFunction("allMonstersDead", new Object[]{this});
             } catch (ScriptException | NoSuchMethodException ex) {
                 MapleLogger.error(new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : allMonstersDead:\r\n").append(ex).toString());
-                FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : allMonstersDead:\r\n").append(ex).toString());
             }
         }
     }
@@ -370,7 +353,6 @@ public class EventInstanceManager {
             this.em.getIv().invokeFunction("playerDead", new Object[]{this, chr});
         } catch (ScriptException | NoSuchMethodException ex) {
             MapleLogger.error(new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : playerDead:\r\n").append(ex).toString());
-            FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : playerDead:\r\n").append(ex).toString());
         }
     }
 
@@ -385,7 +367,6 @@ public class EventInstanceManager {
             }
         } catch (ScriptException | NoSuchMethodException ex) {
             MapleLogger.error(new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : playerRevive:\r\n").append(ex).toString());
-            FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : playerRevive:\r\n").append(ex).toString());
         }
         return true;
     }
@@ -426,7 +407,7 @@ public class EventInstanceManager {
                 dispose_NoLock();
             }
         } catch (Exception ex) {
-            FileoutputUtil.outputFileError(FileoutputUtil.Event_ScriptEx_Log, ex);
+            MapleLogger.error("player discounts:", ex);
         } finally {
             this.wL.unlock();
         }
@@ -453,9 +434,8 @@ public class EventInstanceManager {
             }
         } catch (ScriptException | NoSuchMethodException ex) {
             MapleLogger.error(new StringBuilder().append("Event name").append(this.em == null ? "null" : this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : monsterValue:\r\n").append(ex).toString());
-            FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, new StringBuilder().append("Event name").append(this.em == null ? "null" : this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : monsterValue:\r\n").append(ex).toString());
         } catch (Exception ex) {
-            FileoutputUtil.outputFileError(FileoutputUtil.Event_ScriptEx_Log, ex);
+            MapleLogger.error("monsterKilled error:", ex);
         }
     }
 
@@ -467,9 +447,8 @@ public class EventInstanceManager {
             this.em.getIv().invokeFunction("monsterDamaged", new Object[]{this, chr, mob.getId(), damage});
         } catch (ScriptException | NoSuchMethodException ex) {
             MapleLogger.error(new StringBuilder().append("Event name").append(this.em == null ? "null" : this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : monsterValue:\r\n").append(ex).toString());
-            FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, new StringBuilder().append("Event name").append(this.em == null ? "null" : this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : monsterValue:\r\n").append(ex).toString());
         } catch (Exception ex) {
-            FileoutputUtil.outputFileError(FileoutputUtil.Event_ScriptEx_Log, ex);
+            MapleLogger.error(" monster damaged:", ex);
         }
     }
 
@@ -481,9 +460,8 @@ public class EventInstanceManager {
             this.em.getIv().invokeFunction("addPVPScore", new Object[]{this, chr, score});
         } catch (ScriptException | NoSuchMethodException ex) {
             MapleLogger.error(new StringBuilder().append("Event name").append(this.em == null ? "null" : this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : monsterValue:\r\n").append(ex).toString());
-            FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, new StringBuilder().append("Event name").append(this.em == null ? "null" : this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : monsterValue:\r\n").append(ex).toString());
         } catch (Exception ex) {
-            FileoutputUtil.outputFileError(FileoutputUtil.Event_ScriptEx_Log, ex);
+            MapleLogger.error("add pvp score :", ex);
         }
     }
 
@@ -539,7 +517,6 @@ public class EventInstanceManager {
             this.em.disposeInstance(this.name);
         } catch (Exception e) {
             MapleLogger.error(new StringBuilder().append("Caused by : ").append(emName).append(" instance name: ").append(this.name).append(" method: dispose:").toString());
-            FileoutputUtil.outputFileError(FileoutputUtil.Event_ScriptEx_Log, e);
         }
     }
 
@@ -679,7 +656,7 @@ public class EventInstanceManager {
 
             return map;
         } catch (NullPointerException ex) {
-            FileoutputUtil.outputFileError(FileoutputUtil.Event_ScriptEx_Log, ex);
+            MapleLogger.error("get map instance error:", ex);
         }
         return null;
     }
@@ -699,7 +676,6 @@ public class EventInstanceManager {
                 } catch (NullPointerException npe) {
                 } catch (ScriptException | NoSuchMethodException ex) {
                     MapleLogger.error("Event name" + EventInstanceManager.this.em.getName() + ", Instance name : " + EventInstanceManager.this.name + ", method Name : " + methodName + ":\n" + ex);
-                    FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, "Event name" + EventInstanceManager.this.em.getName() + ", Instance name : " + EventInstanceManager.this.name + ", method Name(schedule) : " + methodName + " :\n" + ex);
                 }
             }
         }, delay*1000);
@@ -742,7 +718,6 @@ public class EventInstanceManager {
             this.em.getIv().invokeFunction("leftParty", new Object[]{this, chr});
         } catch (ScriptException | NoSuchMethodException ex) {
             MapleLogger.error(new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : leftParty:\n").append(ex).toString());
-            FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : leftParty:\n").append(ex).toString());
         }
     }
 
@@ -754,7 +729,6 @@ public class EventInstanceManager {
             this.em.getIv().invokeFunction("disbandParty", new Object[]{this});
         } catch (ScriptException | NoSuchMethodException ex) {
             MapleLogger.error(new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : disbandParty:\n").append(ex).toString());
-            FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : disbandParty:\n").append(ex).toString());
         }
     }
 
@@ -766,7 +740,6 @@ public class EventInstanceManager {
             this.em.getIv().invokeFunction("clearPQ", new Object[]{this});
         } catch (ScriptException | NoSuchMethodException ex) {
             MapleLogger.error(new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : clearPQ:\n").append(ex).toString());
-            FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : clearPQ:\n").append(ex).toString());
         }
     }
 
@@ -778,7 +751,6 @@ public class EventInstanceManager {
             this.em.getIv().invokeFunction("playerExit", new Object[]{this, chr});
         } catch (ScriptException | NoSuchMethodException ex) {
             MapleLogger.error(new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : playerExit:\n").append(ex).toString());
-            FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : playerExit:\n").append(ex).toString());
         }
     }
 
@@ -809,7 +781,6 @@ public class EventInstanceManager {
             this.em.getIv().invokeFunction("registerCarnivalParty", new Object[]{this, carnivalParty});
         } catch (ScriptException ex) {
             MapleLogger.error(new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : registerCarnivalParty:\n").append(ex).toString());
-            FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : registerCarnivalParty:\n").append(ex).toString());
         } catch (NoSuchMethodException ex) {
         }
     }
@@ -822,7 +793,6 @@ public class EventInstanceManager {
             this.em.getIv().invokeFunction("onMapLoad", new Object[]{this, chr});
         } catch (ScriptException ex) {
             MapleLogger.error(new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : onMapLoad:\n").append(ex).toString());
-            FileoutputUtil.log(FileoutputUtil.Event_ScriptEx_Log, new StringBuilder().append("Event name").append(this.em.getName()).append(", Instance name : ").append(this.name).append(", method Name : onMapLoad:\n").append(ex).toString());
         } catch (NoSuchMethodException ex) {
         }
     }
@@ -852,7 +822,7 @@ public class EventInstanceManager {
             }
         }
         squad.setStatus((byte) 2);
-        squad.getBeginMap().broadcastMessage(MaplePacketCreator.stopClock());
+//        squad.getBeginMap().broadcastMessage(MaplePacketCreator.stopClock());
     }
 
     public void registerSquad(MapleSquad squad, MapleMap map, String bossid) {
@@ -876,7 +846,7 @@ public class EventInstanceManager {
             }
         }
         squad.setStatus((byte) 2);
-        squad.getBeginMap().broadcastMessage(MaplePacketCreator.stopClock());
+//        squad.getBeginMap().broadcastMessage(MaplePacketCreator.stopClock());
     }
 
     public boolean isDisconnected(MapleCharacter chr) {

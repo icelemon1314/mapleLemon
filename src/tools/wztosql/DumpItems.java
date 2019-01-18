@@ -37,7 +37,8 @@ import provider.MapleDataFileEntry;
 import provider.MapleDataProvider;
 import provider.MapleDataProviderFactory;
 import provider.MapleDataTool;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.Pair;
 import client.inventory.MapleInventoryType;
 import constants.GameConstants;
@@ -81,7 +82,7 @@ public class DumpItems {
                 dumpItems(psa, psr, ps, pse);
             } catch (Exception e) {
                 e.printStackTrace();
-                FileoutputUtil.log(id + " quest.");
+                MapleLogger.info(id + " quest.");
                 hadError = true;
             } finally {
                 psa.executeBatch();
@@ -390,7 +391,7 @@ public class DumpItems {
                         }
                         break;
                     default:
-                        FileoutputUtil.log("UNKNOWN EQ ADDITION : " + d.getName() + " from " + id);
+                        MapleLogger.info("UNKNOWN EQ ADDITION : " + d.getName() + " from " + id);
                         break;
                 }
             }
@@ -430,12 +431,12 @@ public class DumpItems {
             delete("DELETE FROM wz_itemequipdata");
             delete("DELETE FROM wz_itemadddata");
             delete("DELETE FROM wz_itemrewarddata");
-            FileoutputUtil.log("Deleted wz_itemdata successfully.");
+            MapleLogger.info("Deleted wz_itemdata successfully.");
         }
-        FileoutputUtil.log("Adding into wz_itemdata.....");
+        MapleLogger.info("Adding into wz_itemdata.....");
         dumpItems(item, psa, psr, ps, pse, false);
         dumpItems(character, psa, psr, ps, pse, true);
-        FileoutputUtil.log("Done wz_itemdata...");
+        MapleLogger.info("Done wz_itemdata...");
     }
 
     public int currentId() {
@@ -454,14 +455,14 @@ public class DumpItems {
         int currentQuest = 0;
         try {
             final DumpItems dq = new DumpItems(update);
-            FileoutputUtil.log("Dumping Items");
+            MapleLogger.info("Dumping Items");
             dq.dumpItems();
             hadError |= dq.isHadError();
             currentQuest = dq.currentId();
         } catch (Exception e) {
             hadError = true;
             e.printStackTrace();
-            FileoutputUtil.log(currentQuest + " quest.");
+            MapleLogger.info(currentQuest + " quest.");
         }
         long endTime = System.currentTimeMillis();
         double elapsedSeconds = (endTime - startTime) / 1000.0;
@@ -472,7 +473,7 @@ public class DumpItems {
         if (hadError) {
             withErrors = " with errors";
         }
-        FileoutputUtil.log("Finished" + withErrors + " in " + elapsedMinutes + " minutes " + elapsedSecs + " seconds");
+        MapleLogger.info("Finished" + withErrors + " in " + elapsedMinutes + " minutes " + elapsedSecs + " seconds");
     }
 
     protected final MapleData getStringData(final int itemId) {

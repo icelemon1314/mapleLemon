@@ -7,7 +7,8 @@ import handling.channel.ChannelServer;
 import handling.world.World;
 import java.util.List;
 
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.LoginPacket;
@@ -31,7 +32,7 @@ public class CharlistRequestHandler extends MaplePacketHandler {
             c.sendPacket(LoginPacket.getLoginFailed(1)); //Shows no message, but it is used to unstuck
             return;
         }
-        FileoutputUtil.log("[连接信息] "+c.getSession().remoteAddress().toString().split(":")[0] + " 连接到世界服务器: " + server + " 频道: " + channel);
+        MapleLogger.info("[连接信息] "+c.getSession().remoteAddress().toString().split(":")[0] + " 连接到世界服务器: " + server + " 频道: " + channel);
         List chars = c.loadCharacters(server);
         if ((chars != null) && (ChannelServer.getInstance(channel) != null)) {
             c.setWorld(server);

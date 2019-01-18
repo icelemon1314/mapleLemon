@@ -15,7 +15,8 @@ import java.util.Set;
 import server.life.Element;
 import server.life.MapleLifeFactory;
 import server.life.MapleMonsterStats;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.Pair;
 
 public class BattleConstants {
@@ -47,7 +48,7 @@ public class BattleConstants {
                     int id = (mob.evolutions.get(i));
                     MapleMonsterStats mons = MapleLifeFactory.getMonsterStats(id);
                     if (mons == null) {
-                        FileoutputUtil.log("WARNING: monster " + id + " does not exist.");
+                        MapleLogger.info("WARNING: monster " + id + " does not exist.");
                     } else if (((id == 6400007) || (!mons.isBoss())) && (mons.getLevel() >= map.minLevel) && (mons.getLevel() <= map.maxLevel) && (!set_check.contains(id)) && (canAdd(id))) {
                         set.add(new Pair(id, i + 1));
                         set_check.add(id);

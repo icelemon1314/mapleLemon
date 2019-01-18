@@ -34,7 +34,7 @@ import server.life.MapleMonsterInformationProvider;
 import server.life.MobSkillFactory;
 import server.life.PlayerNPC;
 import server.quest.MapleQuest;
-import tools.FileoutputUtil;
+
 import tools.MapleLogger;
 
 public class Start {
@@ -257,7 +257,7 @@ public class Start {
                 ps.executeUpdate();
                 ps.close();
                 System.out.println("发现复制装备 该装备的唯一ID: " + i + " 已进行删除处理..");
-                FileoutputUtil.log("装备复制.txt", "发现复制装备 该装备的唯一ID: " + i + " 已进行删除处理..", true);
+                MapleLogger.info("发现复制装备 该装备的唯一ID: " + i + " 已进行删除处理..");
             }
         } catch (SQLException ex) {
             System.out.println("[EXCEPTION] 清理复制装备出现错误." + ex);

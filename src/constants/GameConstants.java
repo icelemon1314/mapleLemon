@@ -23,7 +23,7 @@ import java.util.Map;
 import server.MapleItemInformationProvider;
 import server.MapleStatEffect;
 import server.maps.MapleMapObjectType;
-import tools.FileoutputUtil;
+
 import tools.MaplePacketCreator;
 import tools.Pair;
 
@@ -1721,15 +1721,15 @@ public class GameConstants {
         return false;
     }
 
-    public static int getCurrentDate() {
-        String time = FileoutputUtil.CurrentReadable_Time();
-        return Integer.parseInt(time.substring(0, 4) + time.substring(5, 7) + time.substring(8, 10) + time.substring(11, 13));
-    }
+//    public static int getCurrentDate() {
+////        String time = System.currentTimeMillis();
+////        return Integer.parseInt(time.substring(0, 4) + time.substring(5, 7) + time.substring(8, 10) + time.substring(11, 13));
+//    }
 
-    public static int getCurrentDate_NoTime() {
-        String time = FileoutputUtil.CurrentReadable_Time();
-        return Integer.parseInt(time.substring(0, 4) + time.substring(5, 7) + time.substring(8, 10));
-    }
+//    public static int getCurrentDate_NoTime() {
+//        String time = FileoutputUtil.CurrentReadable_Time();
+//        return Integer.parseInt(time.substring(0, 4) + time.substring(5, 7) + time.substring(8, 10));
+//    }
 
     public static boolean isFishingMap(int mapid) {
         return (mapid == 749050500) || (mapid == 749050501) || (mapid == 749050502) || (mapid == 970020000) || (mapid == 970020005);

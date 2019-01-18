@@ -13,7 +13,7 @@ public class ShowAccCash {
         int accId = slea.readInt();
         if (c.getAccID() == accId) {
             if (c.getPlayer() != null) {
-                c.sendPacket(MaplePacketCreator.showPlayerCash(c.getPlayer()));
+//                c.sendPacket(MaplePacketCreator.showPlayerCash(c.getPlayer()));
             } else {
                 Pair cashInfo = MapleCharacterUtil.getCashByAccId(accId);
                 if (cashInfo == null) {

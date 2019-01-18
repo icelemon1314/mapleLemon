@@ -19,7 +19,8 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import tools.EncodingDetect;
-import tools.FileoutputUtil;
+import tools.MapleLogger;
+
 
 public class MapScriptManager {
 
@@ -45,7 +46,7 @@ public class MapScriptManager {
             if (c.getPlayer().isShowPacket()) {
                 c.getPlayer().dropMessage(5, "地图触发: 未找到 地图/" + type + " 文件中的 " + scriptName + ".js 文件.");
             }
-            FileoutputUtil.log(FileoutputUtil.Map_ScriptEx_Log, "地图触发: 未找到 地图/" + type + " 文件中的 " + scriptName + ".js 文件. 在地图 " + c.getPlayer().getMapId() + " - " + c.getPlayer().getMap().getMapName());
+            MapleLogger.info("地图触发: 未找到 地图/" + type + " 文件中的 " + scriptName + ".js 文件. 在地图 " + c.getPlayer().getMapId() + " - " + c.getPlayer().getMap().getMapName());
             return;
         }
         BufferedReader bf = null;
@@ -57,7 +58,7 @@ public class MapScriptManager {
             compiled.eval();
         } catch (FileNotFoundException | ScriptException | UnsupportedEncodingException e) {
             System.err.println("请检查(地图/" + type + " 文件中的 " + scriptName + ".js)的文件." + e);
-            FileoutputUtil.log(FileoutputUtil.Map_ScriptEx_Log, "请检查(地图/" + type + " 文件中的 " + scriptName + ".js)的文件." + e);
+            MapleLogger.info("请检查(地图/" + type + " 文件中的 " + scriptName + ".js)的文件." + e);
         } finally {
             if (bf != null) {
                 try {

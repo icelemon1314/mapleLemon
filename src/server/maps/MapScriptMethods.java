@@ -23,7 +23,8 @@ import server.life.MapleMonster;
 import server.life.OverrideMonsterStats;
 import server.maps.MapleNodes.DirectionInfo;
 import server.quest.MapleQuest;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.packet.MobPacket;
 import tools.packet.NPCPacket;
@@ -655,8 +656,8 @@ public class MapScriptMethods {
                 //926010070-926010089 - 50 Yetis (specialized? immortality)
                 //TODO also find positions to spawn these at
                 c.getPlayer().getMap().resetFully();
-                c.sendPacket(MaplePacketCreator.showEffect("killing/bonus/bonus"));
-                c.sendPacket(MaplePacketCreator.showEffect("killing/bonus/stage"));
+//                c.sendPacket(MaplePacketCreator.showEffect("killing/bonus/bonus"));
+//                c.sendPacket(MaplePacketCreator.showEffect("killing/bonus/stage"));
                 Point pos1 = null, pos2 = null, pos3 = null;
                 int spawnPer = 0;
                 int mobId = 0;
@@ -922,8 +923,8 @@ public class MapScriptMethods {
                 NPCScriptManager.getInstance().onFirstUserEnter(c, scriptName);
                 //MapScriptManager.getInstance().getMapScript(c, scriptName, true);
                 return;
-//                FileoutputUtil.log("Unhandled script : " + scriptName + ", type : onFirstUserEnter - MAPID " + c.getPlayer().getMapId());
-//                FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Unhandled script : " + scriptName + ", type : onFirstUserEnter - MAPID " + c.getPlayer().getMapId());
+//                MapleLogger.info("Unhandled script : " + scriptName + ", type : onFirstUserEnter - MAPID " + c.getPlayer().getMapId());
+//                MapleLogger.info(FileoutputUtil.ScriptEx_Log, "Unhandled script : " + scriptName + ", type : onFirstUserEnter - MAPID " + c.getPlayer().getMapId());
 //                break;
             }
         }
@@ -1438,21 +1439,6 @@ public class MapScriptMethods {
                 }
                 break;
             }
-            case PRaid_W_Enter: {
-                c.sendPacket(MaplePacketCreator.sendPyramidEnergy("PRaid_expPenalty", "0"));
-                c.sendPacket(MaplePacketCreator.sendPyramidEnergy("PRaid_ElapssedTimeAtField", "0"));
-                c.sendPacket(MaplePacketCreator.sendPyramidEnergy("PRaid_Point", "-1"));
-                c.sendPacket(MaplePacketCreator.sendPyramidEnergy("PRaid_Bonus", "-1"));
-                c.sendPacket(MaplePacketCreator.sendPyramidEnergy("PRaid_Total", "-1"));
-                c.sendPacket(MaplePacketCreator.sendPyramidEnergy("PRaid_Team", ""));
-                c.sendPacket(MaplePacketCreator.sendPyramidEnergy("PRaid_IsRevive", "0"));
-                c.getPlayer().writePoint("PRaid_Point", "-1");
-                c.getPlayer().writeStatus("Red_Stage", "1");
-                c.getPlayer().writeStatus("Blue_Stage", "1");
-                c.getPlayer().writeStatus("redTeamDamage", "0");
-                c.getPlayer().writeStatus("blueTeamDamage", "0");
-                break;
-            }
             case jail: {
                 if (!c.getPlayer().isIntern()) {
                     c.getPlayer().getQuestNAdd(MapleQuest.getInstance(GameConstants.JAIL_TIME)).setCustomData(String.valueOf(System.currentTimeMillis()));
@@ -1595,50 +1581,6 @@ public class MapScriptMethods {
                 }
                 break;
             }
-
-            case np_tuto_0_5: {
-                //NPCConversationManager cmnp_tuto_0_5= new NPCConversationManager(c, 0, 0, (byte)0, null);
-                c.sendPacket(UIPacket.IntroEnableUI(1));
-                c.sendPacket(MaplePacketCreator.showEffect("phantom/back"));
-                c.sendPacket(UIPacket.getDirectionInfo(3, 4));
-                c.sendPacket(MaplePacketCreator.showEffect("newPirate/Shuttle/0"));
-                try {
-                    Thread.sleep(6000);
-                } catch (InterruptedException e) {
-                    FileoutputUtil.log("" + e.toString());
-                }
-                c.sendPacket(MaplePacketCreator.showEffect("phantom/back"));
-                c.sendPacket(MaplePacketCreator.showEffect("newPirate/TimeTravel/0"));
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    FileoutputUtil.log("" + e.toString());
-                }
-                c.sendPacket(MaplePacketCreator.showEffect("newPirate/text1"));
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    FileoutputUtil.log("" + e.toString());
-                }
-
-                c.sendPacket(UIPacket.getDirectionInfo(3, 0));
-                c.sendPacket(UIPacket.getDirectionInfo(3, 2));
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    FileoutputUtil.log("" + e.toString());
-                }
-                EventTimer.getInstance().schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        c.sendPacket(UIPacket.getDirectionInfo(3, 0));
-                        NPCScriptManager.getInstance().start(c, 9270084, "np_tuto_0_5");
-                    }
-                }, 2000);
-
-                break;
-            }
-
             case np_tuto_0_8: {
                 c.sendPacket(UIPacket.IntroEnableUI(1));
                 if (!c.getPlayer().getMap().containsNPC(9270084)) {
@@ -1655,14 +1597,14 @@ public class MapScriptMethods {
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
-                            FileoutputUtil.log("" + e.toString());
+                            MapleLogger.info("" + e.toString());
                         }
                         c.sendPacket(UIPacket.getDirectionInfo(3, 0));
                         c.sendPacket(UIPacket.getDirectionInfo("Effect/DirectionNewPirate.img/newPirate/balloonMsg2/17", 2000, 0, -100, 1, 0));
                         try {
                             Thread.sleep(3000);
                         } catch (InterruptedException e) {
-                            FileoutputUtil.log("" + e.toString());
+                            MapleLogger.info("" + e.toString());
                         }
                         MapleMap mapto = c.getChannelServer().getMapFactory().getMap(552000050);
                         c.getPlayer().changeMap(mapto, mapto.getPortal(0));
@@ -1760,24 +1702,6 @@ public class MapScriptMethods {
                     c.sendPacket(UIPacket.getDirectionInfo("Effect/Direction5.img/effect/mercedesInIce/merBalloon/8", 2000, 0, -100, 1));
                     c.sendPacket(UIPacket.getDirectionInfo(1, 2000));
                     c.sendPacket(UIPacket.IntroEnableUI(0));
-                } catch (Exception e) {
-                }
-                c.getPlayer().setDirection(0);
-                break;
-            }
-            case merTutorDrecotion20: { //TODO 双弩 引导修复到去睡觉
-                try {
-                    c.sendPacket(UIPacket.getDirectionStatus(true));
-                    c.sendPacket(UIPacket.IntroEnableUI(1));
-                    c.sendPacket(UIPacket.getDirectionInfo("Effect/Direction5.img/effect/mercedesInIce/merBalloon/9", 2000, 0, -100, 1, 0));
-                    c.sendPacket(UIPacket.getDirectionInfo(1, 2000));
-                    c.sendPacket(UIPacket.getDirectionStatus(true));
-                    Thread.sleep(4000);
-                    c.sendPacket(UIPacket.getDirectionInfo(3, 1));
-                    Thread.sleep(1000);
-                    c.sendPacket(UIPacket.IntroLock(true));
-                    final MapleMap mapto = c.getChannelServer().getMapFactory().getMap(910150005);
-                    c.getPlayer().changeMap(mapto, mapto.getPortal(0));
                 } catch (Exception e) {
                 }
                 c.getPlayer().setDirection(0);
@@ -1891,7 +1815,6 @@ public class MapScriptMethods {
             }
             case explorationPoint: {
                 if (c.getPlayer().getMapId() == 104000000) {
-                    c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/104000000", 12));
                     c.sendPacket(UIPacket.IntroDisableUI(false));
                     c.sendPacket(UIPacket.IntroLock(false));
                     c.sendPacket(MaplePacketCreator.enableActions());
@@ -1970,7 +1893,7 @@ public class MapScriptMethods {
                     c.sendPacket(UIPacket.getDirectionStatus(true));
                     c.sendPacket(UIPacket.IntroEnableUI(1));
                     c.sendPacket(UIPacket.IntroDisableUI(true));
-                    c.sendPacket(MaplePacketCreator.environmentChange("newPirate/text0", 12));
+//                    c.sendPacket(MaplePacketCreator.environmentChange("newPirate/text0", 12));
                     c.sendPacket(UIPacket.getDirectionInfo((byte) 1, 9500));
                     Thread.sleep(100);
                 } catch (InterruptedException ex) {
@@ -2162,57 +2085,57 @@ public class MapScriptMethods {
                 }
                 break;
             }
-            case go10000:
-                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/10000", 12));
-                break;
-            case go20000:
-                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/20000", 12));
-                if (c.getPlayer().getQuestStatus(32200) == 0) {
-                    MapleQuest.getInstance(32200).forceStart(c.getPlayer(), 0, null);
-                    MapleQuest.getInstance(32200).forceComplete(c.getPlayer(), 0);
-                    MapleQuest.getInstance(32201).forceStart(c.getPlayer(), 0, null);
-                    MapleQuest.getInstance(32201).forceComplete(c.getPlayer(), 0);
-                    MapleQuest.getInstance(32202).forceStart(c.getPlayer(), 0, null);
-                    MapleQuest.getInstance(32202).forceComplete(c.getPlayer(), 0);
-                }
-                break;
-            case go30000:
-                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/30000", 12));
-                break;
-            case go40000:
-                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/40000", 12));
-                break;
-            case go50000:
-                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/50000", 12));
-                break;
-            case go1000000:
-                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/1000000", 12));
-                break;
-            case go1010000:
-                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/1010000", 12));
-                break;
-            case go1010100:
-                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/1010100", 12));
-                break;
-            case go1010200:
-                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/1010200", 12));
-                break;
-            case go1010300:
-                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/1010300", 12));
-                break;
-            case go1010400:
-                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/1010400", 12));
-                break;
-            case go1020000:
-                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/1020000", 12));
-                c.sendPacket(UIPacket.IntroEnableUI(0));
-                c.sendPacket(UIPacket.IntroDisableUI(false));
-                c.sendPacket(UIPacket.IntroLock(false));
-                c.sendPacket(MaplePacketCreator.enableActions());
-                break;
-            case go2000000:
-                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/2000000", 12));
-                break;
+//            case go10000:
+//                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/10000", 12));
+//                break;
+//            case go20000:
+//                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/20000", 12));
+//                if (c.getPlayer().getQuestStatus(32200) == 0) {
+//                    MapleQuest.getInstance(32200).forceStart(c.getPlayer(), 0, null);
+//                    MapleQuest.getInstance(32200).forceComplete(c.getPlayer(), 0);
+//                    MapleQuest.getInstance(32201).forceStart(c.getPlayer(), 0, null);
+//                    MapleQuest.getInstance(32201).forceComplete(c.getPlayer(), 0);
+//                    MapleQuest.getInstance(32202).forceStart(c.getPlayer(), 0, null);
+//                    MapleQuest.getInstance(32202).forceComplete(c.getPlayer(), 0);
+//                }
+//                break;
+//            case go30000:
+//                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/30000", 12));
+//                break;
+//            case go40000:
+//                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/40000", 12));
+//                break;
+//            case go50000:
+//                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/50000", 12));
+//                break;
+//            case go1000000:
+//                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/1000000", 12));
+//                break;
+//            case go1010000:
+//                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/1010000", 12));
+//                break;
+//            case go1010100:
+//                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/1010100", 12));
+//                break;
+//            case go1010200:
+//                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/1010200", 12));
+//                break;
+//            case go1010300:
+//                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/1010300", 12));
+//                break;
+//            case go1010400:
+//                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/1010400", 12));
+//                break;
+//            case go1020000:
+//                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/1020000", 12));
+//                c.sendPacket(UIPacket.IntroEnableUI(0));
+//                c.sendPacket(UIPacket.IntroDisableUI(false));
+//                c.sendPacket(UIPacket.IntroLock(false));
+//                c.sendPacket(MaplePacketCreator.enableActions());
+//                break;
+//            case go2000000:
+//                c.sendPacket(MaplePacketCreator.environmentChange("maplemap/enter/2000000", 12));
+//                break;
             case enter_edelstein:
             case patrty6_1stIn:
             case standbyAzwan:
@@ -2263,7 +2186,7 @@ public class MapScriptMethods {
                                 Thread.sleep(2000);
                             } catch (InterruptedException e) {
                             }
-                            c.sendPacket(MaplePacketCreator.showEffect("phantom/suu"));
+//                            c.sendPacket(MaplePacketCreator.showEffect("phantom/suu"));
                             c.removeClickedNPC();
                             NPCScriptManager.getInstance().dispose(c);
                             c.sendPacket(MaplePacketCreator.enableActions());
@@ -2317,7 +2240,7 @@ public class MapScriptMethods {
                         @Override
                         public void run() {
                             c.sendPacket(UIPacket.getDirectionInfo(3, 0));
-                            c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text6"));
+//                            c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text6"));
                         }
                     }, 2500);
                     ScheduledFuture<?> schedule;
@@ -2325,7 +2248,7 @@ public class MapScriptMethods {
                         @Override
                         public void run() {
                             c.sendPacket(UIPacket.getDirectionInfo(3, 0));
-                            c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text5"));
+//                            c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text5"));
                         }
                     }, 4500);
 
@@ -2360,7 +2283,7 @@ public class MapScriptMethods {
                                         Thread.sleep(1000);
                                     } catch (InterruptedException e) {
                                     }
-                                    c.sendPacket(MaplePacketCreator.showEffect("phantom/darkphantom"));
+//                                    c.sendPacket(MaplePacketCreator.showEffect("phantom/darkphantom"));
                                     break;
                                 }
                                 try {
@@ -2472,7 +2395,7 @@ public class MapScriptMethods {
                 c.sendPacket(UIPacket.getDirectionInfo(3, 0));
                 c.sendPacket(UIPacket.getDirectionInfo(1, 90));
 
-                c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text11"));
+//                c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text11"));
                 c.sendPacket(UIPacket.getDirectionInfo(1, 4000));
                 EventTimer.getInstance().schedule(new Runnable() {
                     @Override
@@ -2531,7 +2454,7 @@ public class MapScriptMethods {
                 c.sendPacket(UIPacket.getDirectionInfo(3, 1));
                 c.sendPacket(UIPacket.getDirectionInfo(1, 30));
                 c.sendPacket(UIPacket.getDirectionStatus(true));
-                c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text12"));
+//                c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text12"));
 
                 EventTimer.getInstance().schedule(new Runnable() {
                     @Override
@@ -2566,91 +2489,91 @@ public class MapScriptMethods {
                 }, 1000);
                 break;
             }
-            case ds_tuto_2_before: {
-                c.sendPacket(UIPacket.IntroEnableUI(1));
-                c.sendPacket(UIPacket.getDirectionInfo(3, 1));
-                c.sendPacket(UIPacket.getDirectionInfo(1, 30));
-                c.sendPacket(UIPacket.getDirectionStatus(true));
-                EventTimer.getInstance().schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        c.sendPacket(UIPacket.getDirectionInfo(3, 0));
-                        c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text13"));
-                        c.sendPacket(UIPacket.getDirectionInfo(1, 500));
-                    }
-                }, 1000);
-                EventTimer.getInstance().schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text14"));
-                        c.sendPacket(UIPacket.getDirectionInfo(1, 4000));
-                    }
-                }, 1500);
-                EventTimer.getInstance().schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        final MapleMap mapto = c.getChannelServer().getMapFactory().getMap(927000020);
-                        c.getPlayer().changeMap(mapto, mapto.getPortal(0));
-                        c.sendPacket(UIPacket.IntroEnableUI(0));
-                        MapleQuest.getInstance(23204).forceStart(c.getPlayer(), 0, null);
-                        MapleQuest.getInstance(23205).forceComplete(c.getPlayer(), 0);
-                        final Map<Skill, SkillEntry> sa = new HashMap<>();
-                        sa.put(SkillFactory.getSkill(30011170), new SkillEntry((byte) 1, (byte) 1, -1));
-                        sa.put(SkillFactory.getSkill(30011169), new SkillEntry((byte) 1, (byte) 1, -1));
-                        sa.put(SkillFactory.getSkill(30011168), new SkillEntry((byte) 1, (byte) 1, -1));
-                        sa.put(SkillFactory.getSkill(30011167), new SkillEntry((byte) 1, (byte) 1, -1));
-                        sa.put(SkillFactory.getSkill(30010166), new SkillEntry((byte) 1, (byte) 1, -1));
-                        c.getPlayer().changeSkillsLevel(sa);
-                        c.getPlayer().changeKeybinding(44, (byte) 1, 30010166);
-                        c.getPlayer().changeKeybinding(45, (byte) 1, 30011167);
-                        c.getPlayer().changeKeybinding(46, (byte) 1, 30011168);
-                        c.getPlayer().changeKeybinding(47, (byte) 1, 30011169);
-                        c.getPlayer().changeKeybinding(48, (byte) 1, 30011170);
-                        c.sendPacket(MaplePacketCreator.getKeymap(c.getPlayer()));
-                    }
-                }, 5500);
-                break;
-            }
-            case ds_tuto_1_before: {
-                c.sendPacket(UIPacket.getDirectionInfo(3, 1));
-                c.sendPacket(UIPacket.getDirectionInfo(1, 30));
-                c.sendPacket(UIPacket.getDirectionStatus(true));
-                EventTimer.getInstance().schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        c.sendPacket(UIPacket.getDirectionInfo(3, 0));
-                        c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text8"));
-                        c.sendPacket(UIPacket.getDirectionInfo(1, 500));
-                    }
-                }, 1000);
-                EventTimer.getInstance().schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text9"));
-                        c.sendPacket(UIPacket.getDirectionInfo(1, 3000));
-                    }
-                }, 1500);
-                EventTimer.getInstance().schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        final MapleMap mapto = c.getChannelServer().getMapFactory().getMap(927000010);
-                        c.getPlayer().changeMap(mapto, mapto.getPortal(0));
-                    }
-                }, 4500);
-                break;
-            }
-            case ds_tuto_2_prep: {
-                if (!c.getPlayer().getMap().containsNPC(2159309)) {
-                    c.getPlayer().getMap().spawnNpc(2159309, new Point(550, 50));
-                    c.getPlayer().changeKeybinding(44, (byte) 1, 30010166);
-                    c.getPlayer().changeKeybinding(45, (byte) 1, 30011167);
-                    c.getPlayer().changeKeybinding(46, (byte) 1, 30011168);
-                    c.getPlayer().changeKeybinding(47, (byte) 1, 30011169);
-                    c.getPlayer().changeKeybinding(48, (byte) 1, 30011170);
-                    c.sendPacket(MaplePacketCreator.getKeymap(c.getPlayer()));
-                    break;
-                }
-            }
+//            case ds_tuto_2_before: {
+//                c.sendPacket(UIPacket.IntroEnableUI(1));
+//                c.sendPacket(UIPacket.getDirectionInfo(3, 1));
+//                c.sendPacket(UIPacket.getDirectionInfo(1, 30));
+//                c.sendPacket(UIPacket.getDirectionStatus(true));
+//                EventTimer.getInstance().schedule(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        c.sendPacket(UIPacket.getDirectionInfo(3, 0));
+//                        c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text13"));
+//                        c.sendPacket(UIPacket.getDirectionInfo(1, 500));
+//                    }
+//                }, 1000);
+//                EventTimer.getInstance().schedule(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text14"));
+//                        c.sendPacket(UIPacket.getDirectionInfo(1, 4000));
+//                    }
+//                }, 1500);
+//                EventTimer.getInstance().schedule(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        final MapleMap mapto = c.getChannelServer().getMapFactory().getMap(927000020);
+//                        c.getPlayer().changeMap(mapto, mapto.getPortal(0));
+//                        c.sendPacket(UIPacket.IntroEnableUI(0));
+//                        MapleQuest.getInstance(23204).forceStart(c.getPlayer(), 0, null);
+//                        MapleQuest.getInstance(23205).forceComplete(c.getPlayer(), 0);
+//                        final Map<Skill, SkillEntry> sa = new HashMap<>();
+//                        sa.put(SkillFactory.getSkill(30011170), new SkillEntry((byte) 1, (byte) 1, -1));
+//                        sa.put(SkillFactory.getSkill(30011169), new SkillEntry((byte) 1, (byte) 1, -1));
+//                        sa.put(SkillFactory.getSkill(30011168), new SkillEntry((byte) 1, (byte) 1, -1));
+//                        sa.put(SkillFactory.getSkill(30011167), new SkillEntry((byte) 1, (byte) 1, -1));
+//                        sa.put(SkillFactory.getSkill(30010166), new SkillEntry((byte) 1, (byte) 1, -1));
+//                        c.getPlayer().changeSkillsLevel(sa);
+//                        c.getPlayer().changeKeybinding(44, (byte) 1, 30010166);
+//                        c.getPlayer().changeKeybinding(45, (byte) 1, 30011167);
+//                        c.getPlayer().changeKeybinding(46, (byte) 1, 30011168);
+//                        c.getPlayer().changeKeybinding(47, (byte) 1, 30011169);
+//                        c.getPlayer().changeKeybinding(48, (byte) 1, 30011170);
+//                        c.sendPacket(MaplePacketCreator.getKeymap(c.getPlayer()));
+//                    }
+//                }, 5500);
+//                break;
+//            }
+//            case ds_tuto_1_before: {
+//                c.sendPacket(UIPacket.getDirectionInfo(3, 1));
+//                c.sendPacket(UIPacket.getDirectionInfo(1, 30));
+//                c.sendPacket(UIPacket.getDirectionStatus(true));
+//                EventTimer.getInstance().schedule(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        c.sendPacket(UIPacket.getDirectionInfo(3, 0));
+//                        c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text8"));
+//                        c.sendPacket(UIPacket.getDirectionInfo(1, 500));
+//                    }
+//                }, 1000);
+//                EventTimer.getInstance().schedule(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text9"));
+//                        c.sendPacket(UIPacket.getDirectionInfo(1, 3000));
+//                    }
+//                }, 1500);
+//                EventTimer.getInstance().schedule(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        final MapleMap mapto = c.getChannelServer().getMapFactory().getMap(927000010);
+//                        c.getPlayer().changeMap(mapto, mapto.getPortal(0));
+//                    }
+//                }, 4500);
+//                break;
+//            }
+//            case ds_tuto_2_prep: {
+//                if (!c.getPlayer().getMap().containsNPC(2159309)) {
+//                    c.getPlayer().getMap().spawnNpc(2159309, new Point(550, 50));
+//                    c.getPlayer().changeKeybinding(44, (byte) 1, 30010166);
+//                    c.getPlayer().changeKeybinding(45, (byte) 1, 30011167);
+//                    c.getPlayer().changeKeybinding(46, (byte) 1, 30011168);
+//                    c.getPlayer().changeKeybinding(47, (byte) 1, 30011169);
+//                    c.getPlayer().changeKeybinding(48, (byte) 1, 30011170);
+//                    c.sendPacket(MaplePacketCreator.getKeymap(c.getPlayer()));
+//                    break;
+//                }
+//            }
             case goArcher: {
                 showIntro(c, "Effect/Direction3.img/archer/Scene" + (c.getPlayer().getQuestStatus(32214) == 2 ? "0" : "1"));
                 break;
@@ -2776,8 +2699,8 @@ public class MapScriptMethods {
                     case 1:
                     case 2:
                     case 3:
-                        c.sendPacket(MaplePacketCreator.showEffect("aswan/stageEff/stage"));
-                        c.sendPacket(MaplePacketCreator.showEffect("aswan/stageEff/number/" + (((c.getPlayer().getMapId() % 1000) / 100))));
+//                        c.sendPacket(MaplePacketCreator.showEffect("aswan/stageEff/stage"));
+//                        c.sendPacket(MaplePacketCreator.showEffect("aswan/stageEff/number/" + (((c.getPlayer().getMapId() % 1000) / 100))));
                         break;
                 }
                 synchronized (MapScriptMethods.class) {
@@ -2792,7 +2715,7 @@ public class MapScriptMethods {
             }
             case Massacre_result: { //clear, give exp, etc.
                 //if (c.getPlayer().getPyramidSubway() == null) {
-                c.sendPacket(MaplePacketCreator.showEffect("killing/fail"));
+//                c.sendPacket(MaplePacketCreator.showEffect("killing/fail"));
                 //} else {
                 //	c.sendPacket(MaplePacketCreator.showEffect("killing/clear"));
                 //}
@@ -2800,41 +2723,13 @@ public class MapScriptMethods {
                 break;
             }
 
-            case hayatoJobChange: {
-                c.sendPacket(UIPacket.playMovie("JPKanna.avi", true));
-                while (c.getPlayer().getLevel() < 10) {
-                    c.sendPacket(MaplePacketCreator.showEffect("JPKanna/text0"));
-                    c.sendPacket(MaplePacketCreator.showEffect("JPKanna/text1"));
-                    c.sendPacket(MaplePacketCreator.showEffect("JPKanna/text2"));
-                    c.getPlayer().levelUp();
-                    c.getPlayer().levelUp();
-                    c.getPlayer().levelUp();
-                    c.getPlayer().levelUp();
-                    c.getPlayer().levelUp();
-                    c.getPlayer().levelUp();
-                    c.getPlayer().levelUp();
-                    c.getPlayer().levelUp();
-                    c.getPlayer().levelUp();
-                    c.getPlayer().setExp(0);
-                    //c.getPlayer().changeJob((short) 4200);
-                    if (c.getPlayer().getQuestStatus(28862) == 1) {
-                        MapleQuest.getInstance(28862).forceComplete(c.getPlayer(), 0);
-                    }
-                }
-            }
-            /*case kenjiTutoDirection: {
-             c.sendPacket(UIPacket.getDirectionStatus(true));
-             c.sendPacket(UIPacket.IntroEnableUI(1));
-             c.sendPacket(UIPacket.IntroDisableUI(true));
-             c.sendPacket(MaplePacketCreator.showEffect("JPKenji/text0"));
-             c.sendPacket(UIPacket.getDirectionInfo(1, 7000));
-             }*/
+
             default: {
                 NPCScriptManager.getInstance().onUserEnter(c, scriptName);
                 //MapScriptManager.getInstance().getMapScript(c, scriptName, false);
                 return;
-//                FileoutputUtil.log("Unhandled script : " + scriptName + ", type : onUserEnter - MAPID " + c.getPlayer().getMapId());
-//                FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Unhandled script : " + scriptName + ", type : onUserEnter - MAPID " + c.getPlayer().getMapId());
+//                MapleLogger.info("Unhandled script : " + scriptName + ", type : onUserEnter - MAPID " + c.getPlayer().getMapId());
+//                MapleLogger.info(FileoutputUtil.ScriptEx_Log, "Unhandled script : " + scriptName + ", type : onUserEnter - MAPID " + c.getPlayer().getMapId());
 //                break;
             }
         }
@@ -2993,57 +2888,8 @@ public class MapScriptMethods {
                             MapleMap mapto = c.getChannelServer().getMapFactory().getMap(910150005);
                             c.getPlayer().changeMap(mapto, mapto.getPortal(0));
                             break;
-                        case ds_tuto_0_2:
-                            c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text1"));
-                            break;
                         case ds_tuto_0_1:
                             c.sendPacket(UIPacket.getDirectionInfo(3, 2));
-                            break;
-                        case ds_tuto_0_3:
-                            c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text2"));
-                            EventTimer.getInstance().schedule(new Runnable() {
-                                @Override
-                                public void run() {
-                                    c.sendPacket(UIPacket.getDirectionInfo(1, 4000));
-                                    c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text3"));
-                                }
-                            }, 2000);
-                            EventTimer.getInstance().schedule(new Runnable() {
-                                @Override
-                                public void run() {
-                                    c.sendPacket(UIPacket.getDirectionInfo(1, 500));
-                                    c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text4"));
-                                }
-                            }, 6000);
-                            EventTimer.getInstance().schedule(new Runnable() {
-                                @Override
-                                public void run() {
-                                    c.sendPacket(UIPacket.getDirectionInfo(1, 4000));
-                                    c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text5"));
-                                }
-                            }, 6500);
-                            EventTimer.getInstance().schedule(new Runnable() {
-                                @Override
-                                public void run() {
-                                    c.sendPacket(UIPacket.getDirectionInfo(1, 500));
-                                    c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text6"));
-                                }
-                            }, 10500);
-                            EventTimer.getInstance().schedule(new Runnable() {
-                                @Override
-                                public void run() {
-                                    c.sendPacket(UIPacket.getDirectionInfo(1, 4000));
-                                    c.sendPacket(MaplePacketCreator.showEffect("demonSlayer/text7"));
-                                }
-                            }, 11000);
-                            EventTimer.getInstance().schedule(new Runnable() {
-                                @Override
-                                public void run() {
-                                    c.sendPacket(UIPacket.getDirectionInfo(4, 2159307));
-                                    NPCScriptManager.getInstance().dispose(c);
-                                    NPCScriptManager.getInstance().start(c, 2159307, null);
-                                }
-                            }, 15000);
                             break;
                     }
                 }

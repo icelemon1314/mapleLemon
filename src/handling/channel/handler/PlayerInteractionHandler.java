@@ -21,7 +21,8 @@ import server.shops.IMaplePlayerShop;
 import server.shops.MapleMiniGame;
 import server.shops.MaplePlayerShop;
 import server.shops.MaplePlayerShopItem;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.StringUtil;
@@ -34,7 +35,7 @@ public class PlayerInteractionHandler {
         byte mode = slea.readByte();
         InteractionOpcode action = InteractionOpcode.getByAction(mode);
         if (chr == null || (action == null)) {
-            FileoutputUtil.log("玩家互动未知的操作类型: " + mode + " " + slea.toString());
+            MapleLogger.info("玩家互动未知的操作类型: " + mode + " " + slea.toString());
             c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
@@ -533,8 +534,7 @@ public class PlayerInteractionHandler {
                 }
                 if (chr.getMeso() + imps.getMeso() > 0) {
                     chr.gainMeso(imps.getMeso(), false);
-                    FileoutputUtil.log("[雇佣] " + chr.getName() + " 雇佣整理获得金币: " + imps.getMeso() + " 时间: " + FileoutputUtil.CurrentReadable_Date());
-                    FileoutputUtil.hiredMerchLog(chr.getName(), "雇佣整理获得金币: " + imps.getMeso());
+                    MapleLogger.info("[雇佣] " + chr.getName() + " 雇佣整理获得金币: " + imps.getMeso() + " 时间: " + System.currentTimeMillis());
                     imps.setMeso(0);
                 }
                 c.sendPacket(PlayerShopPacket.shopItemUpdate(imps));
@@ -592,7 +592,7 @@ public class PlayerInteractionHandler {
                 if (((HiredMerchant) merchant).canChangeName()) {
                     merchant.setDescription(desc);
                 } else {
-                    c.sendPacket(MaplePacketCreator.craftMessage("还不能变更名称，还需要等待" + ((HiredMerchant) merchant).getChangeNameTimeLeft() + "秒。"));
+//                    c.sendPacket(MaplePacketCreator.craftMessage("还不能变更名称，还需要等待" + ((HiredMerchant) merchant).getChangeNameTimeLeft() + "秒。"));
                 }
                 break;
             case GIVE_UP:
@@ -777,7 +777,7 @@ public class PlayerInteractionHandler {
                 break;
             default:
                 if (ServerProperties.ShowPacket()) {
-                    FileoutputUtil.log("玩家互动未知的操作类型: 0x" + StringUtil.getLeftPaddedStr(Integer.toHexString(mode).toUpperCase(), '0', 2) + " " + slea.toString());
+                    MapleLogger.info("玩家互动未知的操作类型: 0x" + StringUtil.getLeftPaddedStr(Integer.toHexString(mode).toUpperCase(), '0', 2) + " " + slea.toString());
                 }
                 c.sendPacket(MaplePacketCreator.enableActions());
         }

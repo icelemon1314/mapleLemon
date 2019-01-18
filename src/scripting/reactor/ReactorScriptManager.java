@@ -15,7 +15,8 @@ import javax.script.ScriptException;
 import scripting.AbstractScriptManager;
 import server.maps.MapleReactor;
 import server.maps.ReactorDropEntry;
-import tools.FileoutputUtil;
+import tools.MapleLogger;
+
 
 public class ReactorScriptManager extends AbstractScriptManager {
 
@@ -33,7 +34,7 @@ public class ReactorScriptManager extends AbstractScriptManager {
                 if (c.getPlayer().isShowPacket()) {
                     c.getPlayer().dropMessage(5, "未找到 反应堆 文件中的 " + reactor.getReactorId() + ".js 文件.");
                 }
-                FileoutputUtil.log(FileoutputUtil.Reactor_ScriptEx_Log, "未找到 反应堆 文件中的 " + reactor.getReactorId() + ".js 文件.");
+                MapleLogger.info("未找到 反应堆 文件中的 " + reactor.getReactorId() + ".js 文件.");
                 return;
             }
             ScriptEngine scriptengine = (ScriptEngine) iv;
@@ -43,7 +44,7 @@ public class ReactorScriptManager extends AbstractScriptManager {
             iv.invokeFunction("act", new Object[0]);
         } catch (ScriptException | NoSuchMethodException e) {
             System.err.println("执行反应堆文件出错 反应堆ID: " + reactor.getReactorId() + ", 反应堆名称: " + reactor.getName() + " 错误信息: " + e);
-            FileoutputUtil.log(FileoutputUtil.Reactor_ScriptEx_Log, "执行反应堆文件出错 反应堆ID: " + reactor.getReactorId() + ", 反应堆名称: " + reactor.getName() + " 错误信息: " + e);
+            MapleLogger.info("执行反应堆文件出错 反应堆ID: " + reactor.getReactorId() + ", 反应堆名称: " + reactor.getName() + " 错误信息: " + e);
         }
     }
 
@@ -65,7 +66,7 @@ public class ReactorScriptManager extends AbstractScriptManager {
             }
         } catch (SQLException e) {
             System.err.println("从SQL中读取箱子的爆率出错.箱子的ID: " + reactorId + " 错误信息: " + e);
-            FileoutputUtil.log(FileoutputUtil.Reactor_ScriptEx_Log, "从SQL中读取箱子的爆率出错.箱子的ID: " + reactorId + " 错误信息: " + e);
+            MapleLogger.info("从SQL中读取箱子的爆率出错.箱子的ID: " + reactorId + " 错误信息: " + e);
         }
         this.drops.put(reactorId, ret);
         return ret;

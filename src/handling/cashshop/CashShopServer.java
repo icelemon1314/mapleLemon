@@ -6,7 +6,8 @@ import handling.channel.PlayerStorage;
 
 import handling.netty.ServerConnection;
 import server.ServerProperties;
-import tools.FileoutputUtil;
+import tools.MapleLogger;
+
 
 /**
  * 现金商城服务
@@ -41,10 +42,10 @@ public class CashShopServer {
             acceptor = new ServerConnection(port, 1, MapleServerHandler.CASH_SHOP_SERVER);
             acceptor.run();
 
-            FileoutputUtil.log("完成!");
-            FileoutputUtil.log("商城伺服器正在监听" + port + "端口\r\n");
+            MapleLogger.info("完成!");
+            MapleLogger.info("商城伺服器正在监听" + port + "端口\r\n");
         } catch (Exception e) {
-            FileoutputUtil.log("失败!");
+            MapleLogger.info("失败!");
             System.err.println("无法绑定" + port + "端口");
             throw new RuntimeException("绑定端口失败.", e);
         }
@@ -66,9 +67,9 @@ public class CashShopServer {
         if (finishedShutdown) {
             return;
         }
-        FileoutputUtil.log("正在关闭商城服务器...");
+        MapleLogger.info("正在关闭商城服务器...");
         players.disconnectAll();
-        FileoutputUtil.log("商城服务器解除端口绑定...");
+        MapleLogger.info("商城服务器解除端口绑定...");
         acceptor.close();
         finishedShutdown = true;
     }

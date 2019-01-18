@@ -12,7 +12,8 @@ import server.MapleItemInformationProvider;
 import server.MapleStatEffect;
 import server.events.MapleEvent;
 import server.events.MapleEventType;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.InventoryPacket;
@@ -80,7 +81,7 @@ public class RangeAttackHandler extends MaplePacketHandler {
                 if (chr.isShowPacket()) {
                     chr.dropMessage(5, "近距离攻击效果为空. 使用技能: " + skill.getId() + " - " + skill.getName() + " 技能等级: " + skillLevel);
                 }
-                FileoutputUtil.log(FileoutputUtil.SpecialSkill_log, "远距离攻击效果为空 玩家[" + chr.getName() + " 职业: " + getJobName(chr.getJob()) + "(" + chr.getJob() + ")] 使用技能: " + skill.getId() + " - " + skill.getName() + " 技能等级: " + skillLevel);
+                MapleLogger.info("远距离攻击效果为空 玩家[" + chr.getName() + " 职业: " + getJobName(chr.getJob()) + "(" + chr.getJob() + ")] 使用技能: " + skill.getId() + " - " + skill.getName() + " 技能等级: " + skillLevel);
                 c.sendPacket(MaplePacketCreator.enableActions());
                 return;
             }
@@ -103,7 +104,7 @@ public class RangeAttackHandler extends MaplePacketHandler {
                     c.sendPacket(MaplePacketCreator.enableActions());
                     return;
                 }
-                c.sendPacket(MaplePacketCreator.skillCooldown(attack.skillId, effect.getCooldown(chr)));
+//                c.sendPacket(MaplePacketCreator.skillCooldown(attack.skillId, effect.getCooldown(chr)));
                 chr.addCooldown(attack.skillId, System.currentTimeMillis(), effect.getCooldown(chr) * 1000);
             }
         }

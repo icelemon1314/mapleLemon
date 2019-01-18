@@ -52,11 +52,8 @@ import server.maps.MapleReactor;
 import server.maps.MapleReactorFactory;
 import server.maps.SavedLocationType;
 import server.quest.MapleQuest;
-import tools.DateUtil;
-import tools.FileoutputUtil;
-import tools.MaplePacketCreator;
-import tools.Pair;
-import tools.StringUtil;
+import tools.*;
+
 import tools.packet.InventoryPacket;
 import tools.packet.NPCPacket;
 import tools.packet.PetPacket;
@@ -122,18 +119,18 @@ public abstract class AbstractPlayerInteraction {
      */
     public void warp(int mapId, int portal) {
         MapleMap mapz = getWarpMap(mapId);
-        FileoutputUtil.log("准备传送到地图："+mapId);
+        MapleLogger.info("准备传送到地图："+mapId);
         if ((portal != 0) && (mapId == this.c.getPlayer().getMapId())) {
-            FileoutputUtil.log("准备地图内传送："+mapId);
+            MapleLogger.info("准备地图内传送："+mapId);
             Point portalPos = new Point(this.c.getPlayer().getMap().getPortal(portal).getPosition());
             if (portalPos.distanceSq(getPlayer().getTruePosition()) < 90000.0D) {
-                this.c.sendPacket(MaplePacketCreator.instantMapWarp((byte) portal));
+//                this.c.sendPacket(MaplePacketCreator.instantMapWarp((byte) portal));
                 this.c.getPlayer().getMap().movePlayer(this.c.getPlayer(), portalPos);
             } else {
                 this.c.getPlayer().changeMap(mapz, mapz.getPortal(portal));
             }
         } else {
-            FileoutputUtil.log("准备跨地图传送："+mapId);
+            MapleLogger.info("准备跨地图传送："+mapId);
             this.c.getPlayer().changeMap(mapz, mapz.getPortal(portal));
         }
     }
@@ -146,7 +143,7 @@ public abstract class AbstractPlayerInteraction {
         if (mapId == this.c.getPlayer().getMapId()) {
             Point portalPos = new Point(this.c.getPlayer().getMap().getPortal(portal).getPosition());
             if (portalPos.distanceSq(getPlayer().getTruePosition()) < 90000.0D) {
-                this.c.sendPacket(MaplePacketCreator.instantMapWarp((byte) this.c.getPlayer().getMap().getPortal(portal).getId()));
+//                this.c.sendPacket(MaplePacketCreator.instantMapWarp((byte) this.c.getPlayer().getMap().getPortal(portal).getId()));
                 this.c.getPlayer().getMap().movePlayer(this.c.getPlayer(), new Point(this.c.getPlayer().getMap().getPortal(portal).getPosition()));
             } else {
                 this.c.getPlayer().changeMap(mapz, mapz.getPortal(portal));
@@ -419,19 +416,19 @@ public abstract class AbstractPlayerInteraction {
 
     public byte getQuestStatus(int questId) {
         byte status = this.c.getPlayer().getQuestStatus(questId);
-        FileoutputUtil.log("任务状态："+questId+"-"+status);
+        MapleLogger.info("任务状态："+questId+"-"+status);
         return status;
     }
 
     public boolean isQuestCompleted(int questId){
         byte status = this.c.getPlayer().getQuestStatus(questId);
-        FileoutputUtil.log("任务状态1："+questId+"-"+status);
+        MapleLogger.info("任务状态1："+questId+"-"+status);
         return status == MapleQuestStatus.QUEST_COMPLETED;
     }
 
     public boolean isQuestStarted(int questId){
         byte status = this.c.getPlayer().getQuestStatus(questId);
-        FileoutputUtil.log("任务状态2："+questId+"-"+status);
+        MapleLogger.info("任务状态2："+questId+"-"+status);
         return status == MapleQuestStatus.QUEST_STARTED;
     }
 
@@ -651,10 +648,10 @@ public abstract class AbstractPlayerInteraction {
                 if (owner != null) {
                     item.setOwner(owner);
                 }
-                item.setGMLog("脚本获得 " + id + " (" + script + ") 地图: " + cg.getPlayer().getMapId() + " 时间: " + FileoutputUtil.CurrentReadable_Time());
+                item.setGMLog("脚本获得 " + id + " (" + script + ") 地图: " + cg.getPlayer().getMapId() + " 时间: " + System.currentTimeMillis());
                 MapleInventoryManipulator.addbyItem(cg, item.copy());
             } else {
-                MapleInventoryManipulator.addById(cg, itemId, quantity, owner == null ? "" : owner, null, period, new StringBuilder().append("脚本获得 ").append(id).append(" (").append(script).append(") 地图: ").append(cg.getPlayer().getMapId()).append(" 时间: ").append(FileoutputUtil.CurrentReadable_Time()).toString());
+                MapleInventoryManipulator.addById(cg, itemId, quantity, owner == null ? "" : owner, null, period, new StringBuilder().append("脚本获得 ").append(id).append(" (").append(script).append(") 地图: ").append(cg.getPlayer().getMapId()).append(" 时间: ").toString());
             }
         } else {
             MapleInventoryManipulator.removeById(cg, ItemConstants.getInventoryType(itemId), itemId, -quantity, true, false);
@@ -1183,10 +1180,6 @@ public abstract class AbstractPlayerInteraction {
         this.c.sendPacket(UIPacket.summonMessage(type));
     }
 
-    public void showInstruction(String msg, int width, int height) {
-        this.c.sendPacket(MaplePacketCreator.sendHint(msg, width, height));
-    }
-
     public void playerSummonHint(boolean summon) {
         this.c.getPlayer().setHasSummon(summon);
         this.c.sendPacket(UIPacket.summonHelper(summon));
@@ -1224,11 +1217,11 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public void showEffect(String effect) {
-        this.c.sendPacket(MaplePacketCreator.showEffect(effect));
+//        this.c.sendPacket(MaplePacketCreator.showEffect(effect));
     }
 
     public void playSound(String sound) {
-        this.c.sendPacket(MaplePacketCreator.playSound(sound));
+//        this.c.sendPacket(MaplePacketCreator.playSound(sound));
     }
 
     public void startMapEffect(String msg, int itemId) {
@@ -1288,7 +1281,7 @@ public abstract class AbstractPlayerInteraction {
             fullness = 100;
         }
         try {
-            MapleInventoryManipulator.addById(this.c, itemId, (short) 1, "", MaplePet.createPet(itemId, name, level, closeness, fullness, MapleInventoryIdentifier.getInstance(), itemId == 5000054 ? (int) period : 0, (flags == -1 ? MapleItemInformationProvider.getInstance().getPetFlagInfo(itemId) : flags), 0), 45L, new StringBuilder().append("Pet from interaction ").append(itemId).append(" (").append(this.id).append(")").append(" on ").append(FileoutputUtil.CurrentReadable_Date()).toString());
+            MapleInventoryManipulator.addById(this.c, itemId, (short) 1, "", MaplePet.createPet(itemId, name, level, closeness, fullness, MapleInventoryIdentifier.getInstance(), itemId == 5000054 ? (int) period : 0, (flags == -1 ? MapleItemInformationProvider.getInstance().getPetFlagInfo(itemId) : flags), 0), 45L, new StringBuilder().append("Pet from interaction ").append(itemId).append(" (").append(this.id).append(")").append(" on ").append(System.currentTimeMillis()).toString());
         } catch (NullPointerException ex) {
         }
     }
@@ -1371,24 +1364,12 @@ public abstract class AbstractPlayerInteraction {
     public void logPQ(String text) {
     }
 
-    public void outputFileError(Throwable t) {
-        FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, t);
-    }
-
-    public void trembleEffect(int type, int delay) {
-        this.c.sendPacket(MaplePacketCreator.trembleEffect(type, delay));
-    }
-
     public int nextInt(int arg0) {
         return Randomizer.nextInt(arg0);
     }
 
     public MapleQuest getQuest(int arg0) {
         return MapleQuest.getInstance(arg0);
-    }
-
-    public void achievement(int a) {
-        this.c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.achievementRatio(a));
     }
 
     public MapleInventory getInventory(int type) {
@@ -1479,16 +1460,9 @@ public abstract class AbstractPlayerInteraction {
         this.c.sendPacket(MaplePacketCreator.getClock(time));
     }
 
-    public void openWeb(String web) {
-        this.c.sendPacket(MaplePacketCreator.openWeb(web));
-    }
 
     public boolean isCanPvp() {
         return this.c.getChannelServer().isCanPvp();
-    }
-
-    public void showDoJangRank() {
-        this.c.sendPacket(MaplePacketCreator.showDoJangRank());
     }
 
     public int MarrageChecking() {
@@ -1566,18 +1540,6 @@ public abstract class AbstractPlayerInteraction {
 
     public void getLevelup() {
         this.c.getPlayer().levelUp();
-    }
-
-    public void spouseMessage(int op, String msg) {
-        this.c.sendPacket(MaplePacketCreator.spouseMessage(op, msg));
-    }
-
-    public void sendPolice(String text, boolean dc) {
-        if (dc) {
-            this.c.getPlayer().sendPolice(text);
-        } else {
-            this.c.sendPacket(MaplePacketCreator.sendPolice(text));
-        }
     }
 
     public String getTime() {
@@ -1762,9 +1724,6 @@ public abstract class AbstractPlayerInteraction {
         c.sendPacket(UIPacket.getDirectionEffect(data, value, x, y));
     }
 
-    public void sendPyramidEnergy(String object, String amount) {
-        c.sendPacket(MaplePacketCreator.sendPyramidEnergy(object, amount));
-    }
 
     public void spawnPortal() {
         c.sendPacket(MaplePacketCreator.spawnPortal(999999999, 999999999, 0, null));
@@ -1787,26 +1746,6 @@ public abstract class AbstractPlayerInteraction {
         npc.setObjectId(npcid);
         npcRequestController.put(new Pair(npcid, c), npc);
         c.sendPacket(NPCPacket.spawnNPCRequestController(npc, true));//isMiniMap
-    }
-
-    public void setNPCSpecialAction(int npcid, String action) {
-        final MapleNPC npc;
-        if (npcRequestController.containsKey(new Pair(npcid, c))) {
-            npc = npcRequestController.get(new Pair(npcid, c));
-        } else {
-            return;
-        }
-        c.sendPacket(NPCPacket.setNPCSpecialAction(npc.getObjectId(), action));
-    }
-
-    public void updateNPCSpecialAction(int npcid, int value, int x, int y) {
-        final MapleNPC npc;
-        if (npcRequestController.containsKey(new Pair(npcid, c))) {
-            npc = npcRequestController.get(new Pair(npcid, c));
-        } else {
-            return;
-        }
-        c.sendPacket(NPCPacket.NPCSpecialAction(npc.getObjectId(), value, x, y));
     }
 
     public void getNPCDirectionEffect(int npcid, String data, int value, int x, int y) {
@@ -1884,10 +1823,6 @@ public abstract class AbstractPlayerInteraction {
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(AbstractPlayerInteraction.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    public void instantMapWarp(byte portal) {
-        this.c.sendPacket(MaplePacketCreator.instantMapWarp((byte) portal));
     }
 
     public void EventGainNX() {

@@ -11,7 +11,7 @@ import server.Timer.EventTimer;
 import server.maps.FieldLimitType;
 import server.maps.MapleMap;
 import server.maps.SavedLocationType;
-import tools.FileoutputUtil;
+
 import tools.MaplePacketCreator;
 import tools.StringUtil;
 
@@ -87,7 +87,7 @@ public abstract class MapleEvent {
 
             int quantity = (max_quantity > 1 ? Randomizer.nextInt(max_quantity) : 0) + 1;
             if (MapleInventoryManipulator.checkSpace(chr.getClient(), reward, quantity, "")) {
-                MapleInventoryManipulator.addById(chr.getClient(), reward, (short) quantity, "活动获得 " + FileoutputUtil.CurrentReadable_Date());
+                MapleInventoryManipulator.addById(chr.getClient(), reward, (short) quantity, "活动获得 " + System.currentTimeMillis());
             } else {
                 givePrize(chr);
             }
@@ -100,7 +100,7 @@ public abstract class MapleEvent {
 
     public void onMapLoad(MapleCharacter chr) {
         if ((GameConstants.isEventMap(chr.getMapId())) && (FieldLimitType.Event.check(chr.getMap().getFieldLimit())) && (FieldLimitType.Event2.check(chr.getMap().getFieldLimit()))) {
-            chr.getClient().sendPacket(MaplePacketCreator.showEventInstructions());
+//            chr.getClient().sendPacket(MaplePacketCreator.showEventInstructions());
         }
     }
 

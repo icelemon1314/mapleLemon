@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.packet.PartyPacket;
 
@@ -43,7 +44,7 @@ public class WrodlPartyService {
                 ps.executeUpdate();
             }
         } catch (SQLException e) {
-            FileoutputUtil.log("更新角色组队为-1失败");
+            MapleLogger.info("更新角色组队为-1失败");
         }
         this.runningPartyId = new AtomicInteger(1);
         this.runningExpedId = new AtomicInteger(1);
@@ -146,7 +147,7 @@ public class WrodlPartyService {
     public void updateParty(int partyId, PartyOperation operation, MaplePartyCharacter target) {
         MapleParty party = getParty(partyId);
         if (party == null) {
-            FileoutputUtil.log("no party with the specified partyid exists.");
+            MapleLogger.info("no party with the specified partyid exists.");
             return;
         }
 

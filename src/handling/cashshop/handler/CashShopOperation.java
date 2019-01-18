@@ -8,7 +8,8 @@ import handling.login.LoginServer;
 import handling.world.CharacterTransfer;
 import handling.world.World;
 import java.util.List;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.MTSCSPacket;
@@ -28,7 +29,7 @@ public class CashShopOperation {
         int channel = c.getChannel();
         ChannelServer toch = ChannelServer.getInstance(channel);
         if (toch == null) {
-            FileoutputUtil.log(FileoutputUtil.离开商城, new StringBuilder().append("玩家: ").append(chr.getName()).append(" 从商城离开发生错误.找不到频道[").append(channel).append("]的信息.").toString(), true);
+            MapleLogger.info(new StringBuilder().append("玩家: ").append(chr.getName()).append(" 从商城离开发生错误.找不到频道[").append(channel).append("]的信息.").toString());
             c.getSession().close();
             return;
         }
@@ -51,7 +52,7 @@ public class CashShopOperation {
      */
     public static void EnterCS(CharacterTransfer transfer, MapleClient c) {
         if (transfer == null) {
-            FileoutputUtil.log("玩家为空："+c.getPlayer().getAccountID());
+            MapleLogger.info("玩家为空："+c.getPlayer().getAccountID());
             c.getSession().close();
             return;
         }
@@ -62,7 +63,7 @@ public class CashShopOperation {
 
         if (!c.CheckIPAddress()) {
             c.getSession().close();
-            FileoutputUtil.log(new StringBuilder().append("商城检测连接 - 2 ").append(!c.CheckIPAddress()).toString());
+            MapleLogger.info(new StringBuilder().append("商城检测连接 - 2 ").append(!c.CheckIPAddress()).toString());
             return;
         }
 
@@ -76,7 +77,7 @@ public class CashShopOperation {
         if (!allowLogin) {
             c.setPlayer(null);
             c.getSession().close();
-            FileoutputUtil.log(new StringBuilder().append("商城检测连接 - 3 ").append(!allowLogin).toString());
+            MapleLogger.info(new StringBuilder().append("商城检测连接 - 3 ").append(!allowLogin).toString());
             return;
         }
         c.updateLoginState(MapleClient.LOGIN_LOGGEDIN, c.getSessionIPAddress());

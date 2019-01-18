@@ -16,7 +16,8 @@ import java.util.List;
 import server.Randomizer;
 import server.ServerProperties;
 import server.maps.MapleMapItem;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
 public class InventoryPacket {
@@ -181,7 +182,7 @@ public class InventoryPacket {
                     }
                     break;
                 default:
-                    FileoutputUtil.log("未知的模式："+mod.getMode());
+                    MapleLogger.info("未知的模式："+mod.getMode());
             }
             mod.clear();
         }

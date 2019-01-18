@@ -12,7 +12,8 @@ import handling.MaplePacketHandler;
 import server.MapleInventoryManipulator;
 import server.cashshop.CashItemFactory;
 import server.cashshop.CashItemInfo;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.Triple;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.MTSCSPacket;
@@ -36,7 +37,7 @@ public class CouponCodeHandler extends MaplePacketHandler {
         try {
             info = MapleCharacterUtil.getNXCodeInfo(code);
         } catch (SQLException e) {
-            FileoutputUtil.log("错误 getNXCodeInfo" + e);
+            MapleLogger.info("错误 getNXCodeInfo" + e);
         }
         if ((info != null) && (((Boolean) info.left))) {
             int type = ((Integer) info.mid);
@@ -44,7 +45,7 @@ public class CouponCodeHandler extends MaplePacketHandler {
             try {
                 MapleCharacterUtil.setNXCodeUsed(chr.getName(), code);
             } catch (SQLException e) {
-                FileoutputUtil.log("错误 setNXCodeUsed" + e);
+                MapleLogger.info("错误 setNXCodeUsed" + e);
                 c.sendPacket(MTSCSPacket.商城错误提示(0));
                 return;
             }
@@ -64,7 +65,7 @@ public class CouponCodeHandler extends MaplePacketHandler {
                         c.sendPacket(MTSCSPacket.商城错误提示(0));
                         return;
                     }
-                    byte slot = MapleInventoryManipulator.addId(c, itez.getId(), (byte) 1, "", "商城道具卡兑换 时间: " + FileoutputUtil.CurrentReadable_Date());
+                    byte slot = MapleInventoryManipulator.addId(c, itez.getId(), (byte) 1, "", "商城道具卡兑换 时间: " + System.currentTimeMillis());
                     if (slot <= -1) {
                         c.sendPacket(MTSCSPacket.商城错误提示(0));
                         return;

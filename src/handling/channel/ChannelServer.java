@@ -45,7 +45,7 @@ import server.shops.HiredMerchantSave;
 import server.squad.MapleSquad;
 import server.squad.MapleSquadType;
 import tools.ConcurrentEnumMap;
-import tools.FileoutputUtil;
+
 import tools.MapleLogger;
 import tools.MaplePacketCreator;
 
@@ -176,10 +176,10 @@ public class ChannelServer {
 //            ((SocketSessionConfig) acceptor.getSessionConfig()).setTcpNoDelay(true);
             this.acceptor = new ServerConnection(port, 1, channel);
             this.acceptor.run();
-            FileoutputUtil.log("频道" + channel + " 正在监听" + port + "端口");
+            MapleLogger.info("频道" + channel + " 正在监听" + port + "端口");
             eventSM.init();
         } catch (Exception e) {
-            FileoutputUtil.log("无法绑定" + port + "端口 (频道: " + getChannel() + ")" + e);
+            MapleLogger.info("无法绑定" + port + "端口 (频道: " + getChannel() + ")" + e);
         }
     }
 
@@ -190,15 +190,15 @@ public class ChannelServer {
         broadcastPacket(MaplePacketCreator.serverMessageNotice(" 游戏即将关闭维护..."));
 
         shutdown = true;
-        FileoutputUtil.log("频道 " + channel + " 正在清理活动脚本...");
+        MapleLogger.info("频道 " + channel + " 正在清理活动脚本...");
 
         eventSM.cancel();
 
-        FileoutputUtil.log("频道 " + channel + " 正在保存所有角色数据...");
+        MapleLogger.info("频道 " + channel + " 正在保存所有角色数据...");
 
         getPlayerStorage().disconnectAll();
 
-        FileoutputUtil.log("频道 " + channel + " 解除绑定端口...");
+        MapleLogger.info("频道 " + channel + " 解除绑定端口...");
 
         acceptor.close();
 
@@ -417,7 +417,7 @@ public class ChannelServer {
         } finally {
             mcWriteLock.unlock();
         }
-        FileoutputUtil.log("频道 " + channel + " 共保存雇佣商店: " + ret + " | 耗时: " + (System.currentTimeMillis() - Start) + " 毫秒.");
+        MapleLogger.info("频道 " + channel + " 共保存雇佣商店: " + ret + " | 耗时: " + (System.currentTimeMillis() - Start) + " 毫秒.");
     }
 
     public int addMerchant(HiredMerchant hMerchant) {
@@ -564,12 +564,12 @@ public class ChannelServer {
 
     public void setShutdown() {
         shutdown = true;
-        FileoutputUtil.log("频道 " + channel + " 正在关闭和保存雇佣商店数据信息...");
+        MapleLogger.info("频道 " + channel + " 正在关闭和保存雇佣商店数据信息...");
     }
 
     public void setFinishShutdown() {
         finishedShutdown = true;
-        FileoutputUtil.log("频道 " + channel + " 已关闭完成.");
+        MapleLogger.info("频道 " + channel + " 已关闭完成.");
     }
 
     public boolean isAdminOnly() {
@@ -636,7 +636,7 @@ public class ChannelServer {
                 chr.saveToDB(false, false);
             }
         }
-        FileoutputUtil.log("[自动保存] 已经将频道 " + channel + " 的 " + nos + " 个玩家的数据自动保存到数据中.");
+        MapleLogger.info("[自动保存] 已经将频道 " + channel + " 的 " + nos + " 个玩家的数据自动保存到数据中.");
     }
 
     public int getAutoGain() {
@@ -725,7 +725,7 @@ public class ChannelServer {
                     } else {
                         throw new RuntimeException("[EXCEPTION] 无法加载股票数据.");
                     }
-                    FileoutputUtil.log("目前的股票价格: " + sharePrice);
+                    MapleLogger.info("目前的股票价格: " + sharePrice);
                 }
                 ps.close();
             }

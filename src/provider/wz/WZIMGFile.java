@@ -28,7 +28,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.data.input.GenericSeekableLittleEndianAccessor;
 import tools.data.input.RandomAccessByteStream;
 import tools.data.input.SeekableLittleEndianAccessor;
@@ -83,7 +84,7 @@ public class WZIMGFile {
                 break;
             }
             default:
-                FileoutputUtil.log("Unknown Image identifier: " + marker + " at offset " + (slea.getPosition() - file.getOffset()));
+                MapleLogger.info("Unknown Image identifier: " + marker + " at offset " + (slea.getPosition() - file.getOffset()));
         }
         marker = slea.readByte();
         switch (marker) {
@@ -115,7 +116,7 @@ public class WZIMGFile {
                 } else if (iMarker == 1) {
                     entry.setData(WZTool.readDecodedStringAtOffsetAndReset(slea, slea.readInt() + file.getOffset()));
                 } else {
-                    FileoutputUtil.log("Unknown String type " + iMarker);
+                    MapleLogger.info("Unknown String type " + iMarker);
                 }
                 break;
             case 9:
@@ -125,7 +126,7 @@ public class WZIMGFile {
                 parseExtended(entry, slea, endOfExtendedBlock);
                 break;
             default:
-                FileoutputUtil.log("Unknown Image type " + marker);
+                MapleLogger.info("Unknown Image type " + marker);
         }
     }
 
@@ -175,7 +176,7 @@ public class WZIMGFile {
                             entry.addChild(child);
                         }
                     } else {
-                        FileoutputUtil.log("Canvas marker != 1 (" + marker + ")");
+                        MapleLogger.info("Canvas marker != 1 (" + marker + ")");
                     }       int width = WZTool.readValue(slea);
             int height = WZTool.readValue(slea);
                     int format = WZTool.readValue(slea);
@@ -230,7 +231,7 @@ public class WZIMGFile {
                         entry.setData(WZTool.readDecodedStringAtOffsetAndReset(slea, file.getOffset() + slea.readInt()));
                         break;
                     default:
-                        FileoutputUtil.log("Unknown UOL marker: " + uolmarker + " " + entry.getName());
+                        MapleLogger.info("Unknown UOL marker: " + uolmarker + " " + entry.getName());
                 }   break;
             default:
                 throw new RuntimeException("Unhandeled extended type: " + type);

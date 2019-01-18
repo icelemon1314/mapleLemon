@@ -18,7 +18,7 @@ public class CaltechEval {
         }
 
         CaltechEval m = new CaltechEval(args[0]);
-        FileoutputUtil.log(args[0].replace(" ", "") + " = " + m.evaluate());
+        MapleLogger.info(args[0].replace(" ", "") + " = " + m.evaluate());
     }
 
     public CaltechEval(String s) {

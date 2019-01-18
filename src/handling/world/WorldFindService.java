@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.swing.table.DefaultTableModel;
 import server.ManagerSin;
-import tools.FileoutputUtil;
+import tools.MapleLogger;
+
 
 public class WorldFindService {
 
@@ -38,13 +39,13 @@ public class WorldFindService {
             this.lock.writeLock().unlock();
         }
         if (channel == -10) {
-            FileoutputUtil.log("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 名字: " + chrName + " 进入商城");
+            MapleLogger.info("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 名字: " + chrName + " 进入商城");
         } else if (channel == -20) {
-            FileoutputUtil.log("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 名字: " + chrName + " 进入拍卖");
+            MapleLogger.info("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 名字: " + chrName + " 进入拍卖");
         } else if (channel > -1) {
-            FileoutputUtil.log("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 名字: " + chrName + " 频道: " + channel);
+            MapleLogger.info("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 名字: " + chrName + " 频道: " + channel);
         } else {
-            FileoutputUtil.log("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 未处理的频道...");
+            MapleLogger.info("[登陆信息] 玩家连接 - 角色ID: " + chrId + " 未处理的频道...");
         }
         try {
             int countRows = ManagerSin.jTable1.getRowCount();//获取当前表格总行数
@@ -52,7 +53,7 @@ public class WorldFindService {
                 ((DefaultTableModel) ManagerSin.jTable1.getModel()).insertRow(countRows, new Object[]{chr.getClient().getAccID(), chrName + " (ID:" + chrId + ")", chr.getLevel(), MapleJob.getJobName(chr.getJob()) + "(" + chr.getJob() + ")", channel == -10 ? "现金商城" : channel == -20 ? "拍卖" : channel > -1 ? chr.getMap().getMapName() + "(" + chr.getMapId() + ")" : "未知频道"});
             }
         } catch (Exception e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.GUI_Ex_Log, e);
+            MapleLogger.error("world register error:" + e);
         }
     }
 
@@ -63,7 +64,7 @@ public class WorldFindService {
         } finally {
             this.lock.writeLock().unlock();
         }
-        FileoutputUtil.log("[玩家离开] 角色ID: " + chrId);
+        MapleLogger.info("[玩家离开] 角色ID: " + chrId);
     }
 
     public void forceDeregister(String chrName) {
@@ -73,7 +74,7 @@ public class WorldFindService {
         } finally {
             this.lock.writeLock().unlock();
         }
-        FileoutputUtil.log("[玩家离开] 角色名字: " + chrName);
+        MapleLogger.info("[玩家离开] 角色名字: " + chrName);
     }
 
     public void forceDeregister(int chrId, String chrName) {
@@ -84,7 +85,7 @@ public class WorldFindService {
         } finally {
             this.lock.writeLock().unlock();
         }
-        FileoutputUtil.log("[玩家离开] 角色ID: " + chrId + " 名字: " + chrName);
+        MapleLogger.info("[玩家离开] 角色ID: " + chrId + " 名字: " + chrName);
     }
 
     public int findChannel(int chrId) {

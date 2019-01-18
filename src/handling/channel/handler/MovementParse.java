@@ -12,7 +12,7 @@ import server.movement.LifeMovement;
 import server.movement.LifeMovementFragment;
 import server.movement.RelativeLifeMovement;
 import server.movement.TeleportMovement;
-import tools.FileoutputUtil;
+
 import tools.MapleLogger;
 import tools.data.input.SeekableLittleEndianAccessor;
 
@@ -82,13 +82,12 @@ public class MovementParse {
                     res.add(new ChangeEquipSpecialAwesome(lea.readByte(),0));
                     break;
                 default:
-                    FileoutputUtil.log(FileoutputUtil.Movement_Err, "未知移动封包：[" + command + "]" + "(" + chr.getName() + ") 职业：" + chr.getJobName() + "(" + chr.getJob() + "移动封包 剩余次数: " + (numCommands - res.size()) + "  封包: " + lea.toString(true));
+                    MapleLogger.info("未知移动封包：[" + command + "]" + "(" + chr.getName() + ") 职业：" + chr.getJobName() + "(" + chr.getJob() + "移动封包 剩余次数: " + (numCommands - res.size()) + "  封包: " + lea.toString(true));
                     break;
             }
         }
         if (numCommands != res.size()) {
             MapleLogger.error("循环次数[" + numCommands + "]和实际上获取的循环次数[" + res.size() + "]不符");
-            FileoutputUtil.log(FileoutputUtil.Movement_Err, "循环次数[" + numCommands + "]和实际上获取的循环次数[" + res.size() + "]不符 " + "(" + chr.getName() + ") 职业：" + chr.getJobName() + "(" + chr.getJob() + "移动封包 剩余次数: " + (numCommands - res.size()) + "  封包: " + lea.toString(true));
             return null;
         }
         return res;

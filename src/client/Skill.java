@@ -11,7 +11,8 @@ import server.life.Element;
 import server.skill.冒险家.勇士;
 import server.skill.冒险家.牧师;
 import server.skill.冒险家.独行客;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.Pair;
 
 /**
@@ -72,9 +73,6 @@ public class Skill {
 
     public static Skill loadFromData(int id, MapleData data, MapleData delayData) {
         boolean showSkill = false;
-        if (showSkill) {
-            FileoutputUtil.log(FileoutputUtil.SkillsLog, "正在解析技能id: " + id + " 名字: " + SkillFactory.getSkillName(id), true);
-        }
         Skill ret = new Skill(id);
 
         int skillType = MapleDataTool.getInt("skillType", data, -1);

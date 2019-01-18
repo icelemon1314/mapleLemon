@@ -152,7 +152,7 @@ public class DateUtil {
             Date date = df.parse(dateString);
             return date.getTime();
         } catch (ParseException ex) {
-            FileoutputUtil.log(ex.getMessage());
+            MapleLogger.info(ex.getMessage());
         }
         return -1L;
     }

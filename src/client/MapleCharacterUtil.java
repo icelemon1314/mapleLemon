@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 import server.MapleItemInformationProvider;
-import tools.FileoutputUtil;
+
 import tools.MapleLogger;
 import tools.Pair;
 import tools.Triple;
@@ -307,7 +307,7 @@ public class MapleCharacterUtil {
                 ps.close();
             }
         } catch (SQLException e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.SQL_Ex_Log, e);
+            MapleLogger.error("add item to search:", e);
         }
     }
 

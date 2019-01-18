@@ -12,7 +12,8 @@ import provider.MapleDataEntry;
 import provider.MapleDataProvider;
 import provider.MapleDataProviderFactory;
 import provider.MapleDataTool;
-import tools.FileoutputUtil;
+import tools.MapleLogger;
+
 
 public class CashItemFactory {
 
@@ -76,8 +77,8 @@ public class CashItemFactory {
                 this.idLookup.put(itemId, SN);
             }
         }
-      FileoutputUtil.log("共加载 " + this.itemStats.size() + " 个商城道具，有 " + onSaleSize + " 个道具处于出售状态，");
-      FileoutputUtil.log("其中有 " + fixId.size() + " 重复价格的道具和 " + this.blockRefundableItemId.size() + " 个禁止换购的道具；");
+      MapleLogger.info("共加载 " + this.itemStats.size() + " 个商城道具，有 " + onSaleSize + " 个道具处于出售状态，");
+      MapleLogger.info("其中有 " + fixId.size() + " 重复价格的道具和 " + this.blockRefundableItemId.size() + " 个禁止换购的道具；");
 
         MapleData packageData = this.data.getData("CashPackage.img");
         for (MapleData root : packageData.getChildren()) {
@@ -90,7 +91,7 @@ public class CashItemFactory {
             }
             this.itemPackage.put(Integer.parseInt(root.getName()), packageItems);
         }
-      FileoutputUtil.log("共加载 " + this.itemPackage.size() + " 个商城礼包；");
+      MapleLogger.info("共加载 " + this.itemPackage.size() + " 个商城礼包；");
 
         onSaleSize = 0;
         MapleDataDirectoryEntry root = this.data.getRoot();
@@ -120,7 +121,7 @@ public class CashItemFactory {
                 }
             }
         }
-      FileoutputUtil.log("共加载 " + this.oldItemStats.size() + " 个老的商城道具，有 " + onSaleSize + " 个道具处于出售状态；");
+      MapleLogger.info("共加载 " + this.oldItemStats.size() + " 个老的商城道具，有 " + onSaleSize + " 个道具处于出售状态；");
     }
 
     public void loadBlockedCash() {
@@ -131,23 +132,23 @@ public class CashItemFactory {
          int itemId = Integer.parseInt(dat.getName());
          boolean block = MapleDataTool.getIntConvert("Block", dat, 0) >= 0;
          if (this.blockCashItemId.containsKey(itemId)) {
-         FileoutputUtil.log("发现重复禁止道具信息: " + itemId);
+         MapleLogger.info("发现重复禁止道具信息: " + itemId);
          continue;
          }
          this.blockCashItemId.put(itemId, block);
          }
-         FileoutputUtil.log("共加载 " + this.blockCashItemId.size() + " 个商城禁止购买的道具ID信息...");
+         MapleLogger.info("共加载 " + this.blockCashItemId.size() + " 个商城禁止购买的道具ID信息...");
          this.blockCashSnId.clear();
          for (MapleData dat : root.getChildByPath("SNId").getChildren()) {
          int packageId = Integer.parseInt(dat.getName());
          boolean block = MapleDataTool.getIntConvert("Block", dat, 0) >= 0;
          if (this.blockCashSnId.containsKey(packageId)) {
-         FileoutputUtil.log("发现重复禁止SN信息: " + packageId);
+         MapleLogger.info("发现重复禁止SN信息: " + packageId);
          continue;
          }
          this.blockCashSnId.put(packageId, block);
          }
-         FileoutputUtil.log("共加载 " + this.blockCashSnId.size() + " 个商城禁止购买的道具SN信息...");
+         MapleLogger.info("共加载 " + this.blockCashSnId.size() + " 个商城禁止购买的道具SN信息...");
          */
     }
 

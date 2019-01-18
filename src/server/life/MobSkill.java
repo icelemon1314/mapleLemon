@@ -16,7 +16,8 @@ import server.ServerProperties;
 import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
 import server.maps.MapleDefender;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.packet.MobPacket;
 
@@ -305,8 +306,8 @@ public class MobSkill {
                 if ((disease != null) || (!ServerProperties.ShowPacket())) {
                     break;
                 }
-                FileoutputUtil.log(FileoutputUtil.未处理的怪物技能, "怪物ID:" + monster.getStats().getId() + " 未处理的怪物技能 skillid : " + this.skillId);
-                FileoutputUtil.log("未处理的怪物技能:\n\r怪物ID:" + monster.getStats().getId() + " skillid : " + this.skillId);
+                MapleLogger.info("怪物ID:" + monster.getStats().getId() + " 未处理的怪物技能 skillid : " + this.skillId);
+                MapleLogger.info("未处理的怪物技能:\n\r怪物ID:" + monster.getStats().getId() + " skillid : " + this.skillId);
         }
 
         if ((stats.size() > 0) && (monster != null)) {

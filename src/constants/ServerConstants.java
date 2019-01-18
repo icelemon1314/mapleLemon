@@ -11,7 +11,8 @@ import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import server.ServerProperties;
-import tools.FileoutputUtil;
+import tools.MapleLogger;
+
 
 public class ServerConstants implements Runnable {
 
@@ -22,7 +23,7 @@ public class ServerConstants implements Runnable {
     public static boolean isLinux = !"windows".equals(System.getProperty("sun.desktop"));
     public static String linuxDumpPath = "/opt/lampp/bin/";
     public static String windowsDumpPath = "..\\mysql\\bin\\";
-    public static byte[] NEXON_IP = {(byte) 127, (byte) 0, (byte) 0, 1};
+    public static byte[] NEXON_IP = {(byte) 192, (byte) 168, (byte) 85, 1};
     public static String IP = "127.0.0.1";
 
     public static boolean PollEnabled = false;
@@ -73,8 +74,8 @@ public class ServerConstants implements Runnable {
             instance = new ServerConstants();
             mBeanServer.registerMBean(instance, new ObjectName("constants:type=ServerConstants"));
         } catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException e) {
-            FileoutputUtil.log(e.getMessage());
-            FileoutputUtil.log("Error registering Shutdown MBean");
+            MapleLogger.info(e.getMessage());
+            MapleLogger.info("Error registering Shutdown MBean");
         }
     }
 

@@ -7,9 +7,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.util.AttributeKey;
 import server.ServerProperties;
-import tools.FileoutputUtil;
+
 import tools.HexTool;
 import tools.MapleAESOFB;
+import tools.MapleLogger;
 import tools.StringUtil;
 import tools.data.input.ByteArrayByteStream;
 import tools.data.input.GenericLittleEndianAccessor;
@@ -30,7 +31,7 @@ public class MaplePacketDecoder extends ByteToMessageDecoder {
                 int packetHeader = in.readInt(); // 另外一种方式，getShort() xor getShort()
                 decoderState.packetlength = MapleAESOFB.getPacketLength(packetHeader);
             } else {
-                FileoutputUtil.log("没有足够的数据来解密封包.");
+                MapleLogger.info("没有足够的数据来解密封包.");
                 return ;
             }
         }
@@ -59,24 +60,16 @@ public class MaplePacketDecoder extends ByteToMessageDecoder {
                 String pHeaderStr = Integer.toHexString(pHeader).toUpperCase();
                 pHeaderStr = StringUtil.getLeftPaddedStr(pHeaderStr, '0', 4);
                 String op = lookupSend(pHeader);
-                String Send = "[客户端发送] " + op + "  [0x" + pHeaderStr + "]  (" + packetLen + "字节)  " + FileoutputUtil.CurrentReadable_Time() + "\r\n";
+                String Send = "[客户端发送] " + op + "  [0x" + pHeaderStr + "]  (" + packetLen + "字节)  " + System.currentTimeMillis() + "\r\n";
                 if (packetLen <= 6000) {
                     String SendTo = Send + HexTool.toString(decryptedPacket) + "\r\n" + HexTool.toStringFromAscii(decryptedPacket);
                     if (!ServerProperties.RecvPacket(op, pHeaderStr)) {
-                        String SendTos = "\r\n时间：" + FileoutputUtil.CurrentReadable_Time() + "  ";
+                        String SendTos = "\r\n时间：" + System.currentTimeMillis() + "  ";
 
-                        FileoutputUtil.packetLog(FileoutputUtil.PacketLog, SendTo);
-                        System.out.print(Send);
-                        if ((op.equals("CLOSE_RANGE_ATTACK")) || (op.equals("RANGED_ATTACK")) || (op.equals("SUMMON_ATTACK")) || (op.equals("MAGIC_ATTACK"))) {
-                            FileoutputUtil.packetLog(FileoutputUtil.AttackLog, SendTos + SendTo);
-                        } else if (op.endsWith("PLAYER_INTERACTION")) {
-                            FileoutputUtil.packetLog(FileoutputUtil.玩家互动封包, SendTos + SendTo);
-                        } else if (op.equals("UNKNOWN")) {
-                            FileoutputUtil.packetLog(FileoutputUtil.Packet_Unk, SendTos + SendTo);
-                        }
+                        MapleLogger.info(SendTos + SendTo);
                     }
                 } else {
-                    FileoutputUtil.log(Send + HexTool.toString(new byte[]{decryptedPacket[0], decryptedPacket[1]}) + "...\r\n");
+                    MapleLogger.info(Send + HexTool.toString(new byte[]{decryptedPacket[0], decryptedPacket[1]}) + "...\r\n");
                 }
             }
             return ;

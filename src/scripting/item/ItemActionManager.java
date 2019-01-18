@@ -55,14 +55,6 @@ public class ItemActionManager extends NPCConversationManager {
         return false;
     }
 
-    public void useSkillBook(int skillId, int masterLevel) {
-        final Skill CurrSkillData = SkillFactory.getSkill(skillId);
-        masterLevel = masterLevel > CurrSkillData.getMaxLevel() ? CurrSkillData.getMaxLevel() : masterLevel;
-        c.getPlayer().changeSingleSkillLevel(CurrSkillData, c.getPlayer().getSkillLevel(CurrSkillData), (byte) masterLevel);
-        c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.useSkillBook(c.getPlayer(), 0, 0, true, true));
-        c.sendPacket(MaplePacketCreator.enableActions());
-    }
-
     public Item getItem() {
         return item;
     }

@@ -27,8 +27,9 @@ import server.MapleItemInformationProvider;
 import server.MaplePortal;
 import server.ShutdownServer;
 import server.Timer.EventTimer;
-import tools.FileoutputUtil;
+
 import tools.HexTool;
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.StringUtil;
 
@@ -140,7 +141,7 @@ public class AdminCommand {
         public int execute(MapleClient c, String[] splitted) {
             LoginServer.autoReg = !LoginServer.autoReg;
             c.getPlayer().dropMessage(0, "自动注册状态: " + (LoginServer.isAutoReg() ? "开启" : "关闭"));
-            FileoutputUtil.log("自动注册状态: " + (LoginServer.isAutoReg() ? "开启" : "关闭"));
+            MapleLogger.info("自动注册状态: " + (LoginServer.isAutoReg() ? "开启" : "关闭"));
             return 1;
         }
     }
@@ -209,7 +210,7 @@ public class AdminCommand {
                     }
                 }
             }
-            FileoutputUtil.log("HotTime操作已经完成");
+            MapleLogger.info("HotTime操作已经完成");
             return 1;
         }
     }
@@ -396,10 +397,10 @@ public class AdminCommand {
             checkItems.clear();
             if (msgs.size() > 0) {
                 c.getPlayer().dropMessage(5, "检测完成，共有: " + msgs.size() + " 个复制信息");
-                FileoutputUtil.log(FileoutputUtil.复制装备, "检测完成，共有: " + msgs.size() + " 个复制信息", true);
+                MapleLogger.info("检测完成，共有: " + msgs.size() + " 个复制信息");
                 for (String s : msgs) {
                     c.getPlayer().dropMessage(5, s);
-                    FileoutputUtil.log(FileoutputUtil.复制装备, s, true);
+                    MapleLogger.info(s);
                 }
                 c.getPlayer().dropMessage(5, "以上信息为拥有复制道具的玩家。");
             } else {

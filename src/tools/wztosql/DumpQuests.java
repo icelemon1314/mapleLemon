@@ -34,7 +34,8 @@ import provider.MapleDataProviderFactory;
 import provider.MapleDataTool;
 import server.quest.MapleQuestActionType;
 import server.quest.MapleQuestRequirementType;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.Pair;
 
 public class DumpQuests {
@@ -68,7 +69,7 @@ public class DumpQuests {
             try {
                 dumpQuests(psai, psaq, ps, psr, psq, psa);
             } catch (Exception e) {
-                FileoutputUtil.log(id + " quest.");
+                MapleLogger.info(id + " quest.");
                 hadError = true;
             } finally {
                 psai.executeBatch();
@@ -110,12 +111,12 @@ public class DumpQuests {
             delete("DELETE FROM wz_questactquestdata");
             delete("DELETE FROM wz_questreqdata");
             delete("DELETE FROM wz_questpartydata");
-            FileoutputUtil.log("清除 wz_questdata 完成");
+            MapleLogger.info("清除 wz_questdata 完成");
         }
         final MapleData checkz = quest.getData("Check.img");
         final MapleData actz = quest.getData("Act.img");
         final MapleData infoz = quest.getData("QuestInfo.img");
-        FileoutputUtil.log("正在添加到数据库 wz_questdata.....");
+        MapleLogger.info("正在添加到数据库 wz_questdata.....");
         int uniqueid = 0;
         for (MapleData qz : checkz.getChildren()) { //requirements first
             this.id = Integer.parseInt(qz.getName());
@@ -327,9 +328,9 @@ public class DumpQuests {
                 ps.setInt(9, 0);
             }
             ps.addBatch();
-            FileoutputUtil.log("添加任务：" + id);
+            MapleLogger.info("添加任务：" + id);
         }
-        FileoutputUtil.log("正在储存至数据库 wz_questdata ，请勿关闭...");
+        MapleLogger.info("正在储存至数据库 wz_questdata ，请勿关闭...");
     }
 
     public int currentId() {
@@ -348,14 +349,14 @@ public class DumpQuests {
         int currentQuest = 0;
         try {
             final DumpQuests dq = new DumpQuests(update);
-            FileoutputUtil.log("转存任务");
+            MapleLogger.info("转存任务");
             dq.dumpQuests();
             hadError |= dq.isHadError();
             currentQuest = dq.currentId();
         } catch (Exception e) {
             hadError = true;
             System.out.println(e);
-            FileoutputUtil.log(currentQuest + " quest.");
+            MapleLogger.info(currentQuest + " quest.");
         }
         long endTime = System.currentTimeMillis();
         double elapsedSeconds = (endTime - startTime) / 1000.0;
@@ -366,6 +367,6 @@ public class DumpQuests {
         if (hadError) {
             withErrors = "(有错误)";
         }
-        FileoutputUtil.log("完成" + withErrors + "耗时：" + elapsedMinutes + "分" + elapsedSecs + "秒");
+        MapleLogger.info("完成" + withErrors + "耗时：" + elapsedMinutes + "分" + elapsedSecs + "秒");
     }
 }

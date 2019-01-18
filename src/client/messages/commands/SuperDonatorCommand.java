@@ -10,7 +10,7 @@ import constants.ItemConstants;
 import scripting.npc.NPCScriptManager;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
-import tools.FileoutputUtil;
+
 import tools.StringUtil;
 
 public class SuperDonatorCommand {
@@ -119,7 +119,7 @@ public class SuperDonatorCommand {
             c.getPlayer().dropMessage(6, "You currently have " + c.getPlayer().getPoints() + " donation points.");
             c.getPlayer().dropMessage(6, "You currently have " + c.getPlayer().getVPoints() + " voting points.");
             c.getPlayer().dropMessage(6, "You currently have " + c.getPlayer().getIntNoRecord(150001) + " Boss Party Quest points.");
-            c.getPlayer().dropMessage(6, "当前时间: " + FileoutputUtil.CurrentReadable_TimeGMT());
+            c.getPlayer().dropMessage(6, "当前时间: " + System.currentTimeMillis());
             return 1;
         }
     }

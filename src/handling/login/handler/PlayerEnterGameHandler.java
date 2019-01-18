@@ -15,7 +15,8 @@ import handling.world.messenger.MapleMessengerCharacter;
 import handling.world.party.MapleParty;
 import handling.world.party.MaplePartyCharacter;
 import server.ManagerSin;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.Triple;
 import tools.data.input.SeekableLittleEndianAccessor;
@@ -70,7 +71,7 @@ public class PlayerEnterGameHandler extends MaplePacketHandler {
             c.setAccID(player.getAccountID());
             if (!c.CheckIPAddress()) {
                 c.getSession().close();
-                FileoutputUtil.log(new StringBuilder().append("检测连接地址 - 2 ").append(!c.CheckIPAddress()).toString());
+                MapleLogger.info(new StringBuilder().append("检测连接地址 - 2 ").append(!c.CheckIPAddress()).toString());
                 return;
             }
             int state = c.getLoginState();
@@ -81,7 +82,7 @@ public class PlayerEnterGameHandler extends MaplePacketHandler {
             if (!allowLogin) {
                 c.setPlayer(null);
                 c.getSession().close();
-                FileoutputUtil.log(new StringBuilder().append("检测连接地址 - 3 ").append(!allowLogin).toString());
+                MapleLogger.info(new StringBuilder().append("检测连接地址 - 3 ").append(!allowLogin).toString());
                 return;
             }
             c.updateLoginState(MapleClient.LOGIN_LOGGEDIN, c.getSessionIPAddress());
@@ -165,7 +166,7 @@ public class PlayerEnterGameHandler extends MaplePacketHandler {
 //                SkillFactory.getSkill(1010).getEffect(1).applyTo(player);
 //            }
         } catch (NumberFormatException e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.Login_Error, e);
+            MapleLogger.error("enter game error:", e);
         }
     }
 

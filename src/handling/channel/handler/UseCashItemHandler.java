@@ -43,7 +43,8 @@ import server.maps.MapleDefender;
 import server.maps.MapleTVEffect;
 import server.quest.MapleQuest;
 import server.shop.MapleShopFactory;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.data.input.SeekableLittleEndianAccessor;
@@ -486,7 +487,7 @@ public class UseCashItemHandler extends MaplePacketHandler {
                         pet.saveToDb();
                         c.sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
                         c.sendPacket(MaplePacketCreator.enableActions());
-                        c.sendPacket(MTSCSPacket.changePetFlag(uniqueid, true, petFlag.getValue()));
+//                        c.sendPacket(MTSCSPacket.changePetFlag(uniqueid, true, petFlag.getValue()));
                         used = true;
                     }
                 } else {
@@ -510,7 +511,7 @@ public class UseCashItemHandler extends MaplePacketHandler {
                             pet.saveToDb();
                             c.sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
                             c.sendPacket(MaplePacketCreator.enableActions());
-                            c.sendPacket(MTSCSPacket.changePetFlag(uniqueid, false, petFlag.getValue()));
+//                            c.sendPacket(MTSCSPacket.changePetFlag(uniqueid, false, petFlag.getValue()));
                             used = true;
                         }
                     }
@@ -530,69 +531,6 @@ public class UseCashItemHandler extends MaplePacketHandler {
                 } else {
                     chr.dropMessage(1, "金币已达到上限无法使用这个道具。");
                 }
-                break;
-            case 522:
-                if (itemId == 5220083) {
-                    used = true;
-                    for (Entry<Integer, StructFamiliar> f : ii.getFamiliars().entrySet()) {
-                        if ((((StructFamiliar) f.getValue()).itemid == 2870055) || (((StructFamiliar) f.getValue()).itemid == 2871002) || (((StructFamiliar) f.getValue()).itemid == 2870235) || (((StructFamiliar) f.getValue()).itemid == 2870019)) {
-                            MonsterFamiliar mf = (MonsterFamiliar) chr.getFamiliars().get(f.getKey());
-                            if (mf != null) {
-                                if (mf.getVitality() >= 3) {
-                                    mf.setExpiry(Math.min(System.currentTimeMillis() + 7776000000L, mf.getExpiry() + 2592000000L));
-                                } else {
-                                    mf.setVitality(mf.getVitality() + 1);
-                                    mf.setExpiry(mf.getExpiry() + 2592000000L);
-                                }
-                            } else {
-                                mf = new MonsterFamiliar(chr.getId(), (f.getKey()), System.currentTimeMillis() + 2592000000L);
-                                chr.getFamiliars().put(f.getKey(), mf);
-                            }
-                            c.sendPacket(MaplePacketCreator.registerFamiliar(mf));
-                        }
-                    }
-                } else if (itemId == 5220084) {
-                    if (chr.getInventory(MapleInventoryType.USE).getNumFreeSlot() < 3) {
-                        chr.dropMessage(5, "请确保您有足够的背包空间。");
-                    } else {
-                        used = true;
-                        int[] familiars = new int[3];
-                        while (true) {
-                            for (int i = 0; i < familiars.length; i++) {
-                                if (familiars[i] > 0) {
-                                    continue;
-                                }
-                                for (Map.Entry f : ii.getFamiliars().entrySet()) {
-                                    if ((Randomizer.nextInt(500) == 0) && (((i < 2) && (((StructFamiliar) f.getValue()).grade == 0)) || ((i == 2) && (((StructFamiliar) f.getValue()).grade != 0)))) {
-                                        MapleInventoryManipulator.addById(c, ((StructFamiliar) f.getValue()).itemid, (short) 1, "Booster Pack");
-                                        c.sendPacket(MTSCSPacket.getBoosterFamiliar(chr.getId(), ((Integer) f.getKey()), 0));
-                                        familiars[i] = ((StructFamiliar) f.getValue()).itemid;
-                                        break;
-                                    }
-                                }
-                            }
-                            if ((familiars[0] > 0) && (familiars[1] > 0) && (familiars[2] > 0)) {
-                                break;
-                            }
-                        }
-                        c.sendPacket(MTSCSPacket.getBoosterPack(familiars[0], familiars[1], familiars[2]));
-                        c.sendPacket(MTSCSPacket.getBoosterPackClick());
-                        c.sendPacket(MTSCSPacket.getBoosterPackReveal());
-                    }
-                } else {
-                    chr.dropMessage(1, "暂时无法使用这个道具。");
-                }
-                break;
-            case 523:
-                int itemSearch = slea.readInt();
-                List hms = c.getChannelServer().searchMerchant(itemSearch);
-                if (hms.size() > 0) {
-                    c.sendPacket(MaplePacketCreator.getOwlSearched(itemSearch, hms));
-                    used = true;
-                } else {
-                    chr.dropMessage(1, "没有找到这个道具。");
-                }
-                MapleCharacterUtil.addToItemSearch(itemSearch);
                 break;
             case 212:
                 pet = null;
@@ -619,8 +557,8 @@ public class UseCashItemHandler extends MaplePacketHandler {
                 }
                 break;
             default:
-                FileoutputUtil.log(new StringBuilder().append("使用未处理的商城道具 : ").append(itemId).toString());
-                FileoutputUtil.log(slea.toString(true));
+                MapleLogger.info(new StringBuilder().append("使用未处理的商城道具 : ").append(itemId).toString());
+                MapleLogger.info(slea.toString(true));
         }
 
         if ((itemType != 506) || (used)) {
@@ -635,29 +573,9 @@ public class UseCashItemHandler extends MaplePacketHandler {
             chr.dropMessage(5, "正在刷新人数据.请等待...");
             chr.fakeRelog();
             if (chr.getScrolledPosition() != 0) {
-                c.sendPacket(MaplePacketCreator.pamSongUI());
+//                c.sendPacket(MaplePacketCreator.pamSongUI());
             }
         }
-    }
-
-    private static boolean getIncubatedItems(MapleClient c, int itemId) {
-        if ((c.getPlayer().getInventory(MapleInventoryType.EQUIP).getNumFreeSlot() < 2) || (c.getPlayer().getInventory(MapleInventoryType.USE).getNumFreeSlot() < 2) || (c.getPlayer().getInventory(MapleInventoryType.SETUP).getNumFreeSlot() < 2)) {
-            c.getPlayer().dropMessage(5, "请确保你有足够的背包空间。");
-            return false;
-        }
-        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        int id1 = RandomRewards.getPeanutReward();
-        int id2 = RandomRewards.getPeanutReward();
-        while (!ii.itemExists(id1)) {
-            id1 = RandomRewards.getPeanutReward();
-        }
-        while (!ii.itemExists(id2)) {
-            id2 = RandomRewards.getPeanutReward();
-        }
-        c.sendPacket(MaplePacketCreator.getPeanutResult(id1, (short) 1, id2, (short) 1, itemId));
-        MapleInventoryManipulator.addById(c, id1, (short) 1, new StringBuilder().append(ii.getName(itemId)).append(" 在 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-        MapleInventoryManipulator.addById(c, id2, (short) 1, new StringBuilder().append(ii.getName(itemId)).append(" 在 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-        return true;
     }
 
     private static boolean changeFace(MapleCharacter player, int color) {

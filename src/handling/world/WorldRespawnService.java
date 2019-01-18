@@ -91,7 +91,7 @@ public class WorldRespawnService {
                 if (m.startTime + m.length < now) {
                     int skillId = m.skillId;
                     chr.removeCooldown(skillId);
-                    chr.getClient().sendPacket(MaplePacketCreator.skillCooldown(skillId, 0));
+//                    chr.getClient().sendPacket(MaplePacketCreator.skillCooldown(skillId, 0));
                 }
             }
         }
@@ -139,7 +139,6 @@ public class WorldRespawnService {
             chr.getMount().increaseFatigue();
         }
         if (numTimes % 13 == 0) {
-            chr.doFamiliarSchedule(now);
             for (MaplePet pet : chr.getSummonedPets()) {
                 if ((pet.getPetItemId() == 5000054) && (pet.getSecondsLeft() > 0)) {
                     pet.setSecondsLeft(pet.getSecondsLeft() - 1);

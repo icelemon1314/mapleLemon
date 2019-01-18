@@ -12,7 +12,8 @@ import server.AutobanManager;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.MapleStorage;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.NPCPacket;
@@ -62,7 +63,7 @@ public class OpenStorageHandler extends MaplePacketHandler {
                         c.sendPacket(NPCPacket.getStorageError((byte) 9));
                     }
                 } else {
-                    FileoutputUtil.log("[作弊] " + chr.getName() + " (等级 " + chr.getLevel() + ") 试图从仓库取出不存在的道具.");
+                    MapleLogger.info("[作弊] " + chr.getName() + " (等级 " + chr.getLevel() + ") 试图从仓库取出不存在的道具.");
                     WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverMessageRedText("[GM 信息] 玩家: " + chr.getName() + " (等级 " + chr.getLevel() + ") 试图从仓库取出不存在的道具."));
                     c.sendPacket(MaplePacketCreator.enableActions());
                 }
@@ -147,7 +148,7 @@ public class OpenStorageHandler extends MaplePacketHandler {
                 chr.setConversation(0);
                 break;
             default:
-                FileoutputUtil.log("Unhandled Storage mode : " + mode);
+                MapleLogger.info("Unhandled Storage mode : " + mode);
         }
     }
 }

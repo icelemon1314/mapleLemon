@@ -43,7 +43,7 @@ public class MapleSnowball extends MapleEvent {
             ball.broadcast(getMap(0), 0);
             ball.setInvis(false);
             ball.broadcast(getMap(0), 5);
-            getMap(0).broadcastMessage(MaplePacketCreator.enterSnowBall());
+//            getMap(0).broadcastMessage(MaplePacketCreator.enterSnowBall());
         }
     }
 
@@ -124,7 +124,7 @@ public class MapleSnowball extends MapleEvent {
 
         public void broadcast(MapleMap map, int message) {
             for (MapleCharacter chr : map.getCharactersThreadsafe()) {
-                chr.getClient().sendPacket(MaplePacketCreator.snowballMessage(this.team, message));
+//                chr.getClient().sendPacket(MaplePacketCreator.snowballMessage(this.team, message));
             }
         }
 
@@ -144,10 +144,10 @@ public class MapleSnowball extends MapleEvent {
                 boolean snowman = (chr.getTruePosition().x < -360) && (chr.getTruePosition().x > -560);
                 if (!snowman) {
                     int damage = ((Math.random() < 0.01D) || ((chr.getTruePosition().x > ball.getLeftX()) && (chr.getTruePosition().x < ball.getRightX()))) && (ball.isHittable()) ? 10 : 0;
-                    chr.getMap().broadcastMessage(MaplePacketCreator.hitSnowBall(team, damage, 0, 1));
+//                    chr.getMap().broadcastMessage(MaplePacketCreator.hitSnowBall(team, damage, 0, 1));
                     if (damage == 0) {
                         if (Math.random() < 0.2D) {
-                            chr.getClient().sendPacket(MaplePacketCreator.leftKnockBack());
+//                            chr.getClient().sendPacket(MaplePacketCreator.leftKnockBack());
                             chr.getClient().sendPacket(MaplePacketCreator.enableActions());
                         }
                     } else {
@@ -155,12 +155,12 @@ public class MapleSnowball extends MapleEvent {
 
                         if ((ball.getPosition() == 255) || (ball.getPosition() == 511) || (ball.getPosition() == 767)) {
                             ball.setStartPoint(chr.getMap());
-                            chr.getMap().broadcastMessage(MaplePacketCreator.rollSnowball(4, sb.getSnowBall(0), sb.getSnowBall(1)));
+//                            chr.getMap().broadcastMessage(MaplePacketCreator.rollSnowball(4, sb.getSnowBall(0), sb.getSnowBall(1)));
                         } else if (ball.getPosition() == 899) {
                             MapleMap map = chr.getMap();
                             for (int i = 0; i < 2; i++) {
                                 sb.getSnowBall(i).setInvis(true);
-                                map.broadcastMessage(MaplePacketCreator.rollSnowball(i + 2, sb.getSnowBall(0), sb.getSnowBall(1)));
+//                                map.broadcastMessage(MaplePacketCreator.rollSnowball(i + 2, sb.getSnowBall(0), sb.getSnowBall(1)));
                             }
                             chr.getMap().broadcastMessage(MaplePacketCreator.serverMessageNotice( new StringBuilder().append("Congratulations! Team ").append(team == 0 ? "Story" : "Maple").append(" has won the Snowball Event!").toString()));
                             for (MapleCharacter chrz : chr.getMap().getCharactersThreadsafe()) {
@@ -171,7 +171,7 @@ public class MapleSnowball extends MapleEvent {
                             }
                             sb.unreset();
                         } else if (ball.getPosition() < 899) {
-                            chr.getMap().broadcastMessage(MaplePacketCreator.rollSnowball(4, sb.getSnowBall(0), sb.getSnowBall(1)));
+//                            chr.getMap().broadcastMessage(MaplePacketCreator.rollSnowball(4, sb.getSnowBall(0), sb.getSnowBall(1)));
                             ball.setInvis(false);
                         }
                     }
@@ -183,10 +183,10 @@ public class MapleSnowball extends MapleEvent {
                     if (Math.random() < 0.05D) {
                         damage = 45;
                     }
-                    chr.getMap().broadcastMessage(MaplePacketCreator.hitSnowBall(team + 2, damage, 0, 0));
+//                    chr.getMap().broadcastMessage(MaplePacketCreator.hitSnowBall(team + 2, damage, 0, 0));
                     ball.setSnowmanHP(ball.getSnowmanHP() - damage);
                     if (damage > 0) {
-                        chr.getMap().broadcastMessage(MaplePacketCreator.rollSnowball(0, sb.getSnowBall(0), sb.getSnowBall(1)));
+//                        chr.getMap().broadcastMessage(MaplePacketCreator.rollSnowball(0, sb.getSnowBall(0), sb.getSnowBall(1)));
                         if (ball.getSnowmanHP() <= 0) {
                             ball.setSnowmanHP(7500);
                             final MapleSnowballs oBall = sb.getSnowBall(team == 0 ? 1 : 0);

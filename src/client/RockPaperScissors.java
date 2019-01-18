@@ -11,7 +11,7 @@
     private boolean win = false;
   
     public RockPaperScissors(MapleClient c, byte mode) {
-      c.sendPacket(MaplePacketCreator.getRPSMode((byte)(9 + mode), -1, -1, -1));
+//      c.sendPacket(MaplePacketCreator.getRPSMode((byte)(9 + mode), -1, -1, -1));
       if (mode == 0) {
           c.getPlayer().gainMeso(-1000, true, true);
       }
@@ -22,14 +22,14 @@
       if ((this.ableAnswer) && (!this.win) && (answer >= 0) && (answer <= 2)) {
         int response = Randomizer.nextInt(3);
         if (response == answer) {
-          c.sendPacket(MaplePacketCreator.getRPSMode((byte)11, -1, (byte)response, (byte)this.round));
+//          c.sendPacket(MaplePacketCreator.getRPSMode((byte)11, -1, (byte)response, (byte)this.round));
         }
         else if (((answer == 0) && (response == 2)) || ((answer == 1) && (response == 0)) || ((answer == 2) && (response == 1))) {
-          c.sendPacket(MaplePacketCreator.getRPSMode((byte)11, -1, (byte)response, (byte)(this.round + 1)));
+//          c.sendPacket(MaplePacketCreator.getRPSMode((byte)11, -1, (byte)response, (byte)(this.round + 1)));
           this.ableAnswer = false;
           this.win = true;
         } else {
-          c.sendPacket(MaplePacketCreator.getRPSMode((byte)11, -1, (byte)response, -1));
+//          c.sendPacket(MaplePacketCreator.getRPSMode((byte)11, -1, (byte)response, -1));
           this.ableAnswer = false;
         }
         return true;
@@ -41,7 +41,7 @@
     public boolean timeOut(MapleClient c) {
       if ((this.ableAnswer) && (!this.win)) {
         this.ableAnswer = false;
-        c.sendPacket(MaplePacketCreator.getRPSMode((byte)10, -1, -1, -1));
+//        c.sendPacket(MaplePacketCreator.getRPSMode((byte)10, -1, -1, -1));
         return true;
       }
       reward(c);
@@ -54,7 +54,7 @@
         if (this.round < 10) {
           this.win = false;
           this.ableAnswer = true;
-          c.sendPacket(MaplePacketCreator.getRPSMode((byte)12, -1, -1, -1));
+//          c.sendPacket(MaplePacketCreator.getRPSMode((byte)12, -1, -1, -1));
           return true;
         }
       }
@@ -73,7 +73,7 @@
   
     public void dispose(MapleClient c) {
       reward(c);
-      c.sendPacket(MaplePacketCreator.getRPSMode((byte)13, -1, -1, -1));
+//      c.sendPacket(MaplePacketCreator.getRPSMode((byte)13, -1, -1, -1));
     }
   }
 

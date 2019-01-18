@@ -8,7 +8,8 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import scripting.AbstractScriptManager;
-import tools.FileoutputUtil;
+import tools.MapleLogger;
+
 
 public class ItemScriptManager extends AbstractScriptManager {
 
@@ -46,8 +47,7 @@ public class ItemScriptManager extends AbstractScriptManager {
                 iv.invokeFunction("action", new Object[]{(byte) 1, (byte) 0, (int) (byte) 0});
             }
         } catch (ScriptException | NoSuchMethodException e) {
-            System.err.println("执行道具脚本失败 道具ID: (" + item.getItemId() + ")..NPCID: " + npc + ":" + e);
-            FileoutputUtil.log(FileoutputUtil.Item_ScriptEx_Log, "执行道具脚本失败 道具ID: (" + item.getItemId() + ")..NPCID: " + npc + ". \r\n错误信息: " + e);
+            MapleLogger.info("执行道具脚本失败 道具ID: (" + item.getItemId() + ")..NPCID: " + npc + ". \r\n错误信息: " + e);
             dispose(c);
             notice(c, item.getItemId());
         }
@@ -69,8 +69,7 @@ public class ItemScriptManager extends AbstractScriptManager {
             } catch (ScriptException | NoSuchMethodException e) {
                 int npcId = im.getNpc();
                 int itemId = im.getItemId();
-                System.err.println("执行NPC脚本出错 NPC ID : " + npcId + " 道具ID: " + itemId + " 错误信息: " + e);
-                FileoutputUtil.log(FileoutputUtil.Item_ScriptEx_Log, "执行NPC脚本出错 NPC ID : " + npcId + " 道具ID: " + itemId + ". \r\n错误信息: " + e);
+                MapleLogger.info("执行NPC脚本出错 NPC ID : " + npcId + " 道具ID: " + itemId + ". \r\n错误信息: " + e);
                 dispose(c);
                 notice(c, itemId);
             }

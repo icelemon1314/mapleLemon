@@ -27,7 +27,7 @@ import server.maps.MapleMapObjectType;
 import server.maps.MapleSummon;
 import server.maps.SummonMovementType;
 import tools.AttackPair;
-import tools.FileoutputUtil;
+
 import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.data.input.SeekableLittleEndianAccessor;

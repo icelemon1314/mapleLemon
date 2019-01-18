@@ -11,7 +11,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import server.Timer.WorldTimer;
-import tools.FileoutputUtil;
+import tools.MapleLogger;
+
 
 /**
  *
@@ -53,7 +54,7 @@ public class DatabaseBackup {
                     } finally {
                         p.destroy();
                     }
-                    FileoutputUtil.log("[数据库] 数据库自动完成备份.");
+                    MapleLogger.info("[数据库] 数据库自动完成备份.");
                 } catch (IOException e) {
                     System.err.println("[数据库] 数据库自动备份失败.");
                     e.printStackTrace();

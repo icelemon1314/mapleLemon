@@ -87,13 +87,13 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
             System.err.println("[异常信息] " + cause.getMessage());
             cause.printStackTrace();
             cause.getLocalizedMessage();
-            FileoutputUtil.printError(FileoutputUtil.发现异常, cause.getMessage());
+            MapleLogger.error(cause.getMessage());
         }
         if ((!(cause instanceof IOException))) {
             MapleClient client = session.channel().attr(MapleClient.CLIENT_KEY).get();
             if ((client != null) && (client.getPlayer() != null)) {
                 client.getPlayer().saveToDB(false, channel == MapleServerHandler.CASH_SHOP_SERVER);
-                FileoutputUtil.printError(FileoutputUtil.发现异常, cause, "发现异常 by: 玩家:" + client.getPlayer().getName() + " 职业:" + client.getPlayer().getJob() + " 地图:" + client.getPlayer().getMap().getMapName() + " - " + client.getPlayer().getMapId());
+                MapleLogger.error("发现异常 by: 玩家:" + client.getPlayer().getName() + " 职业:" + client.getPlayer().getJob() + " 地图:" + client.getPlayer().getMap().getMapName() + " - " + client.getPlayer().getMapId());
             }
         }
     }
@@ -102,7 +102,7 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext session) {
         // 起始 IP 检查
         String address = session.channel().remoteAddress().toString().split(":")[0];
-        FileoutputUtil.log("[登陆服务] " + address + " 已连接");
+        MapleLogger.info("[登陆服务] " + address + " 已连接");
 
         if (BlockIPList.contains(address)) {
             session.close();
@@ -153,7 +153,7 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 return;
             }
         } else {
-            FileoutputUtil.log("[連結錯誤] 未知類型: " + channel);
+            MapleLogger.info("[連結錯誤] 未知類型: " + channel);
             session.close();
             return;
         }
@@ -173,16 +173,9 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
         byte[] handShakePacket = LoginPacket.getHello(ServerConstants.MAPLE_VERSION, ivSend, ivRecv);
         session.channel().writeAndFlush(handShakePacket);
 
-//        byte[] hp = new byte[handShakePacket.length + 2];
-//        hp[0] = (byte) 0xFF;
-//        hp[1] = (byte) 0xFF;
-//        for (int i = 2; i < handShakePacket.length + 2; i++) {
-//            hp[i] = handShakePacket[i - 2];
-//        }
-
         RegisterHandlers();
 
-        FileoutputUtil.log("[登陆服务] " + address + ", 发送握手包成功！");
+        MapleLogger.info("[登陆服务] " + address + ", 发送握手包成功！");
         Random r = new Random();
         client.setSessionId(r.nextLong()); // Generates a random session id.  
         session.channel().attr(MapleClient.CLIENT_KEY).set(client);
@@ -203,7 +196,7 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
 //                    }
 //                }
 //            } catch (Exception e) {
-//                FileoutputUtil.outputFileError(FileoutputUtil.GUI_Ex_Log, e);
+//                MapleLogger.error(FileoutputUtil.GUI_Ex_Log, e);
 //            }
 
             try {
@@ -233,7 +226,7 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
         }
         SeekableLittleEndianAccessor slea = new GenericSeekableLittleEndianAccessor(new ByteArrayByteStream((byte[]) message));
         if (slea.available() < 1) {
-            FileoutputUtil.log("数据包长度异常：" + slea.toString());
+            MapleLogger.info("数据包长度异常：" + slea.toString());
             return;
         }
         MapleClient client = session.channel().attr(MapleClient.CLIENT_KEY).get();
@@ -257,14 +250,14 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
 //        for (RecvPacketOpcode recv : RecvPacketOpcode.values()) {
 //            if (recv.getValue() == packetId) {
 //                if (recv.NeedsChecking() && !client.isLoggedIn()) {
-//                    FileoutputUtil.log("客户端没有登录，丢弃包！");
+//                    MapleLogger.info("客户端没有登录，丢弃包！");
 //                    return;
 //                }
 //                try {
 //                    handlePacket(recv, slea, client);
 //                } catch (InterruptedException e) {
-//                    FileoutputUtil.log(FileoutputUtil.Packet_Ex, new StringBuilder().append("封包: ").append(lookupRecv(packetId)).append("\r\n").append(slea.toString(true)).toString());
-//                    FileoutputUtil.outputFileError(FileoutputUtil.Packet_Ex, e);
+//                    MapleLogger.info(FileoutputUtil.Packet_Ex, new StringBuilder().append("封包: ").append(lookupRecv(packetId)).append("\r\n").append(slea.toString(true)).toString());
+//                    MapleLogger.error(FileoutputUtil.Packet_Ex, e);
 //                }
 //                return;
 //            }
@@ -323,7 +316,6 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                     ServerlistRequestHandler.handlePacket(c, false);
                 }
                 break;
-            case REDISPLAY_SERVERLIST:
             case SERVERLIST_REQUEST:
                 ServerlistRequestHandler.handlePacket(c, true);
                 break;
@@ -405,9 +397,6 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
             case CLOSE_RANGE_ATTACK:
             case RANGED_ATTACK:
             case MAGIC_ATTACK:
-            case PASSIVE_ATTACK:
-            case MIST_ATTACK:
-            case SPECIAL_MAGIC_ATTACK:
                 PlayerHandler.攻击处理(slea, c, header);
                 break;
             case SPECIAL_SKILL:
@@ -421,12 +410,6 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 break;
             case MAKE_EXTRACTOR:
                 ItemMakerHandler.MakeExtractor(slea, c, c.getPlayer());
-                break;
-            case USE_FAMILIAR:
-                MobHandler.UseFamiliar(slea, c, c.getPlayer());
-                break;
-            case SPAWN_FAMILIAR:
-                MobHandler.SpawnFamiliar(slea, c, c.getPlayer());
                 break;
             case RENAME_FAMILIAR:
                 MobHandler.RenameFamiliar(slea, c, c.getPlayer());
@@ -569,17 +552,6 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 break;
             case USE_RETURN_SCROLL:
                 InventoryHandler.UseReturnScroll(slea, c, c.getPlayer());
-                break;
-            case USE_UPGRADE_SCROLL:
-                ItemScrollHandler.handlePacket(slea, c, c.getPlayer(), false);
-                break;
-            case USE_FLAG_SCROLL:
-                ItemScrollHandler.handlePacket(slea, c, c.getPlayer(), true);
-                break;
-            case USE_POTENTIAL_ADD_SCROLL:
-            case USE_POTENTIAL_SCROLL:
-            case USE_EQUIP_SCROLL:
-                ItemScrollHandler.handlePacket(slea, c, c.getPlayer(), false);
                 break;
             case USE_SUMMON_BAG:
                 InventoryHandler.UseSummonBag(slea, c, c.getPlayer());
@@ -791,9 +763,6 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
             case OWL_WARP:
                 InventoryHandler.OwlWarp(slea, c);
                 break;
-            case USE_OWL_MINERVA:
-                InventoryHandler.OwlMinerva(slea, c);
-                break;
             case RPS_GAME:
                 NPCHandler.RPSGame(slea, c);
                 break;
@@ -802,13 +771,6 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 break;
             case USE_ITEM_QUEST:
                 NPCHandler.UseItemQuest(slea, c);
-                break;
-            case FOLLOW_REQUEST:
-                PlayersHandler.FollowRequest(slea, c);
-                break;
-            case AUTO_FOLLOW_REPLY:
-            case FOLLOW_REPLY:
-                PlayersHandler.FollowReply(slea, c);
                 break;
             case RING_ACTION:
                 PlayersHandler.RingAction(slea, c);
@@ -851,18 +813,6 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 NPCScriptManager.getInstance().dispose(c);
 //                NPCScriptManager.getInstance().start(c, 1064026, 1);
                 break;
-            case GUIDE_TRANSFER:
-                PlayerHandler.GUIDE_TRANSFER(slea, c, c.getPlayer());//游戏向导
-                break;
-            case EXIT_GAME:
-                c.sendPacket(MaplePacketCreator.exitGame());
-                break;
-            case ARROWS_TURRET_ATTACK:
-                PlayerHandler.ArrowsTurretAttack(slea, c, c.getPlayer());
-                break;
-            case SPAWN_ARROWS_TURRET:
-                PlayerHandler.SpawnArrowsTurret(slea, c, c.getPlayer());
-                break;
             case GETMONOID:
                 //PlayerHandler.getMonoid(slea, c.getPlayer());
                 break;
@@ -873,7 +823,7 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 c.sendPacket(UIPacket.openMap());
                 break;
             default:
-                FileoutputUtil.log(new StringBuilder().append("[未处理封包] Recv ").append(header.toString()).append(" [").append(HexTool.getOpcodeToString(header.getValue())).append("]").toString());
+                MapleLogger.info(new StringBuilder().append("[未处理封包] Recv ").append(header.toString()).append(" [").append(HexTool.getOpcodeToString(header.getValue())).append("]").toString());
                 break;
         }
     }*/

@@ -451,7 +451,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public static MapleCharacter getDefault(MapleClient client, short[] stat) {
         if (stat.length < 4) {
-            FileoutputUtil.log("[錯誤] 創建角色默認能力值出錯");
+            stat[0] = 4;
+            stat[1] = 4;
+            stat[2] = 4;
+            stat[3] = 4;
         }
         MapleCharacter ret = new MapleCharacter(false);
         ret.client = client;
@@ -758,7 +761,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 MapleMapFactory mapFactory = ChannelServer.getInstance(client.getChannel()).getMapFactory();
                 ret.map = mapFactory.getMap(ret.mapid);
                 if (ret.map == null) {
-                    FileoutputUtil.log("不存在的地图："+ret.mapid);
+                    MapleLogger.info("不存在的地图："+ret.mapid);
                     ret.map = mapFactory.getMap(101000000);
                 }
                 MaplePortal portal = ret.map.getPortal(ret.initialSpawnPoint);
@@ -813,7 +816,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 MapleQuest q = MapleQuest.getInstance(id);
                 byte stat = rs.getByte("status");
 //                if ((stat == 1 || stat == 2) && ((channelserver && (q == null || q.isBlocked())) || (stat == 1 && channelserver && (!q.canStart(ret, null))))) {
-//                    FileoutputUtil.log("已经完成的任务ID"+id);
+//                    MapleLogger.info("已经完成的任务ID"+id);
 //                    continue;
 //                }
                 MapleQuestStatus status = new MapleQuestStatus(q, stat);
@@ -1051,7 +1054,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
             }
         } catch (SQLException ess) {
-            FileoutputUtil.outputFileError(FileoutputUtil.SQL_Ex_Log, ess);
+            MapleLogger.error("load chr data failed:", ess);
             ret.getClient().getSession().close();
             throw new RuntimeException("加载角色数据信息出错.服务端断开这个连接...");
         } finally {
@@ -1178,13 +1181,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ItemLoader.装备道具.saveItems(itemsWithType, chr.id);
             con.commit();
         } catch (SQLException | DatabaseException e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.SQL_Ex_Log, e);
-            System.err.println("[charsave] Error saving character data");
+            MapleLogger.error("save chr data error:", e);
             try {
                 con.rollback();
             } catch (SQLException ex) {
-                FileoutputUtil.outputFileError(FileoutputUtil.SQL_Ex_Log, ex);
-                System.err.println("[charsave] Error Rolling Back");
+                MapleLogger.error("rollback chr data error:", e);
             }
         } finally {
             try {
@@ -1201,8 +1202,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 con.setTransactionIsolation(4);
                 con.close();
             } catch (SQLException e) {
-                FileoutputUtil.outputFileError(FileoutputUtil.SQL_Ex_Log, e);
-                System.err.println("[charsave] Error going back to autocommit mode");
+                MapleLogger.error("[charsave] Error going back to autocommit mode:", e);
             }
         }
     }
@@ -1214,7 +1214,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
      */
     public void saveToDB(boolean dc, boolean fromcs) {
         if (this.isSaveing) {
-            FileoutputUtil.log(MapleClient.getLogMessage(this, "正在保存数据，本次操作返回."));
+            MapleLogger.info(MapleClient.getLogMessage(this, "正在保存数据，本次操作返回."));
             this.isSaveing = false;
             return;
         }
@@ -1597,12 +1597,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             this.changed_keyValue = false;
             con.commit();
         } catch (SQLException | DatabaseException e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.SQL_Ex_Log, e);
             MapleLogger.error(new StringBuilder().append(MapleClient.getLogMessage(this, "[charsave] 保存角色数据出现错误 .")).append(e).toString());
             try {
                 con.rollback();
             } catch (SQLException ex) {
-                FileoutputUtil.outputFileError(FileoutputUtil.SQL_Ex_Log, ex);
                 MapleLogger.error(new StringBuilder().append(MapleClient.getLogMessage(this, "[charsave] Error Rolling Back")).append(ex).toString());
             }
         } finally {
@@ -1620,7 +1618,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 con.setTransactionIsolation(4);
                 con.close();
             } catch (SQLException e) {
-                FileoutputUtil.outputFileError(FileoutputUtil.SQL_Ex_Log, e);
                 MapleLogger.error(new StringBuilder().append(MapleClient.getLogMessage(this, "[charsave] Error going back to autocommit mode")).append(e).toString());
             }
         }
@@ -1808,7 +1805,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.quests.put(quest.getQuest(), quest);
         this.client.sendPacket(MaplePacketCreator.updateQuest(quest));
         if ((quest.getStatus() == 1) && (!update)) {
-            this.client.sendPacket(MaplePacketCreator.updateQuestInfo(quest.getQuest().getId(), quest.getNpc(), quest.getStatus() == 1));
+//            this.client.sendPacket(MaplePacketCreator.updateQuestInfo(quest.getQuest().getId(), quest.getNpc(), quest.getStatus() == 1));
         }
     }
 
@@ -2066,7 +2063,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 dropSpouseMessage(20, new StringBuilder().append("取消注册的BUFF效果 - 取消前BUFF总数: ").append(effectSize).append(" 当前BUFF总数 ").append(this.effects.size()).append(" 取消的BUFF数量: ").append(toRemoveSize).append(" 是否相同: ").append(ok).toString());
             }
             if (!ok) {
-                FileoutputUtil.log(FileoutputUtil.SkillCancel_Error, new StringBuilder().append(getName()).append(" - ").append(getJobName()).append(" 取消BUFF出现错误 技能ID: ").append(effect != null ? Integer.valueOf(effect.getSourceId()) : "技能效果为空!").toString(), true);
+                MapleLogger.info(new StringBuilder().append(getName()).append(" - ").append(getJobName()).append(" 取消BUFF出现错误 技能ID: ").append(effect != null ? Integer.valueOf(effect.getSourceId()) : "技能效果为空!").toString());
             }
         }
     }
@@ -2107,7 +2104,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
         }
         if (ServerProperties.ShowPacket()) {
-            FileoutputUtil.log(new StringBuilder().append("取消技能BUFF: - buffstats.size() ").append(buffstats.size()).toString());
+            MapleLogger.info(new StringBuilder().append("取消技能BUFF: - buffstats.size() ").append(buffstats.size()).toString());
         }
         deregisterBuffStats(buffstats, effect, overwrite);
         if (effect.is时空门()) {
@@ -2362,7 +2359,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void setDOT(int d, int source, int sourceLevel) {
         this.dotHP = d;
         addHP(-(this.dotHP * 4));
-        this.map.broadcastMessage(MaplePacketCreator.getPVPMist(this.id, source, sourceLevel, d));
         this.lastDOTTime = System.currentTimeMillis();
     }
 
@@ -2835,7 +2831,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     private void changeMapInternal(final MapleMap to, final Point pos, byte[] warpPacket, final MaplePortal pto) {
         if (to == null) {
-            FileoutputUtil.log("目标地图为空了，不能传送过去！");
+            MapleLogger.info("目标地图为空了，不能传送过去！");
             return;
         }
         final int nowmapid = this.map.getId();
@@ -2869,7 +2865,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                         }
                     }
                 } catch (Exception e) {
-                    FileoutputUtil.outputFileError(FileoutputUtil.GUI_Ex_Log, e);
+                    MapleLogger.error("GUI error:", e);
                 }
             }
         }
@@ -2940,7 +2936,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 ////                        }
 ////                    }
 //                }
-//                FileoutputUtil.log("SP能力点的值为："+this.remainingSp);
+//                MapleLogger.info("SP能力点的值为："+this.remainingSp);
 //                updateSingleStat(MapleStat.AVAILABLESP, this.remainingSp);
             }
 
@@ -3011,216 +3007,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             guildUpdate();
             sidekickUpdate();
             baseSkills();
-            giveSubWeaponItem();
         } catch (Exception e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, e);
-        }
-    }
-
-    public void giveSubWeaponItem() {
-        Item toRemove = getInventory(MapleInventoryType.EQUIPPED).getItem((short) -10);
-        switch (this.job) {
-            case 3100:
-                if ((toRemove != null) && (toRemove.getItemId() == 1099001)) {
-                    break;
-                }
-                MapleInventoryManipulator.addItemAndEquip(this.client, 1099001, (short) -10);
-                break;
-            case 3110:
-                if ((toRemove == null) || (toRemove.getItemId() == 1099002) || (toRemove.getItemId() != 1099001)) {
-                    break;
-                }
-                MapleInventoryManipulator.addItemAndEquip(this.client, 1099002, (short) -10);
-                break;
-            case 3111:
-                if ((toRemove == null) || (toRemove.getItemId() == 1099003) || (toRemove.getItemId() != 1099002)) {
-                    break;
-                }
-                MapleInventoryManipulator.addItemAndEquip(this.client, 1099003, (short) -10);
-                break;
-            case 3112:
-                if ((toRemove == null) || (toRemove.getItemId() == 1099004) || (toRemove.getItemId() != 1099003)) {
-                    break;
-                }
-                MapleInventoryManipulator.addItemAndEquip(this.client, 1099004, (short) -10, 1);
-                break;
-            case 3101:
-                if ((toRemove == null) || (toRemove.getItemId() != 1099006)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1050249, (short) -5, false);
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1070029, (short) -7, false);
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1102505, (short) -9, false);
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1099006, (short) -10);
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1232001, (short) -11);
-                    updateHair(getGender() == 0 ? 36460 : 37450);
-                }
-                if (haveItem(1142553)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142553, (short) 1, new StringBuilder().append("恶魔复仇者1转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                break;
-            case 3120:
-                if ((toRemove != null) && (toRemove.getItemId() != 1099007) && (toRemove.getItemId() == 1099006)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1099007, (short) -10, 1);
-                }
-                if (haveItem(1142554)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142554, (short) 1, new StringBuilder().append("恶魔复仇者2转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                break;
-            case 3121:
-                if ((toRemove != null) && (toRemove.getItemId() != 1099008) && (toRemove.getItemId() == 1099007)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1099008, (short) -10, 1);
-                }
-                if (haveItem(1142555)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142555, (short) 1, new StringBuilder().append("恶魔复仇者3转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                break;
-            case 3122:
-                if ((toRemove != null) && (toRemove.getItemId() != 1099009) && (toRemove.getItemId() == 1099008)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1099009, (short) -10, 1);
-                }
-                if (haveItem(1142556)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142556, (short) 1, new StringBuilder().append("恶魔复仇者4转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                break;
-            case 3600:
-                if ((toRemove == null) || (toRemove.getItemId() != 1353001)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1353001, (short) -10);
-                }
-                toRemove = getInventory(MapleInventoryType.EQUIPPED).getItem((short) -11);
-                if ((toRemove == null) || (toRemove.getItemId() != 1242001)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1242001, (short) -11);
-                }
-                removeAll(1242000, false, false);
-                if (haveItem(1142575)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142575, (short) 1, new StringBuilder().append("尖兵1转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                break;
-            case 3610:
-                if ((toRemove != null) && (toRemove.getItemId() != 1353002) && (toRemove.getItemId() == 1353001)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1353002, (short) -10);
-                }
-                if (haveItem(1142576)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142576, (short) 1, new StringBuilder().append("尖兵2转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                break;
-            case 3611:
-                if ((toRemove != null) && (toRemove.getItemId() != 1353003) && (toRemove.getItemId() == 1353002)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1353003, (short) -10);
-                }
-                if (haveItem(1142577)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142577, (short) 1, new StringBuilder().append("尖兵3转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                break;
-            case 3612:
-                if ((toRemove != null) && (toRemove.getItemId() != 1353004) && (toRemove.getItemId() == 1353003)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1353004, (short) -10, 1);
-                }
-                if (haveItem(1142578)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142578, (short) 1, new StringBuilder().append("尖兵4转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                break;
-            case 5100:
-                if ((toRemove != null) && (toRemove.getItemId() == 1098000)) {
-                    break;
-                }
-                MapleInventoryManipulator.addItemAndEquip(this.client, 1098000, (short) -10);
-                break;
-            case 5110:
-                if ((toRemove == null) || (toRemove.getItemId() == 1098001) || (toRemove.getItemId() != 1098000)) {
-                    break;
-                }
-                MapleInventoryManipulator.addItemAndEquip(this.client, 1098001, (short) -10);
-                break;
-            case 5111:
-                if ((toRemove == null) || (toRemove.getItemId() == 1098002) || (toRemove.getItemId() != 1098001)) {
-                    break;
-                }
-                MapleInventoryManipulator.addItemAndEquip(this.client, 1098002, (short) -10);
-                break;
-            case 5112:
-                if ((toRemove == null) || (toRemove.getItemId() == 1098003) || (toRemove.getItemId() != 1098002)) {
-                    break;
-                }
-                MapleInventoryManipulator.addItemAndEquip(this.client, 1098003, (short) -10, 1);
-                break;
-            case 6100:
-                if ((toRemove == null) || (toRemove.getItemId() != 1352500)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1352500, (short) -10);
-                }
-                if (haveItem(1142484)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142484, (short) 1, new StringBuilder().append("狂龙1转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                break;
-            case 6110:
-                if ((toRemove != null) && (toRemove.getItemId() != 1352501) && (toRemove.getItemId() == 1352500)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1352501, (short) -10);
-                }
-                if (haveItem(1142485)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142485, (short) 1, new StringBuilder().append("狂龙2转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                break;
-            case 6111:
-                if ((toRemove != null) && (toRemove.getItemId() != 1352502) && (toRemove.getItemId() == 1352501)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1352502, (short) -10);
-                }
-                if (haveItem(1142486)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142486, (short) 1, new StringBuilder().append("狂龙3转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                break;
-            case 6112:
-                if ((toRemove != null) && (toRemove.getItemId() != 1352503) && (toRemove.getItemId() == 1352502)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1352503, (short) -10, 1);
-                }
-                if (haveItem(1142487)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142487, (short) 1, new StringBuilder().append("狂龙4转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                break;
-            case 6500:
-                if ((toRemove == null) || (toRemove.getItemId() != 1352601)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1352601, (short) -10);
-                }
-                if (haveItem(1142495)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142495, (short) 1, new StringBuilder().append("萝莉1转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                break;
-            case 6510:
-                if ((toRemove != null) && (toRemove.getItemId() != 1352602) && (toRemove.getItemId() == 1352601)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1352602, (short) -10);
-                }
-                if (haveItem(1142496)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142496, (short) 1, new StringBuilder().append("萝莉2转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                break;
-            case 6511:
-                if ((toRemove != null) && (toRemove.getItemId() != 1352603) && (toRemove.getItemId() == 1352602)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1352603, (short) -10);
-                }
-                if (haveItem(1142497)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142497, (short) 1, new StringBuilder().append("萝莉3转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
-                break;
-            case 6512:
-                if ((toRemove != null) && (toRemove.getItemId() != 1352604) && (toRemove.getItemId() == 1352603)) {
-                    MapleInventoryManipulator.addItemAndEquip(this.client, 1352604, (short) -10, 1);
-                }
-                if (haveItem(1142498)) {
-                    break;
-                }
-                MapleInventoryManipulator.addById(this.client, 1142498, (short) 1, new StringBuilder().append("萝莉4转赠送 时间 ").append(FileoutputUtil.CurrentReadable_Date()).toString());
+            MapleLogger.error("change job failed:", e);
         }
     }
 
@@ -3444,7 +3232,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void changeSingleSkillLevel(Skill skill, int newLevel, byte newMasterlevel) {
         if (skill == null) {
-            FileoutputUtil.log("技能为空，忽略！");
+            MapleLogger.info("技能为空，忽略！");
             return;
         }
         changeSingleSkillLevel(skill, newLevel, newMasterlevel, SkillFactory.getDefaultSExpiry(skill));
@@ -3468,7 +3256,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 recalculate = true;
             }
         } else {
-            FileoutputUtil.log("修改技能等级失败！");
+            MapleLogger.info("修改技能等级失败！");
             return;
         }
         this.client.sendPacket(MaplePacketCreator.updateSkills(list));
@@ -3511,7 +3299,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public boolean changeSkillData(Skill skill, int newLevel, byte newMasterlevel, long expiration) {
         if ((skill == null)) {
-            FileoutputUtil.log("changeSkillData die()!!!");
+            MapleLogger.info("changeSkillData die()!!!");
             return false;
         }
         if ((newLevel == 0) && (newMasterlevel == 0)) {
@@ -3604,7 +3392,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 this.dispelDebuffs();
                 cancelEffectFromBuffStat(stat);
                 if (冷却时间 > 0 && !skillisCooling(statss.getSourceId())) {
-                    getClient().sendPacket(MaplePacketCreator.skillCooldown(statss.getSourceId(), 冷却时间));
+//                    getClient().sendPacket(MaplePacketCreator.skillCooldown(statss.getSourceId(), 冷却时间));
                     addCooldown(statss.getSourceId(), System.currentTimeMillis(), 冷却时间 * 1000);
                 }
                 return;
@@ -3790,7 +3578,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 updateSingleStat(MapleStat.经验, getExp());
             }
         } catch (Exception e) {
-            FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, e);
+            MapleLogger.error("gain exp error:", e);
         }
     }
 
@@ -3935,14 +3723,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.client.sendPacket(InventoryPacket.modifyInventory(updateTick, mods, this));
     }
 
-    public void forceReAddItem_Book(Item item, MapleInventoryType type) {
-        getInventory(type).removeSlot(item.getPosition());
-        getInventory(type).addFromDB(item);
-        if (type != MapleInventoryType.UNDEFINED) {
-            this.client.sendPacket(MaplePacketCreator.upgradeBook(item, this));
-        }
-    }
-
     public void silentPartyUpdate() {
         if (this.party != null) {
             WrodlPartyService.getInstance().updateParty(this.party.getId(), PartyOperation.更新队伍, new MaplePartyCharacter(this));
@@ -4020,7 +3800,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         for (Triple itemz : tobeRemoveItem) {
             Item item = (Item) itemz.getMid();
             if (item == null) {
-                FileoutputUtil.log(FileoutputUtil.Item_Expire, new StringBuilder().append(getName()).append(" 检测道具已经过期，但道具为空，无法继续执行。").toString(), true);
+                MapleLogger.info(new StringBuilder().append(getName()).append(" 检测道具已经过期，但道具为空，无法继续执行。").toString());
                 continue;
             }
             if (((Boolean) itemz.getRight())) {
@@ -4061,7 +3841,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if ((stat != null) && (stat.getCustomData() != null) && (Long.parseLong(stat.getCustomData()) < currenttime)) {
             this.quests.remove(MapleQuest.getInstance(7830));
             this.quests.remove(MapleQuest.getInstance(122700));
-            this.client.sendPacket(MaplePacketCreator.pendantSlot(false));
+//            this.client.sendPacket(MaplePacketCreator.pendantSlot(false));
         }
 
         Item itemFix = getInventory(MapleInventoryType.EQUIPPED).getItem((short) -37);
@@ -4264,7 +4044,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             if (q.mobKilled(id, skillID)) {
                 if (q.getQuest().canComplete(this)) {
-                    this.client.sendPacket(MaplePacketCreator.getShowQuestCompletion(q.getQuest().getId()));
+//                    this.client.sendPacket(MaplePacketCreator.getShowQuestCompletion(q.getQuest().getId()));
                 }
             }
         }
@@ -5032,7 +4812,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             dropMessage(0, new StringBuilder().append("你").append(quantity > 0 ? "获得了 " : "消耗了 ").append(Math.abs(quantity)).append(type == 1 ? " 点券。" : " 抵用券。").toString());
         }
 
-        this.client.sendPacket(MaplePacketCreator.showCharCash(this));
+//        this.client.sendPacket(MaplePacketCreator.showCharCash(this));
         return true;
     }
 
@@ -5166,7 +4946,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void addCooldown(int skillId, long startTime, long length) {
         if (isShowPacket()) {
             dropMessage(-10, "服务器管理员消除技能冷却时间(原时间:" + length / 1000 + "秒)");
-            client.sendPacket(MaplePacketCreator.skillCooldown(skillId, 0));
+//            client.sendPacket(MaplePacketCreator.skillCooldown(skillId, 0));
         } else {
             this.coolDowns.put(skillId, new MapleCoolDownValueHolder(skillId, startTime, length));
         }
@@ -5234,10 +5014,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             冷却时间 -= time * 1000;
             if (冷却时间 <= 0) {
                 removeCooldown(skillId);
-                client.sendPacket(MaplePacketCreator.skillCooldown(skillId, 0));
+//                client.sendPacket(MaplePacketCreator.skillCooldown(skillId, 0));
             } else {
                 coolDowns.get(skillId).length = 冷却时间;
-                client.sendPacket(MaplePacketCreator.skillCooldown(skillId, (int) (冷却时间 / 1000)));
+//                client.sendPacket(MaplePacketCreator.skillCooldown(skillId, (int) (冷却时间 / 1000)));
             }
         }
     }
@@ -5353,55 +5133,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
     }
 
-    public int getMulungEnergy() {
-        return this.mulung_energy;
-    }
-
-    public void mulung_EnergyModify(boolean inc) {
-        if (inc) {
-            if (this.mulung_energy + 100 > 10000) {
-                this.mulung_energy = 10000;
-            } else {
-                this.mulung_energy = (short) (this.mulung_energy + 100);
-            }
-        } else {
-            this.mulung_energy = 0;
-        }
-        this.client.sendPacket(MaplePacketCreator.MulungEnergy(this.mulung_energy));
-    }
-
-    public void writeMulungEnergy() {
-        this.client.sendPacket(MaplePacketCreator.MulungEnergy(this.mulung_energy));
-    }
-
-    public void writeEnergy(String type, String inc) {
-        this.client.sendPacket(MaplePacketCreator.sendPyramidEnergy(type, inc));
-    }
-
-    public void writeStatus(String type, String inc) {
-        this.client.sendPacket(MaplePacketCreator.sendGhostStatus(type, inc));
-    }
-
-    public void writePoint(String type, String inc) {
-        this.client.sendPacket(MaplePacketCreator.sendGhostPoint(type, inc));
-    }
-
-    public int getAranCombo() {
-        return this.aranCombo;
-    }
-
-    public void gainAranCombo(int count, boolean show) {
-        int oldCombo = this.aranCombo;
-        oldCombo += count;
-        if (oldCombo < 0) {
-            oldCombo = 0;
-        }
-        this.aranCombo = Math.min(30000, oldCombo);
-        if (show) {
-            this.client.sendPacket(MaplePacketCreator.ShowAranCombo(this.aranCombo));
-        }
-    }
-
     public long getLastComboTime() {
         return this.lastComboTime;
     }
@@ -5439,7 +5170,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void setChalkboard(String text) {
         this.chalktext = text;
         if (this.map != null) {
-            this.map.broadcastMessage(MTSCSPacket.useChalkboard(getId(), text));
+//            this.map.broadcastMessage(MTSCSPacket.useChalkboard(getId(), text));
         }
     }
 
@@ -5552,17 +5283,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         } else if (type == -4) {
             this.client.sendPacket(MaplePacketCreator.getChatText(getId(), message, isSuperGM(), 1));
         } else if (type == -5) {
-            this.client.sendPacket(MaplePacketCreator.spouseMessage(message, false));
+//            this.client.sendPacket(MaplePacketCreator.spouseMessage(message, false));
         } else if (type == -6) {
-            this.client.sendPacket(MaplePacketCreator.spouseMessage(message, true));
+//            this.client.sendPacket(MaplePacketCreator.spouseMessage(message, true));
         } else if (type == -7) {
             this.client.sendPacket(UIPacket.getMidMsg(message, false, 0));
         } else if (type == -8) {
             this.client.sendPacket(UIPacket.getMidMsg(message, true, 0));
         } else if (type == -10) {
-            this.client.sendPacket(MaplePacketCreator.getFollowMessage(message));
+//            this.client.sendPacket(MaplePacketCreator.getFollowMessage(message));
         } else if (type == -11) {
-            this.client.sendPacket(MaplePacketCreator.yellowChat(message));
+//            this.client.sendPacket(MaplePacketCreator.yellowChat(message));
         } else {
             this.client.sendPacket(MaplePacketCreator.serverMessageRedText(message));
         }
@@ -5977,7 +5708,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void removeExtractor() {
         if (this.extractor != null) {
-            this.map.broadcastMessage(MaplePacketCreator.removeExtractor(this.id));
+//            this.map.broadcastMessage(MaplePacketCreator.removeExtractor(this.id));
             this.map.removeMapObject(this.extractor);
             this.extractor = null;
         }
@@ -6041,7 +5772,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void changeChannel(int channel) {
         ChannelServer toch = ChannelServer.getInstance(channel);
         if ((channel == this.client.getChannel()) || (toch == null) || (toch.isShutdown())) {
-            this.client.sendPacket(MaplePacketCreator.serverBlocked(1));
+//            this.client.sendPacket(MaplePacketCreator.serverBlocked(1));
             return;
         }
         changeRemoval();
@@ -6268,7 +5999,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             this.pqStartTime = System.currentTimeMillis();
             updateOneInfo(questid, "try", String.valueOf(Integer.parseInt(getOneInfo(questid, "try")) + 1));
         } catch (NumberFormatException e) {
-            FileoutputUtil.log("tryPartyQuest error");
+            MapleLogger.info("tryPartyQuest error");
         }
     }
 
@@ -6286,7 +6017,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 if ((mins2 <= 0) || (mins < mins2)) {
                     updateOneInfo(questid, "min", String.valueOf(mins));
                     updateOneInfo(questid, "sec", String.valueOf(secs));
-                    updateOneInfo(questid, "date", FileoutputUtil.CurrentReadable_Date());
+//                    updateOneInfo(questid, "date", FileoutputUtil.CurrentReadable_Date());
                 }
                 int newCmp = Integer.parseInt(getOneInfo(questid, "cmp")) + 1;
                 updateOneInfo(questid, "cmp", String.valueOf(newCmp));
@@ -6295,7 +6026,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 this.pqStartTime = 0L;
             }
         } catch (Exception e) {
-            FileoutputUtil.log("endPartyQuest error");
+            MapleLogger.info("endPartyQuest error");
         }
     }
 
@@ -6410,7 +6141,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void changeRemoval(boolean dc) {
-        removeFamiliar();
         dispelSummons();
         if ((this.playerShop != null) && (!dc)) {
             this.playerShop.removeVisitor(this);
@@ -6472,7 +6202,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public boolean hasBlockedInventory() {
-        FileoutputUtil.log("getConversation："+getConversation()+"||getDirection："+getDirection());
+        MapleLogger.info("getConversation："+getConversation()+"||getDirection："+getDirection());
         return (!isAlive()) || (getTrade() != null) || (getConversation() > 0) || (getDirection() > 0) || (getPlayerShop() != null)|| (this.map == null);
     }
 
@@ -6603,16 +6333,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return Integer.parseInt(stat.getCustomData());
     }
 
-    public void updatePetAuto() {
-        this.client.sendPacket(MaplePacketCreator.petAutoHP(getIntRecord(122221)));
-        this.client.sendPacket(MaplePacketCreator.petAutoMP(getIntRecord(122223)));
-        this.client.sendPacket(MaplePacketCreator.petAutoBuff(getIntRecord(122224)));
-    }
-
-    public void sendEnglishQuiz(String msg) {
-        this.client.sendPacket(MaplePacketCreator.englishQuizMsg(msg));
-    }
-
     public void setChangeTime(boolean changeMap) {
         this.mapChangeTime = System.currentTimeMillis();
     }
@@ -6653,66 +6373,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return this.summonedFamiliar;
     }
 
-    public void removeFamiliar() {
-        if ((this.summonedFamiliar != null) && (this.map != null)) {
-            removeVisibleFamiliar();
-        }
-        this.summonedFamiliar = null;
-    }
-
-    public void removeVisibleFamiliar() {
-        getMap().removeMapObject(this.summonedFamiliar);
-        removeVisibleMapObject(this.summonedFamiliar);
-        getMap().broadcastMessage(MaplePacketCreator.removeFamiliar(getId()));
-        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        cancelEffect(ii.getItemEffect(ii.getFamiliar(this.summonedFamiliar.getFamiliar()).passive), false, System.currentTimeMillis());
-    }
-
-    public void spawnFamiliar(MonsterFamiliar mf) {
-        this.summonedFamiliar = mf;
-        mf.setStance(0);
-        mf.setPosition(getPosition());
-        mf.setFh(getFH());
-        addVisibleMapObject(mf);
-        getMap().spawnFamiliar(mf);
-        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        MapleStatEffect eff = ii.getItemEffect(ii.getFamiliar(this.summonedFamiliar.getFamiliar()).passive);
-        if ((eff != null) && (eff.getInterval() <= 0) && (eff.makeChanceResult())) {
-            eff.applyTo(this);
-        }
-        this.lastFamiliarEffectTime = System.currentTimeMillis();
-    }
-
-    public boolean canFamiliarEffect(long now, MapleStatEffect eff) {
-        return (this.lastFamiliarEffectTime > 0L) && (this.lastFamiliarEffectTime + eff.getInterval() < now);
-    }
-
-    public void doFamiliarSchedule(long now) {
-        for (MonsterFamiliar mf : this.familiars.values()) {
-            if ((this.summonedFamiliar != null) && (this.summonedFamiliar.getId() == mf.getId())) {
-                mf.addFatigue(this, 5);
-                MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-                MapleStatEffect eff = ii.getItemEffect(ii.getFamiliar(this.summonedFamiliar.getFamiliar()).passive);
-                if ((eff != null) && (eff.getInterval() > 0) && (canFamiliarEffect(now, eff)) && (eff.makeChanceResult())) {
-                    eff.applyTo(this);
-                }
-            } else if (mf.getFatigue() > 0) {
-                mf.setFatigue(Math.max(0, mf.getFatigue() - 5));
-            }
-        }
-    }
-
     public MapleImp[] getImps() {
         return this.imps;
     }
 
-    public void sendImp() {
-        for (int i = 0; i < this.imps.length; i++) {
-            if (this.imps[i] != null) {
-                this.client.sendPacket(MaplePacketCreator.updateImp(this.imps[i], ImpFlag.SUMMONED.getValue(), i, true));
-            }
-        }
-    }
 
     public int getBattlePoints() {
         return 0;
@@ -6722,26 +6386,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return 0;
     }
 
-    public void changeTeam(int newTeam) {
-        this.coconutteam = newTeam;
-        this.client.sendPacket(MaplePacketCreator.showEquipEffect(newTeam));
-    }
-
-    public void disease(int type, int level) {
-        if (MapleDisease.getBySkill(type) == null) {
-            return;
-        }
-        this.chair = 0;
-        this.client.sendPacket(MaplePacketCreator.cancelChair(-1, id));
-        this.map.broadcastMessage(this, MaplePacketCreator.showChair(this.id, 0), false);
-        giveDebuff(MapleDisease.getBySkill(type), MobSkillFactory.getInstance().getMobSkill(type, level));
-    }
-
     public void clearAllCooldowns() {
         for (MapleCoolDownValueHolder m : getCooldowns()) {
             int skil = m.skillId;
             removeCooldown(skil);
-            this.client.sendPacket(MaplePacketCreator.skillCooldown(skil, 0));
+//            this.client.sendPacket(MaplePacketCreator.skillCooldown(skil, 0));
         }
     }
 
@@ -6773,7 +6422,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     MapleStatEffect divineShield = divine.getEffect(getTotalSkillLevel(divine));
                     if (divineShield.makeChanceResult()) {
                         divineShield.applyTo(this);
-                        this.client.sendPacket(MaplePacketCreator.skillCooldown(1210016, divineShield.getCooldown(this)));
+//                        this.client.sendPacket(MaplePacketCreator.skillCooldown(1210016, divineShield.getCooldown(this)));
                         addCooldown(1210016, System.currentTimeMillis(), divineShield.getCooldown(this) * 1000);
                     }
                 }
@@ -6791,7 +6440,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     MapleStatEffect divineShield = divine.getEffect(getTotalSkillLevel(divine));
                     if (divineShield.makeChanceResult()) {
                         divineShield.applyTo(this);
-                        this.client.sendPacket(MaplePacketCreator.skillCooldown(divine.getId(), divineShield.getX()));
+//                        this.client.sendPacket(MaplePacketCreator.skillCooldown(divine.getId(), divineShield.getX()));
                         addCooldown(divine.getId(), System.currentTimeMillis(), divineShield.getX() * 1000);
                     }
                 }
@@ -6817,7 +6466,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 if ((getTotalSkillLevel(divine) > 0) && (!skillisCooling(divine.getId())) && (getBuffSource(MapleBuffStat.灵魂助力) == 1301013)) {
                     MapleStatEffect divineShield = divine.getEffect(getTotalSkillLevel(divine));
                     if (divineShield.makeChanceResult()) {
-                        this.client.sendPacket(MaplePacketCreator.skillCooldown(divine.getId(), divineShield.getCooldown(this)));
+//                        this.client.sendPacket(MaplePacketCreator.skillCooldown(divine.getId(), divineShield.getCooldown(this)));
                         addCooldown(divine.getId(), System.currentTimeMillis(), divineShield.getCooldown(this) * 1000);
                         if ((attacke instanceof MapleMonster)) {
                             MapleMonster attacker = (MapleMonster) attacke;
@@ -6852,7 +6501,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
                         attack.add((int) bouncedamage);
                         if (getBuffSource(MapleBuffStat.伤害反击) == 31101003) {
-                            attacker.disease(MapleDisease.昏迷.getDisease(), 1);
+//                            attacker.disease(MapleDisease.昏迷.getDisease(), 1);
                         }
                     }
                     ret.right = true;
@@ -6928,7 +6577,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 if (getTotalSkillLevel(skill) > 0) {
                     MapleStatEffect venomEffect = skill.getEffect(getTotalSkillLevel(skill));
                     if (ServerProperties.ShowPacket()) {
-                        FileoutputUtil.log(new StringBuilder().append("神秘瞄准术: ").append(skill.getId()).append(" - ").append(skill.getName()).append(" getAllLinkMid ").append(getAllLinkMid().size()).append(" Y ").append(venomEffect.getY()).toString());
+                        MapleLogger.info(new StringBuilder().append("神秘瞄准术: ").append(skill.getId()).append(" - ").append(skill.getName()).append(" getAllLinkMid ").append(getAllLinkMid().size()).append(" Y ").append(venomEffect.getY()).toString());
                     }
                     if ((!venomEffect.makeChanceResult()) || (getAllLinkMid().size() > venomEffect.getY())) {
                         break;
@@ -6984,53 +6633,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return 0;
     }
 
-    public void handleForceGain(int oid, int skillid) {
-        handleForceGain(oid, skillid, 0);
-    }
-
-    public void handleForceGain(int moboid, int skillid, int extraForce) {
-        if (extraForce <= 0) {
-            return;
-        }
-        int forceGain = 1;
-        if ((getLevel() >= 30) && (getLevel() < 70)) {
-            forceGain = 2;
-        } else if ((getLevel() >= 70) && (getLevel() < 120)) {
-            forceGain = 3;
-        } else if (getLevel() >= 120) {
-            forceGain = 4;
-        }
-        this.forceCounter += 1;
-        addMP(extraForce > 0 ? extraForce : forceGain);
-        getClient().sendPacket(SkillPacket.showForce(this, moboid, this.forceCounter, forceGain));
-        if ((this.stats.mpRecoverProp > 0) && (extraForce <= 0)
-                && (Randomizer.nextInt(100) <= this.stats.mpRecoverProp)) {
-            this.forceCounter += 1;
-            addMP(this.stats.mpRecover);
-            getClient().sendPacket(SkillPacket.showForce(this, moboid, this.forceCounter, this.stats.mpRecoverProp));
-        }
-    }
-
-    public void gainForce(int moboid, int forceColor, int skillid) {
-        Skill effect = SkillFactory.getSkill(31110009);
-        int maxFuryLevel = getSkillLevel(effect);
-        this.forceCounter += 1;
-        if (Randomizer.nextInt(100) >= 60) {
-            addMP(forceColor);
-        }
-        getClient().sendPacket(SkillPacket.showForce(this, moboid, this.forceCounter, forceColor));
-        if ((maxFuryLevel > 0) && ((skillid == 31000004) || (skillid == 31001006) || (skillid == 31001007) || (skillid == 31001008))) {
-            this.forceCounter += 1;
-            int rand = Randomizer.nextInt(100);
-            if (rand >= 40) {
-                addMP(forceColor);
-                getClient().sendPacket(SkillPacket.showForce(this, moboid, this.forceCounter, 2));
-            } else {
-                getClient().sendPacket(SkillPacket.showForce(this, moboid, this.forceCounter, 3));
-            }
-        }
-    }
-
     public int getCardStack() {
         return this.cardStack;
     }
@@ -7048,28 +6650,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void setCardStack(int amount) {
         this.cardStack = amount;
     }
-
-    public void handleCarteGain(int oid) {
-        int[] skillIds = {24120002, 24100003};
-        for (int i : skillIds) {
-            Skill skill = SkillFactory.getSkill(i);
-            if (getSkillLevel(skill) > 0) {
-                MapleStatEffect effect = skill.getEffect(getSkillLevel(skill));
-                if ((!effect.makeChanceResult()) || (Randomizer.nextInt(100) > 50)) {
-                    break;
-                }
-                this.forceCounter += 1;
-                getClient().sendPacket(SkillPacket.gainCardStack(this, oid, skill.getId(), this.forceCounter, skill.getId() == 24120002 ? 2 : 1));
-                if (getCardStack() >= getCarteByJob()) {
-                    break;
-                }
-                this.cardStack += 1;
-                getClient().sendPacket(SkillPacket.updateCardStack(this.cardStack));
-                break;
-            }
-        }
-    }
-
     /**
      * 金钱炸弹
      * @param attack
@@ -7121,7 +6701,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             mob.setmark(false);
             this.forceCounter += 1;
-            send_other(SkillPacket.gainAssassinStack(getId(), mob.getObjectId(), this.forceCounter, isAssassin, moboids, visProjectile, mob.getTruePosition()), true);
+//            send_other(SkillPacket.gainAssassinStack(getId(), mob.getObjectId(), this.forceCounter, isAssassin, moboids, visProjectile, mob.getTruePosition()), true);
             this.forceCounter += moboids.size();
         }
     }
@@ -7141,10 +6721,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void checkTailAndEar() {
         if (!this.questinfo.containsKey(59300)) {
         }
-    }
-
-    public void updateCash() {
-        this.client.sendPacket(MaplePacketCreator.showCharCash(this));
     }
 
     public short getSpace(int type) {

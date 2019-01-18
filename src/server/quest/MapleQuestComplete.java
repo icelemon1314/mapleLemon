@@ -8,7 +8,8 @@ import client.inventory.Item;
 import client.inventory.MapleInventoryType;
 import client.inventory.MaplePet;
 import constants.ItemConstants;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.Pair;
 
 import java.io.Serializable;
@@ -35,7 +36,7 @@ public class MapleQuestComplete implements Serializable {
         } if (type == MapleQuestCompleteType.exp) {
             this.dataStore.add(new Pair(itemId,num));
         } else {
-            FileoutputUtil.log("暂时不支持的奖励类型："+type.toString());
+            MapleLogger.info("暂时不支持的奖励类型："+type.toString());
         }
     }
 

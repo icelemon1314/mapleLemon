@@ -33,7 +33,8 @@ import server.skill.冒险家.刺客;
 import server.skill.冒险家.牧师;
 import server.skill.冒险家.独行客;
 import tools.AttackPair;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.data.input.SeekableLittleEndianAccessor;
@@ -56,15 +57,7 @@ public class DamageParse {
                 player.getClient().sendPacket(MaplePacketCreator.enableActions());
                 return;
             }
-            if (GameConstants.isMulungSkill(attack.skillId)) {
-                if (player.getMapId() / 10000 != 92502) {
-                    return;
-                }
-                if (player.getMulungEnergy() < 10000) {
-                    return;
-                }
-                player.mulung_EnergyModify(false);
-            } else if (GameConstants.isPyramidSkill(attack.skillId)) {
+            if (GameConstants.isPyramidSkill(attack.skillId)) {
                 if (player.getMapId() / 1000000 != 926) {
                     return;
                 }
@@ -184,7 +177,7 @@ public class DamageParse {
                                 if ((eachd > maxDamagePerHit * 5) && (attack.skillId != 4001344)) {//TODO 开启攻击异常封号
                                     String banReason = player.getName() + " 被系统封号.[异常攻击伤害值: " + eachd + ", 预计伤害: " + maxDamagePerHit + ", 怪物ID: " + monster.getId() + "] [职业: " + player.getJob() + ", 等级: " + player.getLevel() + ", 技能: " + attack.skillId + "]";
                                     if (eachd > maxDamagePerHit * 7) {
-                                        FileoutputUtil.log(FileoutputUtil.攻击异常, "玩家[" + player.getName() + " 职业: " + player.getJobName() + "] 使用技能: " + theSkill.getName() + "超过系统计算攻击:" + maxDamagePerHit * 7 + " 玩家攻击:" + eachd);
+                                        MapleLogger.info("玩家[" + player.getName() + " 职业: " + player.getJobName() + "] 使用技能: " + theSkill.getName() + "超过系统计算攻击:" + maxDamagePerHit * 7 + " 玩家攻击:" + eachd);
                                         player.getClient().sendPacket(MaplePacketCreator.enableActions());
                                         //AutobanManager.getInstance().autoban(player.getClient(), banReason);
                                         return;
@@ -328,15 +321,7 @@ public class DamageParse {
         int mobCount = effect.getMobCount(player);
         int attackCount = effect.getAttackCount(player);
 
-        if (GameConstants.isMulungSkill(attack.skillId)) {
-            if (player.getMapId() / 10000 != 92502) {
-                return;
-            }
-            if (player.getMulungEnergy() < 10000) {
-                return;
-            }
-            player.mulung_EnergyModify(false);
-        } else if (GameConstants.isPyramidSkill(attack.skillId)) {
+        if (GameConstants.isPyramidSkill(attack.skillId)) {
             if (player.getMapId() / 1000000 != 926) {
                 return;
             }
@@ -816,7 +801,7 @@ public class DamageParse {
                     chr.dropMessage(0, "魔法攻击 - 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage);
                 }
                 if (damage < 0) {
-                    FileoutputUtil.log(FileoutputUtil.攻击出错, "魔法攻击出错封包:  打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage + " 技能ID: " + ret.skillId + lea.toString(true));
+                    MapleLogger.info("魔法攻击出错封包:  打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage + " 技能ID: " + ret.skillId + lea.toString(true));
                 }
                 allDamageNumbers.add(new Pair(damage, false));
             }
@@ -924,7 +909,7 @@ public class DamageParse {
 //                        chr.sendPolice("系统检测到您的攻击伤害异常，系统对您进行掉线处理。");
 //                        WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverNotice(6, "[GM Message] "+chr.getName()+" ID: "+chr.getId()+" (等级 "+chr.getLevel()+") 远距离攻击伤害异常。打怪伤害: "+damage+" 地图ID: "+chr.getMapId()));
 //                    }
-                    FileoutputUtil.log(FileoutputUtil.攻击出错, "远距离攻击出错封包: 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage + " 技能ID: " + ret.skillId + lea.toString(true));
+                    MapleLogger.info("远距离攻击出错封包: 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage + " 技能ID: " + ret.skillId + lea.toString(true));
                 }
                 allDamageNumbers.add(new Pair(damage, false));
             }

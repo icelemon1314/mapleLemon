@@ -12,7 +12,7 @@ import server.maps.MapleMapObjectType;
 import server.movement.AbsoluteLifeMovement;
 import server.movement.LifeMovement;
 import server.movement.LifeMovementFragment;
-import tools.FileoutputUtil;
+
 import tools.MaplePacketCreator;
 import tools.data.output.MaplePacketLittleEndianWriter;
 import tools.packet.PacketHelper;
@@ -57,18 +57,6 @@ public final class MonsterFamiliar extends AnimatedMapleMapObject implements Ser
 
     public MapleMonsterStats getOriginalStats() {
         return MapleLifeFactory.getMonsterStats(MapleItemInformationProvider.getInstance().getFamiliar(this.familiar).mob);
-    }
-
-    public void addFatigue(MapleCharacter owner) {
-        addFatigue(owner, 1);
-    }
-
-    public void addFatigue(MapleCharacter owner, int f) {
-        this.fatigue = Math.min(this.vitality * 300, Math.max(0, this.fatigue + f));
-        owner.getClient().sendPacket(MaplePacketCreator.updateFamiliar(this));
-        if (this.fatigue >= this.vitality * 300) {
-            owner.removeFamiliar();
-        }
     }
 
     public int getFamiliar() {
@@ -124,21 +112,18 @@ public final class MonsterFamiliar extends AnimatedMapleMapObject implements Ser
     }
 
     @Override
-    public void sendSpawnData(MapleClient client) {
-        FileoutputUtil.log("召唤spawnFamiliar");
-        client.sendPacket(MaplePacketCreator.spawnFamiliar(this, true));
-    }
-
-    @Override
-    public void sendDestroyData(MapleClient client) {
-        client.sendPacket(MaplePacketCreator.spawnFamiliar(this, false));
-    }
-
-    @Override
     public MapleMapObjectType getType() {
         return MapleMapObjectType.FAMILIAR;
     }
 
+    @Override
+    public void sendDestroyData(MapleClient c) {
+
+    }
+    @Override
+    public void sendSpawnData(MapleClient c) {
+
+    }
     public void updatePosition(List<LifeMovementFragment> movement) {
         for (LifeMovementFragment move : movement) {
             if (((move instanceof LifeMovement)) && ((move instanceof AbsoluteLifeMovement))) {

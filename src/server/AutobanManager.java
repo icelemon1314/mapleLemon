@@ -1,6 +1,8 @@
 package server;
 
 import client.MapleClient;
+import tools.MapleLogger;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.locks.ReentrantLock;
-import tools.FileoutputUtil;
+
 
 public class AutobanManager implements Runnable {
 
@@ -66,7 +68,7 @@ public class AutobanManager implements Runnable {
             }
 
             if ((this.points.get(acc)) >= AUTOBAN_POINTS) {
-                FileoutputUtil.log(new StringBuilder().append("[作弊] 玩家 ").append(c.getPlayer().getName()).append(" A/b 触发 ").append(reason).toString());
+                MapleLogger.info(new StringBuilder().append("[作弊] 玩家 ").append(c.getPlayer().getName()).append(" A/b 触发 ").append(reason).toString());
                 if (c.getPlayer().isGM()) {
                     c.getPlayer().dropMessage(5, new StringBuilder().append("[警告] A/b 触发 : ").append(reason).toString());
                     return;

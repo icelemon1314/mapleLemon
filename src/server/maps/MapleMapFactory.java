@@ -25,7 +25,8 @@ import server.life.AbstractLoadedMapleLife;
 import server.life.MapleLifeFactory;
 import server.life.MapleMonster;
 import server.life.MapleNPC;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.Pair;
 import tools.StringUtil;
 
@@ -176,7 +177,7 @@ public class MapleMapFactory {
                         }
                     }
                 } catch (SQLException e) {
-                    FileoutputUtil.log("读取SQL刷Npc和刷新怪物出错.");
+                    MapleLogger.info("读取SQL刷Npc和刷新怪物出错.");
                 }
 
                 for (MapleData life : mapData.getChildByPath("life")) {
@@ -220,7 +221,7 @@ public class MapleMapFactory {
                     map.setStreetName("");
                 }
                 if ((map.getMapName().length() <= 1) && (map.getStreetName().length() <= 1)) {
-                    FileoutputUtil.log(FileoutputUtil.地图名字错误, new StringBuilder().append("地图ID: ").append(mapid).toString(), true);
+                    MapleLogger.info(new StringBuilder().append("地图ID: ").append(mapid).toString());
                 }
                 
                 map.setClock(mapData.getChildByPath("clock") != null);
@@ -390,7 +391,7 @@ public class MapleMapFactory {
                 }
             }
         } catch (SQLException e) {
-            FileoutputUtil.log("读取SQL刷Npc和刷新怪物出错.");
+            MapleLogger.info("读取SQL刷Npc和刷新怪物出错.");
         }
 
         for (MapleData life : mapData.getChildByPath("life")) {
@@ -712,7 +713,7 @@ public class MapleMapFactory {
                         di.eventQ.add(MapleDataTool.getString(event));
                     }
                 } else {
-                    FileoutputUtil.log(new StringBuilder().append("[loadNodes] 地图: ").append(mapid).append(" 没有找到EventQ.").toString());
+                    MapleLogger.info(new StringBuilder().append("[loadNodes] 地图: ").append(mapid).append(" 没有找到EventQ.").toString());
                 }
                 nodeInfo.addDirection(Integer.parseInt(area.getName()), di);
             }

@@ -30,7 +30,7 @@ import server.maps.MapScriptMethods;
 import server.maps.MapleQuickMove;
 import server.quest.MapleQuest;
 import server.shop.MapleShop;
-import tools.FileoutputUtil;
+
 import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.data.input.SeekableLittleEndianAccessor;
@@ -192,32 +192,32 @@ public class NPCHandler {
                 if (c.getPlayer().getMeso() >= 1000) {
                     c.getPlayer().setRPS(new RockPaperScissors(c, mode));
                 } else {
-                    c.sendPacket(MaplePacketCreator.getRPSMode((byte) 8, -1, -1, -1));
+//                    c.sendPacket(MaplePacketCreator.getRPSMode((byte) 8, -1, -1, -1));
                 }
                 break;
             case 1:
                 if ((c.getPlayer().getRPS() != null) && (c.getPlayer().getRPS().answer(c, slea.readByte()))) {
                     break;
                 }
-                c.sendPacket(MaplePacketCreator.getRPSMode((byte) 13, -1, -1, -1));
+//                c.sendPacket(MaplePacketCreator.getRPSMode((byte) 13, -1, -1, -1));
                 break;
             case 2:
                 if ((c.getPlayer().getRPS() != null) && (c.getPlayer().getRPS().timeOut(c))) {
                     break;
                 }
-                c.sendPacket(MaplePacketCreator.getRPSMode((byte) 13, -1, -1, -1));
+//                c.sendPacket(MaplePacketCreator.getRPSMode((byte) 13, -1, -1, -1));
                 break;
             case 3:
                 if ((c.getPlayer().getRPS() != null) && (c.getPlayer().getRPS().nextRound(c))) {
                     break;
                 }
-                c.sendPacket(MaplePacketCreator.getRPSMode((byte) 13, -1, -1, -1));
+//                c.sendPacket(MaplePacketCreator.getRPSMode((byte) 13, -1, -1, -1));
                 break;
             case 4:
                 if (c.getPlayer().getRPS() != null) {
                     c.getPlayer().getRPS().dispose(c);
                 } else {
-                    c.sendPacket(MaplePacketCreator.getRPSMode((byte) 13, -1, -1, -1));
+//                    c.sendPacket(MaplePacketCreator.getRPSMode((byte) 13, -1, -1, -1));
                 }
         }
     }

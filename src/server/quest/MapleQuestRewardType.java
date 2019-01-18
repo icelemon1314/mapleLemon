@@ -1,6 +1,7 @@
 package server.quest;
 
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 
 public enum MapleQuestRewardType {
 
@@ -65,7 +66,7 @@ public enum MapleQuestRewardType {
             return valueOf(name);
         } catch (IllegalArgumentException ex) {
         }
-        FileoutputUtil.log("不支持的奖励类型："+name);
+        MapleLogger.info("不支持的奖励类型："+name);
         return UNDEFINED;
     }
 }

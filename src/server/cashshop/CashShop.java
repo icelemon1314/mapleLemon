@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
-import tools.FileoutputUtil;
+
 import tools.Pair;
 import tools.packet.MTSCSPacket;
 
@@ -97,7 +97,7 @@ public class CashShop implements Serializable {
             if (period > 0L) {
                 eq.setExpiration(System.currentTimeMillis() + period * 24L * 60L * 60L * 1000L);
             }
-            eq.setGMLog("商城购买 " + cItem.getSN() + " 时间 " + FileoutputUtil.CurrentReadable_Date());
+            eq.setGMLog("商城购买 " + cItem.getSN() + " 时间 " + System.currentTimeMillis());
             eq.setGiftFrom(gift);
             if ((ItemConstants.isEffectRing(cItem.getId())) && (uniqueid > 0)) {
                 MapleRing ring = MapleRing.loadFromDb(uniqueid);
@@ -120,7 +120,7 @@ public class CashShop implements Serializable {
             } else {
                 item.setExpiration(-1L);
             }
-            item.setGMLog("商城购买 " + cItem.getSN() + " 时间 " + FileoutputUtil.CurrentReadable_Date());
+            item.setGMLog("商城购买 " + cItem.getSN() + " 时间 " + System.currentTimeMillis());
             item.setGiftFrom(gift);
             if (ItemConstants.isPet(cItem.getId())) {
                 MaplePet pet = MaplePet.createPet(cItem.getId(), uniqueid);

@@ -18,7 +18,7 @@ import server.life.MapleMonster;
 import server.life.MobAttackInfo;
 import server.life.MobSkill;
 import server.life.MobSkillFactory;
-import tools.FileoutputUtil;
+
 import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.data.input.SeekableLittleEndianAccessor;

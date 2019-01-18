@@ -26,7 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import server.MapleStatEffect;
-import tools.FileoutputUtil;
+
 import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.data.output.MaplePacketLittleEndianWriter;
@@ -793,12 +793,6 @@ public class MapleGuild
                     gainGP((mgc.getLevel() - old_level) * mgc.getLevel(), false, mgc.getId());
                 }
 
-                if (old_level != mgc.getLevel()) {
-                    broadcast(MaplePacketCreator.sendLevelup(false, mgc.getLevel(), mgc.getName()), mgc.getId());
-                }
-                if (old_job != mgc.getJobId()) {
-                    broadcast(MaplePacketCreator.sendJobup(false, mgc.getJobId(), mgc.getName()), mgc.getId());
-                }
                 broadcast(GuildPacket.guildMemberLevelJobUpdate(mgc));
                 if (this.allianceid <= 0) {
                     break;
@@ -934,7 +928,7 @@ public class MapleGuild
             }
         }
         if (players.size() != this.members.size()) {
-            FileoutputUtil.log(new StringBuilder().append("家族成员信息加载错误 - 实际加载: ").append(players.size()).append(" 应当加载: ").append(this.members.size()).toString());
+            MapleLogger.info(new StringBuilder().append("家族成员信息加载错误 - 实际加载: ").append(players.size()).append(" 应当加载: ").append(this.members.size()).toString());
         }
         mplew.writeShort(players.size());
         for (MapleGuildCharacter mgc : players) {
@@ -1035,7 +1029,7 @@ public class MapleGuild
                 ps.close();
             }
         } catch (SQLException se) {
-            FileoutputUtil.log(new StringBuilder().append("SQLException: ").append(se.getLocalizedMessage()).toString());
+            MapleLogger.info(new StringBuilder().append("SQLException: ").append(se.getLocalizedMessage()).toString());
         }
     }
 
@@ -1105,7 +1099,7 @@ public class MapleGuild
                 ps.close();
             }
         } catch (SQLException se) {
-            FileoutputUtil.log("SQLException: " + se.getLocalizedMessage());
+            MapleLogger.info("SQLException: " + se.getLocalizedMessage());
         }
         return guilds;
     }

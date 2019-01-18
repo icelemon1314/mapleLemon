@@ -12,7 +12,8 @@ import java.sql.SQLException;
 import java.util.*;
 
 import scripting.quest.QuestScriptManager;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.Pair;
 
@@ -126,7 +127,7 @@ public class MapleQuest implements Serializable {
             ret.completeReqs.put(questStatus,tmpReward);
         }
 
-        FileoutputUtil.log(ret.completeReqs.toString());
+        MapleLogger.info(ret.completeReqs.toString());
 
 
         // 任务奖励数据
@@ -223,7 +224,7 @@ public class MapleQuest implements Serializable {
         MapleQuest ret = quests.get(Integer.valueOf(id));
         if (ret == null) {
             // 这是一个脚本任务
-            FileoutputUtil.log("找不到任务："+id+"有可能是脚本任务！");
+            MapleLogger.info("找不到任务："+id+"有可能是脚本任务！");
             MapleQuest vet = new MapleQuest(id);
             quests.put(id,vet);
             return vet;
@@ -395,7 +396,7 @@ public class MapleQuest implements Serializable {
             }
             return isComplete;
         } else {
-            FileoutputUtil.log("NPC不在该地图上："+npc);
+            MapleLogger.info("NPC不在该地图上："+npc);
             return isComplete;
         }
     }

@@ -9,7 +9,8 @@ import java.util.Map;
 
 import handling.netty.ServerConnection;
 import server.ServerProperties;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.Triple;
 
 public class LoginServer {
@@ -84,7 +85,7 @@ public class LoginServer {
             acceptor = new ServerConnection(port, 1, MapleServerHandler.LOGIN_SERVER);
             acceptor.run();
 
-            FileoutputUtil.log("\"登入\"伺服器正在监听" + port + "端口\r\n");
+            MapleLogger.info("\"登入\"伺服器正在监听" + port + "端口\r\n");
         } catch (Exception e) {
             System.err.println("无法绑定" + port + "端口: " + e);
         }
@@ -94,7 +95,7 @@ public class LoginServer {
         if (finishedShutdown) {
             return;
         }
-        FileoutputUtil.log("正在关闭登录服务器...");
+        MapleLogger.info("正在关闭登录服务器...");
         acceptor.close();
         finishedShutdown = true;
     }

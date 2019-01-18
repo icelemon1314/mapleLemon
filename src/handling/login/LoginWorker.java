@@ -8,7 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Map.Entry;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.packet.LoginPacket;
 
@@ -27,7 +28,7 @@ public class LoginWorker {
             c.sendPacket(LoginPacket.getLoginFailed(7));
             return;
         }
-        FileoutputUtil.log("登录成功，准备通知客户端！！！！");
+        MapleLogger.info("登录成功，准备通知客户端！！！！");
         c.sendPacket(LoginPacket.getAuthSuccessRequest(c));
 //        c.sendPacket(LoginPacket.checkUserLimit());
         //c.sendPacket(MaplePacketCreator.serverNotice(1, "恭喜您成功登陆！\r\n您的账户中有 " + c.getJinQuan() + " 张金券\r\n祝您游戏愉快"));
@@ -40,7 +41,7 @@ public class LoginWorker {
 //            ps.executeUpdate();
 //            ps.close();
 //        } catch (SQLException e) {
-//            FileoutputUtil.outputFileError(FileoutputUtil.SQL_ScriptEx_Log, e);
+//            MapleLogger.error(FileoutputUtil.SQL_ScriptEx_Log, e);
 //        }
     }
 

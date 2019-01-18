@@ -1,6 +1,8 @@
 package server.maps;
 
-import tools.FileoutputUtil;
+
+
+import tools.MapleLogger;
 
 import java.awt.Point;
 import java.util.Collections;
@@ -159,7 +161,7 @@ public class MapleFootholdTree {
         for (MapleFoothold fh2 : this.footholds) {
             if ((fh2.getX1() <= tox) && (fh2.getX2() >= tox) && (fh2.getY1() <= toy) && (fh2.getY2() >= toy)) {
                 if (fhdata != null && (fhdata.getId() != fh2.getId()) && (fh2.getId() != fhdata.getNext()) && (fh2.getId() != fhdata.getPrev())) {
-                    FileoutputUtil.log("Couldn't find the correct pos for next/prev");
+                    MapleLogger.info("Couldn't find the correct pos for next/prev");
                     return false;
                 }
                 return true;

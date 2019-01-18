@@ -12,7 +12,8 @@ import server.events.MapleEventType;
 import server.events.MapleSnowball;
 import server.skill.冒险家.勇士;
 import server.skill.冒险家.独行客;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 
@@ -74,7 +75,7 @@ public class CloseRangeAttackHandler extends MaplePacketHandler {
                 if (chr.isShowPacket()) {
                     chr.dropMessage(5, "近距离攻击效果为空. 使用技能: " + skill.getId() + " - " + skill.getName() + " 技能等级: " + skillLevel);
                 }
-                FileoutputUtil.log(FileoutputUtil.SpecialSkill_log, "近距离攻击效果为空 玩家[" + chr.getName() + " 职业: " + getJobName(chr.getJob()) + "(" + chr.getJob() + ")] 使用技能: " + skill.getId() + " - " + skill.getName() + " 技能等级: " + skillLevel);
+                MapleLogger.info("近距离攻击效果为空 玩家[" + chr.getName() + " 职业: " + getJobName(chr.getJob()) + "(" + chr.getJob() + ")] 使用技能: " + skill.getId() + " - " + skill.getName() + " 技能等级: " + skillLevel);
                 c.sendPacket(MaplePacketCreator.enableActions());
                 return;
             }
@@ -115,7 +116,7 @@ public class CloseRangeAttackHandler extends MaplePacketHandler {
                     return;
                 }
                 if (!chr.skillisCooling(attack.skillId)) {
-                    c.sendPacket(MaplePacketCreator.skillCooldown(attack.skillId, effect.getCooldown(chr)));
+//                    c.sendPacket(MaplePacketCreator.skillCooldown(attack.skillId, effect.getCooldown(chr)));
                     chr.addCooldown(attack.skillId, System.currentTimeMillis(), effect.getCooldown(chr) * 1000);
                 }
             }
@@ -148,11 +149,7 @@ public class CloseRangeAttackHandler extends MaplePacketHandler {
 
         //给地图上的玩家显示当前玩家使用技能效果
         byte[] packet;
-        if (被动攻击) {
-            packet = MaplePacketCreator.passiveAttack(chr, skillLevel, 0, attack, false);
-        } else {
-            packet = MaplePacketCreator.closeRangeAttack(chr, skillLevel, 0, attack, false);
-        }
+        packet = MaplePacketCreator.closeRangeAttack(chr, skillLevel, 0, attack, false);
 
         if (!chr.isHidden()) {
             chr.getMap().broadcastMessage(chr, packet, chr.getTruePosition());

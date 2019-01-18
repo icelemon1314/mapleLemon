@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import handling.MaplePacketHandler;
-import tools.FileoutputUtil;
+
 import tools.data.input.SeekableLittleEndianAccessor;
 
 public class ClientErrorHandler extends MaplePacketHandler {
@@ -18,7 +18,7 @@ public class ClientErrorHandler extends MaplePacketHandler {
             try (RandomAccessFile file = new RandomAccessFile("日志\\错误信息.txt", "rw")) {
                 int num = (int) file.length();
                 file.seek(num);
-                file.writeBytes("\r\n------------------------ " + FileoutputUtil.CurrentReadable_Time() + " ------------------------\r\n");
+                file.writeBytes("\r\n------------------------ " + System.currentTimeMillis() + " ------------------------\r\n");
                 file.write("错误信息：\r\n".getBytes());
                 file.write((error + "\r\n").getBytes());
             }

@@ -42,7 +42,8 @@ import server.maps.MapleMapObjectType;
 import server.maps.MapleSummon;
 import server.maps.SummonMovementType;
 import server.skill.冒险家.*;
-import tools.FileoutputUtil;
+
+import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.Triple;
@@ -155,7 +156,7 @@ public class MapleStatEffect implements Serializable {
         if (dd.getType() != MapleDataType.STRING) {
             return MapleDataTool.getIntConvert(path, source, def);
         }
-        FileoutputUtil.log("到这里就囧了！");
+        MapleLogger.info("到这里就囧了！");
         return 0;
         /*
         String dddd = MapleDataTool.getString(dd).replace(variables, String.valueOf(level));
@@ -172,7 +173,7 @@ public class MapleStatEffect implements Serializable {
                 break;
         }
         if (dddd.contains("y")) {
-//            FileoutputUtil.log(dddd);
+//            MapleLogger.info(dddd);
             dddd = dddd.replaceAll("y", "0");
         }
         int result = (int) new CaltechEval(dddd).evaluate();
@@ -700,7 +701,7 @@ public class MapleStatEffect implements Serializable {
             applyto.cancelEffectFromBuffStat(MapleBuffStat.灵魂助力);
             if (applyto.skillisCooling(1321013)) {
                 applyto.removeCooldown(1321013);
-                applyto.getClient().sendPacket(MaplePacketCreator.skillCooldown(1321013, 0));
+//                applyto.getClient().sendPacket(MaplePacketCreator.skillCooldown(1321013, 0));
             }
         }
         Map hpmpupdate = new EnumMap(MapleStat.class);
@@ -762,14 +763,14 @@ public class MapleStatEffect implements Serializable {
             } else if (this.bs > 0) {
                 int xx = Integer.parseInt(applyto.getEventInstance().getProperty(String.valueOf(applyto.getId())));
                 applyto.getEventInstance().setProperty(String.valueOf(applyto.getId()), String.valueOf(xx + this.bs));
-                applyto.getClient().sendPacket(MaplePacketCreator.getPVPScore(xx + this.bs, false));
+//                applyto.getClient().sendPacket(MaplePacketCreator.getPVPScore(xx + this.bs, false));
             } else if ((this.info.get(MapleStatInfo.iceGageCon)) > 0) {
                 int x = Integer.parseInt(applyto.getEventInstance().getProperty("icegage"));
                 if (x < (this.info.get(MapleStatInfo.iceGageCon))) {
                     return false;
                 }
                 applyto.getEventInstance().setProperty("icegage", String.valueOf(x - (this.info.get(MapleStatInfo.iceGageCon))));
-                applyto.getClient().sendPacket(MaplePacketCreator.getPVPIceGage(x - (this.info.get(MapleStatInfo.iceGageCon))));
+//                applyto.getClient().sendPacket(MaplePacketCreator.getPVPIceGage(x - (this.info.get(MapleStatInfo.iceGageCon))));
                 applyto.applyIceGage(x - (this.info.get(MapleStatInfo.iceGageCon)));
             } else if (this.recipe > 0) {
                 if ((applyto.getSkillLevel(this.recipe) > 0)) {
@@ -889,7 +890,7 @@ public class MapleStatEffect implements Serializable {
             Rectangle bounds = calculateBoundingBox(pos != null ? pos : applyfrom.getPosition(), applyfrom.isFacingLeft(), addx);
             MapleDefender mist = new MapleDefender(bounds, applyfrom, this);
             if (getCooldown(applyfrom) > 0) {
-                applyfrom.getClient().sendPacket(MaplePacketCreator.skillCooldown(this.sourceid, getCooldown(applyfrom)));
+//                applyfrom.getClient().sendPacket(MaplePacketCreator.skillCooldown(this.sourceid, getCooldown(applyfrom)));
                 applyfrom.addCooldown(this.sourceid, System.currentTimeMillis(), getCooldown(applyfrom) * 1000);
             }
             applyfrom.getMap().spawnMist(mist, getDuration(), false);
@@ -897,13 +898,13 @@ public class MapleStatEffect implements Serializable {
             for (MapleCoolDownValueHolder i : applyto.getCooldowns()) {
                 if (i.skillId != 5121010) {
                     applyto.removeCooldown(i.skillId);
-                    applyto.getClient().sendPacket(MaplePacketCreator.skillCooldown(i.skillId, 0));
+//                    applyto.getClient().sendPacket(MaplePacketCreator.skillCooldown(i.skillId, 0));
                 }
             }
         }
-        if ((this.fatigueChange != 0) && (applyto.getSummonedFamiliar() != null) && ((this.familiars == null) || (this.familiars.contains(applyto.getSummonedFamiliar().getFamiliar())))) {
-            applyto.getSummonedFamiliar().addFatigue(applyto, this.fatigueChange);
-        }
+//        if ((this.fatigueChange != 0) && (applyto.getSummonedFamiliar() != null) && ((this.familiars == null) || (this.familiars.contains(applyto.getSummonedFamiliar().getFamiliar())))) {
+//            applyto.getSummonedFamiliar().addFatigue(applyto, this.fatigueChange);
+//        }
         if (this.rewardMeso != 0) {
             applyto.gainMeso(this.rewardMeso, false);
         }
@@ -912,10 +913,10 @@ public class MapleStatEffect implements Serializable {
                 if ((MapleInventoryManipulator.checkSpace(applyto.getClient(), ((Integer) reward.left), ((Integer) reward.mid), "")) && (((Integer) reward.right) > 0) && (Randomizer.nextInt(this.totalprob) < ((Integer) reward.right))) {
                     if (ItemConstants.getInventoryType(((Integer) reward.left)) == MapleInventoryType.EQUIP) {
                         Item item = MapleItemInformationProvider.getInstance().getEquipById(((Integer) reward.left).intValue());
-                        item.setGMLog("Reward item (effect): " + this.sourceid + " on " + FileoutputUtil.CurrentReadable_Date());
+                        item.setGMLog("Reward item (effect): " + this.sourceid + " on " + System.currentTimeMillis());
                         MapleInventoryManipulator.addbyItem(applyto.getClient(), item);
                     } else {
-                        MapleInventoryManipulator.addById(applyto.getClient(), ((Integer) reward.left), ((Integer) reward.mid).shortValue(), "Reward item (effect): " + this.sourceid + " on " + FileoutputUtil.CurrentReadable_Date());
+                        MapleInventoryManipulator.addById(applyto.getClient(), ((Integer) reward.left), ((Integer) reward.mid).shortValue(), "Reward item (effect): " + this.sourceid + " on " + System.currentTimeMillis());
                     }
                 }
             }
@@ -992,7 +993,7 @@ public class MapleStatEffect implements Serializable {
 
         int cooldown = getCooldown(applyto);
         if (cooldown > 0) {
-            applyto.getClient().sendPacket(MaplePacketCreator.skillCooldown(this.sourceid, cooldown));
+//            applyto.getClient().sendPacket(MaplePacketCreator.skillCooldown(this.sourceid, cooldown));
             applyto.addCooldown(this.sourceid, startTime, cooldown * 1000);
         }
         if (buff != null) {
@@ -1024,7 +1025,7 @@ public class MapleStatEffect implements Serializable {
                             && (targetMapId != 12) && (charMapId != 10)
                             && (targetMapId != 10) && (charMapId != 12)
                             && (targetMapId != charMapId)) {
-                        FileoutputUtil.log("玩家 " + applyto.getName() + " 尝试回到一个非法的位置 (" + applyto.getMapId() + "->" + target.getId() + ")");
+                        MapleLogger.info("玩家 " + applyto.getName() + " 尝试回到一个非法的位置 (" + applyto.getMapId() + "->" + target.getId() + ")");
                         return false;
                     }
 
@@ -1065,7 +1066,7 @@ public class MapleStatEffect implements Serializable {
                 for (MapleCoolDownValueHolder i : chr.getCooldowns()) {
                     if (i.skillId != 5121010) {
                         chr.removeCooldown(i.skillId);
-                        chr.getClient().sendPacket(MaplePacketCreator.skillCooldown(i.skillId, 0));
+//                        chr.getClient().sendPacket(MaplePacketCreator.skillCooldown(i.skillId, 0));
                     }
                 }
             }
@@ -1320,7 +1321,7 @@ public class MapleStatEffect implements Serializable {
             applyfrom.dropMessage(5,"发送技能：GIVE_BUFF");
             applyto.getClient().sendPacket(buff);
         } else if (normal && localstatups.size() > 0) { //自动使用？
-            FileoutputUtil.log("发送技能：GIVE_BUFF|null"+sourceid);
+            MapleLogger.info("发送技能：GIVE_BUFF|null"+sourceid);
             applyto.getClient().sendPacket(BuffPacket.giveBuff(skill ? sourceid : -sourceid, localDuration, maskedStatups == null ? localstatups : maskedStatups));
         }
 
@@ -1341,7 +1342,7 @@ public class MapleStatEffect implements Serializable {
                 return;
             }
             if (!applyto.skillisCooling(this.sourceid)) {
-                applyto.getClient().sendPacket(MaplePacketCreator.skillCooldown(this.sourceid, cooldown));
+//                applyto.getClient().sendPacket(MaplePacketCreator.skillCooldown(this.sourceid, cooldown));
                 applyto.addCooldown(this.sourceid, startTime, cooldown * 1000);
             }
         }
