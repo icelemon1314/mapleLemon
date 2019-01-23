@@ -130,7 +130,7 @@ public class MapleMount implements Serializable {
     public void update() {
         MapleCharacter chr = this.owner.get();
         if (chr != null) {
-            chr.getMap().broadcastMessage(MaplePacketCreator.updateMount(chr, false));
+//            chr.getMap().broadcastMessage(MaplePacketCreator.updateMount(chr, false));
         }
     }
 }

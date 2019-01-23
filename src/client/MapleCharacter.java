@@ -29,12 +29,9 @@ import handling.world.PlayerBuffStorage;
 import handling.world.PlayerBuffValueHolder;
 import handling.world.World;
 import handling.world.WorldBroadcastService;
-import handling.world.WorldGuildService;
 import handling.world.WorldMessengerService;
 import handling.world.WorldSidekickService;
 import handling.world.WrodlPartyService;
-import handling.world.guild.MapleGuild;
-import handling.world.guild.MapleGuildCharacter;
 import handling.world.messenger.MapleMessenger;
 import handling.world.messenger.MapleMessengerCharacter;
 import handling.world.messenger.MessengerRankingWorker;
@@ -123,7 +120,6 @@ import tools.packet.MTSCSPacket;
 import tools.packet.MobPacket;
 import tools.packet.PartyPacket;
 import tools.packet.PetPacket;
-import tools.packet.PlayerShopPacket;
 import tools.packet.SkillPacket;
 import tools.packet.SummonPacket;
 import tools.packet.UIPacket;
@@ -239,7 +235,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private boolean followon;
     private boolean smega;
     private boolean hasSummon;
-    private MapleGuildCharacter mgc;
     private transient EventInstanceManager eventInstance;
     private MapleInventory[] inventory;
     private Battler[] battlers = new Battler[6];
@@ -580,9 +575,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.runningDarkSlot = ct.runningDarkSlot;
         ret.runningLight = ct.runningLight;
         ret.runningLightSlot = ct.runningLightSlot;
-        if (ret.guildid > 0) {
-            ret.mgc = new MapleGuildCharacter(ret);
-        }
         ret.fatigue = ct.fatigue;
         ret.buddylist = new BuddyList(ct.buddysize);
         ret.subcategory = ct.subcategory;
@@ -743,9 +735,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ret.totalLosses = rs.getInt("totalLosses");
             ret.currentrep = rs.getInt("currentrep");
             ret.totalrep = rs.getInt("totalrep");
-            if (ret.guildid > 0 && client != null) {
-                ret.mgc = new MapleGuildCharacter(ret);
-            }
             ret.gachexp = rs.getInt("gachexp");
             ret.buddylist = new BuddyList(rs.getByte("buddyCapacity"));
             ret.subcategory = rs.getByte("subcategory");
@@ -3004,7 +2993,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             this.map.broadcastMessage(this, MaplePacketCreator.showForeignEffect(getId(), 0x0D), false);
             this.map.broadcastMessage(this, MaplePacketCreator.updateCharLook(this), false);
             silentPartyUpdate();
-            guildUpdate();
             sidekickUpdate();
             baseSkills();
         } catch (Exception e) {
@@ -4251,7 +4239,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             map.broadcastMessage(this, MaplePacketCreator.showForeignEffect(getId(), 0), false);
             stats.recalcLocalStats(this);
             silentPartyUpdate();
-            guildUpdate();
             sidekickUpdate();
             checkNewQuest();
         } catch (Exception e) {
@@ -4703,55 +4690,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return this.guildContribution;
     }
 
-    public void setGuildId(int newGuildId) {
-        this.guildid = newGuildId;
-        if (this.guildid > 0) {
-            if (this.mgc == null) {
-                this.mgc = new MapleGuildCharacter(this);
-            } else {
-                this.mgc.setGuildId(this.guildid);
-            }
-        } else {
-            this.mgc = null;
-            this.guildContribution = 0;
-        }
-    }
-
-    public void setGuildRank(byte newRank) {
-        this.guildrank = newRank;
-        if (this.mgc != null) {
-            this.mgc.setGuildRank(newRank);
-        }
-    }
-
-    public void setGuildContribution(int newContribution) {
-        this.guildContribution = newContribution;
-        if (this.mgc != null) {
-            this.mgc.setGuildContribution(newContribution);
-        }
-    }
-
-    public MapleGuildCharacter getMGC() {
-        return this.mgc;
-    }
-
-    public void setAllianceRank(byte newRank) {
-        this.allianceRank = newRank;
-        if (this.mgc != null) {
-            this.mgc.setAllianceRank(newRank);
-        }
-    }
 
     public byte getAllianceRank() {
         return this.allianceRank;
     }
 
-    public MapleGuild getGuild() {
-        if (getGuildId() <= 0) {
-            return null;
-        }
-        return WorldGuildService.getInstance().getGuild(getGuildId());
-    }
 
     public void setJob(int jobId) {
         this.job = (short) jobId;
@@ -4765,19 +4708,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (!MapleSidekick.checkLevels(getLevel(), this.sidekick.getCharacter(this.sidekick.getCharacter(0).getId() == getId() ? 1 : 0).getLevel())) {
             this.sidekick.eraseToDB();
         }
-    }
-
-    public void guildUpdate() {
-        if (this.guildid <= 0) {
-            return;
-        }
-        this.mgc.setLevel(this.level);
-        this.mgc.setJobId(this.job);
-        WorldGuildService.getInstance().memberLevelJobUpdate(this.mgc);
-    }
-
-    public void saveGuildStatus() {
-        MapleGuild.setOfflineGuildStatus(this.guildid, this.guildrank, this.guildContribution, this.allianceRank, this.id);
     }
 
     public void modifyCSPoints(int type, int quantity) {
@@ -5277,7 +5207,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (type == -1) {
             this.client.sendPacket(MaplePacketCreator.serverMessageTop(message));
         } else if (type == -2) {
-            this.client.sendPacket(PlayerShopPacket.shopChat(message, 0));
+//            this.client.sendPacket(PlayerShopPacket.shopChat(message, 0));
         } else if (type == -3) {
             this.client.sendPacket(MaplePacketCreator.getChatText(getId(), message, isSuperGM(), 0));
         } else if (type == -4) {
@@ -5287,9 +5217,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         } else if (type == -6) {
 //            this.client.sendPacket(MaplePacketCreator.spouseMessage(message, true));
         } else if (type == -7) {
-            this.client.sendPacket(UIPacket.getMidMsg(message, false, 0));
+//            this.client.sendPacket(UIPacket.getMidMsg(message, false, 0));
         } else if (type == -8) {
-            this.client.sendPacket(UIPacket.getMidMsg(message, true, 0));
+//            this.client.sendPacket(UIPacket.getMidMsg(message, true, 0));
         } else if (type == -10) {
 //            this.client.sendPacket(MaplePacketCreator.getFollowMessage(message));
         } else if (type == -11) {
@@ -5663,9 +5593,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if ((this.fairyExp < this.stats.equippedFairy * 3) && (this.stats.equippedFairy > 0)) {
             this.fairyExp = (byte) (this.fairyExp + this.stats.equippedFairy);
             dropMessage(5, new StringBuilder().append("精灵吊坠经验获取增加到 ").append(this.fairyExp).append(" %.").toString());
-        }
-        if (getGuildId() > 0) {
-            WorldGuildService.getInstance().gainGP(getGuildId(), 20, this.id);
         }
         startFairySchedule(false, true);
     }
@@ -7251,16 +7178,16 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void dropTopMsg(String message) {
-        this.client.sendPacket(UIPacket.getTopMsg(message));
+//        this.client.sendPacket(UIPacket.getTopMsg(message));
     }
 
     public void dropMidMsg(String message) {
-        this.client.sendPacket(UIPacket.clearMidMsg());
-        this.client.sendPacket(UIPacket.getMidMsg(message, true, 0));
+//        this.client.sendPacket(UIPacket.clearMidMsg());
+//        this.client.sendPacket(UIPacket.getMidMsg(message, true, 0));
     }
 
     public void clearMidMsg() {
-        this.client.sendPacket(UIPacket.clearMidMsg());
+//        this.client.sendPacket(UIPacket.clearMidMsg());
     }
 
     public int getEventCount(String eventId) {

@@ -287,7 +287,7 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
                         for (AttackingMapleCharacter cattacker : mattacker.getAttackers()) {
                             if ((cattacker.getAttacker().getMap() == from.getMap())
                                     && (cattacker.getLastAttackTime() >= System.currentTimeMillis() - 4000L)) {
-                                cattacker.getAttacker().getClient().sendPacket(MobPacket.showMonsterHP(getObjectId(), getHPPercent()));
+//                                cattacker.getAttacker().getClient().sendPacket(MobPacket.showMonsterHP(getObjectId(), getHPPercent()));
                             }
                         }
                     }
@@ -300,10 +300,10 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
                 if (((MapleMonster) this.sponge.get()).hp > 0L) {
                     ((MapleMonster) this.sponge.get()).hp -= rDamage;
                     if (((MapleMonster) this.sponge.get()).hp <= 0L) {
-                        this.map.broadcastMessage(MobPacket.showBossHP((this.sponge.get()).getId(), -1L, ((MapleMonster) this.sponge.get()).getMobMaxHp()));
+//                        this.map.broadcastMessage(MobPacket.showBossHP((this.sponge.get()).getId(), -1L, ((MapleMonster) this.sponge.get()).getMobMaxHp()));
                         this.map.killMonster(this.sponge.get(), from, true, false, (byte) 1, lastSkill);
                     } else {
-                        this.map.broadcastMessage(MobPacket.showBossHP( this.sponge.get()));
+//                        this.map.broadcastMessage(MobPacket.showBossHP( this.sponge.get()));
                     }
                 }
             }
@@ -320,13 +320,13 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
                 if ((this.sponge.get() == null) && (this.hp > 0L)) {
                     switch (this.stats.getHPDisplayType()) {
                         case 0:
-                            this.map.broadcastMessage(MobPacket.showBossHP(this), getTruePosition());
+//                            this.map.broadcastMessage(MobPacket.showBossHP(this), getTruePosition());
                             break;
                         case 1:
                             this.map.broadcastMessage(from, MobPacket.damageFriendlyMob(this, damage, true), false);
                             break;
                         case 2:
-                            this.map.broadcastMessage(MobPacket.showMonsterHP(getObjectId(), getHPPercent()));
+//                            this.map.broadcastMessage(MobPacket.showMonsterHP(getObjectId(), getHPPercent()));
                             break;
                         case 3:
                             for (AttackerEntry mattacker : getAttackers()) {
@@ -334,7 +334,7 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
                                     for (AttackingMapleCharacter cattacker : mattacker.getAttackers()) {
                                         if ((cattacker != null) && (cattacker.getAttacker().getMap() == from.getMap())
                                                 && (cattacker.getLastAttackTime() >= System.currentTimeMillis() - 4000L)) {
-                                            cattacker.getAttacker().getClient().sendPacket(MobPacket.showMonsterHP(getObjectId(), getHPPercent()));
+//                                            cattacker.getAttacker().getClient().sendPacket(MobPacket.showMonsterHP(getObjectId(), getHPPercent()));
                                         }
                                     }
                                 }
@@ -345,7 +345,7 @@ public final class MapleMonster extends AbstractLoadedMapleLife {
 
                 if (this.hp <= 0L) {
                     if (this.stats.getHPDisplayType() == 0) {
-                        this.map.broadcastMessage(MobPacket.showBossHP(getId(), -1L, getMobMaxHp()), getTruePosition());
+//                        this.map.broadcastMessage(MobPacket.showBossHP(getId(), -1L, getMobMaxHp()), getTruePosition());
                     }
                     this.map.killMonster(this, from, true, false, (byte) 1, lastSkill);
                 }

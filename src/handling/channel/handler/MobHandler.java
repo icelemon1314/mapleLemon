@@ -140,13 +140,6 @@ public final class MobHandler {
         }
     }
 
-    public static void DisplayNode(SeekableLittleEndianAccessor slea, MapleCharacter chr) {
-        MapleMonster mob_from = chr.getMap().getMonsterByOid(slea.readInt());
-        if (mob_from != null) {
-            chr.getClient().sendPacket(MobPacket.getNodeProperties(mob_from, chr.getMap()));
-        }
-    }
-
     public static void MobNode(SeekableLittleEndianAccessor slea, MapleCharacter chr) {
         MapleMonster mob_from = chr.getMap().getMonsterByOid(slea.readInt());
         int newNode = slea.readInt();

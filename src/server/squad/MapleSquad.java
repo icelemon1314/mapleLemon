@@ -94,7 +94,7 @@ public class MapleSquad {
 
     public void clear() {
         if (this.removal != null) {
-            getBeginMap().broadcastMessage(MaplePacketCreator.stopClock());
+//            getBeginMap().broadcastMessage(MaplePacketCreator.stopClock());
             this.removal.cancel(false);
             this.removal = null;
         }

@@ -69,7 +69,6 @@ import tools.packet.InventoryPacket;
 import tools.packet.MTSCSPacket;
 import tools.packet.MobPacket;
 import tools.packet.NPCPacket;
-import tools.packet.PlayerShopPacket;
 
 public class InventoryHandler {
 
@@ -267,15 +266,12 @@ public class InventoryHandler {
         MapleMap map = chr.getMap();
         if ((toUse != null) && (toUse.getQuantity() > 0) && (toUse.getItemId() == itemid) && (mob != null) && (!chr.hasBlockedInventory()) && (itemid / 10000 == 227)) {
             if ((!MapleItemInformationProvider.getInstance().isMobHP(itemid)) || (mob.getHp() <= mob.getMobMaxHp() / 2L)) {
-                map.broadcastMessage(MobPacket.catchMonster(mob.getObjectId(), itemid, (byte) 1));
                 map.killMonster(mob, chr, true, false, (byte) 1);
                 MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, (short) slot, (byte) 1, false, false);
                 if (MapleItemInformationProvider.getInstance().getCreateId(itemid) > 0) {
                     MapleInventoryManipulator.addById(c, MapleItemInformationProvider.getInstance().getCreateId(itemid), (short) 1, "Catch item " + itemid + " on " + System.currentTimeMillis());
                 }
             } else {
-                map.broadcastMessage(MobPacket.catchMonster(mob.getObjectId(), itemid, (byte) 0));
-                c.sendPacket(MobPacket.catchMob(mob.getId(), itemid, (byte) 0));
             }
         }
         c.sendPacket(MaplePacketCreator.enableActions());

@@ -5,7 +5,6 @@ import handling.cashshop.CashShopServer;
 import handling.channel.ChannelServer;
 import handling.login.LoginServer;
 import handling.world.WorldBroadcastService;
-import handling.world.WorldGuildService;
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 import javax.management.InstanceAlreadyExistsException;
@@ -50,7 +49,6 @@ public class ShutdownServer implements ShutdownServerMBean {
                 cs.setShutdown();
                 cs.closeAllMerchants();
             }
-            WorldGuildService.getInstance().save();
             MapleLogger.info("所有档案已保存.");
             this.mode++;
         } else if (this.mode == 1) {

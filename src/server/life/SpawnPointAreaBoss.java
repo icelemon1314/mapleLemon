@@ -103,7 +103,7 @@ public class SpawnPointAreaBoss extends Spawns {
 
         if (this.msg != null) {
             if (this.sendWorldMsg) {
-                WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.spouseMessage(20, "[系统提示] " + this.msg));
+//                WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.spouseMessage(20, "[系统提示] " + this.msg));
             } else {
                 map.broadcastMessage(MaplePacketCreator.serverMessageNotice(this.msg));
             }

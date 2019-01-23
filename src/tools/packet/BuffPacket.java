@@ -165,21 +165,6 @@ public class BuffPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] updateLuminousGauge(MapleCharacter chr) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.LUMINOUS_COMBO.getValue());
-        mplew.writeInt(chr.getDarkTotal());
-        mplew.writeInt(chr.getLightTotal());
-        mplew.writeInt(chr.getDarkType());
-        mplew.writeInt(chr.getLightType());
-        mplew.write(new byte[]{79, 23, -106, -113});
-
-        return mplew.getPacket();
-    }
-
-
-
     public static byte[] startPower(boolean start, int time) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 

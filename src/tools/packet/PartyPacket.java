@@ -78,16 +78,6 @@ public class PartyPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] partyStatusMessage(String message) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SPOUSE_MESSAGE.getValue());
-        mplew.writeShort(11);
-        mplew.writeMapleAsciiString(message);
-
-        return mplew.getPacket();
-    }
-
     private static void addPartyStatus(int forchannel, MapleParty party, MaplePacketLittleEndianWriter mplew, boolean leaving) {
         addPartyStatus(forchannel, party, mplew, leaving, false);
     }
@@ -290,118 +280,6 @@ public class PartyPacket {
         mplew.writeInt(ps.getType().id);
         mplew.writeInt(ps.getId());
         mplew.writeInt(2);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] showMemberSearch(List<MapleCharacter> players) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.write(SendPacketOpcode.MEMBER_SEARCH.getValue());
-        mplew.write(players.size());
-        for (MapleCharacter chr : players) {
-            mplew.writeInt(chr.getId());
-            mplew.writeMapleAsciiString(chr.getName());
-            mplew.writeInt(chr.getJob());
-            mplew.write(chr.getLevel());
-        }
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] showPartySearch(List<MapleParty> partylist) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.write(SendPacketOpcode.PARTY_SEARCH.getValue());
-        mplew.write(partylist.size());
-        for (MapleParty party : partylist) {
-            mplew.writeInt(party.getId());
-            mplew.writeMapleAsciiString(party.getLeader().getName());
-            mplew.write(party.getLeader().getLevel());
-            mplew.write(party.getLeader().isOnline() ? 1 : 0);
-            mplew.writeMapleAsciiString(new String[]{party.getName(), null, null, null});
-            mplew.write(party.getMembers().size());
-            for (MaplePartyCharacter partyChr : party.getMembers()) {
-                mplew.writeInt(partyChr.getId());
-                mplew.writeMapleAsciiString(partyChr.getName());
-                mplew.writeInt(partyChr.getJobId());
-                mplew.write(partyChr.getLevel());
-                mplew.write(partyChr.isOnline() ? 1 : 0);
-            }
-        }
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] sidekickInvite(MapleCharacter from) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SIDEKICK_OPERATION.getValue());
-        mplew.write(65);
-        mplew.writeInt(from.getId());
-        mplew.writeMapleAsciiString(from.getName());
-        mplew.writeInt(from.getLevel());
-        mplew.writeInt(from.getJob());
-        mplew.writeInt(0);
-        mplew.write(0);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] disbandSidekick(MapleSidekick s) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SIDEKICK_OPERATION.getValue());
-        mplew.write(75);
-        mplew.writeInt(s.getId());
-        mplew.writeInt(s.getCharacter(0).getId());
-        mplew.write(0);
-        mplew.writeInt(s.getCharacter(1).getId());
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] updateSidekick(MapleCharacter first, MapleSidekick s, boolean f) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.SIDEKICK_OPERATION.getValue());
-        mplew.write(f ? 0x4E : 0x46);
-        MapleSidekickCharacter second = s.getCharacter(s.getCharacter(0).getId() == first.getId() ? 1 : 0);
-        boolean online = first.getMap().getCharacterById(second.getId()) != null;
-        mplew.writeInt(s.getId());
-        if (f) {
-            mplew.writeMapleAsciiString(second.getName());
-        }
-        List<String> msg = s.getSidekickMsg(online);
-        mplew.writeInt(msg.size());
-        for (String m : msg) {
-            mplew.writeMapleAsciiString(m);
-        }
-        mplew.writeInt(first.getId());
-        mplew.writeInt(second.getId());
-        mplew.writeAsciiString(first.getName(), 13);
-        mplew.writeAsciiString(second.getName(), 13);
-        mplew.writeInt(first.getJob());
-        mplew.writeInt(second.getJobId());
-        mplew.writeInt(first.getLevel());
-        mplew.writeInt(second.getLevel());
-        mplew.writeInt(first.getClient().getChannel() - 1);
-        mplew.writeInt(online ? first.getClient().getChannel() - 1 : 0);
-        mplew.writeLong(0L);
-        mplew.writeInt(first.getId());
-        if (f) {
-            mplew.writeInt(first.getId());
-        }
-        mplew.writeInt(second.getId());
-        if (!f) {
-            mplew.writeInt(first.getId());
-        }
-        mplew.writeInt(first.getMapId());
-        mplew.writeInt(online ? first.getMapId() : 999999999);
-        mplew.writeInt(1);
-        mplew.write(Math.abs(first.getLevel() - second.getLevel()));
-        mplew.writeInt(0);
-        mplew.writeInt(0);
-        mplew.writeInt(2147483647);
-        mplew.writeInt(1);
 
         return mplew.getPacket();
     }

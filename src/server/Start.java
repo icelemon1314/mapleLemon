@@ -6,6 +6,7 @@ import constants.GameConstants;
 import constants.ServerConstants;
 import constants.WorldConstants;
 import database.DatabaseConnection;
+import database.entity.Accounts;
 import handling.MaplePacketHandler;
 import handling.RecvPacketOpcode;
 import handling.cashshop.CashShopServer;
@@ -37,6 +38,11 @@ import server.quest.MapleQuest;
 
 import tools.MapleLogger;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+
 public class Start {
 
     public static final Start instance = new Start();
@@ -47,6 +53,24 @@ public class Start {
 
     public Start() {
         this.ivCheck = false;
+    }
+
+    public void test() {
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("MapleLemonJPA");
+        EntityManager manager = factory.createEntityManager();
+        EntityTransaction transaction = manager.getTransaction();
+        transaction.begin();
+
+        Accounts account = manager.find(Accounts.class, 1);
+        System.out.println(account);
+
+        account.setPoints(100000);
+
+        // 5.提交事务，关闭资源
+        transaction.commit();
+        manager.close();
+        factory.close();
+        return ;
     }
 
     public void run() throws InterruptedException {
@@ -200,7 +224,8 @@ public class Start {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        instance.run();
+//        instance.run();
+        instance.test();
     }
 
     public int getRankTime() {

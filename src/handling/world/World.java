@@ -24,7 +24,6 @@ public class World {
         WrodlPartyService.getInstance();
         WorldSidekickService.getInstance();
         WorldBuddyService.getInstance();
-        WorldGuildService.getInstance();
         WorldMessengerService.getInstance();
 
     }

@@ -18,8 +18,6 @@ import constants.ItemConstants;
 import database.DatabaseConnection;
 import handling.channel.ChannelServer;
 import handling.world.WorldBroadcastService;
-import handling.world.WorldGuildService;
-import handling.world.guild.MapleGuild;
 import handling.world.party.MapleParty;
 import handling.world.party.MaplePartyCharacter;
 import java.awt.Point;
@@ -28,7 +26,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -39,7 +36,6 @@ import server.MapleCarnivalChallenge;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.Randomizer;
-import server.StructItemOption;
 import server.events.MapleEvent;
 import server.events.MapleEventType;
 import server.life.MapleLifeFactory;
@@ -705,24 +701,15 @@ public abstract class AbstractPlayerInteraction {
 
     public void guildMessage(int type, String message) {
         if (getPlayer().getGuildId() > 0) {
-            WorldGuildService.getInstance().guildPacket(getPlayer().getGuildId(), MaplePacketCreator.serverNotice(type, message));
         }
     }
 
     public void topMessage(String message) {
-        this.c.sendPacket(UIPacket.getTopMsg(message));
+//        this.c.sendPacket(UIPacket.getTopMsg(message));
     }
 
     public void topMsg(String message) {
         topMessage(message);
-    }
-
-    public MapleGuild getGuild() {
-        return getGuild(getPlayer().getGuildId());
-    }
-
-    public MapleGuild getGuild(int guildid) {
-        return WorldGuildService.getInstance().getGuild(guildid);
     }
 
     public MapleParty getParty() {
@@ -1170,19 +1157,19 @@ public abstract class AbstractPlayerInteraction {
         if (!this.c.getPlayer().hasSummon()) {
             playerSummonHint(true);
         }
-        this.c.sendPacket(UIPacket.summonMessage(msg));
+//        this.c.sendPacket(UIPacket.summonMessage(msg));
     }
 
     public void summonMsg(int type) {
         if (!this.c.getPlayer().hasSummon()) {
             playerSummonHint(true);
         }
-        this.c.sendPacket(UIPacket.summonMessage(type));
+//        this.c.sendPacket(UIPacket.summonMessage(type));
     }
 
     public void playerSummonHint(boolean summon) {
         this.c.getPlayer().setHasSummon(summon);
-        this.c.sendPacket(UIPacket.summonHelper(summon));
+//        this.c.sendPacket(UIPacket.summonHelper(summon));
     }
 
     public String getInfoQuest(int questId) {
@@ -1212,51 +1199,8 @@ public abstract class AbstractPlayerInteraction {
         c.sendPacket(UIPacket.ShowWZEffect(type, data));
     }
 
-    public final void EarnTitleMsg(String data) {
-        this.c.sendPacket(UIPacket.EarnTitleMsg(data));
-    }
-
-    public void showEffect(String effect) {
-//        this.c.sendPacket(MaplePacketCreator.showEffect(effect));
-    }
-
-    public void playSound(String sound) {
-//        this.c.sendPacket(MaplePacketCreator.playSound(sound));
-    }
-
     public void startMapEffect(String msg, int itemId) {
         this.c.getPlayer().getMap().startMapEffect(msg, itemId);
-    }
-
-    public void showMapEffect(String path) {
-        getClient().sendPacket(UIPacket.MapEff(path));
-    }
-
-    public void EnableUI(short i) {
-        this.c.sendPacket(UIPacket.IntroEnableUI(i));
-    }
-
-    public void DisableUI(boolean enabled) {
-        this.c.sendPacket(UIPacket.IntroDisableUI(enabled));
-    }
-
-    public void introDisableUI(boolean enabled) {
-        this.c.sendPacket(UIPacket.IntroDisableUI(enabled));
-    }
-
-    public void MovieClipIntroUI(boolean enabled) {
-        this.c.sendPacket(UIPacket.IntroDisableUI(enabled));
-        this.c.sendPacket(UIPacket.IntroLock(enabled));
-    }
-
-    public void lockUI() {
-        this.c.sendPacket(UIPacket.IntroDisableUI(true));
-        this.c.sendPacket(UIPacket.IntroLock(true));
-    }
-
-    public void unlockUI() {
-        this.c.sendPacket(UIPacket.IntroDisableUI(false));
-        this.c.sendPacket(UIPacket.IntroLock(false));
     }
 
     public MapleInventoryType getInvType(int i) {
@@ -1290,19 +1234,6 @@ public abstract class AbstractPlayerInteraction {
         MapleInventoryManipulator.removeFromSlot(this.c, getInvType(invType), (short) slot, quantity, true);
     }
 
-    public void gainGP(int gp) {
-        if (getPlayer().getGuildId() <= 0) {
-            return;
-        }
-        WorldGuildService.getInstance().gainGP(getPlayer().getGuildId(), gp);
-    }
-
-    public int getGP() {
-        if (getPlayer().getGuildId() <= 0) {
-            return 0;
-        }
-        return WorldGuildService.getInstance().getGP(getPlayer().getGuildId());
-    }
 
     public int itemQuantity(int itemId) {
         return getPlayer().itemQuantity(itemId);
@@ -1382,16 +1313,6 @@ public abstract class AbstractPlayerInteraction {
 
     public int randInt(int arg0) {
         return Randomizer.nextInt(arg0);
-    }
-
-    public void sendDirectionStatus(int key, int value) {
-        this.c.sendPacket(UIPacket.getDirectionInfo(key, value));
-        this.c.sendPacket(UIPacket.getDirectionStatus(true));
-    }
-
-    public void sendDirectionInfo(String data) {
-        this.c.sendPacket(UIPacket.getDirectionInfo(data, 2000, 0, -100, 0));
-        this.c.sendPacket(UIPacket.getDirectionInfo(1, 2000));
     }
 
     public int getPQLog(String pqName) {
@@ -1679,52 +1600,6 @@ public abstract class AbstractPlayerInteraction {
         c.sendPacket(NPCPacket.removeNPC(oid));
     }
 
-    public void sendDirectionFacialExpression(int expression, int duration) {
-        c.sendPacket(UIPacket.getDirectionFacialExpression(expression, duration));
-    }
-
-    public void introEnableUI(int wtf) {
-        c.sendPacket(UIPacket.IntroEnableUI(wtf));
-    }
-
-    public void getDirectionStatus(boolean enable) {
-        c.sendPacket(UIPacket.getDirectionStatus(enable));
-    }
-
-    public void playMovie(String data, boolean show) {
-        c.sendPacket(UIPacket.playMovie(data, show));
-    }
-
-    public void sendDirectionStatus(int key, int value, boolean direction) {
-        c.sendPacket(UIPacket.getDirectionInfo(key, value));
-        c.sendPacket(UIPacket.getDirectionStatus(direction));
-    }
-
-    public void getDirectionInfo(String data, int value, int x, int y, int a, int b) {
-        c.sendPacket(UIPacket.getDirectionInfo(data, value, x, y, a, b));
-    }
-
-    public void getDirectionInfo(byte type, int value) {
-        c.sendPacket(UIPacket.getDirectionInfo(type, value));
-    }
-
-    public void getDirectionInfoNew(byte type, int x, int y, int z) {
-        c.sendPacket(UIPacket.getDirectionInfoNew(type, x, y, z));
-    }
-
-    public void getDirectionInfoNew(byte type, int value) {
-        c.sendPacket(UIPacket.getDirectionInfoNew(type, value));
-    }
-
-    public void getDIRECTION_INFO(int value, int s, String data) {
-        c.sendPacket(UIPacket.getDIRECTION_INFO(data, value, s));
-    }
-
-    public void getDirectionEffect(String data, int value, int x, int y) {
-        c.sendPacket(UIPacket.getDirectionEffect(data, value, x, y));
-    }
-
-
     public void spawnPortal() {
         c.sendPacket(MaplePacketCreator.spawnPortal(999999999, 999999999, 0, null));
     }
@@ -1746,16 +1621,6 @@ public abstract class AbstractPlayerInteraction {
         npc.setObjectId(npcid);
         npcRequestController.put(new Pair(npcid, c), npc);
         c.sendPacket(NPCPacket.spawnNPCRequestController(npc, true));//isMiniMap
-    }
-
-    public void getNPCDirectionEffect(int npcid, String data, int value, int x, int y) {
-        final MapleNPC npc;
-        if (npcRequestController.containsKey(new Pair(npcid, c))) {
-            npc = npcRequestController.get(new Pair(npcid, c));
-        } else {
-            return;
-        }
-        c.sendPacket(UIPacket.getDirectionEffect(data, value, x, y, npc.getObjectId()));
     }
 
     public void removeNPCRequestController(int npcid) {
@@ -1812,10 +1677,6 @@ public abstract class AbstractPlayerInteraction {
         gainItem(Integer.valueOf(this.script), (byte) -1, false, 0L, -1, "", 0);
     }
 
-    public void sendUIWindow(final int type, final int npc) {
-        c.sendPacket(UIPacket.openUIOption(type, npc));
-    }
-
     public void deleteChrSkills() {
         Connection con = DatabaseConnection.getConnection();
         try {
@@ -1856,7 +1717,4 @@ public abstract class AbstractPlayerInteraction {
         return c.getPlayer().isAdmin();
     }
 
-    public void FreeTransfer() {
-        this.c.sendPacket(UIPacket.openUI(0xA7));
-    }
 }

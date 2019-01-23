@@ -70,7 +70,6 @@ public class MapleSidekick
                 ps.executeUpdate();
                 ps.close();
             }
-            broadcast(PartyPacket.disbandSidekick(this));
             WorldSidekickService.getInstance().eraseSidekick(this.id);
         } catch (SQLException se) {
             System.err.println("Error deleting sidekick" + se);

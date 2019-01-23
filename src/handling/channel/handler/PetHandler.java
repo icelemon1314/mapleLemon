@@ -159,7 +159,7 @@ public class PetHandler {
                 pet.setCanPickup(data > 0);
                 chr.getClient().sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
             }
-        c.sendPacket(PetPacket.showPetPickUpMsg(data > 0, 1));
+//        c.sendPacket(PetPacket.showPetPickUpMsg(data > 0, 1));
     }
 
     public static void AllowPetAutoEat(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
@@ -170,6 +170,6 @@ public class PetHandler {
         slea.skip(4);
         slea.skip(4);
         boolean data = slea.readByte() > 0;
-        c.sendPacket(PetPacket.showPetAutoEatMsg());
+//        c.sendPacket(PetPacket.showPetAutoEatMsg());
     }
 }

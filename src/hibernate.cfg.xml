@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+
+    <session-factory>
+        <!--数据源信息 for Druid-->
+        <property name="driverClassName">com.mysql.cj.jdbc.Driver</property>
+        <property name="url">jdbc:mysql:///hibernate?useSSL=false</property>
+        <property name="username">root</property>
+        <property name="password">root</property>
+        <property name="filter">stat,log4j</property>
+        <property name="initialSize">5</property>
+        <property name="maxActive">100</property>
+        <property name="maxWait">60000</property>
+        <property name="timeBetweenEvictionRunsMillis">60000</property>
+        <property name="minEvictableIdleTimeMillis">300000</property>
+        <property name="validationQuery">SELECT 1</property>
+        <property name="testWhileIdle">true</property>
+        <property name="testOnBorrow">false</property>
+        <property name="testOnReturn">false</property>
+        <property name="poolPreparedStatements">false</property>
+        <property name="maxPoolPreparedStatementPerConnectionSize">200</property>
+        <!--end-->
+
+        <property name="dialect">
+            org.hibernate.dialect.MySQL57Dialect
+        </property>
+
+        <property name="hbm2ddl.auto">update</property>
+        <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
+        <!-- #hibernate.connection.provider_class org.hibernate.connection.C3P0ConnectionProvider -->
+        <property name="hibernate.connection.provider_class">
+            <!--org.hibernate.connection.C3P0ConnectionProvider-->
+            com.alibaba.druid.support.hibernate.DruidConnectionProvider
+        </property>
+
+        <property name="hibernate.current_session_context_class">thread</property>
+        <mapping class="database.entity.Accounts" />
+
+    </session-factory>
+</hibernate-configuration>

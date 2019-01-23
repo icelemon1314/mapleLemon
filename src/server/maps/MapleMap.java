@@ -765,17 +765,17 @@ public final class MapleMap {
                 case 2:
                 case 3:
                 case 4:
-                    chr.getClient().sendPacket(UIPacket.MapEff("monsterPark/clear"));
+//                    chr.getClient().sendPacket(UIPacket.MapEff("monsterPark/clear"));
                     break;
                 case 5:
                     if (chr.getMapId() / 1000000 == 952) {
-                        chr.getClient().sendPacket(UIPacket.MapEff("monsterPark/clearF"));
+//                        chr.getClient().sendPacket(UIPacket.MapEff("monsterPark/clearF"));
                     } else {
-                        chr.getClient().sendPacket(UIPacket.MapEff("monsterPark/clear"));
+//                        chr.getClient().sendPacket(UIPacket.MapEff("monsterPark/clear"));
                     }
                     break;
                 case 6:
-                    chr.getClient().sendPacket(UIPacket.MapEff("monsterPark/clearF"));
+//                    chr.getClient().sendPacket(UIPacket.MapEff("monsterPark/clearF"));
             }
         } else if ((mobid / 100000 == 93) && (chr.getMapId() / 1000000 == 955) && (getAllMonstersThreadsafe().isEmpty())) {
             switch (chr.getMapId() % 1000 / 100) {

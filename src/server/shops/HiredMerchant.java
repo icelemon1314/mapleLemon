@@ -16,7 +16,6 @@ import server.maps.MapleMapObjectType;
 
 import tools.MapleLogger;
 import tools.MaplePacketCreator;
-import tools.packet.PlayerShopPacket;
 
 public class HiredMerchant extends AbstractPlayerStore {
 
@@ -113,7 +112,6 @@ public class HiredMerchant extends AbstractPlayerStore {
         }
         if (remove) {
             ChannelServer.getInstance(this.channel).removeMerchant(this);
-            getMap().broadcastMessage(PlayerShopPacket.destroyHiredMerchant(getOwnerId()));
         }
         getMap().removeMapObject(this);
         this.schedule = null;
@@ -155,14 +153,12 @@ public class HiredMerchant extends AbstractPlayerStore {
     @Override
     public void sendDestroyData(MapleClient client) {
         if (isAvailable()) {
-            client.sendPacket(PlayerShopPacket.destroyHiredMerchant(getOwnerId()));
         }
     }
 
     @Override
     public void sendSpawnData(MapleClient client) {
         if (isAvailable()) {
-            client.sendPacket(PlayerShopPacket.spawnHiredMerchant(this));
         }
     }
 
@@ -178,11 +174,4 @@ public class HiredMerchant extends AbstractPlayerStore {
         this.blacklist.remove(bl);
     }
 
-    public void sendBlackList(MapleClient c) {
-        c.sendPacket(PlayerShopPacket.MerchantBlackListView(this.blacklist));
-    }
-
-    public void sendVisitor(MapleClient c) {
-        c.sendPacket(PlayerShopPacket.MerchantVisitorView(this.visitorsList));
-    }
 }

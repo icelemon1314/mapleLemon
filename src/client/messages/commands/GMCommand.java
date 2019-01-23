@@ -583,7 +583,6 @@ public class GMCommand {
                         c.getPlayer().dropMessage(5, "未找到");
                         return 0;
                     }
-                    mch.disease(type, CommandProcessorUtil.getOptionalIntArg(splitted, 2, 1));
                 }
             }
             return 1;
@@ -646,7 +645,6 @@ public class GMCommand {
                 c.getPlayer().dropMessage(5, "未找到");
                 return 0;
             }
-            victim.disease(type, CommandProcessorUtil.getOptionalIntArg(splitted, 3, 1));
             return 1;
         }
     }
@@ -887,47 +885,6 @@ public class GMCommand {
             }
             return 1;
         }
-    }
-
-    public static class 黄字事项 extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            if (splitted.length < 2) {
-                c.getPlayer().dropMessage(6, splitted[0] + " (对象:默认w) <内容>");
-                c.getPlayer().dropMessage(6, splitted[0] + "对象:地图所有人 - m/频道所有人 - c/服务器所有人 - w");
-                return 0;
-            }
-            int range = -1;
-            switch (splitted[1]) {
-                case "m":
-                    range = 0;
-                    break;
-                case "c":
-                    range = 1;
-                    break;
-                case "w":
-                    range = 2;
-                    break;
-            }
-            int tfrom = 2;
-            if (range == -1) {
-                range = 2;
-                tfrom = 1;
-            }
-            byte[] packet = MaplePacketCreator.yellowChat((splitted[0].equals("!带名黄字事项") ? ("[" + c.getPlayer().getName() + "] ") : "") + StringUtil.joinStringFrom(splitted, tfrom));
-            if (range == 0) {
-                c.getPlayer().getMap().broadcastMessage(packet);
-            } else if (range == 1) {
-                ChannelServer.getInstance(c.getChannel()).broadcastPacket(packet);
-            } else if (range == 2) {
-                WorldBroadcastService.getInstance().broadcastMessage(packet);
-            }
-            return 1;
-        }
-    }
-
-    public static class 带名黄字事项 extends 黄字事项 {
     }
 
     public static class 我的IP extends CommandExecute {

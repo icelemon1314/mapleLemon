@@ -40,8 +40,8 @@ public class MapleTVEffect {
         setActive(isActive);
         if (isActive) {
             int delay = getDelayTime(this.type);
-            WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.enableTV());
-            WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.sendTV(this.user, this.message, this.type <= 2 ? this.type : this.type - 3, this.partner, delay));
+//            WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.enableTV());
+//            WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.sendTV(this.user, this.message, this.type <= 2 ? this.type : this.type - 3, this.partner, delay));
 
             WorldTimer.getInstance().schedule(new Runnable() {
                 @Override
@@ -50,7 +50,7 @@ public class MapleTVEffect {
                 }
             }, delay * 1000);
         } else {
-            WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.removeTV());
+//            WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.removeTV());
         }
     }
 

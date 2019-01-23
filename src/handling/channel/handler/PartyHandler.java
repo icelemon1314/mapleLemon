@@ -310,51 +310,6 @@ public class PartyHandler {
         }
     }
 
-    public static void DenySidekickRequest(SeekableLittleEndianAccessor slea, MapleClient c) {
-        int action = slea.readByte();
-        int cid = slea.readInt();
-        if ((c.getPlayer().getSidekick() == null) && (action == 90)) {
-            MapleCharacter party = c.getPlayer().getMap().getCharacterById(cid);
-            if (party != null) {
-                if ((party.getSidekick() != null) || (!MapleSidekick.checkLevels(c.getPlayer().getLevel(), party.getLevel()))) {
-                    return;
-                }
-                int sid = WorldSidekickService.getInstance().createSidekick(c.getPlayer().getId(), party.getId());
-                if (sid <= 0) {
-                    c.getPlayer().dropMessage(5, "Please try again.");
-                } else {
-                    MapleSidekick s = WorldSidekickService.getInstance().getSidekick(sid);
-                    c.getPlayer().setSidekick(s);
-                    c.sendPacket(PartyPacket.updateSidekick(c.getPlayer(), s, true));
-                    party.setSidekick(s);
-                    party.getClient().sendPacket(PartyPacket.updateSidekick(party, s, true));
-                }
-            } else {
-                c.getPlayer().dropMessage(5, "The sidekick you are trying to join does not exist");
-            }
-        }
-    }
-
-    public static void SidekickOperation(SeekableLittleEndianAccessor slea, MapleClient c) {
-        int operation = slea.readByte();
-        switch (operation) {
-            case 65:
-                if (c.getPlayer().getSidekick() != null) {
-                    break;
-                }
-                MapleCharacter other = c.getPlayer().getMap().getCharacterByName(slea.readMapleAsciiString());
-                if ((other.getSidekick() == null) && (MapleSidekick.checkLevels(c.getPlayer().getLevel(), other.getLevel()))) {
-                    other.getClient().sendPacket(PartyPacket.sidekickInvite(c.getPlayer()));
-                    c.getPlayer().dropMessage(1, new StringBuilder().append("You have sent the sidekick invite to ").append(other.getName()).append(".").toString());
-                }
-                break;
-            case 63:
-                if (c.getPlayer().getSidekick() == null) {
-                    break;
-                }
-                c.getPlayer().getSidekick().eraseToDB();
-        }
-    }
 
     public static void MemberSearch(SeekableLittleEndianAccessor slea, MapleClient c) {
         if ((c.getPlayer().isInBlockedMap()) || (FieldLimitType.VipRock.check(c.getPlayer().getMap().getFieldLimit()))) {
@@ -368,7 +323,7 @@ public class PartyHandler {
                 members.add(chr);
             }
         }
-        c.sendPacket(PartyPacket.showMemberSearch(members));
+//        c.sendPacket(PartyPacket.showMemberSearch(members));
     }
 
     public static void PartySearch(SeekableLittleEndianAccessor slea, MapleClient c) {
@@ -386,7 +341,7 @@ public class PartyHandler {
                 parties.add(chr.getParty());
             }
         }
-        c.sendPacket(PartyPacket.showPartySearch(parties));
+//        c.sendPacket(PartyPacket.showPartySearch(parties));
     }
 
 }

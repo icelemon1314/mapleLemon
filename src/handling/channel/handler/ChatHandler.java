@@ -10,7 +10,6 @@ import handling.world.World;
 import handling.world.WorldBroadcastService;
 import handling.world.WorldBuddyService;
 import handling.world.WorldFindService;
-import handling.world.WorldGuildService;
 import handling.world.WorldMessengerService;
 import handling.world.WrodlPartyService;
 import handling.world.messenger.MapleMessenger;
@@ -83,7 +82,6 @@ public class ChatHandler {
                 break;
             case 2:
                 if (chr.getGuildId() > 0) {
-                    WorldGuildService.getInstance().guildChat(chr.getGuildId(), chr.getName(), chr.getId(), chattext);
                 }
                 break;
             case 4:
@@ -127,7 +125,7 @@ public class ChatHandler {
                             }
                         } else {
                             c.getPlayer().setMessenger(messengerService.createMessenger(messengerPlayer, type, c.getPlayer().isIntern()));
-                            c.sendPacket(MessengerPacket.joinMessenger(255));
+//                            c.sendPacket(MessengerPacket.joinMessenger(255));
                         }
                     }
                 } else {
@@ -162,15 +160,15 @@ public class ChatHandler {
                 MapleCharacter target = c.getChannelServer().getPlayerStorage().getCharacterByName(input);
                 if (target != null) {
                     if ((!target.isIntern()) || (c.getPlayer().isIntern())) {
-                        c.sendPacket(MessengerPacket.messengerNote(input, 4, 1));
-                        target.getClient().sendPacket(MessengerPacket.messengerInvite(c.getPlayer().getName(), messenger.getId(), c.getChannel() - 1));
+//                        c.sendPacket(MessengerPacket.messengerNote(input, 4, 1));
+//                        target.getClient().sendPacket(MessengerPacket.messengerInvite(c.getPlayer().getName(), messenger.getId(), c.getChannel() - 1));
                     } else {
-                        c.sendPacket(MessengerPacket.messengerNote(input, 4, 1));
+//                        c.sendPacket(MessengerPacket.messengerNote(input, 4, 1));
                     }
                 } else if (World.isConnected(input)) {
                     messengerService.messengerInvite(c.getPlayer().getName(), messenger.getId(), input, c.getChannel(), c.getPlayer().isIntern());
                 } else {
-                    c.sendPacket(MessengerPacket.messengerNote(input, 4, 0));
+//                    c.sendPacket(MessengerPacket.messengerNote(input, 4, 0));
                 }
 
                 break;
@@ -181,7 +179,7 @@ public class ChatHandler {
                     if (target.getMessenger() == null) {
                         break;
                     }
-                    target.getClient().sendPacket(MessengerPacket.messengerNote(c.getPlayer().getName(), 5, 0));
+//                    target.getClient().sendPacket(MessengerPacket.messengerNote(c.getPlayer().getName(), 5, 0));
                 } else {
                     if (c.getPlayer().isIntern()) {
                         break;
@@ -218,17 +216,17 @@ public class ChatHandler {
                         case 0:
                             if (Math.abs(targetPlayer.getLove() + 1) <= 99999) {
                                 targetPlayer.addLove(1);
-                                targetPlayer.getClient().sendPacket(MessengerPacket.updateLove(targetPlayer.getLove()));
+//                                targetPlayer.getClient().sendPacket(MessengerPacket.updateLove(targetPlayer.getLove()));
                             }
                             c.getPlayer().hasGiveLove(targetPlayer);
-                            c.sendPacket(MessengerPacket.giveLoveResponse(0, c.getPlayer().getName(), targetPlayer.getName()));
-                            targetPlayer.getClient().sendPacket(MessengerPacket.giveLoveResponse(0, c.getPlayer().getName(), targetPlayer.getName()));
+//                            c.sendPacket(MessengerPacket.giveLoveResponse(0, c.getPlayer().getName(), targetPlayer.getName()));
+//                            targetPlayer.getClient().sendPacket(MessengerPacket.giveLoveResponse(0, c.getPlayer().getName(), targetPlayer.getName()));
                             break;
                         case 1:
-                            c.sendPacket(MessengerPacket.giveLoveResponse(1, c.getPlayer().getName(), targetPlayer.getName()));
+//                            c.sendPacket(MessengerPacket.giveLoveResponse(1, c.getPlayer().getName(), targetPlayer.getName()));
                             break;
                         case 2:
-                            c.sendPacket(MessengerPacket.giveLoveResponse(2, c.getPlayer().getName(), targetPlayer.getName()));
+//                            c.sendPacket(MessengerPacket.giveLoveResponse(2, c.getPlayer().getName(), targetPlayer.getName()));
                     }
                 }
 
@@ -241,10 +239,8 @@ public class ChatHandler {
                 MapleCharacter player = WorldFindService.getInstance().findCharacterByName(name);
                 if (player != null) {
                     if ((player.getMessenger() != null) && (player.getMessenger().getId() == messenger.getId())) {
-                        c.sendPacket(MessengerPacket.messengerPlayerInfo(player));
                     }
                 } else {
-                    c.sendPacket(MessengerPacket.messengerNote(name, 4, 0));
                 }
                 break;
             case 14:
@@ -335,7 +331,6 @@ public class ChatHandler {
         byte mode = slea.readByte();
         switch (mode) {
             case 7:
-                c.sendPacket(MessengerPacket.showLoveRank(7));
                 break;
             case 8:
         }

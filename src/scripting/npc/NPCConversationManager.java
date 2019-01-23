@@ -17,8 +17,6 @@ import handling.channel.handler.PlayersHandler;
 import handling.login.LoginInformationProvider;
 import handling.world.WorldBroadcastService;
 import handling.world.WorldFindService;
-import handling.world.WorldGuildService;
-import handling.world.guild.MapleGuild;
 import handling.world.party.ExpeditionType;
 import handling.world.party.MapleParty;
 import handling.world.party.MaplePartyCharacter;
@@ -60,10 +58,7 @@ import server.quest.MapleQuest;
 import server.shop.MapleShopFactory;
 import server.squad.MapleSquad;
 import tools.*;
-import tools.packet.GuildPacket;
 import tools.packet.NPCPacket;
-import tools.packet.PlayerShopPacket;
-import tools.packet.UIPacket;
 
 public class NPCConversationManager extends AbstractPlayerInteraction {
 
@@ -805,56 +800,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         getPlayer().getMap().resetReactors();
     }
 
-    public void genericGuildMessage(int code) {
-        this.c.sendPacket(GuildPacket.genericGuildMessage((byte) code));
-    }
-
-    public void disbandGuild() {
-        int gid = this.c.getPlayer().getGuildId();
-        if ((gid <= 0) || (this.c.getPlayer().getGuildRank() != 1)) {
-            return;
-        }
-        WorldGuildService.getInstance().disbandGuild(gid);
-    }
-
-    public void increaseGuildCapacity(boolean trueMax) {
-        increaseGuildCapacity(trueMax, 50000000);
-    }
-
-    public void increaseGuildCapacity(boolean trueMax, long meso) {
-        if ((this.c.getPlayer().getMeso() < meso) && (!trueMax)) {
-            this.c.sendPacket(MaplePacketCreator.serverMessageRedText(new StringBuilder().append("金币不足.要金币: ").append(meso).toString()));
-            return;
-        }
-        int gid = this.c.getPlayer().getGuildId();
-        if (gid <= 0) {
-            return;
-        }
-        if (WorldGuildService.getInstance().increaseGuildCapacity(gid, trueMax)) {
-            if (!trueMax) {
-                this.c.getPlayer().gainMeso(-meso, true, true);
-            } else {
-                gainGP(-25000);
-            }
-        } else if (!trueMax) {
-            sendNext("请检查家族成员是否到达上限. (最大人数: 100)");
-        } else {
-            sendNext("请检查家族成员是否到达上限, if you have the GP needed or if subtracting GP would decrease a guild level. (最大人数: 200)");
-        }
-    }
-
-    public void displayGuildRanks() {
-        displayGuildRanks(false);
-    }
-
-    public void displayGuildRanks(boolean show) {
-        this.c.sendPacket(GuildPacket.showGuildRanks(this.id, MapleGuildRanking.getInstance().getRank(), show));
-    }
-
-    public int getCreateGuildCost() {
-        return this.c.getChannelServer().getCreateGuildCost();
-    }
-
     public boolean removePlayerFromInstance() {
         if (this.c.getPlayer().getEventInstance() != null) {
             this.c.getPlayer().getEventInstance().removePlayer(this.c.getPlayer());
@@ -938,7 +883,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
     public void openMerchantItemStore() {
         this.c.getPlayer().setConversation(3);
-        this.c.sendPacket(PlayerShopPacket.merchItemStore((byte) 40));
     }
 
     public short getKegs() {
@@ -1160,33 +1104,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
                 }
             }
         }
-    }
-
-    public boolean addCapacityToAlliance() {
-        try {
-            MapleGuild guild = WorldGuildService.getInstance().getGuild(this.c.getPlayer().getGuildId());
-            if ((guild != null) && (this.c.getPlayer().getGuildRank() == 1) && (this.c.getPlayer().getAllianceRank() == 1)
-                   ) {
-                gainMeso(-10000000);
-                return true;
-            }
-        } catch (Exception re) {
-            MapleLogger.error("addCapacityToAlliance 错误", re);
-        }
-        return false;
-    }
-
-    public boolean disbandAlliance() {
-        try {
-            MapleGuild guild = WorldGuildService.getInstance().getGuild(this.c.getPlayer().getGuildId());
-            if ((guild != null) && (this.c.getPlayer().getGuildRank() == 1) && (this.c.getPlayer().getAllianceRank() == 1)
-                  ) {
-                return true;
-            }
-        } catch (Exception re) {
-            MapleLogger.error("disbandAlliance 错误", re);
-        }
-        return false;
     }
 
     public boolean hasSkill(int skillid) {
@@ -1802,10 +1719,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         c.getPlayer().changeMap(mapto, mapto.getPortal(0));
     }
 
-    public void directionEffect(String data, int value, int x, int y, int npc) {
-        c.sendPacket(UIPacket.getDirectionEffect(data, value, x, y, npc));
-    }
-
     /**
      * 是否为新手
      * @return
@@ -1815,19 +1728,4 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     }
 
     public boolean isMagician(){ return c.getPlayer().getJob() == MapleJob.魔法师.getId();}
-
-    @Override
-    public void getDirectionInfo(byte type, int value) {
-        super.getDirectionInfo(type, value);
-    }
-
-    @Override
-    public void getDirectionInfoNew(byte type, int value) {
-        super.getDirectionInfoNew(type, value);
-    }
-
-    @Override
-    public void playMovie(String data, boolean show) {
-        super.playMovie(data, show);
-    }
 }

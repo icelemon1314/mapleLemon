@@ -36,23 +36,15 @@ public class PetPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] showPetPickUpMsg(boolean canPickup, int pets) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.PET_PICKUP_MSG.getValue());
-        mplew.write(canPickup ? 1 : 0);
-        mplew.write(pets);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] showPetAutoEatMsg() {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.PET_AUTO_EAT_MSG.getValue());
-
-        return mplew.getPacket();
-    }
+//    public static byte[] showPetPickUpMsg(boolean canPickup, int pets) {
+//        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+//
+//        mplew.write(SendPacketOpcode.PET_PICKUP_MSG.getValue());
+//        mplew.write(canPickup ? 1 : 0);
+//        mplew.write(pets);
+//
+//        return mplew.getPacket();
+//    }
 
     public static byte[] showPet(MapleCharacter chr, MaplePet pet, boolean remove, boolean hunger) {
         return showPet(chr, pet, remove, hunger, false);
@@ -168,22 +160,6 @@ public class PetPacket {
         mplew.write(6);
         mplew.write(0);
         mplew.writeZero(3);
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] loadExceptionList(MapleCharacter chr, MaplePet pet) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.PET_EXCEPTION_LIST.getValue());
-        mplew.writeInt(chr.getId());
-        mplew.writeInt(0);
-        mplew.writeLong(pet.getUniqueId());
-        List excluded = pet.getExcluded();
-        mplew.write(excluded.size());
-        for (Object excluded1 : excluded) {
-            mplew.writeInt(((Integer) excluded1));
-        }
 
         return mplew.getPacket();
     }

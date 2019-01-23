@@ -7,7 +7,6 @@ import client.inventory.ItemFlag;
 import java.util.ArrayList;
 import java.util.List;
 import server.MapleInventoryManipulator;
-import tools.packet.PlayerShopPacket;
 
 public class MaplePlayerShop extends AbstractPlayerStore {
 
@@ -51,7 +50,6 @@ public class MaplePlayerShop extends AbstractPlayerStore {
                 c.getPlayer().dropMessage(1, "You do not have enough mesos.");
             }
 
-            getMCOwner().getClient().sendPacket(PlayerShopPacket.shopItemUpdate(this));
         }
     }
 
@@ -80,7 +78,6 @@ public class MaplePlayerShop extends AbstractPlayerStore {
         }
         owner.setPlayerShop(null);
         update();
-        getMCOwner().getClient().sendPacket(PlayerShopPacket.shopErrorMessage(10, 1));
     }
 
     public void banPlayer(String name) {
@@ -90,7 +87,6 @@ public class MaplePlayerShop extends AbstractPlayerStore {
         for (int i = 0; i < 3; i++) {
             MapleCharacter chr = getVisitor(i);
             if (chr.getName().equals(name)) {
-                chr.getClient().sendPacket(PlayerShopPacket.shopErrorMessage(5, 1));
                 chr.setPlayerShop(null);
                 removeVisitor(chr);
             }

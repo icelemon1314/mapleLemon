@@ -87,6 +87,7 @@ public enum SendPacketOpcode implements WritableIntValueHolder {
     MOVE_SUMMON(0x50),
     SUMMON_ATTACK(0x51),
     DAMAGE_SUMMON(0x52),
+    SUMMON_SKILL(0x53), // test code
     SPAWN_MONSTER(0x6F),
     KILL_MONSTER(0x70),
     SPAWN_MONSTER_CONTROL(0x71),

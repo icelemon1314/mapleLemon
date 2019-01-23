@@ -51,8 +51,8 @@ public class MapScriptMethods extends AbstractPlayerInteraction {
     }
 
     private void showIntro(MapleClient c, String data) {
-        c.sendPacket(UIPacket.IntroDisableUI(true));
-        c.sendPacket(UIPacket.IntroLock(true));
+//        c.sendPacket(UIPacket.IntroDisableUI(true));
+//        c.sendPacket(UIPacket.IntroLock(true));
         c.sendPacket(UIPacket.ShowWZEffect(data));
     }
 
@@ -67,14 +67,6 @@ public class MapScriptMethods extends AbstractPlayerInteraction {
             return;
         }
         c.getPlayer().getMap().startMapEffect(data, itemId);
-    }
-
-    public void sendMapNameDisplay(boolean enabled) {
-        if (enabled) {
-            this.c.sendPacket(UIPacket.IntroDisableUI(false));
-            this.c.sendPacket(UIPacket.IntroLock(false));
-        }
-        this.c.sendPacket(UIPacket.MapNameDisplay(this.c.getPlayer().getMapId()));
     }
 
     public void handlePinkBeanStart() {

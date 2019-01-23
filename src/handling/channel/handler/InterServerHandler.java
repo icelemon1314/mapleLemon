@@ -16,11 +16,9 @@ import handling.world.PlayerBuffStorage;
 import handling.world.World;
 import handling.world.WorldBuddyService;
 import handling.world.WorldFindService;
-import handling.world.WorldGuildService;
 import handling.world.WorldMessengerService;
 import handling.world.WorldSidekickService;
 import handling.world.WrodlPartyService;
-import handling.world.guild.MapleGuild;
 import handling.world.messenger.MapleMessenger;
 import handling.world.messenger.MapleMessengerCharacter;
 import handling.world.party.MapleExpedition;
@@ -35,7 +33,6 @@ import tools.MapleLogger;
 import tools.MaplePacketCreator;
 import tools.Triple;
 import tools.data.input.SeekableLittleEndianAccessor;
-import tools.packet.GuildPacket;
 import tools.packet.PartyPacket;
 
 public class InterServerHandler {
@@ -139,7 +136,6 @@ public class InterServerHandler {
                 player.setSidekick(WorldSidekickService.getInstance().getSidekickByChr(player.getId()));
             }
             if (player.getSidekick() != null) {
-                c.sendPacket(PartyPacket.updateSidekick(player, player.getSidekick(), false));
             }
             CharacterIdChannelPair[] onlineBuddies = WorldFindService.getInstance().multiBuddyFind(player.getId(), buddyIds);
             for (CharacterIdChannelPair onlineBuddy : onlineBuddies) {
@@ -151,20 +147,6 @@ public class InterServerHandler {
             if (messenger != null) {
                 WorldMessengerService.getInstance().silentJoinMessenger(messenger.getId(), new MapleMessengerCharacter(player));
                 WorldMessengerService.getInstance().updateMessenger(messenger.getId(), player.getName(), c.getChannel());
-            }
-            if (player.getGuildId() > 0) {
-                WorldGuildService.getInstance().setGuildMemberOnline(player.getMGC(), true, c.getChannel());
-                c.sendPacket(GuildPacket.showGuildInfo(player));
-                MapleGuild gs = WorldGuildService.getInstance().getGuild(player.getGuildId());
-                if (gs != null) {
-                    ///  List<byte[]> packetList = World.Alliance.getAllianceInfo(gs.getAllianceId(), true);
-
-                } else {
-                    player.setGuildId(0);
-                    player.setGuildRank((byte) 5);
-                    player.setAllianceRank((byte) 5);
-                    player.saveGuildStatus();
-                }
             }
             player.getClient().sendPacket(MaplePacketCreator.serverMessageTop("欢迎来到怀旧冒×岛，希望你能找到儿时的感觉，查看可用命令@help 如有bug可以加QQ群：479357604！dev by:icelemon1314"));
 //            player.showNote();

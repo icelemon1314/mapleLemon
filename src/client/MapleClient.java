@@ -10,11 +10,9 @@ import handling.login.LoginServer;
 import handling.world.PartyOperation;
 import handling.world.WorldBuddyService;
 import handling.world.WorldFindService;
-import handling.world.WorldGuildService;
 import handling.world.WorldMessengerService;
 import handling.world.WorldSidekickService;
 import handling.world.WrodlPartyService;
-import handling.world.guild.MapleGuildCharacter;
 import handling.world.messenger.MapleMessengerCharacter;
 import handling.world.party.MapleParty;
 import handling.world.party.MaplePartyCharacter;
@@ -672,7 +670,6 @@ public class MapleClient implements Serializable {
             BuddyList bl = player.getBuddylist();
             MaplePartyCharacter chrp = new MaplePartyCharacter(player);
             MapleMessengerCharacter chrm = new MapleMessengerCharacter(player);
-            MapleGuildCharacter chrg = player.getMGC();
             removalTask(shutdown);
             LoginServer.getLoginAuth(player.getId());
             player.saveToDB(true, fromCS);
@@ -719,9 +716,6 @@ public class MapleClient implements Serializable {
                             WorldBuddyService.getInstance().loggedOn(namez, idz, channel, bl.getBuddyIds());
                         }
                     }
-                    if ((gid > 0) && (chrg != null)) {
-                        WorldGuildService.getInstance().setGuildMemberOnline(chrg, false, -1);
-                    }
                 } catch (Exception e) {
                     MapleLogger.error(new StringBuilder().append(getLogMessage(this, "ERROR")).append(e).toString());
                 } finally {
@@ -745,9 +739,6 @@ public class MapleClient implements Serializable {
                         WorldBuddyService.getInstance().loggedOff(namez, idz, this.channel, bl.getBuddyIds());
                     } else {
                         WorldBuddyService.getInstance().loggedOn(namez, idz, this.channel, bl.getBuddyIds());
-                    }
-                    if ((gid > 0) && (chrg != null)) {
-                        WorldGuildService.getInstance().setGuildMemberOnline(chrg, false, -1);
                     }
                     if (player != null) {
                         player.setMessenger(null);
@@ -866,7 +857,6 @@ public class MapleClient implements Serializable {
                             ps.close();
                             return 1;
                         }
-                        WorldGuildService.getInstance().deleteGuildCharacter(rs.getInt("guildid"), cid);
                     }
                     MapleSidekick sidekick = WorldSidekickService.getInstance().getSidekickByChr(cid);
                     if (sidekick != null) {

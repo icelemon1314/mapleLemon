@@ -25,8 +25,6 @@ import constants.ServerConstants;
 import custom.LoadPacket;
 import handling.SendPacketOpcode;
 import handling.channel.handler.AttackInfo;
-import handling.world.WorldGuildService;
-import handling.world.guild.MapleGuild;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.EnumMap;
