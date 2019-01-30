@@ -202,40 +202,11 @@ public class ChatHandler {
                     WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverMessageNotice(new StringBuilder().append("[GM 信息] ").append(MapleCharacterUtil.makeMapleReadable(c.getPlayer().getName())).append("(Messenger: ").append(messenger.getMemberNamesDEBUG()).append(") said: ").append(chattext).toString()));
                 }
                 break;
-            case 9:
-                if (messenger == null) {
-                    break;
-                }
-                String name = slea.readMapleAsciiString();
-                if (!messenger.getType().random) {
-                    return;
-                }
-                MapleCharacter targetPlayer = WorldFindService.getInstance().findCharacterByName(name);
-                if ((targetPlayer != null) && (targetPlayer.getId() != c.getPlayer().getId()) && (targetPlayer.getMessenger() != null) && (targetPlayer.getMessenger().getId() == messenger.getId())) {
-                    switch (c.getPlayer().canGiveLove(targetPlayer)) {
-                        case 0:
-                            if (Math.abs(targetPlayer.getLove() + 1) <= 99999) {
-                                targetPlayer.addLove(1);
-//                                targetPlayer.getClient().sendPacket(MessengerPacket.updateLove(targetPlayer.getLove()));
-                            }
-                            c.getPlayer().hasGiveLove(targetPlayer);
-//                            c.sendPacket(MessengerPacket.giveLoveResponse(0, c.getPlayer().getName(), targetPlayer.getName()));
-//                            targetPlayer.getClient().sendPacket(MessengerPacket.giveLoveResponse(0, c.getPlayer().getName(), targetPlayer.getName()));
-                            break;
-                        case 1:
-//                            c.sendPacket(MessengerPacket.giveLoveResponse(1, c.getPlayer().getName(), targetPlayer.getName()));
-                            break;
-                        case 2:
-//                            c.sendPacket(MessengerPacket.giveLoveResponse(2, c.getPlayer().getName(), targetPlayer.getName()));
-                    }
-                }
-
-                break;
             case 11:
                 if (messenger == null) {
                     break;
                 }
-                name = slea.readMapleAsciiString();
+                String name = slea.readMapleAsciiString();
                 MapleCharacter player = WorldFindService.getInstance().findCharacterByName(name);
                 if (player != null) {
                     if ((player.getMessenger() != null) && (player.getMessenger().getId() == messenger.getId())) {

@@ -12,7 +12,6 @@ import constants.BattleConstants.PokedexEntry;
 import constants.GameConstants;
 import database.DatabaseConnection;
 import handling.channel.ChannelServer;
-import handling.channel.MapleGuildRanking;
 import handling.channel.handler.PlayersHandler;
 import handling.login.LoginInformationProvider;
 import handling.world.WorldBroadcastService;
@@ -1407,40 +1406,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return sb.toString();
     }
 
-    public Triple<Integer, Integer, Integer> getCompensation() {
-        Triple ret = null;
-        try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM compensationlog_confirmed WHERE chrname LIKE ?")) {
-                ps.setString(1, getPlayer().getName());
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        ret = new Triple(rs.getInt("value"), rs.getInt("taken"), rs.getInt("donor"));
-                    }
-                }
-                ps.close();
-            }
-            return ret;
-        } catch (SQLException e) {
-            MapleLogger.error("getCompensation error:", e);
-        }
-        return ret;
-    }
-
-    public boolean deleteCompensation(int taken) {
-        try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE compensationlog_confirmed SET taken = ? WHERE chrname LIKE ?")) {
-                ps.setInt(1, taken);
-                ps.setString(2, getPlayer().getName());
-                ps.executeUpdate();
-                ps.close();
-            }
-            return true;
-        } catch (SQLException e) {
-            MapleLogger.error("deleteCompensation error:", e);
-        }
-        return false;
-    }
-
     public void testPacket(String testmsg) {
         this.c.sendPacket(MaplePacketCreator.testPacket(testmsg));
     }
@@ -1459,69 +1424,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
     public boolean haveSpaceForId(int itemid) {
         return getPlayer().haveSpaceForId(itemid);
-    }
-
-    public int getMoney() {
-        int money = 0;
-        try {
-            int cid = getPlayer().getId();
-            Connection con = DatabaseConnection.getConnection();
-            ResultSet rs;
-            try (PreparedStatement ps = con.prepareStatement("select * from bank where charid=?")) {
-                ps.setInt(1, cid);
-                rs = ps.executeQuery();
-                if (rs.next()) {
-                    money = rs.getInt("money");
-                } else {
-                    try (PreparedStatement psu = con.prepareStatement("insert into bank (charid, money) VALUES (?, ?)")) {
-                        psu.setInt(1, cid);
-                        psu.setInt(2, 0);
-                        psu.executeUpdate();
-                        ps.close();
-                    }
-                }
-            }
-            rs.close();
-        } catch (SQLException ex) {
-            MapleLogger.error("银行存款获取信息发生错误", ex);
-        }
-        return money;
-    }
-
-    public int addMoney(int money, int type) {
-        try {
-            int cid = getPlayer().getId();
-            Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("select * from bank where charid=?");
-            ps.setInt(1, cid);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                if ((type == 1)
-                        && (money > rs.getInt("money"))) {
-                    return -1;
-                }
-
-                ps = con.prepareStatement(new StringBuilder().append("UPDATE bank SET money =money+ ").append(money).append(" WHERE charid = ").append(cid).append("").toString());
-                return ps.executeUpdate();
-            }
-            ps.close();
-            rs.close();
-        } catch (SQLException ex) {
-            MapleLogger.error("银行存款添加数量发生错误", ex);
-        }
-        return 0;
-    }
-
-    public int getHyPay(int type) {
-        return getPlayer().getHyPay(type);
-    }
-
-    public int addHyPay(int hypay) {
-        return getPlayer().addHyPay(hypay);
-    }
-
-    public int delPayReward(int pay) {
-        return getPlayer().delPayReward(pay);
     }
 
     public void fakeRelog() {

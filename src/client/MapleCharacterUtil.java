@@ -148,55 +148,6 @@ public class MapleCharacterUtil {
         return true;
     }
 
-    public static int Change_SecondPassword(int accid, String password, String newpassword) {
-        Connection con = DatabaseConnection.getConnection();
-        try {
-            PreparedStatement ps = con.prepareStatement("SELECT * from accounts where id = ?");
-            ps.setInt(1, accid);
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
-                rs.close();
-                ps.close();
-                return -1;
-            }
-            String secondPassword = rs.getString("2ndpassword");
-            String salt2 = rs.getString("salt2");
-            if ((secondPassword != null) && (salt2 != null)) {
-                secondPassword = LoginCrypto.rand_r(secondPassword);
-            } else if ((secondPassword == null) && (salt2 == null)) {
-                rs.close();
-                ps.close();
-                return 0;
-            }
-            if (!check_ifPasswordEquals(secondPassword, password, salt2)) {
-                rs.close();
-                ps.close();
-                return 1;
-            }
-            rs.close();
-            ps.close();
-            String SHA1hashedsecond;
-            try {
-                SHA1hashedsecond = LoginCryptoLegacy.encodeSHA1(newpassword);
-            } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-                return -2;
-            }
-            ps = con.prepareStatement("UPDATE accounts set 2ndpassword = ?, salt2 = ? where id = ?");
-            ps.setString(1, SHA1hashedsecond);
-            ps.setString(2, null);
-            ps.setInt(3, accid);
-            if (!ps.execute()) {
-                ps.close();
-                return 2;
-            }
-            ps.close();
-            return -2;
-        } catch (SQLException e) {
-            MapleLogger.error("change second password failed.");
-        }
-        return -2;
-    }
-
     private static boolean check_ifPasswordEquals(String passhash, String pwd, String salt) {
         if ((LoginCryptoLegacy.isLegacyPassword(passhash)) && (LoginCryptoLegacy.checkPassword(pwd, passhash))) {
             return true;

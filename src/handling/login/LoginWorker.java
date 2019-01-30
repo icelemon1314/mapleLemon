@@ -30,19 +30,8 @@ public class LoginWorker {
         }
         MapleLogger.info("登录成功，准备通知客户端！！！！");
         c.sendPacket(LoginPacket.getAuthSuccessRequest(c));
-//        c.sendPacket(LoginPacket.checkUserLimit());
-        //c.sendPacket(MaplePacketCreator.serverNotice(1, "恭喜您成功登陆！\r\n您的账户中有 " + c.getJinQuan() + " 张金券\r\n祝您游戏愉快"));
         ServerlistRequestHandler.handlePacket(c, false);
-//        try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("INSERT INTO accounts_log (accid, accname, ip, macs) VALUES (?, ?, ?, ?)")) {
-//            ps.setInt(1, c.getAccID());
-//            ps.setString(2, c.getAccountName());
-//            ps.setString(3, c.getSession().getRemoteAddress().toString());
-//            ps.setString(4, c.getMac());
-//            ps.executeUpdate();
-//            ps.close();
-//        } catch (SQLException e) {
-//            MapleLogger.error(FileoutputUtil.SQL_ScriptEx_Log, e);
-//        }
+
     }
 
     public static void updateChannel(final MapleClient c) {

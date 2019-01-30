@@ -131,11 +131,8 @@ public class CharacterTransfer implements Externalizable {
     public int morphCount;
     public int powerCount;
     public int love;
-    public long lastLoveTime;
-    public Map<Integer, Long> loveCharacters = null;
     public int playerPoints;
     public int playerEnergy;
-    public Object pvpStats;
     public int pvpDeaths;
     public int pvpKills;
     public int pvpVictory;
@@ -155,7 +152,6 @@ public class CharacterTransfer implements Externalizable {
         this.finishedAchievements = new ArrayList();
         this.famedcharacters = new ArrayList();
         this.battledaccs = new ArrayList();
-        this.loveCharacters = new LinkedHashMap();
         this.rebuy = new ArrayList();
         this.KeyValue = new LinkedHashMap();
         this.InfoQuest = new LinkedHashMap();
@@ -295,8 +291,6 @@ public class CharacterTransfer implements Externalizable {
         this.mount_level = mount.getLevel();
         this.mount_exp = mount.getExp();
         this.battlers = chr.getBattlers();
-        this.lastLoveTime = chr.getLastLoveTime();
-        this.loveCharacters = chr.getLoveCharacters();
         this.TranferTime = System.currentTimeMillis();
     }
 
@@ -360,7 +354,6 @@ public class CharacterTransfer implements Externalizable {
         this.skillmacro = in.readObject();
         this.lastfametime = in.readLong();
         this.storage = in.readObject();
-        this.pvpStats = in.readObject();
         this.potionPot = in.readObject();
         this.coreAura = in.readObject();
         this.cs = in.readObject();
@@ -507,11 +500,6 @@ public class CharacterTransfer implements Externalizable {
                 this.imps[x] = i;
             }
         }
-        this.lastLoveTime = in.readLong();
-        int lovesize = in.readByte();
-        for (int i = 0; i < lovesize; i++) {
-            this.loveCharacters.put(in.readInt(), in.readLong());
-        }
         this.TranferTime = System.currentTimeMillis();
     }
 
@@ -571,7 +559,6 @@ public class CharacterTransfer implements Externalizable {
         out.writeObject(this.skillmacro);
         out.writeLong(this.lastfametime);
         out.writeObject(this.storage);
-        out.writeObject(this.pvpStats);
         out.writeObject(this.potionPot);
         out.writeObject(this.coreAura);
         out.writeObject(this.cs);
@@ -759,13 +746,6 @@ public class CharacterTransfer implements Externalizable {
             } else {
                 out.writeByte(0);
             }
-        }
-
-        out.writeLong(this.lastLoveTime);
-        out.writeByte(this.loveCharacters.size());
-        for (Map.Entry loves : this.loveCharacters.entrySet()) {
-            out.writeInt(((Integer) loves.getKey()));
-            out.writeLong(((Long) loves.getValue()));
         }
     }
 }

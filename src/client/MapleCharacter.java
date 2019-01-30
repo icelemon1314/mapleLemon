@@ -269,8 +269,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private int powerCount = 0;
     private boolean usePower = false;
     private int love;
-    private long lastlovetime;
-    private Map<Integer, Long> lastdayloveids;
     private int playerPoints;
     private int playerEnergy;
     private int batterytime;
@@ -655,8 +653,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.keydown_skill = 0L;
         ret.lastfametime = ct.lastfametime;
         ret.lastmonthfameids = ct.famedcharacters;
-        ret.lastlovetime = ct.lastLoveTime;
-        ret.lastdayloveids = ct.loveCharacters;
         ret.storage = ((MapleStorage) ct.storage);
         ret.cs = ((CashShop) ct.cs);
         client.setAccountName(ct.accountname);
@@ -962,19 +958,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     ret.lastmonthfameids.add(rs.getInt("characterid_to"));
                 }
                 ps.close();
-                ps = con.prepareStatement("SELECT `characterid_to`,`when` FROM lovelog WHERE characterid = ? AND DATEDIFF(NOW(),`when`) < 1");
-                ps.setInt(1, charid);
-                rs = ps.executeQuery();
-                ret.lastlovetime = 0L;
-                ret.lastdayloveids = new LinkedHashMap();
-                while (rs.next()) {
-                    ret.lastlovetime = Math.max(ret.lastlovetime, rs.getTimestamp("when").getTime());
-                    ret.lastdayloveids.put(rs.getInt("characterid_to"), rs.getTimestamp("when").getTime());
-                }
-                ps.close();
                 ret.buddylist.loadFromDb(charid);
                 ret.storage = MapleStorage.loadOrCreateFromDB(ret.accountid);
-                ret.cs = new CashShop(ret.accountid, charid, ret.getJob());
+                ret.cs = new CashShop(ret.accountid, charid);
                 ps = con.prepareStatement("SELECT sn FROM wishlist WHERE characterid = ?");
                 ps.setInt(1, charid);
                 rs = ps.executeQuery();
@@ -1029,10 +1015,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
                 Item mount = ret.getInventory(MapleInventoryType.EQUIPPED).getItem((short) -18);
                 ret.mount = new MapleMount(ret, mount != null ? mount.getItemId() : 0, 80001000, rs.getByte("Fatigue"), rs.getByte("Level"), rs.getInt("Exp"));
-                ps.close();
-                ps = con.prepareStatement("SELECT * FROM character_potionpots WHERE characterid = ?");
-                ps.setInt(1, charid);
-                rs = ps.executeQuery();
                 ps.close();
                 if (client != null && client.getSendCrypto() != null) {
                     ret.stats.recalcLocalStats(true, ret);
@@ -6704,90 +6686,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return mesos;
     }
 
-    public int getHyPay(int type) {
-        int pay = 0;
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            ResultSet rs;
-            try (PreparedStatement ps = con.prepareStatement("select * from hypay where accname = ?")) {
-                ps.setString(1, getClient().getAccountName());
-                rs = ps.executeQuery();
-                if (rs.next()) {
-                    if (type == 1) {
-                        pay = rs.getInt("pay");
-                    } else if (type == 2) {
-                        pay = rs.getInt("payUsed");
-                    } else if (type == 3) {
-                        pay = rs.getInt("pay") + rs.getInt("payUsed");
-                    } else if (type == 4) {
-                        pay = rs.getInt("payReward");
-                    } else {
-                        pay = 0;
-                    }
-                } else {
-                    try (PreparedStatement psu = con.prepareStatement("insert into hypay (accname, pay, payUsed, payReward) VALUES (?, ?, ?, ?)")) {
-                        psu.setString(1, getClient().getAccountName());
-                        psu.setInt(2, 0);
-                        psu.setInt(3, 0);
-                        psu.setInt(4, 0);
-                        psu.executeUpdate();
-                        psu.close();
-                    }
-                }
-                ps.close();
-            }
-            rs.close();
-        } catch (SQLException ex) {
-            MapleLogger.error("获取充值信息发生错误", ex);
-        }
-        return pay;
-    }
-
-    public int addHyPay(int hypay) {
-        int pay = getHyPay(1);
-        int payUsed = getHyPay(2);
-        int payReward = getHyPay(4);
-        if (hypay > pay) {
-            return -1;
-        }
-        try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE hypay SET pay = ? ,payUsed = ? ,payReward = ? where accname = ?")) {
-                ps.setInt(1, pay - hypay);
-                ps.setInt(2, payUsed + hypay);
-                ps.setInt(3, payReward + hypay);
-                ps.setString(4, getClient().getAccountName());
-                ps.executeUpdate();
-                ps.close();
-            }
-            return 1;
-        } catch (SQLException ex) {
-            MapleLogger.error("加减充值信息发生错误", ex);
-        }
-        return -1;
-    }
-
-    public int delPayReward(int pay) {
-        int payReward = getHyPay(4);
-        if (pay <= 0) {
-            return -1;
-        }
-        if (pay > payReward) {
-            return -1;
-        }
-        try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE hypay SET payReward = ? where accname = ?")) {
-                ps.setInt(1, payReward - pay);
-                ps.setString(2, getClient().getAccountName());
-                ps.executeUpdate();
-                ps.close();
-            }
-            return 1;
-        } catch (SQLException ex) {
-            MapleLogger.error("加减消费奖励信息发生错误", ex);
-        }
-        return -1;
-    }
-
     public void sendPolice(int greason, String reason, int duration) {
         this.isbanned = true;
         WorldTimer.getInstance().schedule(new Runnable() {
@@ -7008,47 +6906,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void addLove(int loveChange) {
         this.love += loveChange;
         MessengerRankingWorker.getInstance().updateRankFromPlayer(this);
-    }
-
-    public long getLastLoveTime() {
-        return this.lastlovetime;
-    }
-
-    public Map<Integer, Long> getLoveCharacters() {
-        return this.lastdayloveids;
-    }
-
-    public int canGiveLove(MapleCharacter from) {
-        if ((from == null) || (this.lastdayloveids == null)) {
-            return 1;
-        }
-        if (this.lastdayloveids.containsKey(from.getId())) {
-            long lastTime = (this.lastdayloveids.get(Integer.valueOf(from.getId())));
-            if (lastTime >= System.currentTimeMillis() - 86400000L) {
-                return 2;
-            }
-            return 0;
-        }
-
-        return 0;
-    }
-
-    public void hasGiveLove(MapleCharacter to) {
-        this.lastlovetime = System.currentTimeMillis();
-        if (this.lastdayloveids.containsKey(to.getId())) {
-            this.lastdayloveids.remove(to.getId());
-        }
-        this.lastdayloveids.put(to.getId(), System.currentTimeMillis());
-        try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("INSERT INTO lovelog (characterid, characterid_to) VALUES (?, ?)")) {
-                ps.setInt(1, getId());
-                ps.setInt(2, to.getId());
-                ps.execute();
-                ps.close();
-            }
-        } catch (SQLException e) {
-            System.err.println(new StringBuilder().append("ERROR writing lovelog for char ").append(getName()).append(" to ").append(to.getName()).append(e).toString());
-        }
     }
 
     public long getExpNeededForLevel() {

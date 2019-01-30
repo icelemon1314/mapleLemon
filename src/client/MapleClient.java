@@ -332,12 +332,12 @@ public class MapleClient implements Serializable {
     /**
      * 验证帐号密码
      * @param login
-     * @param pwd
+     * @param originPwd
      * @return
      */
-    public int login(String login, String pwd) {
+    public int login(String login, String originPwd) {
         int loginok = 5;
-        pwd = LoginCrypto.hexSha1(pwd); // 用最简单的sha1
+        String pwd = LoginCrypto.hexSha1(originPwd); // 用最简单的sha1
         try {
             Connection con = DatabaseConnection.getConnection();
             try (PreparedStatement ps = con.prepareStatement("SELECT * FROM accounts WHERE name = ?")) {
@@ -373,8 +373,14 @@ public class MapleClient implements Serializable {
                             } else if (pwd.equals(passhash)) {
                                 loginok = 0;
                             } else {
-                                loggedIn = false;
-                                loginok = 4;
+                                pwd = LoginCrypto.hexSha256(originPwd);
+                                if (pwd.equals(passhash)) {
+                                    loginok = 0;
+                                    // @TODO update password to sha-256
+                                } else {
+                                    loggedIn = false;
+                                    loginok = 4;
+                                }
                             }
                             if (getLoginState() > MapleClient.LOGIN_NOTLOGGEDIN) { // already loggedin
                                 if (loginok != 0) {
@@ -387,7 +393,6 @@ public class MapleClient implements Serializable {
                         }
                     }
                 }
-                ps.close();
             }
         } catch (SQLException e) {
             System.err.println("登录出错：" + e);
@@ -884,7 +889,6 @@ public class MapleClient implements Serializable {
             MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM mountdata WHERE characterid = ?", cid);
             MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM queststatus WHERE characterid = ?", cid);
             MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM inventoryslot WHERE characterid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM bank WHERE charid = ?", cid);
             MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM pqlog WHERE characterid = ?", cid);
             return 0;
         } catch (SQLException e) {
@@ -1304,22 +1308,6 @@ public class MapleClient implements Serializable {
         return (ServerConstants.USE_LOCALHOST) || (ServerConstants.isIPLocalhost(getSessionIPAddress()));
     }
 
-//    public boolean hasCheck(int accid) {
-//        boolean ret = false;
-//        try {
-//            PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM accounts WHERE id = ?");
-//            ps.setInt(1, accid);
-//            ResultSet rs = ps.executeQuery();
-//            if (rs.next()) {
-//                ret = rs.getInt("check") > 0;
-//            }
-//            rs.close();
-//            ps.close();
-//        } catch (SQLException ex) {
-//            MapleLogger.error("Error checking ip Check", ex);
-//        }
-//        return ret;
-//    }
     public static String getAccInfo(String accname, boolean admin) {
         StringBuilder ret = new StringBuilder(new StringBuilder().append("账号ID：").append(accname).append(" 信息-").toString());
         try {

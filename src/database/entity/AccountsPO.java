@@ -6,8 +6,8 @@ import java.util.Date;
 
 @Entity
 @Table(name = "accounts")
-public class Accounts {
-    public Accounts(){}
+public class AccountsPO {
+    public AccountsPO(){}
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

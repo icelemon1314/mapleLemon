@@ -29,7 +29,6 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
     private final int channel;
     public final static int CASH_SHOP_SERVER = -10;
     public final static int LOGIN_SERVER = 0;
-    private static final boolean show = false;
     private final List<String> BlockIPList = new ArrayList();
     private final Map<String, Pair<Long, Byte>> tracker = new ConcurrentHashMap();
     private Map<Byte, MaplePacketHandler> handlers;
@@ -93,16 +92,15 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext session) {
-        // 起始 IP 检查
         String address = session.channel().remoteAddress().toString().split(":")[0];
-        MapleLogger.info("[登陆服务] " + address + " 已连接");
+        MapleLogger.info("[Socket] " + address + " connected");
 
         if (BlockIPList.contains(address)) {
             session.close();
             return;
         }
+        // if the connect count > 10  in 2 seconds,it'll add to blockIpList
         Pair track = tracker.get(address);
-
         byte count;
         if (track == null) {
             count = 1;
@@ -110,10 +108,10 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
             count = (Byte) track.right;
 
             long difference = System.currentTimeMillis() - (Long) track.left;
-            if (difference < 2000L) {// 小于2秒
-                count = (byte) (count + 1);
-            } else if (difference > 20000L) {// 超过2秒
+            if (difference > 2000L) {
                 count = 1;
+            } else {
+                count++;
             }
             if (count > 10) {
                 BlockIPList.add(address);
@@ -123,7 +121,6 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
             }
         }
         tracker.put(address, new Pair(System.currentTimeMillis(), count));
-        // 结束 ID 检查
         String IP = address.substring(address.indexOf('/') + 1, address.length());
 
         if (channel == MapleServerHandler.CASH_SHOP_SERVER) {
@@ -146,7 +143,7 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 return;
             }
         } else {
-            MapleLogger.info("[連結錯誤] 未知類型: " + channel);
+            MapleLogger.info("[Socket] Unknown Server channel: " + channel);
             session.close();
             return;
         }
@@ -219,15 +216,15 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
         }
         SeekableLittleEndianAccessor slea = new GenericSeekableLittleEndianAccessor(new ByteArrayByteStream((byte[]) message));
         if (slea.available() < 1) {
-            MapleLogger.info("数据包长度异常：" + slea.toString());
+            MapleLogger.error("数据包长度异常：" + slea.toString());
             return;
         }
         MapleClient client = session.channel().attr(MapleClient.CLIENT_KEY).get();
         if (client == null || !client.isReceiving()) {
             return;
         }
-        byte packetId = slea.readByte();
 
+        byte packetId = slea.readByte();
         try {
             MaplePacketHandler handler = handlers.get(packetId);
             if (handler == null) {
@@ -238,32 +235,6 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
         } catch (Exception e) {
             MapleLogger.error(e.getMessage());
         }
-
-
-//        for (RecvPacketOpcode recv : RecvPacketOpcode.values()) {
-//            if (recv.getValue() == packetId) {
-//                if (recv.NeedsChecking() && !client.isLoggedIn()) {
-//                    MapleLogger.info("客户端没有登录，丢弃包！");
-//                    return;
-//                }
-//                try {
-//                    handlePacket(recv, slea, client);
-//                } catch (InterruptedException e) {
-//                    MapleLogger.info(FileoutputUtil.Packet_Ex, new StringBuilder().append("封包: ").append(lookupRecv(packetId)).append("\r\n").append(slea.toString(true)).toString());
-//                    MapleLogger.error(FileoutputUtil.Packet_Ex, e);
-//                }
-//                return;
-//            }
-//        }
-    }
-
-    private String lookupRecv(short header) {
-        for (RecvPacketOpcode recv : RecvPacketOpcode.values()) {
-            if (recv.getValue() == header) {
-                return recv.name();
-            }
-        }
-        return "UNKNOWN";
     }
 /*
     public static void handlePacket(final RecvPacketOpcode header, final SeekableLittleEndianAccessor slea, final MapleClient c) throws InterruptedException {
@@ -312,9 +283,6 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
             case SERVERLIST_REQUEST:
                 ServerlistRequestHandler.handlePacket(c, true);
                 break;
-            case CLIENT_HELLO:
-                MapLoginHandler.handlePacket(slea, c);
-                break;
             case GET_SERVER:
                 c.sendPacket(LoginPacket.getLoginAUTH());
                 break;
@@ -344,15 +312,6 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 break;
             case VIEW_ALL_CHAR:
                 ViewCharHandler.handlePacket(slea, c);
-                break;
-            case PICK_ALL_CHAR:
-                WithoutSecondPasswordHandler.handlePacket(slea, c, false, true);
-                break;
-            case CHAR_SELECT_NO_PIC:
-                WithoutSecondPasswordHandler.handlePacket(slea, c, false, false);
-                break;
-            case VIEW_REGISTER_PIC:
-                WithoutSecondPasswordHandler.handlePacket(slea, c, true, true);
                 break;
             case CHAR_SELECT:
                 CharSelectHandler.handlePacket(slea, c);

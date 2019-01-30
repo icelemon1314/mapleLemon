@@ -38,7 +38,7 @@
         </property>
 
         <property name="hibernate.current_session_context_class">thread</property>
-        <mapping class="database.entity.Accounts" />
+        <mapping class="database.entity.AccountsPO" />
 
     </session-factory>
 </hibernate-configuration>

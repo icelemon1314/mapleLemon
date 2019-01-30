@@ -33,7 +33,7 @@ public class CashShop implements Serializable {
     private final List<Item> inventory = new ArrayList();
     private final List<Integer> uniqueids = new ArrayList();
 
-    public CashShop(int accountId, int characterId, int jobType) throws SQLException {
+    public CashShop(int accountId, int characterId) throws SQLException {
         this.accountId = accountId;
         this.characterId = characterId;
         for (Pair<Item, MapleInventoryType> item : this.factory.loadItems(false, accountId).values()) {

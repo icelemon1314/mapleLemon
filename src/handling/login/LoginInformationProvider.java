@@ -42,16 +42,6 @@ public class LoginInformationProvider {
                 continue;
             }
 
-            int type;
-            if (dat.getName().equals("000_1")) {
-                type = JobType.getById(1).type;
-            } else {
-                if (dat.getName().equals("3001_Dummy")) {
-                    type = JobType.getById(6).type;
-                } else {
-                    type = JobType.getById(Integer.parseInt(dat.getName())).type;
-                }
-            }
             for (MapleData d : dat) {
                 if (d.getName().equals(d.getName())) {
                     continue;
@@ -64,8 +54,8 @@ public class LoginInformationProvider {
                 }
 
                 for (MapleData da : d) {
-                    Triple key = new Triple(Integer.valueOf(gender), Integer.valueOf(Integer.parseInt(da.getName())), Integer.valueOf(type));
-                    our = (List) this.makeCharInfo.get(key);
+                    Triple key = new Triple(Integer.valueOf(gender), Integer.valueOf(Integer.parseInt(da.getName())), 1);
+                    our = this.makeCharInfo.get(key);
                     if (our == null) {
                         our = new ArrayList();
                         this.makeCharInfo.put(key, our);
