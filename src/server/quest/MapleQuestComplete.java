@@ -26,17 +26,17 @@ public class MapleQuestComplete implements Serializable {
 
     /**
      * 任务的必要条件
-     * @param type
+     * @param comtype
      * @throws SQLException
      */
-    public MapleQuestComplete(MapleQuestCompleteType type, int itemId,int num) {
-        this.type = type;
+    public MapleQuestComplete(MapleQuestCompleteType comtype, int itemId,int num) {
+        type = comtype;
         if (type == MapleQuestCompleteType.item) {
             this.dataStore.add(new Pair(itemId,num));
-        } if (type == MapleQuestCompleteType.exp) {
+        } else if (type == MapleQuestCompleteType.exp) {
             this.dataStore.add(new Pair(itemId,num));
         } else {
-            MapleLogger.info("暂时不支持的奖励类型："+type.toString());
+            MapleLogger.info("MapleQuestComplete暂时不支持的奖励类型："+type.toString());
         }
     }
 

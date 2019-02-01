@@ -7,6 +7,7 @@ import database.DatabaseException;
 import handling.cashshop.CashShopServer;
 import handling.channel.ChannelServer;
 import handling.login.LoginServer;
+import handling.vo.send.LoginStatusSendVO;
 import handling.world.PartyOperation;
 import handling.world.WorldBuddyService;
 import handling.world.WorldFindService;
@@ -336,7 +337,7 @@ public class MapleClient implements Serializable {
      * @return
      */
     public int login(String login, String originPwd) {
-        int loginok = 5;
+        int loginok = LoginStatusSendVO.LOGIN_STATE_UNKNOW_ACCOUNT;
         String pwd = LoginCrypto.hexSha1(originPwd); // 用最简单的sha1
         try {
             Connection con = DatabaseConnection.getConnection();
@@ -355,7 +356,7 @@ public class MapleClient implements Serializable {
                         gender = rs.getByte("gender");
 
                         if (banned > 0 && gmLevel < 6) {
-                            loginok = 3;
+                            loginok = LoginStatusSendVO.LOGIN_STATE_BANNED;
                         } else {
                             if (banned == -1) {
                                 unban();
@@ -365,27 +366,27 @@ public class MapleClient implements Serializable {
                                 //match by sessionIP
                                 if (oldSession != null && !oldSession.isEmpty()) {
                                     loggedIn = getSessionIPAddress().equals(oldSession);
-                                    loginok = loggedIn ? 0 : 4;
+                                    loginok = loggedIn ? LoginStatusSendVO.LOGIN_STATE_OK : LoginStatusSendVO.LOGIN_STATE_WRONG_PASSWORD;
                                 } else {
-                                    loginok = 4;
+                                    loginok = LoginStatusSendVO.LOGIN_STATE_WRONG_PASSWORD;
                                     loggedIn = false;
                                 }
                             } else if (pwd.equals(passhash)) {
-                                loginok = 0;
+                                loginok = LoginStatusSendVO.LOGIN_STATE_OK;
                             } else {
                                 pwd = LoginCrypto.hexSha256(originPwd);
                                 if (pwd.equals(passhash)) {
-                                    loginok = 0;
+                                    loginok = LoginStatusSendVO.LOGIN_STATE_OK;
                                     // @TODO update password to sha-256
                                 } else {
                                     loggedIn = false;
-                                    loginok = 4;
+                                    loginok = LoginStatusSendVO.LOGIN_STATE_WRONG_PASSWORD;
                                 }
                             }
                             if (getLoginState() > MapleClient.LOGIN_NOTLOGGEDIN) { // already loggedin
-                                if (loginok != 0) {
+                                if (loginok != LoginStatusSendVO.LOGIN_STATE_OK) {
                                     loggedIn = false;
-                                    loginok = 7;
+                                    loginok = LoginStatusSendVO.LOGIN_STATE_LOGINNED;
                                 } else {//解卡处理
                                     解卡账号();
                                 }

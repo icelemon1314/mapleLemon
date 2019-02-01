@@ -4,12 +4,9 @@ import client.MapleClient;
 import constants.ServerConstants;
 import handling.cashshop.CashShopServer;
 import handling.channel.ChannelServer;
-import handling.channel.handler.*;
 import handling.login.LoginServer;
-import handling.login.LoginWorker;
-import handling.login.handler.*;
 import handling.mina.MaplePacketDecoder;
-import handling.RecvPacketOpcode;
+import handling.vo.MaplePacketRecvVO;
 import handling.world.World;
 import java.io.IOException;
 import java.util.*;
@@ -17,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import scripting.npc.NPCScriptManager;
 import tools.*;
 import tools.data.input.ByteArrayByteStream;
 import tools.data.input.GenericSeekableLittleEndianAccessor;
@@ -231,7 +227,28 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 MapleLogger.error("unhandler packet:" + slea.toString());
                 return ;
             }
-            handler.handlePacket(slea, client);
+
+            String name = handler.getClass().getSimpleName();
+            name = name.replaceAll("Handler","");
+
+            MaplePacketRecvVO packetVO = null;
+            String className = "handling.vo.recv." + name + "RecvVO";
+            boolean isFindVO = false;
+            try {
+                Class handleVo = Class.forName(className);
+                packetVO = (MaplePacketRecvVO)handleVo.newInstance();
+                packetVO.decodePacket(slea, client);
+                isFindVO = true;
+
+            } catch (Exception e) {
+                MapleLogger.error("registerHandlers errors:" + e.getMessage());
+                return ;
+            }
+            if (isFindVO) {
+                handler.handlePacket(packetVO, client);
+            } else {
+                handler.handlePacket(slea, client);
+            }
         } catch (Exception e) {
             MapleLogger.error(e.getMessage());
         }

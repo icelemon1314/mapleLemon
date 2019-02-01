@@ -14,6 +14,8 @@ import handling.login.LoginServer;
 
 import java.util.*;
 
+import handling.vo.MaplePacketSendVO;
+import handling.vo.send.LoginStatusSendVO;
 import server.ServerProperties;
 import tools.HexTool;
 import tools.data.output.MaplePacketLittleEndianWriter;
@@ -33,8 +35,7 @@ public class LoginPacket {
     }
 
     public static byte[] getPing() {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(2);
-
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.PING.getValue());
 
         return mplew.getPacket();
@@ -55,8 +56,7 @@ public class LoginPacket {
      * @return
      */
     public static byte[] genderNeeded(MapleClient c) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(3);
-
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.CHOOSE_GENDER.getValue());
         mplew.writeMapleAsciiString(c.getAccountName());
 
@@ -64,8 +64,7 @@ public class LoginPacket {
     }
 
     public static byte[] genderChanged(MapleClient c) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(3);
-
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.GENDER_SET.getValue());
         mplew.write(0);
         mplew.writeMapleAsciiString(c.getAccountName());
@@ -74,49 +73,27 @@ public class LoginPacket {
         return mplew.getPacket();
     }
 
+    /**
+     * 登录失败
+     * @param reason
+     * @return
+     */
     public static byte[] getLoginFailed(int reason) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(16);
-
-        mplew.write(SendPacketOpcode.LOGIN_STATUS.getValue());
-        mplew.write(reason);
-        mplew.write(0);
-        mplew.writeInt(0);
-
-        return mplew.getPacket();
+        LoginStatusSendVO sendvo = new LoginStatusSendVO();
+        sendvo.setState((byte)reason);
+        return sendvo.encodePacket();
     }
 
-    public static byte[] getPermBan(byte reason) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(16);
-
-        mplew.write(SendPacketOpcode.LOGIN_STATUS.getValue());
-        mplew.writeShort(2);
-        mplew.write(0);
-        mplew.writeShort((short) reason);
-        mplew.write(HexTool.getByteArrayFromHexString("01 01 01 01 00"));
-
-        return mplew.getPacket();
-    }
-
-    public static byte[] getTempBan(long timestampTill, byte reason) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(17);
-
-        mplew.write(SendPacketOpcode.LOGIN_STATUS.getValue());
-        mplew.writeShort(2);
-        mplew.writeInt(0);
-        mplew.write(reason);
-        mplew.writeLong(timestampTill);
-
-        return mplew.getPacket();
-    }
-    
+    /**
+     * 被封号了
+     * @param timestampTill
+     * @return
+     */
     public static byte[] getTempBan(long timestampTill) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(17);
-
-        mplew.write(SendPacketOpcode.LOGIN_STATUS.getValue());
-        mplew.writeShort(2);
-        mplew.writeLong(timestampTill);
-
-        return mplew.getPacket();
+        LoginStatusSendVO sendvo = new LoginStatusSendVO();
+        sendvo.setState((byte)2);
+        sendvo.setBanTimestamp(timestampTill);
+        return sendvo.encodePacket();
     }
 
     /**
@@ -125,21 +102,13 @@ public class LoginPacket {
      * @return
      */
     public static byte[] getAuthSuccessRequest(MapleClient client) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.write(SendPacketOpcode.LOGIN_STATUS.getValue());
-        mplew.write(0);
-
-        mplew.writeInt(client.getAccID());
-        mplew.write(client.getGender()); // 早期版本角色性别由帐号控制
-        mplew.write(client.isGm() ? 1 : 0);//给客户端判断是否GM,是GM客户端会给/找人命令加地图ID,有删除人物按钮,被封印后能使用技能,其他未知
-
-
-        mplew.writeMapleAsciiString(client.getAccountName());
-        mplew.writeInt(client.getAccID());
-        mplew.write(0);
-
-        return mplew.getPacket();
+        LoginStatusSendVO sendvo = new LoginStatusSendVO();
+        sendvo.setState((byte)0);
+        sendvo.setAccountId(client.getAccID());
+        sendvo.setGender(client.getGender());
+        sendvo.setGm(client.isGm());
+        sendvo.setAccountName(client.getAccountName());
+        return sendvo.encodePacket();
     }
 
     /**
@@ -148,7 +117,6 @@ public class LoginPacket {
      */
     public static byte[] checkUserLimit() {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
         mplew.write(0x03);
         mplew.write(4);
         mplew.write(0);
@@ -205,7 +173,6 @@ public class LoginPacket {
      */
     public static byte[] getServerList(WorldConstants.Option world, Map<Integer, Integer> channelLoad) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
         mplew.write(SendPacketOpcode.SERVERLIST.getValue());
         mplew.write(world.getWorld());
         mplew.writeMapleAsciiString(LoginServer.getServerName());

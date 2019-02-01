@@ -12,6 +12,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import server.ServerProperties;
 
+import tools.DateUtil;
 import tools.HexTool;
 import tools.MapleLogger;
 import tools.StringUtil;
@@ -43,7 +44,7 @@ public class MaplePacketEncoder extends MessageToByteEncoder<Object> {
                     String pHeaderStr = Integer.toHexString(pHeader).toUpperCase();
                     pHeaderStr = StringUtil.getLeftPaddedStr(pHeaderStr, '0', 4);
                     String op = lookupRecv(pHeader);
-                    String Recv = "[服务端发送] " + op + "  [0x" + pHeaderStr + "]  (" + packetLen + "字节)  " + System.currentTimeMillis() + "\r\n";
+                    String Recv = "[服务端发送] " + op + "  [0x" + pHeaderStr + "]  (" + packetLen + "字节)  " + DateUtil.getNowTime() + "\r\n";
 
                     if (packetLen <= 60000) {
                         String RecvTo = Recv + HexTool.toString(input) + "\r\n" + HexTool.toStringFromAscii(input);

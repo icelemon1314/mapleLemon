@@ -127,9 +127,6 @@ public class MapleQuest implements Serializable {
             ret.completeReqs.put(questStatus,tmpReward);
         }
 
-        MapleLogger.info(ret.completeReqs.toString());
-
-
         // 任务奖励数据
         PreparedStatement psReward = con.prepareStatement("SELECT * FROM wz_questrewarddata WHERE questId = ?");
         psReward.setInt(1,ret.id);

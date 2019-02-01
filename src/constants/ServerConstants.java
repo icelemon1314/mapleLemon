@@ -14,7 +14,7 @@ import server.ServerProperties;
 import tools.MapleLogger;
 
 
-public class ServerConstants implements Runnable {
+public class ServerConstants {
 
     public static boolean 打怪获得点抵用卷 = false;
     public static boolean loadop = true;
@@ -55,7 +55,7 @@ public class ServerConstants implements Runnable {
     public static final List<String> localhostIP = new LinkedList();
     public static final List<String> vpnIp = new LinkedList();
     public static String master;
-    public static ServerConstants instance;
+//    public static ServerConstants instance;
 
     public static String getMaster() {
         if (master == null) {
@@ -68,21 +68,16 @@ public class ServerConstants implements Runnable {
         return (!USE_FIXED_IV) && (localhostIP.contains(sessionIP.replace("/", "")));
     }
 
-    public static void registerMBean() {
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            instance = new ServerConstants();
-            mBeanServer.registerMBean(instance, new ObjectName("constants:type=ServerConstants"));
-        } catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException e) {
-            MapleLogger.info(e.getMessage());
-            MapleLogger.info("Error registering Shutdown MBean");
-        }
-    }
-
-    @Override
-    public void run(){
-
-    }
+//    public static void registerMBean() {
+//        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+//        try {
+//            instance = new ServerConstants();
+//            mBeanServer.registerMBean(instance, new ObjectName("constants:type=ServerConstants"));
+//        } catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException e) {
+//            MapleLogger.info(e.getMessage());
+//            MapleLogger.info("Error registering Shutdown MBean");
+//        }
+//    }
 
     static {
         localhostIP.add("127.0.0.1");

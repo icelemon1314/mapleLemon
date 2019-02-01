@@ -8,10 +8,7 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.util.AttributeKey;
 import server.ServerProperties;
 
-import tools.HexTool;
-import tools.MapleAESOFB;
-import tools.MapleLogger;
-import tools.StringUtil;
+import tools.*;
 import tools.data.input.ByteArrayByteStream;
 import tools.data.input.GenericLittleEndianAccessor;
 
@@ -60,13 +57,11 @@ public class MaplePacketDecoder extends ByteToMessageDecoder {
                 String pHeaderStr = Integer.toHexString(pHeader).toUpperCase();
                 pHeaderStr = StringUtil.getLeftPaddedStr(pHeaderStr, '0', 4);
                 String op = lookupSend(pHeader);
-                String Send = "[客户端发送] " + op + "  [0x" + pHeaderStr + "]  (" + packetLen + "字节)  " + System.currentTimeMillis() + "\r\n";
+                String Send = "[客户端发送] " + op + "  [0x" + pHeaderStr + "]  (" + packetLen + "字节)  " + DateUtil.getNowTime() + "\r\n";
                 if (packetLen <= 6000) {
-                    String SendTo = Send + HexTool.toString(decryptedPacket) + "\r\n" + HexTool.toStringFromAscii(decryptedPacket);
+//                    String SendTo = Send + HexTool.toString(decryptedPacket) + "\r\n" + HexTool.toStringFromAscii(decryptedPacket);
                     if (!ServerProperties.RecvPacket(op, pHeaderStr)) {
-                        String SendTos = "\r\n时间：" + System.currentTimeMillis() + "  ";
-
-                        MapleLogger.info(SendTos + SendTo);
+                        MapleLogger.info(Send);
                     }
                 } else {
                     MapleLogger.info(Send + HexTool.toString(new byte[]{decryptedPacket[0], decryptedPacket[1]}) + "...\r\n");

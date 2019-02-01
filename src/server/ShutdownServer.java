@@ -33,6 +33,9 @@ public class ShutdownServer implements ShutdownServerMBean {
     }
 
     public static ShutdownServer getInstance() {
+        if (instance == null) {
+            instance = new ShutdownServer();
+        }
         return instance;
     }
 
@@ -43,32 +46,32 @@ public class ShutdownServer implements ShutdownServerMBean {
 
     @Override
     public void run() {
-        if (this.mode == 0) {
+//        if (this.mode == 0) {
             WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.serverMessageNotice(" 游戏服务器将关闭维护，请玩家安全下线..."));
             for (ChannelServer cs : ChannelServer.getAllInstances()) {
                 cs.setShutdown();
                 cs.closeAllMerchants();
+                cs.shutdown();
             }
-            MapleLogger.info("所有档案已保存.");
-            this.mode++;
-        } else if (this.mode == 1) {
-            this.mode++;
-            WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.serverMessageNotice(" 游戏服务器将关闭维护，请玩家安全下线..."));
-            Integer[] chs = (Integer[]) ChannelServer.getAllInstance().toArray(new Integer[0]);
-            for (int i = 0; i < chs.length; i++) {
-                i = chs[i];
-                try {
-                    ChannelServer cs = ChannelServer.getInstance(i);
-                    synchronized (this) {
-                        cs.shutdown();
-                    }
-                } catch (Exception e) {
-                    MapleLogger.error("关闭服务端错误 - 3" + e);
-                }
-            }
+            MapleLogger.info("所有档案已保存.1");
+//            this.mode++;
+//        } else if (this.mode == 1) {
+//            this.mode++;
+//            WorldBroadcastService.getInstance().broadcastMessage(MaplePacketCreator.serverMessageNotice(" 游戏服务器将关闭维护，请玩家安全下线..."));
+//            Integer[] chs = ChannelServer.getAllInstance().toArray(new Integer[0]);
+//            for (int i = 0; i < chs.length; i++) {
+//                i = chs[i];
+//                try {
+//                    ChannelServer cs = ChannelServer.getInstance(i);
+//                    synchronized (this) {
+//                        cs.shutdown();
+//                    }
+//                } catch (Exception e) {
+//                    MapleLogger.error("关闭服务端错误 - 3" + e);
+//                }
+//            }
             LoginServer.shutdown();
             CashShopServer.shutdown();
-            //AuctionServer.shutdown(); //已注释启动拍卖
             MapleLogger.info("正在关闭时钟线程...");
             Timer.WorldTimer.getInstance().stop();
             Timer.MapTimer.getInstance().stop();
@@ -81,8 +84,8 @@ public class ShutdownServer implements ShutdownServerMBean {
             MapleLogger.info("正在关闭数据库连接...");
             DatabaseConnection.closeAll();
 
-        }
+//        }
         MapleLogger.info("游戏服务已成功关闭");
-        System.exit(0);
+//        System.exit(0);
     }
 }

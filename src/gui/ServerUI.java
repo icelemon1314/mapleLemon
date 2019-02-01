@@ -218,13 +218,9 @@ public class ServerUI extends javax.swing.JFrame {
             server = new Thread() {
                 @Override
                 public void run() {
-                    try {
-                        JOptionPane.showMessageDialog(null, "服务器启动需要时间,请点击确定继续。");
-                        Start.main(null);
-                        JOptionPane.showMessageDialog(null, "服务器启动完成。");
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(ServerUI.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                JOptionPane.showMessageDialog(null, "服务器启动需要时间,请点击确定继续。");
+                Start.main(null);
+                JOptionPane.showMessageDialog(null, "服务器启动完成。");
                 }
             };
             server.start();

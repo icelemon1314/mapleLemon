@@ -42,8 +42,10 @@ public class MapleQuestReward implements Serializable {
 			this.dataStore.add(new Pair(rse.getInt("id"),rse.getInt("num")));
 		} else if (type == MapleQuestRewardType.pop){
             this.dataStore.add(new Pair(rse.getInt("id"),rse.getInt("num")));
-        }else {
-            MapleLogger.info("暂时不支持的奖励类型："+type.toString());
+        }  else if (type == MapleQuestRewardType.meso){
+            this.dataStore.add(new Pair(rse.getInt("id"),rse.getInt("num")));
+        } else {
+            MapleLogger.info("MapleQuestReward暂时不支持的奖励类型："+type.toString());
         }
     }
 

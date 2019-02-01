@@ -40,7 +40,7 @@ public enum MapleQuestCompleteType {
         return item;
     }
 
-    private MapleQuestCompleteType(int type) {
+    MapleQuestCompleteType(int type) {
         this.type = (byte) type;
     }
 

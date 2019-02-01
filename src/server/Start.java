@@ -6,12 +6,16 @@ import constants.ServerConstants;
 import constants.WorldConstants;
 import database.DatabaseConnection;
 import database.entity.AccountsPO;
+import handling.MaplePacketHandler;
 import handling.cashshop.CashShopServer;
 import handling.channel.ChannelServer;
 import handling.login.LoginServer;
+import handling.login.handler.LoginPasswordHandler;
+import handling.vo.recv.LoginPasswordRecvVO;
 import handling.world.World;
 import handling.world.WorldRespawnService;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.ServerSocket;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -66,7 +70,9 @@ public class Start {
         return ;
     }
 
-    public void run() throws InterruptedException {
+    public void run() {
+        System.setProperty("io.netty.tryReflectionSetAccessible", "false");
+
         long start = System.currentTimeMillis();
 //        LoggingService.init();
 //        MapleInfos.printAllInfos();
@@ -91,7 +97,7 @@ public class Start {
         runTimerThread();
         loadMapleData(false);
 
-        System.out.print("加载\"登入\"服务...");
+        System.out.print("加载登入服务...");
         LoginServer.run_startup_configurations();
 
         System.out.println("正在加载频道...");
@@ -100,6 +106,7 @@ public class Start {
         System.out.println("频道加载完成!\r\n");
         System.out.print("正在加载商城...");
         CashShopServer.run_startup_configurations();
+
         Runtime.getRuntime().addShutdownHook(new Thread(new Shutdown()));
 
         printSection("刷怪线程");
@@ -107,8 +114,8 @@ public class Start {
         if (ServerProperties.getProperty("RandDrop", false)) {
             ChannelServer.getInstance(1).getMapFactory().getMap(910000000).spawnRandDrop();
         }
-        ShutdownServer.registerMBean();
-        ServerConstants.registerMBean();
+//        ShutdownServer.registerMBean();
+//        ServerConstants.registerMBean();
         PlayerNPC.loadAll();
 //        printSection("定时活动");
 //        MessengerRankingWorker.getInstance();
@@ -210,9 +217,9 @@ public class Start {
         System.out.println(s);
     }
 
-    public static void main(String[] args) throws InterruptedException {
-//        instance.run();
-        instance.test();
+    public static void main(String[] args) {
+        instance.run();
+//        instance.test();
     }
 
     public int getRankTime() {
@@ -276,11 +283,11 @@ public class Start {
         }
     }
 
-    public static class Shutdown
-            implements Runnable {
+    public static class Shutdown implements Runnable {
 
         @Override
         public void run() {
+            System.out.println("call call shutdown!!!!!!!!!!");
             ShutdownServer.getInstance().run();
         }
     }
