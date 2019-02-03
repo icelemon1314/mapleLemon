@@ -4,6 +4,7 @@ import client.MapleClient;
 import constants.WorldConstants;
 import handling.MaplePacketHandler;
 import handling.channel.ChannelServer;
+import handling.vo.recv.CharlistRequestRecvVO;
 import handling.world.World;
 import java.util.List;
 
@@ -13,15 +14,15 @@ import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.LoginPacket;
 
-public class CharlistRequestHandler extends MaplePacketHandler {
+public class CharlistRequestHandler extends MaplePacketHandler<CharlistRequestRecvVO> {
 
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(CharlistRequestRecvVO recvMsg, MapleClient c) {
         if (!c.isLoggedIn()) {
             c.getSession().close();
             return;
         }
-        int server = slea.readByte();
-        int channel = slea.readByte() + 1;
+        int server = recvMsg.getServer();
+        int channel = recvMsg.getChannel();
         if (!World.isChannelAvailable(channel) || !WorldConstants.isExists(server)) {
             c.sendPacket(LoginPacket.getLoginFailed(10)); //cannot process so many
             return;

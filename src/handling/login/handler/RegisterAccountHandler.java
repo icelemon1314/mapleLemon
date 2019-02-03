@@ -4,6 +4,7 @@ import client.LoginCrypto;
 import client.MapleClient;
 import database.DatabaseConnection;
 import handling.MaplePacketHandler;
+import handling.vo.recv.RegisterAccountRecvVO;
 import tools.MapleLogger;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.LoginPacket;
@@ -13,15 +14,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class RegisterAccountHandler extends MaplePacketHandler {
+public class RegisterAccountHandler extends MaplePacketHandler<RegisterAccountRecvVO> {
 
     /**
      * 注册帐号
-     * @param slea
+     * @param recvMsg
      * @param c
      */
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c){
+    public void handlePacket(RegisterAccountRecvVO recvMsg, MapleClient c){
     /*
        * 0A
        * 0C 00 69 63 65 6C 65 6D 6F 6E 30 30 30 31 // 用户名
@@ -42,19 +43,19 @@ public class RegisterAccountHandler extends MaplePacketHandler {
      *
      *
      */
-        String accountName = slea.readMapleAsciiString();
-        String password = slea.readMapleAsciiString();
-        String realName = slea.readMapleAsciiString();
-        String birthDay = slea.readMapleAsciiString();
-        String homeNo = slea.readMapleAsciiString();
-        String questionOne = slea.readMapleAsciiString();
-        String answerOne = slea.readMapleAsciiString();
-        String questionTwo = slea.readMapleAsciiString();
-        String answerTwo = slea.readMapleAsciiString();
-        String email = slea.readMapleAsciiString();
-        String IDCard = slea.readMapleAsciiString();
-        String telNo = slea.readMapleAsciiString();
-        byte sex = slea.readByte();
+        String accountName = recvMsg.getAccountName();
+        String password = recvMsg.getPassword();
+        String realName = recvMsg.getRealName();
+        String birthDay = recvMsg.getBirthDay();
+        String homeNo = recvMsg.getHomeNo();
+        String questionOne = recvMsg.getQuestionOne();
+        String answerOne = recvMsg.getAnswerOne();
+        String questionTwo = recvMsg.getQuestionTwo();
+        String answerTwo = recvMsg.getAnswerTwo();
+        String email = recvMsg.getEmail();
+        String IDCard = recvMsg.getIDCard();
+        String telNo = recvMsg.getTelNo();
+        byte sex = recvMsg.getSex();
 
         boolean result = false;
         if (!c.isAccountNameUsed(accountName)) {

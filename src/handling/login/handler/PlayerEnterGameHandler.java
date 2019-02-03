@@ -8,6 +8,7 @@ import handling.cashshop.CashShopServer;
 import handling.cashshop.handler.CashShopOperation;
 import handling.channel.ChannelServer;
 import handling.login.LoginServer;
+import handling.vo.recv.PlayerEnterGameRecvVO;
 import handling.world.*;
 import handling.world.messenger.MapleMessenger;
 import handling.world.messenger.MapleMessengerCharacter;
@@ -23,7 +24,7 @@ import tools.packet.PartyPacket;
 
 import javax.swing.table.DefaultTableModel;
 
-public class PlayerEnterGameHandler extends MaplePacketHandler {
+public class PlayerEnterGameHandler extends MaplePacketHandler<PlayerEnterGameRecvVO> {
 
     /**
      * 登录游戏
@@ -31,10 +32,9 @@ public class PlayerEnterGameHandler extends MaplePacketHandler {
      * @param c 客户端连接
      */
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(PlayerEnterGameRecvVO recvMsg, MapleClient c) {
         try {
-            // c.setWorld(slea.readInt());
-            int playerid = slea.readInt();
+            int playerid = recvMsg.getPayerId();
             CharacterTransfer transfer = CashShopServer.getPlayerStorage().getPendingCharacter(playerid);
             if (transfer != null) {
                 CashShopOperation.EnterCS(transfer, c);

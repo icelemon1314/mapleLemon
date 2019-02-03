@@ -9,6 +9,7 @@ import client.inventory.MapleInventoryType;
 import gui.ServerUI;
 import handling.MaplePacketHandler;
 import handling.login.LoginInformationProvider;
+import handling.vo.recv.CreateCharRecvVO;
 import server.MapleItemInformationProvider;
 import server.ServerProperties;
 
@@ -16,23 +17,22 @@ import tools.MapleLogger;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.LoginPacket;
 
-public class CreateCharHandler extends MaplePacketHandler {
+public class CreateCharHandler extends MaplePacketHandler<CreateCharRecvVO> {
 
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(CreateCharRecvVO recvMsg, MapleClient c) {
         if (!c.isLoggedIn()) {
             c.getSession().close();
             return;
         }
         int faceMark = 0;
         int cape = 0;
-        int bottom = 0;
-        String name = slea.readMapleAsciiString();
-        int face = slea.readInt();
-        int hair = slea.readInt();
-        int top = slea.readInt();
-        bottom = slea.readInt();
-        int shoes = slea.readInt();
-        int weapon = slea.readInt();
+        String name = recvMsg.getCharName();
+        int face = recvMsg.getFace();
+        int hair = recvMsg.getHair();
+        int top = recvMsg.getTop();
+        int bottom = recvMsg.getBottom();
+        int shoes = recvMsg.getShoes();
+        int weapon = recvMsg.getWeapon();
 
         MapleItemInformationProvider li = MapleItemInformationProvider.getInstance();
         int[] items = {top, bottom, cape, shoes, weapon};
@@ -44,21 +44,8 @@ public class CreateCharHandler extends MaplePacketHandler {
             }
         }
 
-        short[] stat = new short[4];
-        int totalStat = 0;
-        for (int i = 0; i < 4; i++) {
-            stat[i] = slea.readByte();
-            if (stat[i] < 4 || stat[i] > 13) {
-                MapleLogger.info("[作弊] 創建角色初始能力值過小或過大");
-                return;
-            }
-            totalStat += stat[i];
-        }
-        if (totalStat != 25) {
-            MapleLogger.info("[作弊] 創建角色初始總能力值不正確");
-            return;
-        }
-        MapleCharacter newchar = MapleCharacter.getDefault(c, stat);
+
+        MapleCharacter newchar = MapleCharacter.getDefault(c, recvMsg.getStat());
         newchar.setWorld((byte) c.getWorld());
         newchar.setFace(face);
         newchar.setHair(hair);

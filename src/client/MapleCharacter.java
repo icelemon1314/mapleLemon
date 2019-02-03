@@ -442,7 +442,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
     }
 
-    public static MapleCharacter getDefault(MapleClient client, short[] stat) {
+    public static MapleCharacter getDefault(MapleClient client, Byte[] stat) {
         if (stat.length < 4) {
             stat[0] = 4;
             stat[1] = 4;

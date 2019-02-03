@@ -14,6 +14,7 @@ import database.DatabaseConnection;
 import handling.MaplePacketHandler;
 import handling.cashshop.CashShopServer;
 import handling.channel.ChannelServer;
+import handling.vo.recv.BuyCashItemRecvVO;
 import handling.world.WorldFindService;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -33,10 +34,10 @@ import tools.Triple;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.MTSCSPacket;
 
-public class BuyCashItemHandler extends MaplePacketHandler {
+public class BuyCashItemHandler extends MaplePacketHandler<BuyCashItemRecvVO> {
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(BuyCashItemRecvVO recvMsg, MapleClient c) {
         // 73 05 00 01
         // 73 02 00 DB 96 98 00
         MapleCharacter chr = c.getPlayer();

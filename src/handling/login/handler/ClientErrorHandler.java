@@ -8,12 +8,15 @@ import java.util.logging.Logger;
 
 import handling.MaplePacketHandler;
 
+import handling.vo.recv.CharlistRequestRecvVO;
+import handling.vo.recv.ClientErrorRecvVO;
 import tools.data.input.SeekableLittleEndianAccessor;
 
-public class ClientErrorHandler extends MaplePacketHandler {
+public class ClientErrorHandler extends MaplePacketHandler<ClientErrorRecvVO> {
 
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        String error = slea.readMapleAsciiString();
+    @Override
+    public void handlePacket(ClientErrorRecvVO recvMsg, MapleClient c) {
+        String error = recvMsg.getErrorMsg();
         try {
             try (RandomAccessFile file = new RandomAccessFile("日志\\错误信息.txt", "rw")) {
                 int num = (int) file.length();
