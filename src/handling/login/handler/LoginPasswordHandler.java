@@ -16,19 +16,14 @@ import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.LoginPacket;
 
-public class LoginPasswordHandler extends MaplePacketHandler {
+public class LoginPasswordHandler extends MaplePacketHandler<LoginPasswordRecvVO> {
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c){
-
-    }
-
-    public void handlePacket(MaplePacketRecvVO vo, MapleClient c) {
+    public void handlePacket(LoginPasswordRecvVO recvVO, MapleClient c) {
         // 01 0C 00 69 63 65 6C 65 6D 6F 6E 31 33 31 34
         // 05 00 61 64 6D 69 6E
         // 00 00 24 7E DD AA F0 7E D6 03 00 00 00 00 00 53 9C 00 00 00 00
 
-        LoginPasswordRecvVO recvVO = (LoginPasswordRecvVO) vo;
         String login = recvVO.getUsername();
         String pwd = recvVO.getPassowrd();
 

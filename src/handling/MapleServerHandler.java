@@ -239,7 +239,6 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 packetVO = (MaplePacketRecvVO)handleVo.newInstance();
                 packetVO.decodePacket(slea, client);
                 isFindVO = true;
-
             } catch (Exception e) {
                 MapleLogger.error("registerHandlers errors:" + e.getMessage());
                 return ;
@@ -247,7 +246,7 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
             if (isFindVO) {
                 handler.handlePacket(packetVO, client);
             } else {
-                handler.handlePacket(slea, client);
+                MapleLogger.error("unknown recv VO :" + className);
             }
         } catch (Exception e) {
             MapleLogger.error(e.getMessage());

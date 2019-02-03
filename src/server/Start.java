@@ -53,21 +53,28 @@ public class Start {
     }
 
     public void test() {
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("MapleLemonJPA");
-        EntityManager manager = factory.createEntityManager();
-        EntityTransaction transaction = manager.getTransaction();
-        transaction.begin();
+        MapleLogger.error("eeeeeeeeeeeee");
+        MapleLogger.info("ttttttttt");
+        MapleLogger.debug("DDDDDDDDDDDDDDDD");
 
-        AccountsPO account = manager.find(AccountsPO.class, 1);
-        System.out.println(account);
+        return;
 
-        account.setPoints(100000);
 
-        // 5.提交事务，关闭资源
-        transaction.commit();
-        manager.close();
-        factory.close();
-        return ;
+//        EntityManagerFactory factory = Persistence.createEntityManagerFactory("MapleLemonJPA");
+//        EntityManager manager = factory.createEntityManager();
+//        EntityTransaction transaction = manager.getTransaction();
+//        transaction.begin();
+//
+//        AccountsPO account = manager.find(AccountsPO.class, 1);
+//        System.out.println(account);
+//
+//        account.setPoints(100000);
+//
+//        // 5.提交事务，关闭资源
+//        transaction.commit();
+//        manager.close();
+//        factory.close();
+//        return ;
     }
 
     public void run() {
@@ -218,8 +225,8 @@ public class Start {
     }
 
     public static void main(String[] args) {
-        instance.run();
-//        instance.test();
+//        instance.run();
+        instance.test();
     }
 
     public int getRankTime() {
@@ -275,7 +282,6 @@ public class Start {
                 ps.setInt(1, i);
                 ps.executeUpdate();
                 ps.close();
-                System.out.println("发现复制装备 该装备的唯一ID: " + i + " 已进行删除处理..");
                 MapleLogger.info("发现复制装备 该装备的唯一ID: " + i + " 已进行删除处理..");
             }
         } catch (SQLException ex) {

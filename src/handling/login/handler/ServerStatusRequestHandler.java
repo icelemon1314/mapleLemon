@@ -4,13 +4,14 @@ import client.MapleClient;
 import constants.ServerConstants;
 import handling.MaplePacketHandler;
 import handling.login.LoginServer;
+import handling.vo.MaplePacketRecvVO;
+import handling.vo.recv.ServerStatusRequestRecvVO;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.LoginPacket;
 
-public class ServerStatusRequestHandler extends MaplePacketHandler {
+public class ServerStatusRequestHandler extends MaplePacketHandler<ServerStatusRequestRecvVO> {
 
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        short serverId = slea.readByte();
+    public void handlePacket(ServerStatusRequestRecvVO recvMsg, MapleClient c) {
         int numPlayer = LoginServer.getUsersOn();
         int userLimit = ServerConstants.单机服务端 ? 2 : LoginServer.getUserLimit();
         if (numPlayer >= userLimit) {
