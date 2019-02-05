@@ -49,7 +49,7 @@ public class CashShop implements Serializable {
         return this.inventory;
     }
 
-    public Item findByCashId(int cashId) {
+    public Item findByCashId(Long cashId) {
         for (Item item : this.inventory) {
             if (item.getUniqueId() == cashId) {
                 return item;

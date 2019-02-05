@@ -28,9 +28,9 @@ import java.util.List;
 public class BuyCashItemRecvVO extends MaplePacketRecvVO {
 
     Integer action;
-    Integer itemPrice;
+    Integer cashType;   // 1-点卷，2-抵用
     Integer itemSn;
-    MapleInventoryType extendType;  // 扩充类型
+    MapleInventoryType inventoryType;  // 扩充类型
     Long cashId;
 
     @Override
@@ -40,7 +40,7 @@ public class BuyCashItemRecvVO extends MaplePacketRecvVO {
         action = slea.readByte() & 0xFF;
         switch (action) {
             case 0x02: // 购买道具
-                itemPrice = slea.readByte() + 1;
+                cashType = slea.readByte() + 1;
                 itemSn = slea.readInt();
             case 0x03: // 赠送给别人
                 // 73 03
@@ -57,11 +57,11 @@ public class BuyCashItemRecvVO extends MaplePacketRecvVO {
             case 0x05:
                 // 73 05 00 01
                 // 73 05 01 02
-                itemPrice = slea.readByte() + 1;
+                cashType = slea.readByte() + 1;
                 MapleInventoryType type = MapleInventoryType.getByType(slea.readByte());
                 break;
             case 0x06: // 扩充仓库
-                itemPrice = slea.readByte() + 1;
+                cashType = slea.readByte() + 1;
                 break;
 
             case 0x09:
@@ -86,7 +86,7 @@ public class BuyCashItemRecvVO extends MaplePacketRecvVO {
                 break;
             case 0x0A: // 商城到背包 06 00 00 00 00 00 00 00 02 02 00
                 cashId = slea.readLong();
-                byte itemType = slea.readByte();
+                inventoryType = MapleInventoryType.getByType(slea.readByte());
 //                if (item1 == null) {
 //                    c.sendPacket(MTSCSPacket.刷新点券信息(chr));
 //                    return;
@@ -101,9 +101,8 @@ public class BuyCashItemRecvVO extends MaplePacketRecvVO {
 //                }
                 break;
             case 0xB: // 背包到商城
-                int cashId = (int) slea.readLong();
-                itemType = slea.readByte();
-                MapleInventory mi = chr.getInventory(MapleInventoryType.getByType(itemType));
+                cashId = slea.readLong();
+                inventoryType = MapleInventoryType.getByType(slea.readByte());
 //                item1 = mi.findByUniqueId(cashId);
 //                if (chr.isShowPacket()) {
 //                    MapleLogger.info(new StringBuilder().append("背包 => 商城 - 道具是否为空 ").append(item1 == null).toString());
@@ -124,10 +123,10 @@ public class BuyCashItemRecvVO extends MaplePacketRecvVO {
 //                    chr.dropMessage(1, "移动失败。");
 //                }
                 break;
-            case 0x20:
-                slea.readMapleAsciiString();
-                toCharge = 2;
-                uniqueId = (int) slea.readLong();
+//            case 0x20:
+//                slea.readMapleAsciiString();
+//                toCharge = 2;
+//                uniqueId = (int) slea.readLong();
 //                item1 = cs.findByCashId(uniqueId);
 //                if (item1 == null) {
 //                    c.sendPacket(MTSCSPacket.刷新点券信息(chr));
@@ -157,17 +156,17 @@ public class BuyCashItemRecvVO extends MaplePacketRecvVO {
 //                chr.modifyCSPoints(toCharge, Money, false);
 //                c.sendPacket(MTSCSPacket.商城换购道具(uniqueId, Money));
 //                c.sendPacket(MTSCSPacket.刷新点券信息(chr));
-                break;
-            case 0x23:
-            case 0x2A:
-                slea.readMapleAsciiString();
-                slea.skip(1);
-                toCharge = 1;
-                snCS = slea.readInt();
-                CashItemInfo item = cashinfo.getItem(snCS);
-                slea.skip(4);
-                String partnerName = slea.readMapleAsciiString();
-                String msg = slea.readMapleAsciiString();
+//                break;
+//            case 0x23:
+//            case 0x2A:
+//                slea.readMapleAsciiString();
+//                slea.skip(1);
+//                toCharge = 1;
+//                snCS = slea.readInt();
+//                CashItemInfo item = cashinfo.getItem(snCS);
+//                slea.skip(4);
+//                String partnerName = slea.readMapleAsciiString();
+//                String msg = slea.readMapleAsciiString();
 //                if ((item == null) || (!ItemConstants.isEffectRing(item.getId())) || (chr.getCSPoints(toCharge) < item.getPrice()) || (msg.length() > 73) || (msg.length() < 1)) {
 //                    c.sendPacket(MTSCSPacket.商城错误提示(0));
 //                    return;
@@ -216,20 +215,20 @@ public class BuyCashItemRecvVO extends MaplePacketRecvVO {
 //                    }
 //                }
 //                c.sendPacket(MTSCSPacket.刷新点券信息(chr));
-                break;
-            case 0x25: // 礼包购买
-                toCharge = slea.readByte() + 1;
-                int snCsId = slea.readInt();
-                int count = slea.readInt();
-                chr.dropMessage(1, "礼包购买未开放.");
+//                break;
+//            case 0x25: // 礼包购买
+//                toCharge = slea.readByte() + 1;
+//                int snCsId = slea.readInt();
+//                int count = slea.readInt();
+//                chr.dropMessage(1, "礼包购买未开放.");
 //
-                break;
-            case 0x26:
-                slea.readMapleAsciiString();
-                snCsId = slea.readInt();
-                item = cashinfo.getItem(snCsId);
-                partnerName = slea.readMapleAsciiString();
-                msg = slea.readMapleAsciiString();
+//                break;
+//            case 0x26:
+//                slea.readMapleAsciiString();
+//                snCsId = slea.readInt();
+//                item = cashinfo.getItem(snCsId);
+//                partnerName = slea.readMapleAsciiString();
+//                msg = slea.readMapleAsciiString();
 //                if ((item == null) || (chr.getCSPoints(1) < item.getPrice()) || (msg.length() > 73) || (msg.length() < 1)) {
 //                    c.sendPacket(MTSCSPacket.商城错误提示(3));
 //                    return;
@@ -265,9 +264,9 @@ public class BuyCashItemRecvVO extends MaplePacketRecvVO {
 //                    }
 //                }
 //                c.sendPacket(MTSCSPacket.刷新点券信息(chr));
-                break;
-            case 0x27:
-                item = cashinfo.getItem(slea.readInt());
+//                break;
+//            case 0x27:
+//                item = cashinfo.getItem(slea.readInt());
 //                if ((item == null) || (!MapleItemInformationProvider.getInstance().isQuestItem(item.getId()))) {
 //                    chr.dropMessage(1, "该道具不是任务物品");
 //                    c.sendPacket(MTSCSPacket.刷新点券信息(chr));
@@ -305,11 +304,11 @@ public class BuyCashItemRecvVO extends MaplePacketRecvVO {
 //                } else {
 //                    AutobanManager.getInstance().autoban(chr.getClient(), "商城非法购买任务道具.");
 //                }
-                break;
-            case 0x32:
-                slea.readByte();
-                snCS = slea.readInt();
-                slea.readInt();
+//                break;
+//            case 0x32:
+//                slea.readByte();
+//                snCS = slea.readInt();
+//                slea.readInt();
 //                if ((snCS == 50200031) && (chr.getCSPoints(1) >= 500)) {
 //                    chr.modifyCSPoints(1, -500, false);
 //                    chr.modifyCSPoints(2, 500, false);
@@ -326,41 +325,32 @@ public class BuyCashItemRecvVO extends MaplePacketRecvVO {
 //                    chr.dropMessage(1, "没有找到这个道具的信息。");
 //                }
 //                c.sendPacket(MTSCSPacket.刷新点券信息(chr));
-                break;
-            case 0x34:
-                c.sendPacket(MTSCSPacket.redeemResponse());
-                break;
-            case 0x41:
-                uniqueId = (int) slea.readLong();
-//                Item boxItem = cs.findByCashId((int) uniqueId);
-//                if ((boxItem == null) || (!cashinfo.hasRandomItem(boxItem.getItemId()))) {
-//                    chr.dropMessage(1, "打开箱子失败，服务器找不到对应的道具信息。");
-//                    c.sendPacket(MTSCSPacket.刷新点券信息(chr));
-//                    return;
-//                }
-//                List boxItemSNs = cashinfo.getRandomItem(boxItem.getItemId());
-//                if (boxItemSNs.isEmpty()) {
-//                    chr.dropMessage(1, "打开箱子失败，服务器找不到对应的道具信息。");
-//                    c.sendPacket(MTSCSPacket.刷新点券信息(chr));
-//                    return;
-//                }
-//                snCS = ((Integer) boxItemSNs.get(Randomizer.nextInt(boxItemSNs.size())));
-//                cItem = cashinfo.getItem(snCS);
-//                if (cItem != null) {
-//                    item1 = cs.toItem(cItem);
-//                    if ((item1 != null) && (item1.getUniqueId() > 0) && (item1.getItemId() == cItem.getId()) && (item1.getQuantity() == cItem.getCount())) {
-//                        if (chr.getInventory(ItemConstants.getInventoryType(item1.getItemId())).addItem(item1) != -1) {
-//                            cs.removeFromInventory(boxItem);
-//                            c.sendPacket(MTSCSPacket.商城打开箱子(item1, Long.valueOf(uniqueId)));
-//                        } else {
-//                            chr.dropMessage(1, "打开箱子失败，请确认背包是否有足够的空间。");
-//                        }
-//                    }
-//                }
-//                c.sendPacket(MTSCSPacket.刷新点券信息(chr));
-                break;
+//                break;
+//            case 0x34:
+//                c.sendPacket(MTSCSPacket.redeemResponse());
+//                break;
             default:
                 MapleLogger.error(new StringBuilder().append("商城操作未知的操作类型: 0x").append(StringUtil.getLeftPaddedStr(Integer.toHexString(action).toUpperCase(), '0', 2)).append(" ").append(slea.toString()).toString());
         }
+    }
+
+    public Integer getAction() {
+        return action;
+    }
+
+    public Integer getCashType() {
+        return cashType;
+    }
+
+    public Integer getItemSn() {
+        return itemSn;
+    }
+
+    public MapleInventoryType getInventoryType() {
+        return inventoryType;
+    }
+
+    public Long getCashId() {
+        return cashId;
     }
 }

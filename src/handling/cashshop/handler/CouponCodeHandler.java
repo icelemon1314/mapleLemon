@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import handling.MaplePacketHandler;
+import handling.vo.recv.CouponCodeRecvVO;
 import server.MapleInventoryManipulator;
 import server.cashshop.CashItemFactory;
 import server.cashshop.CashItemInfo;
@@ -18,17 +19,17 @@ import tools.Triple;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.MTSCSPacket;
 
-public class CouponCodeHandler extends MaplePacketHandler {
+public class CouponCodeHandler extends MaplePacketHandler<CouponCodeRecvVO> {
     // 商城优惠券
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(CouponCodeRecvVO recvMsg, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
-        String toPlayer = slea.readMapleAsciiString();
+        String toPlayer = recvMsg.getToPlayer();
         if (toPlayer.length() > 0) {
             c.sendPacket(MTSCSPacket.商城错误提示(22));
             c.sendPacket(MTSCSPacket.刷新点券信息(chr));
             return;
         }
-        String code = slea.readMapleAsciiString();
+        String code = recvMsg.getCode();
         if (code.length() <= 0) {
             c.sendPacket(MTSCSPacket.刷新点券信息(chr));
             return;

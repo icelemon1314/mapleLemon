@@ -3,16 +3,17 @@ package handling.channel.handler;
 import client.MapleCharacter;
 import client.MapleClient;
 import handling.MaplePacketHandler;
+import handling.vo.recv.CharInfoRequestRecvVO;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 
-public class CharInfoRequestHandler extends MaplePacketHandler {
+public class CharInfoRequestHandler extends MaplePacketHandler<CharInfoRequestRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(CharInfoRequestRecvVO recvMsg, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
-        int objectid = slea.readInt();
+        int objectid = recvMsg.getCharId();
         if ((chr == null) || (chr.getMap() == null)) {
             return;
         }

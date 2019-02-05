@@ -519,7 +519,7 @@ public class MTSCSPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] 商城删除道具(int uniqueid) {
+    public static byte[] 商城删除道具(Long uniqueid) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CS_OPERATION.getValue());
