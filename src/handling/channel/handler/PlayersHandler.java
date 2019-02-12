@@ -56,7 +56,7 @@ public class PlayersHandler {
                 String msg = slea.readMapleAsciiString();
                 boolean fame = slea.readByte() > 0;
                 slea.readInt();
-                Item itemz = chr.getCashInventory().findByCashId((int) slea.readLong());
+                Item itemz = chr.getCashInventory().findByCashId(slea.readLong());
                 if ((itemz == null) || (!itemz.getGiftFrom().equalsIgnoreCase(name)) || (!chr.getCashInventory().canSendNote(itemz.getUniqueId()))) {
                     return;
                 }

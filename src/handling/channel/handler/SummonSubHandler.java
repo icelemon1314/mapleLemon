@@ -5,6 +5,7 @@ import client.MapleClient;
 import client.Skill;
 import client.SkillFactory;
 import handling.MaplePacketHandler;
+import handling.vo.recv.SummonSubRecvVO;
 import server.MapleStatEffect;
 import server.Randomizer;
 import server.maps.MapleSummon;
@@ -12,19 +13,19 @@ import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.SummonPacket;
 
-public class SummonSubHandler extends MaplePacketHandler {
+public class SummonSubHandler extends MaplePacketHandler<SummonSubRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(SummonSubRecvVO recvVO, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
-        MapleSummon sum = chr.getSummons().get(slea.readInt());
+        MapleSummon sum = chr.getSummons().get(recvVO.getSummonId());
         if (sum == null || (sum.getOwnerId() != chr.getId()) || (sum.getSkillLevel() <= 0) || (!chr.isAlive())) {
             return;
         }
         switch (sum.getSkillId()) {
             case 1301013:
-                Skill bHealing = SkillFactory.getSkill(slea.readInt());
+                Skill bHealing = SkillFactory.getSkill(recvVO.getSkillId());
                 int bHealingLvl = chr.getTotalSkillLevel(bHealing);
                 if ((bHealingLvl <= 0) || (bHealing == null)) {
                     return;

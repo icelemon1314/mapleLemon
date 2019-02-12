@@ -4423,19 +4423,14 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
     }
 
-
-    public void spawnPet(byte slot, boolean lead) {
-        spawnPet(slot, lead, true);
-    }
-
     /**
      * 召唤宠物
      * @param slot
      * @param lead
      * @param broadcast
      */
-    public void spawnPet(byte slot, boolean lead, boolean broadcast) {
-        Item item = getInventory(MapleInventoryType.CASH).getItem((short) slot);
+    public void spawnPet(Short slot) {
+        Item item = getInventory(MapleInventoryType.CASH).getItem(slot);
         if ((item == null) || (!ItemConstants.isPet(item.getItemId()))) {
             dropMessage(1, "召唤失败，请你重新登陆");
             client.sendPacket(MaplePacketCreator.enableActions());
@@ -5625,7 +5620,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void spawnSavedPets() {
         if (this.petStore > -1) {
-            spawnPet(this.petStore, false, false);
+            spawnPet((short)this.petStore);
         }
         this.petStore = -1;
     }

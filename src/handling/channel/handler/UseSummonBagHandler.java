@@ -5,6 +5,7 @@ import client.MapleClient;
 import client.inventory.Item;
 import client.inventory.MapleInventoryType;
 import handling.MaplePacketHandler;
+import handling.vo.recv.UseSummonBagRecvVO;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.Randomizer;
@@ -15,19 +16,19 @@ import tools.data.input.SeekableLittleEndianAccessor;
 
 import java.util.Map;
 
-public class UseSummonBagHandler extends MaplePacketHandler {
+public class UseSummonBagHandler extends MaplePacketHandler<UseSummonBagRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(UseSummonBagRecvVO recvVO, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
         if ((!chr.isAlive()) || (chr.hasBlockedInventory())) {
             c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
-        byte slot = (byte) slea.readShort();
-        int itemId = slea.readInt();
-        Item toUse = chr.getInventory(MapleInventoryType.USE).getItem((short) slot);
+        Short slot = recvVO.getSlot();
+        int itemId = recvVO.getItemId();
+        Item toUse = chr.getInventory(MapleInventoryType.USE).getItem(slot);
         if ((toUse != null) && (toUse.getQuantity() >= 1) && (toUse.getItemId() == itemId) && ((c.getPlayer().getMapId() < 910000000) || (c.getPlayer().getMapId() > 910000022))) {
             Map<String, Integer> toSpawn = MapleItemInformationProvider.getInstance().getEquipStats(itemId);
             if (toSpawn == null) {
@@ -48,7 +49,7 @@ public class UseSummonBagHandler extends MaplePacketHandler {
                 c.sendPacket(MaplePacketCreator.enableActions());
                 return;
             }
-            MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, (short) slot, (short) 1, false);
+            MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (short) 1, false);
         }
         c.sendPacket(MaplePacketCreator.enableActions());
     }

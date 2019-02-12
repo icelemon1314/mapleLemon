@@ -134,11 +134,11 @@ public class MapleShop {
      * @param slot
      * @param quantity
      */
-    public void sell(MapleClient c, MapleInventoryType type, byte slot, short quantity) {
+    public void sell(MapleClient c, MapleInventoryType type, Short slot, short quantity) {
         if (quantity == 65535 || quantity <= 0) {
             quantity = 1;
         }
-        Item item = c.getPlayer().getInventory(type).getItem((short) slot);
+        Item item = c.getPlayer().getInventory(type).getItem(slot);
         if (item == null) {
             MapleLogger.info("该位置上无道具："+slot);
             return;
@@ -183,8 +183,8 @@ public class MapleShop {
      * @param c
      * @param slot
      */
-    public void recharge(MapleClient c, byte slot) {
-        Item item = c.getPlayer().getInventory(MapleInventoryType.USE).getItem((short) slot);
+    public void recharge(MapleClient c, Short slot) {
+        Item item = c.getPlayer().getInventory(MapleInventoryType.USE).getItem(slot);
         if (item == null || (!ItemConstants.is飞镖道具(item.getItemId()) && !ItemConstants.is子弹道具(item.getItemId()))) {
             return;
         }

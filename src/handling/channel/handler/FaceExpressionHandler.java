@@ -5,15 +5,15 @@ import client.MapleClient;
 import client.inventory.MapleInventoryType;
 import constants.ItemConstants;
 import handling.MaplePacketHandler;
+import handling.vo.recv.FaceExpressionRecvVO;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 
-public class FaceExpressionHandler extends MaplePacketHandler {
-
+public class FaceExpressionHandler extends MaplePacketHandler<FaceExpressionRecvVO> {
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        int emote = slea.readInt();
+    public void handlePacket(FaceExpressionRecvVO recvVo, MapleClient c) {
+        int emote = recvVo.getEmote();
         MapleCharacter chr = c.getPlayer();
         if (emote > 7) {
             int emoteid = 5159992 + emote;

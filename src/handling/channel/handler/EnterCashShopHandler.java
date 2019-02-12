@@ -6,6 +6,7 @@ import client.MapleClient;
 import handling.MaplePacketHandler;
 import handling.cashshop.CashShopServer;
 import handling.channel.ChannelServer;
+import handling.vo.recv.EnterCashShopRecvVO;
 import handling.world.CharacterTransfer;
 import handling.world.PlayerBuffStorage;
 import handling.world.World;
@@ -19,10 +20,10 @@ import tools.data.input.SeekableLittleEndianAccessor;
 
 import javax.swing.table.DefaultTableModel;
 
-public class EnterCashShopHandler extends MaplePacketHandler {
+public class EnterCashShopHandler extends MaplePacketHandler<EnterCashShopRecvVO> {
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(EnterCashShopRecvVO recvVO, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
         if ((chr == null) || (chr.hasBlockedInventory()) || (chr.getMap() == null) || (chr.getEventInstance() != null) || (c.getChannelServer() == null)) {
 //            c.sendPacket(MaplePacketCreator.serverBlocked(2));

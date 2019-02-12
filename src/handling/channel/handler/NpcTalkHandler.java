@@ -3,22 +3,23 @@ package handling.channel.handler;
 import client.MapleCharacter;
 import client.MapleClient;
 import handling.MaplePacketHandler;
+import handling.vo.recv.NpcTalkRecvVO;
 import scripting.npc.NPCScriptManager;
 import server.life.MapleNPC;
 import server.quest.MapleQuest;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 
-public class NpcTalkHandler extends MaplePacketHandler {
+public class NpcTalkHandler extends MaplePacketHandler<NpcTalkRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(NpcTalkRecvVO recvVO, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
         if ((chr == null) || (chr.getMap() == null)) {
             return;
         }
-        MapleNPC npc = chr.getMap().getNPCByOid(slea.readInt());
+        MapleNPC npc = chr.getMap().getNPCByOid(recvVO.getNpcOid());
         if (npc == null) {
             return;
         }

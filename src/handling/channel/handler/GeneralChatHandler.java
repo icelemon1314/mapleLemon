@@ -5,15 +5,16 @@ import client.MapleClient;
 import client.messages.CommandProcessor;
 import client.messages.CommandType;
 import handling.MaplePacketHandler;
+import handling.vo.recv.GeneralChatRecvVO;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 
-public class GeneralChatHandler extends MaplePacketHandler {
+public class GeneralChatHandler extends MaplePacketHandler<GeneralChatRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        String text = slea.readMapleAsciiString();
+    public void handlePacket(GeneralChatRecvVO recvVO, MapleClient c) {
+        String text = recvVO.getText();
         MapleCharacter chr = c.getPlayer();
         int unk = 0;
         if ((text.length() > 0) && (chr != null) && (chr.getMap() != null)) {

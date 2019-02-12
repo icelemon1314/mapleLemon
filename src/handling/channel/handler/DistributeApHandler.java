@@ -6,6 +6,7 @@ import client.MapleStat;
 import client.PlayerStats;
 import constants.GameConstants;
 import handling.MaplePacketHandler;
+import handling.vo.recv.DistributeApRecvVO;
 import server.Randomizer;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
@@ -13,11 +14,11 @@ import tools.data.input.SeekableLittleEndianAccessor;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class DistributeApHandler extends MaplePacketHandler {
+public class DistributeApHandler extends MaplePacketHandler<DistributeApRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(DistributeApRecvVO recvVO, MapleClient c) {
         // 2E 40 00 00 00
         Map statupdate = new EnumMap(MapleStat.class);
         MapleCharacter chr = c.getPlayer();
@@ -26,7 +27,7 @@ public class DistributeApHandler extends MaplePacketHandler {
         PlayerStats stat = chr.getStat();
         int job = chr.getJob();
         if (chr.getRemainingAp() > 0) {
-            switch (slea.readInt()) {
+            switch (recvVO.getType()) {
                 case 0x40:
                     stat.setStr((short) (stat.getStr() + 1), chr);
                     statupdate.put(MapleStat.力量, (long) stat.getStr());

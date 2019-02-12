@@ -7,6 +7,7 @@ import client.inventory.ItemFlag;
 import client.inventory.MapleInventoryType;
 import constants.ItemConstants;
 import handling.MaplePacketHandler;
+import handling.vo.recv.OpenStorageRecvVO;
 import handling.world.WorldBroadcastService;
 import server.AutobanManager;
 import server.MapleInventoryManipulator;
@@ -18,13 +19,13 @@ import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.NPCPacket;
 
-public class OpenStorageHandler extends MaplePacketHandler {
+public class OpenStorageHandler extends MaplePacketHandler<OpenStorageRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(OpenStorageRecvVO recvVO, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
-        byte mode = slea.readByte();
+        byte mode = recvVO.getMode();
         if (chr == null) {
             return;
         }
@@ -32,8 +33,8 @@ public class OpenStorageHandler extends MaplePacketHandler {
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         switch (mode) {
             case 4://取出
-                byte type = slea.readByte();
-                byte slot = slea.readByte();  // 从0开始计算的
+                byte type = recvVO.getSlotType();
+                byte slot = recvVO.getSlot();  // 从0开始计算的
                 slot = storage.getSlot(MapleInventoryType.getByType(type), slot);
                 Item item = storage.getItem(slot);
                 if (item != null) {
@@ -69,9 +70,9 @@ public class OpenStorageHandler extends MaplePacketHandler {
                 }
                 break;
             case 5://放入仓库
-                slot = (byte) slea.readShort();
-                int itemId = slea.readInt();
-                short quantity = slea.readShort();
+                slot = recvVO.getSlot();
+                int itemId = recvVO.getItemId();
+                short quantity = recvVO.getQuantity();
 
                 if (quantity < 1) {
                     AutobanManager.getInstance().autoban(c, "试图存入到仓库的道具数量: " + quantity + " 道具ID: " + itemId);
@@ -120,7 +121,7 @@ public class OpenStorageHandler extends MaplePacketHandler {
                 }
                 break;
             case 6:
-                meso = slea.readInt();
+                meso = recvVO.getMeso();
                 long storageMesos = storage.getMeso();
                 long playerMesos = chr.getMeso();
                 if (((meso > 0) && (storageMesos >= meso)) || ((meso < 0) && (playerMesos >= -meso))) {
