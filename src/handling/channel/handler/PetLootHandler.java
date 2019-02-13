@@ -4,6 +4,7 @@ import client.MapleCharacter;
 import client.MapleClient;
 import client.inventory.MaplePet;
 import handling.MaplePacketHandler;
+import handling.vo.recv.PetLootRecvVO;
 import handling.world.WorldBroadcastService;
 import handling.world.party.MaplePartyCharacter;
 import server.MapleInventoryManipulator;
@@ -20,15 +21,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 
-public class PetLootHandler extends MaplePacketHandler {
+public class PetLootHandler extends MaplePacketHandler<PetLootRecvVO> {
 
     /**
      * 宠物拾取道具
-     * @param slea
+     * @param recvVO
      * @param c
      */
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(PetLootRecvVO recvVO, MapleClient c) {
         // 4F 4C 00 F6 00 A3 86 01 00
         MapleCharacter chr = c.getPlayer();
         if (chr == null) {
@@ -39,8 +40,8 @@ public class PetLootHandler extends MaplePacketHandler {
         }
         c.getPlayer().setScrolledPosition((short) 0);
         MaplePet pet = chr.getSpawnPet();
-        Point Client_Reportedpos = slea.readPos();
-        MapleMapObject ob = chr.getMap().getMapObject(slea.readInt(), MapleMapObjectType.ITEM);
+        Point Client_Reportedpos = recvVO.getPetPos();
+        MapleMapObject ob = chr.getMap().getMapObject(recvVO.getMapOid(), MapleMapObjectType.ITEM);
         if ((ob == null) || (pet == null)) {
             return;
         }

@@ -4,6 +4,7 @@ import client.*;
 import client.status.MonsterStatus;
 import client.status.MonsterStatusEffect;
 import handling.MaplePacketHandler;
+import handling.vo.recv.SummonAttackRecvVO;
 import server.MapleStatEffect;
 import server.life.MapleMonster;
 import server.maps.MapleMap;
@@ -20,11 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class SummonAttackHandler extends MaplePacketHandler {
+public class SummonAttackHandler extends MaplePacketHandler<SummonAttackRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(SummonAttackRecvVO recvVO, MapleClient c) {
         // 53 5D 78 2F 00 03 A1 86 01 00 06 80 01 5A FF F6 00 5C FF F6 00 64 00 17 00 00 00 E6 FE 35 01
         int count;
         MapleCharacter chr = c.getPlayer();
@@ -32,7 +33,7 @@ public class SummonAttackHandler extends MaplePacketHandler {
             return;
         }
         MapleMap map = chr.getMap();
-        MapleSummon summon = chr.getSummons().get(slea.readInt());
+        MapleSummon summon = chr.getSummons().get(recvVO.getSummonId());
         if (summon == null || (summon.getOwnerId() != chr.getId()) || (summon.getSkillLevel() <= 0)) {
             chr.dropMessage(5, "出现错误.");
             return;
@@ -42,7 +43,7 @@ public class SummonAttackHandler extends MaplePacketHandler {
             chr.dropMessage(5, "召唤兽攻击处理出错。");
             return;
         }
-        byte animation = slea.readByte();
+        byte animation = recvVO.getAnimation();
         byte numAttackedAndDamage = 0x11;
         byte numAttacked = 1;
         byte numDamage = 1;
@@ -74,24 +75,7 @@ public class SummonAttackHandler extends MaplePacketHandler {
             }
         }
 
-        List<AttackPair> allDamage = new ArrayList();
-        for (int i = 0; i < numAttacked; i++) {
-            MapleMonster mob = map.getMonsterByOid(slea.readInt());
-            if (mob == null) {
-                continue;
-            }
-            slea.skip(13);
-            List allDamageNumbers = new ArrayList();
-            for (int j = 0; j < numDamage; j++) {
-                int damge = slea.readInt();
-                if (chr.isShowPacket()) {
-                    chr.dropMessage(-5, "召唤兽攻击 打怪数量: " + numAttacked + " 打怪次数: " + numDamage + " 打怪伤害: " + damge + " 怪物OID: " + mob.getObjectId());
-                }
-                allDamageNumbers.add(new Pair(damge, false));
-            }
-            slea.skip(4);
-            allDamage.add(new AttackPair(mob.getObjectId(), allDamageNumbers));
-        }
+        List<AttackPair> allDamage = recvVO.getAllDamage();
         Skill summonSkill = SkillFactory.getSkill(summon.getSkillId());
         MapleStatEffect summonEffect = summonSkill.getEffect(summon.getSkillLevel());
         if (summonEffect == null) {

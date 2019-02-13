@@ -3,23 +3,18 @@ package handling.channel.handler;
 import client.MapleClient;
 import handling.MaplePacketHandler;
 import handling.SendPacketOpcode;
+import handling.vo.recv.NpcActionRecvVO;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
-public class NpcActionHandler extends MaplePacketHandler {
+public class NpcActionHandler extends MaplePacketHandler<NpcActionRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(NpcActionRecvVO recvVO, MapleClient c) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(SendPacketOpcode.NPC_ACTION.getValue());
-        int length = (int) slea.available();
-        if (length == 6) {
-            mplew.writeInt(slea.readInt());
-            mplew.writeShort(slea.readShort());
-        } else{
-            mplew.write(slea.read(length));
-        }
+        mplew.write(recvVO.getAvailable());
         c.sendPacket(mplew.getPacket());
     }
 }

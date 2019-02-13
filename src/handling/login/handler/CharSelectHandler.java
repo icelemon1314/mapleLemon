@@ -5,18 +5,19 @@ import constants.WorldConstants;
 import handling.MaplePacketHandler;
 import handling.channel.ChannelServer;
 import handling.login.LoginServer;
+import handling.vo.recv.CharSelectRecvVO;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 
-public class CharSelectHandler extends MaplePacketHandler {
+public class CharSelectHandler extends MaplePacketHandler<CharSelectRecvVO> {
 
     private static boolean loginFailCount(MapleClient c) {
         c.loginAttempt = (short) (c.loginAttempt + 1);
         return c.loginAttempt > 5;
     }
 
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        int charId = slea.readInt();
+    public void handlePacket(CharSelectRecvVO recvVO, MapleClient c) {
+        int charId = recvVO.getCharId();
         if (!c.isLoggedIn() || loginFailCount(c) || (!c.login_Auth(charId))) {
             c.sendPacket(MaplePacketCreator.enableActions());
             return;

@@ -2,6 +2,7 @@ package handling.channel.handler;
 
 import client.*;
 import handling.MaplePacketHandler;
+import handling.vo.recv.DistributeSpRecvVO;
 import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.data.input.SeekableLittleEndianAccessor;
@@ -9,14 +10,14 @@ import tools.data.input.SeekableLittleEndianAccessor;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class DistributeSpHandler extends MaplePacketHandler {
+public class DistributeSpHandler extends MaplePacketHandler<DistributeSpRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(DistributeSpRecvVO recvVO, MapleClient c) {
         // 30 40 42 0F 00
         MapleCharacter chr = c.getPlayer();
-        int skillid = slea.readInt();
+        int skillid = recvVO.getSkillId();
         boolean isBeginnerSkill = false;
         int remainingSp = chr.getRemainingSp();
         if (skillid == 1000 || skillid == 1001 || skillid == 1002) {

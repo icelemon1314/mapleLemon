@@ -7,17 +7,18 @@ import client.inventory.MapleInventoryType;
 import client.inventory.MaplePet;
 import constants.GameConstants;
 import handling.MaplePacketHandler;
+import handling.vo.recv.UsePetFoodRecvVO;
 import server.MapleInventoryManipulator;
 import server.Randomizer;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.PetPacket;
 
-public class UsePetFoodHandler extends MaplePacketHandler {
+public class UsePetFoodHandler extends MaplePacketHandler<UsePetFoodRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(UsePetFoodRecvVO recvVO, MapleClient c) {
         // 2A 05 00 40 59 20 00
         // 2A 19 00 40 59 20 00
         MapleCharacter chr = c.getPlayer();
@@ -26,8 +27,8 @@ public class UsePetFoodHandler extends MaplePacketHandler {
         }
         int previousFullness = 100;
         MaplePet pet = chr.getSpawnPet();
-        short slot = slea.readShort();
-        int itemId = slea.readInt();
+        short slot = recvVO.getSlot();
+        int itemId = recvVO.getItemId();
         Item petFood = chr.getInventory(MapleInventoryType.USE).getItem(slot);
         if ((pet == null) || (petFood == null) || (petFood.getItemId() != itemId) || (petFood.getQuantity() <= 0) || (itemId / 10000 != 212)) {
             c.sendPacket(MaplePacketCreator.enableActions());
