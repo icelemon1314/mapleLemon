@@ -7,25 +7,26 @@ import client.inventory.Item;
 import client.inventory.MapleInventoryType;
 import constants.ItemConstants;
 import handling.MaplePacketHandler;
+import handling.vo.recv.UseUpgradeScrollRecvVO;
 import server.MapleItemInformationProvider;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.InventoryPacket;
 
 import java.util.List;
 
-public class UseUpgradeScrollHandler extends MaplePacketHandler {
+public class UseUpgradeScrollHandler extends MaplePacketHandler<UseUpgradeScrollRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(UseUpgradeScrollRecvVO recvVO, MapleClient c) {
         // 2D 05 00 FF FF
         boolean cash = false;
         MapleCharacter chr = c.getPlayer();
         if ((chr == null) || (chr.getMap() == null)) {
             return;
         }
-        byte slot = (byte) slea.readShort();
-        byte dst = (byte) slea.readShort();
+        Short slot = recvVO.getSlot();
+        Short dst = recvVO.getDst();
         if (cash) {
             Item scroll = chr.getInventory(MapleInventoryType.CASH).getItem(slot);
             if (scroll == null) {
@@ -36,25 +37,20 @@ public class UseUpgradeScrollHandler extends MaplePacketHandler {
                 cash = false;
             }
         }
-        byte ws = 0;
-        if (slea.available() >= 3L) {
-            ws = (byte) slea.readShort();
-        }
-        UseUpgradeScroll((short) slot, (short) dst, (short) ws, c, chr, 0, cash);
+        UseUpgradeScroll(slot, dst, c, chr, 0, cash);
     }
 
     /**
      * 使用卷轴
      * @param slot
      * @param dst
-     * @param ws
      * @param c
      * @param chr
      * @param vegas
      * @param cash
      * @return
      */
-    public static boolean UseUpgradeScroll(short slot, short dst, short ws, MapleClient c, MapleCharacter chr, int vegas, boolean cash) {
+    public static boolean UseUpgradeScroll(short slot, short dst, MapleClient c, MapleCharacter chr, int vegas, boolean cash) {
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         chr.setScrolledPosition((short) 0);
 

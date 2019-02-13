@@ -3,16 +3,17 @@ package handling.channel.handler;
 import client.MapleClient;
 import client.SkillFactory;
 import handling.MaplePacketHandler;
+import handling.vo.recv.SummonRemoveRecvVO;
 import server.maps.MapleSummon;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.SummonPacket;
 
-public class SummonRemoveHandler extends MaplePacketHandler {
+public class SummonRemoveHandler extends MaplePacketHandler<SummonRemoveRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        MapleSummon summon = c.getPlayer().getSummons().get(slea.readInt());
+    public void handlePacket(SummonRemoveRecvVO recvVO, MapleClient c) {
+        MapleSummon summon = c.getPlayer().getSummons().get(recvVO.getSummonId());
         if (summon ==null || (summon.getOwnerId() != c.getPlayer().getId()) || (summon.getSkillLevel() <= 0)) {
             c.getPlayer().dropMessage(5, "移除召唤兽出现错误.");
             return;

@@ -5,6 +5,7 @@ import client.MapleClient;
 import client.Skill;
 import client.SkillFactory;
 import handling.MaplePacketHandler;
+import handling.vo.recv.SpecialSkillRecvVO;
 import server.MapleStatEffect;
 import server.maps.FieldLimitType;
 
@@ -14,11 +15,11 @@ import tools.data.input.SeekableLittleEndianAccessor;
 
 import java.awt.*;
 
-public class SpecialSkillHandler extends MaplePacketHandler {
+public class SpecialSkillHandler extends MaplePacketHandler<SpecialSkillRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(SpecialSkillRecvVO recvVO, MapleClient c) {
         // 31 CE CC 10 00 01 80 00 00
         // 31 2B 46 0F 00 14 00 00
         // 31 BC BC 21 00 04 01 A6 86 01 00 58 02
@@ -29,15 +30,12 @@ public class SpecialSkillHandler extends MaplePacketHandler {
             c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
-        int skillid = slea.readInt();
-        int skillLevel = slea.readByte();
+        int skillid = recvVO.getSkillId();
+        int skillLevel = recvVO.getSkillLevel();
         if (chr.isShowPacket()) {
             chr.dropMessage(5,"[SpecialSkill] - 技能ID: " + skillid + " 技能等级: " + skillLevel);
         }
-        Point pos = null;
-        if (slea.available() == 4) {
-            pos = new Point(slea.readShort(), slea.readShort());
-        }
+        Point pos = recvVO.getPosition();
         Skill skill = SkillFactory.getSkill(skillid);
         if ((skill == null)) {
             chr.dropMessage(5,"[SpecialSkill] -   不存在的技能ID" + skillid);

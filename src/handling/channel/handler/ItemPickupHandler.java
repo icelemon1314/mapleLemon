@@ -4,6 +4,7 @@ import client.MapleCharacter;
 import client.MapleClient;
 import constants.ItemConstants;
 import handling.MaplePacketHandler;
+import handling.vo.recv.ItemPickupRecvVO;
 import handling.world.WorldBroadcastService;
 import handling.world.party.MaplePartyCharacter;
 import server.MapleInventoryManipulator;
@@ -20,11 +21,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 
-public class ItemPickupHandler extends MaplePacketHandler {
+public class ItemPickupHandler extends MaplePacketHandler<ItemPickupRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(ItemPickupRecvVO recvVO, MapleClient c) {
         // 63 CC FE 13 01 A4 86 01 00
         // 63 8E FF 8D 00 A1 86 01 00
         // 63 8E FF 8D 00 A1 86 01 00
@@ -36,11 +37,11 @@ public class ItemPickupHandler extends MaplePacketHandler {
             return;
         }
         c.getPlayer().setScrolledPosition((short) 0);
-        Point Client_Reportedpos = slea.readPos();
+        Point Client_Reportedpos = recvVO.getChrPos();
         if (chr.getMap() == null) {
             return;
         }
-        MapleMapObject ob = chr.getMap().getMapObject(slea.readInt(), MapleMapObjectType.ITEM);
+        MapleMapObject ob = chr.getMap().getMapObject(recvVO.getMapOid(), MapleMapObjectType.ITEM);
         if (ob == null) {
             chr.dropMessage(5, "找不到地图上的道具");
             c.sendPacket(MaplePacketCreator.enableActions());

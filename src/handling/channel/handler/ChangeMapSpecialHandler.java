@@ -3,17 +3,18 @@ package handling.channel.handler;
 import client.MapleCharacter;
 import client.MapleClient;
 import handling.MaplePacketHandler;
+import handling.vo.recv.ChangeMapSpecialRecvVO;
 import server.MaplePortal;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 
-public class ChangeMapSpecialHandler extends MaplePacketHandler {
+public class ChangeMapSpecialHandler extends MaplePacketHandler<ChangeMapSpecialRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(ChangeMapSpecialRecvVO recvVO, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
-        String portal_name = slea.readMapleAsciiString();
+        String portal_name = recvVO.getPortalName();
         if ((chr == null) || (chr.getMap() == null)) {
             return;
         }

@@ -5,16 +5,17 @@ import client.MapleClient;
 import client.Skill;
 import client.SkillFactory;
 import handling.MaplePacketHandler;
+import handling.vo.recv.CancelBuffRecvVO;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 
-public class CancelBuffHandler extends MaplePacketHandler {
+public class CancelBuffHandler extends MaplePacketHandler<CancelBuffRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(CancelBuffRecvVO recvVO, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
-        int sourceid = slea.readInt();
+        int sourceid = recvVO.getSourceId();
         if ((chr == null) || (chr.getMap() == null)) {
             return;
         }

@@ -5,25 +5,26 @@ import client.MapleClient;
 import client.inventory.Item;
 import client.inventory.MapleInventoryType;
 import handling.MaplePacketHandler;
+import handling.vo.recv.UseReturnScrollRecvVO;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.maps.FieldLimitType;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 
-public class UseReturnScrollHandler extends MaplePacketHandler {
+public class UseReturnScrollHandler extends MaplePacketHandler<UseReturnScrollRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(UseReturnScrollRecvVO recvVO, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
         if ((!chr.isAlive()) || (chr.getMapId() == 749040100) || (chr.hasBlockedInventory()) || (chr.isInBlockedMap())) {
             c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
-        byte slot = (byte) slea.readShort();
-        int itemId = slea.readInt();
-        Item toUse = chr.getInventory(MapleInventoryType.USE).getItem((short) slot);
+        Short slot = recvVO.getSlot();
+        int itemId = recvVO.getItemId();
+        Item toUse = chr.getInventory(MapleInventoryType.USE).getItem(slot);
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         if ((toUse == null) || (toUse.getQuantity() < 1) || (toUse.getItemId() != itemId)) {
             c.sendPacket(MaplePacketCreator.enableActions());

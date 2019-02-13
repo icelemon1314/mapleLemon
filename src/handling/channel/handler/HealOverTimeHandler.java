@@ -4,21 +4,21 @@ import client.MapleCharacter;
 import client.MapleClient;
 import client.PlayerStats;
 import handling.MaplePacketHandler;
+import handling.vo.recv.HealOverTimeRecvVO;
 import tools.data.input.SeekableLittleEndianAccessor;
 
-public class HealOverTimeHandler extends MaplePacketHandler {
+public class HealOverTimeHandler extends MaplePacketHandler<HealOverTimeRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(HealOverTimeRecvVO recvVO, MapleClient c) {
         // 2F 00 14 00 00 0A 00 00 00 00 8E 9D 5C 00
         MapleCharacter chr = c.getPlayer();
         if (chr == null) {
             return;
         }
-        slea.skip(4);
-        int healHP = slea.readShort();
-        int healMP = slea.readShort();
+        int healHP = recvVO.getHealHp();
+        int healMP = recvVO.getHealMp();
         PlayerStats stats = chr.getStat();
         if (stats.getHp() <= 0 || healHP > 100 || healMP > 100) {
             return;
