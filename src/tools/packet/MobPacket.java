@@ -108,10 +108,6 @@ public class MobPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] moveMonster(boolean useskill, SeekableLittleEndianAccessor slea, int skillId, int skillLevel, int delay, int oid, Point startPos, List<LifeMovementFragment> moves) {
-        return moveMonster(useskill, slea, skillId, skillLevel, oid);
-    }
-
     /**
      * 广播怪物移动
      * @param useskill
@@ -120,7 +116,7 @@ public class MobPacket {
      * @param oid
      * @return
      */
-    public static byte[] moveMonster(boolean useskill,  SeekableLittleEndianAccessor slea,int skillId, int skillLevel, int oid) {
+    public static byte[] moveMonster(boolean useskill,  byte[] response,int skillId, int skillLevel, int oid) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MOVE_MONSTER.getValue());
@@ -128,7 +124,7 @@ public class MobPacket {
         mplew.write(useskill ? 1 : 0);
         mplew.write(skillId);
         mplew.writeInt(skillLevel);
-        mplew.write(slea.read((int)slea.available()));
+        mplew.write(response);
         mplew.writeLong(0);
 
         return mplew.getPacket();

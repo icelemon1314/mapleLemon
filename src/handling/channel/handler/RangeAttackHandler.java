@@ -7,6 +7,7 @@ import client.inventory.ModifyInventory;
 import constants.GameConstants;
 import handling.MaplePacketHandler;
 import handling.channel.ChannelServer;
+import handling.vo.recv.RangeAttackRecvVO;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.MapleStatEffect;
@@ -22,11 +23,11 @@ import java.util.Collections;
 
 import static client.MapleJob.getJobName;
 
-public class RangeAttackHandler extends MaplePacketHandler {
+public class RangeAttackHandler extends MaplePacketHandler<RangeAttackRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(RangeAttackRecvVO recvVO, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
         if (chr == null) {
             return;
@@ -43,19 +44,18 @@ public class RangeAttackHandler extends MaplePacketHandler {
         }
 
 
-        rangedAttack(slea, c, chr);
+        rangedAttack(recvVO, c, chr);
 
         chr.monsterMultiKill();
     }
 
     /**
      * 远程攻击
-     * @param slea
      * @param c
      * @param chr
      */
-    public void rangedAttack(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        AttackInfo attack = DamageParse.parseRangedAttack(slea, chr);
+    public void rangedAttack(RangeAttackRecvVO recvVO, MapleClient c, MapleCharacter chr) {
+        AttackInfo attack = recvVO.getAttackInfo();
         if (attack == null) {
             if (chr.isShowPacket()) {
                 chr.dropSpouseMessage(25, "[RangedAttack] - 远距离攻击封包解析返回为空.");

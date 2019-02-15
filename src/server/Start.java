@@ -225,8 +225,8 @@ public class Start {
     }
 
     public static void main(String[] args) {
-//        instance.run();
-        instance.test();
+        instance.run();
+//        instance.test();
     }
 
     public int getRankTime() {

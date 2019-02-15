@@ -43,7 +43,7 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 MaplePacketHandler mapleHandler = (MaplePacketHandler)handler.newInstance();
                 handlers.put(recvOpcode.getValue(), mapleHandler);
             } catch (Exception e) {
-                MapleLogger.error("registerHandlers errors:" + e.getMessage());
+                MapleLogger.error("registerHandlers " + className +" errors:" + e.getMessage());
             }
         }
     }
@@ -240,7 +240,7 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 packetVO.decodePacket(slea, client);
                 isFindVO = true;
             } catch (Exception e) {
-                MapleLogger.error("registerHandlers errors:" + e.getMessage());
+                MapleLogger.error("channelRead errors:" + e.getMessage());
                 return ;
             }
             if (isFindVO) {
@@ -326,17 +326,8 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
             case DELETE_CHAR:
                 DeleteCharHandler.handlePacket(slea, c);
                 break;
-            case VIEW_ALL_CHAR:
-                ViewCharHandler.handlePacket(slea, c);
-                break;
             case CHAR_SELECT:
                 CharSelectHandler.handlePacket(slea, c);
-                break;
-            case VIEW_SELECT_PIC:
-                WithSecondPasswordHandler.handlePacket(slea, c, true);
-                break;
-            case AUTH_SECOND_PASSWORD:
-                WithSecondPasswordHandler.handlePacket(slea, c, false);
                 break;
             case CHANGE_CHANNEL:
                 InterServerHandler.ChangeChannel(slea, c, c.getPlayer());

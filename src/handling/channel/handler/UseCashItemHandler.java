@@ -18,6 +18,7 @@ import constants.GameConstants;
 import constants.ItemConstants;
 import handling.MaplePacketHandler;
 import handling.channel.ChannelServer;
+import handling.vo.recv.UseCashItemRecvVO;
 import handling.world.WorldBroadcastService;
 import java.awt.Rectangle;
 import java.util.EnumMap;
@@ -52,10 +53,10 @@ import tools.packet.InventoryPacket;
 import tools.packet.MTSCSPacket;
 import tools.packet.PetPacket;
 
-public class UseCashItemHandler extends MaplePacketHandler {
+public class UseCashItemHandler extends MaplePacketHandler<UseCashItemRecvVO> {
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(UseCashItemRecvVO recvVO, MapleClient c) {
         // 2B 0F 00
         // D0 C4 1F 00 // 道具ID
         // 10 00 B2 E2 CA D4 C0 AE B0 C8 A3 A1 A3 A1 A3 A1 A3 A1
@@ -67,8 +68,8 @@ public class UseCashItemHandler extends MaplePacketHandler {
         }
         chr.setScrolledPosition((short) 0);
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        byte slot = (byte) slea.readShort();
-        int itemId = slea.readInt();
+        Short slot = recvVO.getSlot();
+        int itemId = recvVO.getItemId();
         int itemType = itemId / 10000;
         Item toUse = chr.getInventory(MapleInventoryType.USE).getItem((short) slot);
         if ((toUse == null) || (toUse.getItemId() != itemId) || (toUse.getQuantity() < 1) || (chr.hasBlockedInventory())) {
@@ -82,7 +83,7 @@ public class UseCashItemHandler extends MaplePacketHandler {
         boolean cc = false;
         switch (itemType) {
             case 217: // 缩地石
-                    used = InventoryHandler.UseTeleRock(slea, c, itemId);
+                    used = InventoryHandler.UseTeleRock(recvVO.getMapId(), recvVO.getCharName(), c, itemId);
                 break;
             case 218: // 洗点卷
                 // 2B 10 00 A0 43 21 00 80 00 00 00 40 00 00 00 敏捷加力量
@@ -90,8 +91,8 @@ public class UseCashItemHandler extends MaplePacketHandler {
                 // 2B 1B 00 A0 43 21 00 80 00 00 00 40 00 00 00 减力量加敏捷
                 if (itemId == 2180000) { // 洗能力点
                     Map statupdate = new EnumMap(MapleStat.class);
-                    int apto = slea.readInt();
-                    int apfrom = slea.readInt();
+                    int apto = recvVO.getApSpTo();
+                    int apfrom = recvVO.getApSpFrom();
                     int statLimit = c.getChannelServer().getStatLimit();
                     if (chr.isShowPacket()) {
                         chr.dropMessage(5, new StringBuilder().append("洗能力点 apto: ").append(apto).append(" apfrom: ").append(apfrom).toString());
@@ -315,8 +316,8 @@ public class UseCashItemHandler extends MaplePacketHandler {
                     // 洗技能点
                     // 2B 0B 00 A1 43 21 00 40 42 0F 00 41 42 0F 00
                     used = false;
-                    int skillTo = slea.readInt();
-                    int skillFrom = slea.readInt();
+                    int skillTo = recvVO.getApSpTo();
+                    int skillFrom = recvVO.getApSpFrom();
                     Skill skillSPTo = SkillFactory.getSkill(skillTo);
                     Skill skillSPFrom = SkillFactory.getSkill(skillFrom);
                     if ((itemId == 2180001 && (skillTo/10000)%100 == 0 && (skillFrom/10000)%100 == 0)
@@ -345,13 +346,13 @@ public class UseCashItemHandler extends MaplePacketHandler {
                     used = true;
                     switch (msgType) {
                         case 0:
-                            chr.getMap().broadcastMessage(MaplePacketCreator.serverMessageMega(new StringBuilder().append(chr.getMedalText()).append(chr.getName()).append(" : ").append(slea.readMapleAsciiString()).toString()));
+                            chr.getMap().broadcastMessage(MaplePacketCreator.serverMessageMega(new StringBuilder().append(chr.getMedalText()).append(chr.getName()).append(" : ").append(recvVO.getMessage()).toString()));
                             break;
                         case 1:
-                            c.getChannelServer().broadcastSmegaPacket(MaplePacketCreator.serverMessageMega(new StringBuilder().append(chr.getMedalText()).append(chr.getName()).append(" : ").append(slea.readMapleAsciiString()).toString()));
+                            c.getChannelServer().broadcastSmegaPacket(MaplePacketCreator.serverMessageMega(new StringBuilder().append(chr.getMedalText()).append(chr.getName()).append(" : ").append(recvVO.getMessage()).toString()));
                             break;
                         case 2:
-                            WorldBroadcastService.getInstance().broadcastSmega(MaplePacketCreator.serverNotice(3, c.getChannel(), new StringBuilder().append(chr.getMedalText()).append(chr.getName()).append(" : ").append(slea.readMapleAsciiString()).toString(), slea.readByte() != 0));
+                            WorldBroadcastService.getInstance().broadcastSmega(MaplePacketCreator.serverNotice(3, c.getChannel(), new StringBuilder().append(chr.getMedalText()).append(chr.getName()).append(" : ").append(recvVO.getMessage()).toString(), false));
                             break;
                     }
                 } else {
@@ -361,13 +362,13 @@ public class UseCashItemHandler extends MaplePacketHandler {
             case 213: // 真情告白
                 // 2B 09 00 51 80 20 00
                 // 31 00 31 32 33 32 31 34 33 32 34 33 71 65 77 71 65 77 71 65 77 71 65 0A 65 77 71 65 77 71 65 77 0A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A 7A
-                MapleLove love = new MapleLove(chr, chr.getPosition(), chr.getMap().getFootholds().findBelow(chr.getPosition()).getId(), slea.readMapleAsciiString(), itemId);
+                MapleLove love = new MapleLove(chr, chr.getPosition(), chr.getMap().getFootholds().findBelow(chr.getPosition()).getId(), recvVO.getMessage(), itemId);
                 chr.getMap().spawnLove(love);
                 used = true;
                 break;
             case 216: // 消息
-                String sendTo = slea.readMapleAsciiString();
-                String msg = slea.readMapleAsciiString();
+                String sendTo = recvVO.getCharName();
+                String msg = recvVO.getMessage();
                 chr.sendNote(sendTo, msg);
                 used = true;
                 break;
@@ -377,7 +378,7 @@ public class UseCashItemHandler extends MaplePacketHandler {
                 break;
             case 209: // 地图祝福
                 msg = ii.getMsg(itemId);
-                String ourMsg = slea.readMapleAsciiString();
+                String ourMsg = recvVO.getMessage();
                 if (!msg.contains("%s")) {
                     msg = ourMsg;
                 } else {
@@ -438,7 +439,7 @@ public class UseCashItemHandler extends MaplePacketHandler {
                 }
                 break;
             case 211: // 宠物取名卡
-                int uniqueid = (int) slea.readLong();
+                Long uniqueid = recvVO.getPetUniqueId();
                 MaplePet pet = null;
                 for (MaplePet petx : chr.getPets()) {
                     if ((petx != null) && (petx.getUniqueId() == uniqueid)) {
@@ -449,7 +450,7 @@ public class UseCashItemHandler extends MaplePacketHandler {
                 if (pet == null) {
                     chr.dropMessage(1, "宠物改名错误，找不到宠物的信息。");
                 } else {
-                    String nName = slea.readMapleAsciiString();
+                    String nName = recvVO.getPetName();
                     for (String z : GameConstants.RESERVED) {
                         if ((pet.getName().contains(z)) || (nName.contains(z))) {
                             break;
@@ -464,57 +465,6 @@ public class UseCashItemHandler extends MaplePacketHandler {
                     c.sendPacket(MaplePacketCreator.enableActions());
                     chr.getMap().broadcastMessage(MTSCSPacket.changePetName(chr, nName, pet.getInventoryPosition()));
                     used = true;
-                }
-                break;
-            case 519:
-                if ((itemId >= 5190000) && (itemId <= 5190011)) {
-                    uniqueid = (int) slea.readLong();
-                    pet = null;
-                    for (MaplePet petx : chr.getPets()) {
-                        if ((petx != null) && (petx.getUniqueId() == uniqueid)) {
-                            pet = petx;
-                            break;
-                        }
-                    }
-                    if (pet == null) {
-                        chr.dropMessage(1, "宠物改名错误，找不到宠物的信息。");
-                    } else {
-                        PetFlag petFlag = PetFlag.getByAddId(itemId);
-                        if ((petFlag == null) || (petFlag.check(pet.getFlags()))) {
-                            break;
-                        }
-                        pet.setFlags(pet.getFlags() | petFlag.getValue());
-                        pet.saveToDb();
-                        c.sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
-                        c.sendPacket(MaplePacketCreator.enableActions());
-//                        c.sendPacket(MTSCSPacket.changePetFlag(uniqueid, true, petFlag.getValue()));
-                        used = true;
-                    }
-                } else {
-                    if ((itemId < 5191000) || (itemId > 5191004)) {
-                        break;
-                    }
-                    uniqueid = (int) slea.readLong();
-                    pet = null;
-                    for (MaplePet petx : chr.getPets()) {
-                        if ((petx != null) && (petx.getUniqueId() == uniqueid)) {
-                            pet = petx;
-                            break;
-                        }
-                    }
-                    if (pet == null) {
-                        chr.dropMessage(1, "宠物改名错误，找不到宠物的信息。");
-                    } else {
-                        PetFlag petFlag = PetFlag.getByDelId(itemId);
-                        if ((petFlag != null) && (petFlag.check(pet.getFlags()))) {
-                            pet.setFlags(pet.getFlags() - petFlag.getValue());
-                            pet.saveToDb();
-                            c.sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), false));
-                            c.sendPacket(MaplePacketCreator.enableActions());
-//                            c.sendPacket(MTSCSPacket.changePetFlag(uniqueid, false, petFlag.getValue()));
-                            used = true;
-                        }
-                    }
                 }
                 break;
             case 214: // 金币包
@@ -558,7 +508,7 @@ public class UseCashItemHandler extends MaplePacketHandler {
                 break;
             default:
                 MapleLogger.info(new StringBuilder().append("使用未处理的商城道具 : ").append(itemId).toString());
-                MapleLogger.info(slea.toString(true));
+                MapleLogger.info(recvVO.toString());
         }
 
         if ((itemType != 506) || (used)) {

@@ -12,6 +12,7 @@ import client.status.MonsterStatusEffect;
 import java.awt.Point;
 
 import handling.MaplePacketHandler;
+import handling.vo.recv.TakeDamageRecvVO;
 import server.MapleStatEffect;
 import server.Randomizer;
 import server.life.MapleMonster;
@@ -23,29 +24,22 @@ import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.data.input.SeekableLittleEndianAccessor;
 
-public class TakeDamageHandler extends MaplePacketHandler {
+public class TakeDamageHandler extends MaplePacketHandler<TakeDamageRecvVO> {
 
     /**
      * 玩家受到伤害
-     * @param slea
+     * @param recvVO
      * @param c
      */
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        // 1E
-        // FF
-        // 07 00 00 00
-        // 00 A2 86 01
-        // 00 35 FC 01 00 00 00
-        //TODO 修复反射伤害给怪物 还有其他的掉血类型
-        // 1E FE 19 00 00 00 00 00 高处掉落下来扣血
+    public void handlePacket(TakeDamageRecvVO recvVO, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
         if ((chr == null) || (chr.getMap() == null) || (chr.isHidden())) {
             c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
-        byte type = slea.readByte();
-        int damage = slea.readInt();
+        byte type = recvVO.getDamageType();
+        int damage = recvVO.getDamage();
         boolean isDeadlyAttack = false;
         boolean pPhysical = false;
         int oid = 0;
@@ -63,8 +57,7 @@ public class TakeDamageHandler extends MaplePacketHandler {
             chr.dropMessage(5, "受伤类型: " + type + " 受伤数值: " + damage);
         }
         if (type == -1) { // 怪物伤害
-            slea.readByte();
-            oid = slea.readInt();
+            oid = recvVO.getDamageByMonsterOid();
             attacker = chr.getMap().getMonsterByOid(oid);
 //        MapleStatEffect.applyDoubleDefense(chr);
             if ((attacker == null)) {
@@ -72,7 +65,6 @@ public class TakeDamageHandler extends MaplePacketHandler {
                 return;
             }
         } else if (type == -2) { // 高处掉落扣血
-            slea.readShort();
         }
 
 //        if (stats.reduceDamageRate > 0) {

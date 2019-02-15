@@ -7,6 +7,7 @@ import client.SkillFactory;
 import constants.GameConstants;
 import handling.MaplePacketHandler;
 import handling.channel.ChannelServer;
+import handling.vo.recv.MagicAttackRecvVO;
 import server.MapleStatEffect;
 import server.events.MapleEvent;
 import server.events.MapleEventType;
@@ -17,11 +18,11 @@ import tools.data.input.SeekableLittleEndianAccessor;
 
 import static client.MapleJob.getJobName;
 
-public class MagicAttackHandler extends MaplePacketHandler {
+public class MagicAttackHandler extends MaplePacketHandler<MagicAttackRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(MagicAttackRecvVO recvVO, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
         if (chr == null) {
             return;
@@ -37,18 +38,18 @@ public class MagicAttackHandler extends MaplePacketHandler {
             return;
         }
 
-        MagicDamage(slea, c, chr);
+        MagicDamage(recvVO, c, chr);
         chr.monsterMultiKill();
     }
 
     /**
      * 魔法攻击
-     * @param slea
+     * @param recvVO
      * @param c
      * @param chr
      */
-    public void MagicDamage(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        AttackInfo attack = DamageParse.parseMagicDamage(slea, chr);
+    public void MagicDamage(MagicAttackRecvVO recvVO, MapleClient c, MapleCharacter chr) {
+        AttackInfo attack = recvVO.getAttackInfo();
         if (attack == null) {
             c.sendPacket(MaplePacketCreator.enableActions());
             return;

@@ -3,36 +3,32 @@ package handling.channel.handler;
 import client.MapleCharacter;
 import client.MapleClient;
 import handling.MaplePacketHandler;
+import handling.vo.recv.NpcTalkMoreRecvVO;
 import scripting.item.ItemScriptManager;
 import scripting.npc.NPCConversationManager;
 import scripting.npc.NPCScriptManager;
 import scripting.quest.QuestScriptManager;
 import tools.data.input.SeekableLittleEndianAccessor;
 
-public class NpcTalkMoreHandler extends MaplePacketHandler {
+public class NpcTalkMoreHandler extends MaplePacketHandler<NpcTalkMoreRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(NpcTalkMoreRecvVO recvVO, MapleClient c) {
         MapleCharacter player = c.getPlayer();
         if (player == null) {
             return;
         }
         final NPCConversationManager cm = NPCScriptManager.getInstance().getCM(c);
-        byte lastMsg = slea.readByte();
-        byte action = slea.readByte();
+        byte lastMsg = recvVO.getLastMsgType();
+        byte action = recvVO.getAction();
 
         if (player.getConversation() != 1) {
             return;
         }
 
         if (lastMsg == 3) { // 数字框
-            int selection = -1;
-            if (slea.available() >= 4L) {
-                selection = slea.readInt();
-            } else if (slea.available() > 0L) {
-                selection = slea.readByte();
-            }
+            int selection = recvVO.getSelection();
             if ((!player.isShowPacket()) || ((selection >= -1) && (action != -1))) {
                 if (c.getQM() != null) {
                     if (c.getQM().isStart()) {
@@ -57,12 +53,7 @@ public class NpcTalkMoreHandler extends MaplePacketHandler {
                 }
             }
         } else {
-            int selection = -1;
-            if (slea.available() >= 4L) {
-                selection = slea.readInt();
-            } else if (slea.available() > 0L) {
-                selection = slea.readByte();
-            }
+            int selection = recvVO.getSelection();
             if ((!player.isShowPacket()) || ((selection >= -1) && (action != -1))) {
                 if (c.getQM() != null) {
                     if (c.getQM().isStart()) {

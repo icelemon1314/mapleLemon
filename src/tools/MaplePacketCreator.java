@@ -642,12 +642,12 @@ public class MaplePacketCreator {
      * @param chrId
      * @return
      */
-    public static byte[] movePlayer(int chrId, SeekableLittleEndianAccessor slea) {
+    public static byte[] movePlayer(int chrId, byte[] response) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.MOVE_PLAYER.getValue());
         mplew.writeInt(chrId);
-        mplew.write(slea.read((int)slea.available()));
+        mplew.write(response);
 
         return mplew.getPacket();
     }

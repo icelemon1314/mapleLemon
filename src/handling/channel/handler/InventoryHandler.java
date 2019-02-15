@@ -1304,39 +1304,23 @@ public class InventoryHandler {
         }
     }
 
-    public static void TeleRock(SeekableLittleEndianAccessor slea, MapleClient c) {
-        byte slot = (byte) slea.readShort();
-        int itemId = slea.readInt();
-        Item toUse = c.getPlayer().getInventory(MapleInventoryType.USE).getItem((short) slot);
-        if ((toUse == null) || (toUse.getQuantity() < 1) || (toUse.getItemId() != itemId) || (itemId / 10000 != 232) || (c.getPlayer().hasBlockedInventory())) {
-            c.sendPacket(MaplePacketCreator.enableActions());
-            return;
-        }
-        boolean used = UseTeleRock(slea, c, itemId);
-        if (used) {
-            MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, (short) slot, (short) 1, false);
-        }
-        c.sendPacket(MaplePacketCreator.enableActions());
-    }
-
     /**
      * 使用缩地石
-     * @param slea
      * @param c
      * @param itemId
      * @return
      */
-    public static boolean UseTeleRock(SeekableLittleEndianAccessor slea, MapleClient c, int itemId) {
+    public static boolean UseTeleRock(Integer mapId, String chrName, MapleClient c, int itemId) {
         boolean used = false;
-        if (slea.readByte() == 0) {
-            MapleMap target = c.getChannelServer().getMapFactory().getMap(slea.readInt());
+        if (mapId != 0) {
+            MapleMap target = c.getChannelServer().getMapFactory().getMap(mapId);
             if (((itemId == 5041000) && (c.getPlayer().isRegRockMap(target.getId()))) || ((itemId != 5041000) && (c.getPlayer().isRegRockMap(target.getId()))) || (((itemId == 5040004) || (itemId == 5041001)) && ((GameConstants.isHyperTeleMap(target.getId())))
                     && (!FieldLimitType.VipRock.check(c.getPlayer().getMap().getFieldLimit())) && (!FieldLimitType.VipRock.check(target.getFieldLimit())) && (!c.getPlayer().isInBlockedMap()))) {
                 c.getPlayer().changeMap(target, target.getPortal(0));
                 used = true;
             }
         } else {
-            MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(slea.readMapleAsciiString());
+            MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(chrName);
             if ((victim != null) && (!victim.isIntern()) && (c.getPlayer().getEventInstance() == null) && (victim.getEventInstance() == null)) {
                 if ((!FieldLimitType.VipRock.check(c.getPlayer().getMap().getFieldLimit())) && (!FieldLimitType.VipRock.check(c.getChannelServer().getMapFactory().getMap(victim.getMapId()).getFieldLimit())) && (!victim.isInBlockedMap()) && (!c.getPlayer().isInBlockedMap()) && ((itemId == 5041000) || (itemId == 5040004) || (itemId == 5041001) || (victim.getMapId() / 100000000 == c.getPlayer().getMapId() / 100000000))) {
                     c.getPlayer().changeMap(victim.getMap(), victim.getMap().findClosestPortal(victim.getTruePosition()));

@@ -6,6 +6,7 @@ import client.inventory.MapleInventoryType;
 import constants.GameConstants;
 import handling.MaplePacketHandler;
 import handling.channel.ChannelServer;
+import handling.vo.recv.CloseRangeAttackRecvVO;
 import server.MapleStatEffect;
 import server.events.MapleEvent;
 import server.events.MapleEventType;
@@ -20,11 +21,11 @@ import tools.data.input.SeekableLittleEndianAccessor;
 import static client.MapleJob.getJobName;
 import static handling.channel.handler.DamageParse.NotEffectforAttack;
 
-public class CloseRangeAttackHandler extends MaplePacketHandler {
+public class CloseRangeAttackHandler extends MaplePacketHandler<CloseRangeAttackRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(CloseRangeAttackRecvVO recvVO, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
         if (chr == null) {
             return;
@@ -39,13 +40,13 @@ public class CloseRangeAttackHandler extends MaplePacketHandler {
             c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
-        closeRangeAttack(slea, c, chr, false);
+        closeRangeAttack(recvVO, c, chr, false);
         chr.monsterMultiKill();
     }
 
-    public void closeRangeAttack(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr, boolean 被动攻击) {
+    public void closeRangeAttack(CloseRangeAttackRecvVO recvVO, MapleClient c, MapleCharacter chr, boolean 被动攻击) {
         //获取攻击信息
-        AttackInfo attack = DamageParse.parseCloseRangeAttack(slea, chr);
+        AttackInfo attack = recvVO.getAttackInfo();
         if (attack == null) {
             chr.dropMessage(5, "攻击出现错误。");
             c.sendPacket(MaplePacketCreator.enableActions());

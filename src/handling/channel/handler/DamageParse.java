@@ -773,10 +773,9 @@ public class DamageParse {
     /**
      * 解析魔法攻击
      * @param lea
-     * @param chr
      * @return
      */
-    public static AttackInfo parseMagicDamage(SeekableLittleEndianAccessor lea, MapleCharacter chr) {
+    public static AttackInfo parseMagicDamage(SeekableLittleEndianAccessor lea) {
         // 1C 11 6C 88 1E 00 00 1D 06 A1 86 01 00 06 80 00 00 F7 FF F6 00 F7 FF F6 00 79 02 09 00 00 00 4C FF F6 00
         AttackInfo ret = new AttackInfo();
         ret.isMagicAttack = true;
@@ -797,9 +796,9 @@ public class DamageParse {
             List allDamageNumbers = new ArrayList();
             for (int j = 0; j < ret.numDamage; j++) {
                 int damage = lea.readInt();
-                if (chr.isShowPacket()) {
-                    chr.dropMessage(0, "魔法攻击 - 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage);
-                }
+//                if (chr.isShowPacket()) {
+//                    chr.dropMessage(0, "魔法攻击 - 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage);
+//                }
                 if (damage < 0) {
                     MapleLogger.info("魔法攻击出错封包:  打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage + " 技能ID: " + ret.skillId + lea.toString(true));
                 }
@@ -814,10 +813,9 @@ public class DamageParse {
     /**
      * 解析攻击参数
      * @param lea
-     * @param chr
      * @return
      */
-    public static AttackInfo parseCloseRangeAttack(SeekableLittleEndianAccessor lea, MapleCharacter chr) {
+    public static AttackInfo parseCloseRangeAttack(SeekableLittleEndianAccessor lea) {
         // 1A 11 2C 46 0F 00 00 10 04 A2 86 01 00 06 80 00 00 94 FF F6 00 95 FF F6 00 31 01 0B 00 00 00 57 FF F6 00
         // 1A 11 2C 46 0F 00 00 14 08 A7 86 01 00 06 00 01 00 39 FF F6 00 38 FF F6 00 C1 01 2E 00 00 00 23 FF 05 01
         // 1A 01 00 00 00 00 00 06 04 FD FE 13 01
@@ -844,9 +842,9 @@ public class DamageParse {
             List allDamageNumbers = new ArrayList();
             for (int j = 0; j < ret.numDamage; j++) {
                 int damage = lea.readInt();
-                if (chr.isShowPacket()) {
-                    chr.dropMessage(0, "近距离攻击 - 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage);
-                }
+//                if (chr.isShowPacket()) {
+//                    chr.dropMessage(0, "近距离攻击 - 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage);
+//                }
                 allDamageNumbers.add(new Pair(damage, false));
             }
             ret.allDamage.add(new AttackPair(oid, allDamageNumbers));
@@ -855,7 +853,7 @@ public class DamageParse {
         return ret;
     }
 
-    public static AttackInfo parseRangedAttack(SeekableLittleEndianAccessor lea, MapleCharacter chr) {
+    public static AttackInfo parseRangedAttack(SeekableLittleEndianAccessor lea) {
         // 1B 11 AC CA 2D 00 00 16 06 02 00 41 A1 86 01 00 06 80 00 00 4E FF F6 00 4E FF F6 00 44 02 39 00 00 00 B7 FE 13 01
         // 1B
         // 01
@@ -871,9 +869,9 @@ public class DamageParse {
         ret.numAttacked = (byte) (ret.numAttackedAndDamage >>> 4 & 0xF);//数量
         ret.numDamage = (byte) (ret.numAttackedAndDamage & 0xF);//次数
         ret.skillId = lea.readInt();
-        if (chr.isShowPacket()) {
-            chr.dropSpouseMessage(1, "[RangedAttack] - 技能ID: " + ret.skillId + " 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage);
-        }
+//        if (chr.isShowPacket()) {
+//            chr.dropSpouseMessage(1, "[RangedAttack] - 技能ID: " + ret.skillId + " 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage);
+//        }
         lea.skip(1);
         ret.stance = lea.readByte();
         ret.direction = lea.readByte();
@@ -898,19 +896,19 @@ public class DamageParse {
             List allDamageNumbers = new ArrayList();
             for (int j = 0; j < ret.numDamage; j++) {
                 int damage = lea.readInt();
-                if (chr.isShowPacket()) {
-                    chr.dropMessage(-5, "远距离攻击 - 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage);
-                }
-                if ((damage > chr.getMaxDamageOver(ret.skillId)) || (damage < 0)) {
-                    if (chr.isShowPacket()) {
-                        chr.dropMessage(-5, "远距离攻击次数出错:  技能ID: " + ret.skillId + " 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage);
-                    }
+//                if (chr.isShowPacket()) {
+//                    chr.dropMessage(-5, "远距离攻击 - 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage);
+//                }
+//                if ((damage > chr.getMaxDamageOver(ret.skillId)) || (damage < 0)) {
+//                    if (chr.isShowPacket()) {
+//                        chr.dropMessage(-5, "远距离攻击次数出错:  技能ID: " + ret.skillId + " 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage);
+//                    }
 //                    if ((damage > chr.getMaxDamageOver(ret.skillId)) && (!chr.isGM())) {
 //                        chr.sendPolice("系统检测到您的攻击伤害异常，系统对您进行掉线处理。");
 //                        WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverNotice(6, "[GM Message] "+chr.getName()+" ID: "+chr.getId()+" (等级 "+chr.getLevel()+") 远距离攻击伤害异常。打怪伤害: "+damage+" 地图ID: "+chr.getMapId()));
 //                    }
                     MapleLogger.info("远距离攻击出错封包: 打怪数量: " + ret.numAttacked + " 打怪次数: " + ret.numDamage + " 怪物OID " + oid + " 伤害: " + damage + " 技能ID: " + ret.skillId + lea.toString(true));
-                }
+//                }
                 allDamageNumbers.add(new Pair(damage, false));
             }
             ret.allDamage.add(new AttackPair(oid, allDamageNumbers));

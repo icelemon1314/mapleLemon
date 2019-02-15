@@ -3,6 +3,7 @@ package handling.channel.handler;
 import client.MapleCharacter;
 import client.MapleClient;
 import handling.MaplePacketHandler;
+import handling.vo.recv.MoveLifeRecvVO;
 import server.life.MapleMonster;
 import server.maps.MapleMap;
 import server.movement.LifeMovementFragment;
@@ -14,49 +15,37 @@ import tools.packet.MobPacket;
 import java.awt.*;
 import java.util.List;
 
-public class MoveLifeHandler extends MaplePacketHandler {
+public class MoveLifeHandler extends MaplePacketHandler<MoveLifeRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(MoveLifeRecvVO recvVO, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
         if (chr == null || chr.getMap() == null) {
             return;
         }
-        MapleMonster monster = chr.getMap().getMonsterByOid(slea.readInt());
+        MapleMonster monster = chr.getMap().getMonsterByOid(recvVO.getMonsterOid());
         if (monster == null) {
             return;
         }
         if (monster.getLinkCID() > 0) {
             return;
         }
-        short moveid = slea.readShort();
-        boolean useSkill = (slea.readByte() & 0xFF) > 0;
-        int skillId = slea.readByte();
+        short moveid = recvVO.getMoveId();
+        boolean useSkill = recvVO.getUseSkill();
+        int skillId = recvVO.getSkillId();
         int skillLevel = 0;
-        int start_x = slea.readShort(); // hmm.. startpos?
-        int start_y = slea.readShort(); // hmm...
-        slea.readShort();
-        slea.readShort();
+        int start_x = recvVO.getStartPos(); // hmm.. startpos?
+        int start_y = recvVO.getEndPos(); // hmm...
 
-        final List<LifeMovementFragment> res;
-        try {
-            res = MovementParse.parseMovement(slea, 2);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            MapleLogger.error("怪物ID " + monster.getId() + ", AIOBE Type2:\r\n" + slea.toString(true));
-            return;
-        }
+        final List<LifeMovementFragment> res = recvVO.getRes();
         if ((res != null) && (res.size() > 0)) {
             MapleMap map = chr.getMap();
             c.sendPacket(MobPacket.moveMonsterResponse(monster.getObjectId(), moveid, monster.getMp(), monster.isControllerHasAggro(), skillId, skillLevel));
-            if (slea.available() != 1) {
-                MapleLogger.error("slea.available != 1 (怪物移动错误) 剩余封包长度: " + slea.available());
-                return;
-            }
             MovementParse.updatePosition(res, monster, -1);
             Point endPos = monster.getTruePosition();
             map.moveMonster(monster, endPos);
-            map.broadcastMessage(chr, MobPacket.moveMonster(useSkill, slea, skillId, skillLevel, monster.getObjectId()), endPos);
+            map.broadcastMessage(chr, MobPacket.moveMonster(useSkill, recvVO.getResponseMoveData(), skillId, skillLevel, monster.getObjectId()), endPos);
         }
     }
 }

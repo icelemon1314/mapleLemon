@@ -3,6 +3,7 @@ package handling.channel.handler;
 import client.MapleCharacter;
 import client.MapleClient;
 import handling.MaplePacketHandler;
+import handling.vo.recv.SummonMoveRecvVO;
 import server.maps.MapleSummon;
 import server.maps.SummonMovementType;
 
@@ -13,11 +14,11 @@ import tools.packet.SummonPacket;
 import java.awt.*;
 import java.util.List;
 
-public class SummonMoveHandler extends MaplePacketHandler {
+public class SummonMoveHandler extends MaplePacketHandler<SummonMoveRecvVO> {
 
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(SummonMoveRecvVO recvVO, MapleClient c) {
         // 52
         // 5D 78 2F 00
         // E7 FE 1D 01
@@ -26,7 +27,7 @@ public class SummonMoveHandler extends MaplePacketHandler {
         if ((chr == null) || (chr.getMap() == null)) {
             return;
         }
-        MapleSummon sum = chr.getSummons().get(slea.readInt());
+        MapleSummon sum = chr.getSummons().get(recvVO.getSummonId());
         if (sum == null) {
             MapleLogger.info("找不到地图物体：召唤兽！");
             return;
@@ -34,15 +35,10 @@ public class SummonMoveHandler extends MaplePacketHandler {
         if ((sum.getOwnerId() != chr.getId()) || (sum.getSkillLevel() <= 0) || (sum.getMovementType() == SummonMovementType.不会移动)) {
             return;
         }
-        Point startPos = new Point(slea.readShort(), slea.readShort());
-        List res = MovementParse.parseMovement(slea, 4);
+        List res = recvVO.getRes();
         Point pos = sum.getPosition();
         MovementParse.updatePosition(res, sum, 0);
         if (res.size() > 0) {
-            if (slea.available() != 1L) {
-                MapleLogger.error("slea.available() != 1 (召唤兽移动错误) 剩余封包长度: " + slea.available());
-                return;
-            }
             chr.getMap().broadcastMessage(chr, SummonPacket.moveSummon(chr.getId(), sum.getSkillId(), pos, res), sum.getTruePosition());
         }
     }

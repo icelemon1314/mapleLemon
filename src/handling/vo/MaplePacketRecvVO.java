@@ -5,7 +5,11 @@ import tools.data.input.SeekableLittleEndianAccessor;
 
 public abstract class MaplePacketRecvVO {
 
+    protected SeekableLittleEndianAccessor rawPacketMsg;
+
     public abstract void decodePacket(SeekableLittleEndianAccessor msg, MapleClient c);
 
-    // public abstract void encodePacket(SeekableLittleEndianAccessor slea, MapleClient c);
+    public SeekableLittleEndianAccessor getRawPacketMsg() {
+        return rawPacketMsg;
+    }
 }

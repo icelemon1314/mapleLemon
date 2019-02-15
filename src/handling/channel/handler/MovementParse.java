@@ -19,12 +19,8 @@ import tools.data.input.SeekableLittleEndianAccessor;
 public class MovementParse {
 
     //1 = player, 2 = mob, 3 = pet, 4 = summon, 5 = dragon
-    public static List<LifeMovementFragment> parseMovement(final SeekableLittleEndianAccessor lea, final int kind) {
-        return parseMovement(lea, kind, null);
-    }
-
     //来源于IDB的类型
-    public static List<LifeMovementFragment> parseMovement(SeekableLittleEndianAccessor lea, int kind, MapleCharacter chr) {
+    public static List<LifeMovementFragment> parseMovement(SeekableLittleEndianAccessor lea) {
         final List<LifeMovementFragment> res = new ArrayList<>();
         final byte numCommands = lea.readByte();
         for (byte i = 0; i < numCommands; i++) {
@@ -82,7 +78,7 @@ public class MovementParse {
                     res.add(new ChangeEquipSpecialAwesome(lea.readByte(),0));
                     break;
                 default:
-                    MapleLogger.info("未知移动封包：[" + command + "]" + "(" + chr.getName() + ") 职业：" + chr.getJobName() + "(" + chr.getJob() + "移动封包 剩余次数: " + (numCommands - res.size()) + "  封包: " + lea.toString(true));
+                    MapleLogger.info("未知移动封包：[" + command + "]" + "移动封包 剩余次数: " + (numCommands - res.size()) + "  封包: " + lea.toString(true));
                     break;
             }
         }
