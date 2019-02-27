@@ -121,15 +121,17 @@ public class MapleSidekick
 
     public static List<MapleSidekick> loadAll() {
         List ret = new ArrayList();
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            try (PreparedStatement ps = con.prepareStatement("SELECT id FROM sidekicks"); ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    ret.add(new MapleSidekick(rs.getInt("id")));
-                }
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("SELECT id FROM sidekicks"); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                ret.add(new MapleSidekick(rs.getInt("id")));
             }
         } catch (SQLException se) {
             System.err.println("unable to read sidekick information from sql" + se);
+        } finally {
+            try {
+                con.close();
+            } catch (Exception e) {}
         }
         return ret;
     }

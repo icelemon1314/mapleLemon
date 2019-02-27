@@ -170,14 +170,4 @@ public class InterServerHandler {
             MapleLogger.error("loggin error:" + e);
         }
     }
-
-    /**
-     * 更换频道
-     * @param slea
-     * @param c
-     * @param chr
-     */
-    public static void ChangeChannel(SeekableLittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-//
-    }
 }

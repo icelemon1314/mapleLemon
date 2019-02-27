@@ -199,8 +199,8 @@ public class MapleQuest implements Serializable {
         if (!quests.isEmpty() ) {
             return;
         }
-        try (Connection con = DatabaseConnection.getConnection();
-                PreparedStatement questData = con.prepareStatement("SELECT * FROM wz_questdata");
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement questData = con.prepareStatement("SELECT * FROM wz_questdata");
                 ResultSet rs = questData.executeQuery();
         ) {
             while (rs.next()) {
@@ -214,6 +214,10 @@ public class MapleQuest implements Serializable {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                con.close();
+            } catch (Exception e) {}
         }
     }
 

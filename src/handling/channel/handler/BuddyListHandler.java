@@ -21,7 +21,8 @@ public class BuddyListHandler {
     private static CharacterIdNameBuddyCapacity getCharacterIdAndNameFromDatabase(String name, String group)
             throws SQLException {
         CharacterIdNameBuddyCapacity ret;
-        try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM characters WHERE name LIKE ?")) {
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM characters WHERE name LIKE ?")) {
             ps.setString(1, name);
             try (ResultSet rs = ps.executeQuery()) {
                 ret = null;
@@ -29,7 +30,10 @@ public class BuddyListHandler {
                     ret = new CharacterIdNameBuddyCapacity(rs.getInt("id"), rs.getString("name"), group, rs.getInt("buddyCapacity"));
                 }
             }
-            ps.close();
+        } finally {
+            try{
+                con.close();
+            } catch (Exception e) {}
         }
         return ret;
     }

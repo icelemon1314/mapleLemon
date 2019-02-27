@@ -57,6 +57,32 @@ public class Start {
         MapleLogger.info("ttttttttt");
         MapleLogger.debug("DDDDDDDDDDDDDDDD");
 
+        Connection con1 = DatabaseConnection.getConnection();
+        try {
+                con1.close();
+        } catch (Exception e){}
+        Connection con2 = DatabaseConnection.getConnection();
+        Connection con3 = DatabaseConnection.getConnection();
+
+//        try ( PreparedStatement ps= con.prepareStatement("SELECT * FROM accounts WHERE id = ?");) {
+//            ps.setInt(1, 1);
+//            try (ResultSet rs = ps.executeQuery()) {
+//
+//            }
+//        } catch (SQLException e) {
+//            System.err.println(new StringBuilder().append("Error getting character default").append(e).toString());
+//        }
+//        finally {
+//            try {
+//                con.close();
+//            } catch (SQLException e){}
+//        }
+
+        try {
+            Thread.sleep(10000L);
+        } catch (Exception e) {}
+
+
         return;
 
 
@@ -89,10 +115,16 @@ public class Start {
             ServerConstants.USE_FIXED_IV = false;
             System.out.println("[!!! 已开启只能管理员登录模式 !!!]");
         }
-        try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE `accounts` SET `loggedin` = 0")) {
+        // @TODO 放在用户登录的时候处理
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("UPDATE `accounts` SET `loggedin` = 0")) {
             ps.executeUpdate();
         } catch (SQLException ex) {
             throw new RuntimeException("运行时错误: 无法连接到MySQL数据库伺服器");
+        } finally {
+            try {
+                con.close();
+            } catch (Exception e) {}
         }
 
         System.out.println("正在加载服务端...");

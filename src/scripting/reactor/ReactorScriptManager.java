@@ -2,6 +2,8 @@ package scripting.reactor;
 
 import client.MapleClient;
 import database.DatabaseConnection;
+
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,7 +45,6 @@ public class ReactorScriptManager extends AbstractScriptManager {
             scriptengine.put("rm", rm);
             iv.invokeFunction("act", new Object[0]);
         } catch (ScriptException | NoSuchMethodException e) {
-            System.err.println("执行反应堆文件出错 反应堆ID: " + reactor.getReactorId() + ", 反应堆名称: " + reactor.getName() + " 错误信息: " + e);
             MapleLogger.info("执行反应堆文件出错 反应堆ID: " + reactor.getReactorId() + ", 反应堆名称: " + reactor.getName() + " 错误信息: " + e);
         }
     }
@@ -54,19 +55,20 @@ public class ReactorScriptManager extends AbstractScriptManager {
             return ret;
         }
         ret = new LinkedList();
-        try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM reactordrops WHERE reactorid = ?")) {
-                ps.setInt(1, reactorId);
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        ret.add(new ReactorDropEntry(rs.getInt("itemid"), rs.getInt("chance"), rs.getInt("questid")));
-                    }
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM reactordrops WHERE reactorid = ?")) {
+            ps.setInt(1, reactorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ret.add(new ReactorDropEntry(rs.getInt("itemid"), rs.getInt("chance"), rs.getInt("questid")));
                 }
-                ps.close();
             }
         } catch (SQLException e) {
-            System.err.println("从SQL中读取箱子的爆率出错.箱子的ID: " + reactorId + " 错误信息: " + e);
             MapleLogger.info("从SQL中读取箱子的爆率出错.箱子的ID: " + reactorId + " 错误信息: " + e);
+        } finally {
+            try{
+                con.close();
+            } catch (Exception e) {}
         }
         this.drops.put(reactorId, ret);
         return ret;

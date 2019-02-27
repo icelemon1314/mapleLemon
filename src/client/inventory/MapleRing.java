@@ -34,22 +34,25 @@ public class MapleRing implements Serializable {
     }
 
     public static MapleRing loadFromDb(int ringId, boolean equipped) {
-        try {
-            MapleRing ret;
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM rings WHERE ringId = ?")) {
-                ps.setInt(1, ringId);
-                try (ResultSet rs = ps.executeQuery()) {
-                    ret = null;
-                    if (rs.next()) {
-                        ret = new MapleRing(ringId, rs.getInt("partnerRingId"), rs.getInt("partnerChrId"), rs.getInt("itemid"), rs.getString("partnerName"));
-                        ret.setEquipped(equipped);
-                    }
+        MapleRing ret;
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM rings WHERE ringId = ?")) {
+            ps.setInt(1, ringId);
+            try (ResultSet rs = ps.executeQuery()) {
+                ret = null;
+                if (rs.next()) {
+                    ret = new MapleRing(ringId, rs.getInt("partnerRingId"), rs.getInt("partnerChrId"), rs.getInt("itemid"), rs.getString("partnerName"));
+                    ret.setEquipped(equipped);
                 }
-                ps.close();
             }
+            ps.close();
             return ret;
         } catch (SQLException ex) {
             MapleLogger.error("加载戒指信息出错", ex);
+        } finally {
+            try{
+                con.close();
+            } catch (Exception e) {}
         }
         return null;
     }
@@ -161,15 +164,17 @@ public class MapleRing implements Serializable {
     }
 
     public static void removeRingFromDb(int ringId, int partnerRingId) {
-        try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("DELETE FROM rings WHERE ringId = ? OR ringId = ?")) {
-                ps.setInt(1, ringId);
-                ps.setInt(2, partnerRingId);
-                ps.executeUpdate();
-                ps.close();
-            }
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("DELETE FROM rings WHERE ringId = ? OR ringId = ?")) {
+            ps.setInt(1, ringId);
+            ps.setInt(2, partnerRingId);
+            ps.executeUpdate();
         } catch (SQLException ex) {
             MapleLogger.error("删除戒指信息出错", ex);
+        } finally {
+            try{
+                con.close();
+            } catch (Exception e) {}
         }
     }
 

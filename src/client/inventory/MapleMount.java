@@ -5,6 +5,7 @@ import client.MapleCharacter;
 import database.DatabaseConnection;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import server.Randomizer;
@@ -35,13 +36,17 @@ public class MapleMount implements Serializable {
         if (!this.changed) {
             return;
         }
-        try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE mountdata set `Level` = ?, `Exp` = ?, `Fatigue` = ? WHERE characterid = ?")) {
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("UPDATE mountdata set `Level` = ?, `Exp` = ?, `Fatigue` = ? WHERE characterid = ?")) {
             ps.setByte(1, this.level);
             ps.setInt(2, this.exp);
             ps.setByte(3, this.fatigue);
             ps.setInt(4, charid);
             ps.executeUpdate();
-            ps.close();
+        } finally {
+            try{
+                con.close();
+            } catch (Exception e) {}
         }
     }
 

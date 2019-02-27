@@ -463,6 +463,12 @@ public final class MapleMap {
         return ret;
     }
 
+    /**
+     * 掉落道具
+     * @param chr
+     * @param mob
+     * @param instanced
+     */
     private void dropFromMonster(MapleCharacter chr, MapleMonster mob, boolean instanced) {//TODO 怪物死亡掉落物品
         if (mob == null) {
             chr.dropMessage(1,"怪物为空了！");
@@ -486,7 +492,7 @@ public final class MapleMap {
         }
 
         int maxSize = 200;
-        if ((!instanced) && (maxSize >= 300) && (((LinkedHashMap) this.mapobjects.get(MapleMapObjectType.ITEM)).size() >= maxSize)) {
+        if ((!instanced) && (maxSize >= 300) && ((this.mapobjects.get(MapleMapObjectType.ITEM)).size() >= maxSize)) {
             removeDropsDelay();
             if (chr.isShowPacket()) {
                 chr.dropMessage(6, new StringBuilder().append("[系统提示] 当前地图的道具数量达到 ").append(maxSize).append(" 系统已自动清理掉所有地上的物品信息.").toString());
@@ -516,6 +522,7 @@ public final class MapleMap {
             if (de.itemId == mob.getStolen()) {
                 continue;
             }
+            chr.dropMessage(1, "change:" + de.chance + " dropServerRate:" + dropServerRate + " chr.getDropMod():" + chr.getDropMod() + " drop buffer :" + (chr.getStat().getDropBuff() / 100.0D));
             if (Randomizer.nextInt(10000) < (int) (de.chance * dropServerRate * chr.getDropMod() * (chr.getStat().getDropBuff() / 100.0D))) {
                 if (((droptype != 3) && (de.itemId == 0))) {
                     continue;
@@ -642,22 +649,6 @@ public final class MapleMap {
      * @param lastSkill
      */
     public void killMonster(final MapleMonster monster, final MapleCharacter chr, boolean withDrops, boolean second, byte animation, int lastSkill) {
-//        if (((monster.getId() == 8810122) || (monster.getId() == 8810018)) && (!second)) {
-//            MapTimer.getInstance().schedule(new Runnable() {
-//                @Override
-//                public void run() {
-//                    MapleMap.this.killMonster(monster, chr, true, true, (byte) 1);
-//                    MapleMap.this.killAllMonsters(true);
-//                }
-//            }, 3000);
-//            return;
-//        }
-//        if (monster.getStatusSourceID(MonsterStatus.持续掉血) == 2111010) { //TODO 处理绿水灵病毒
-//            Skill skills = SkillFactory.getSkill(2111010);
-//            int skilllevel = chr.getSkillLevel(2111010);
-//            MapleStatEffect infoEffect = skills.getEffect(skilllevel);
-//            infoEffect.applyBuffEffect(chr, monster.getBuff(MonsterStatus.持续掉血).getPoisonSchedule());
-//        }
         this.spawnedMonstersOnMap.decrementAndGet();
         removeMapObject(monster);
         monster.killed();

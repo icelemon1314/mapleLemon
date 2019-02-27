@@ -9,6 +9,7 @@ import constants.ItemConstants;
 import database.DatabaseConnection;
 import database.DatabaseException;
 import java.io.Serializable;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,7 +52,8 @@ public class MapleStorage
     public static int create(int accountId)
             throws SQLException {
         ResultSet rs;
-        try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("INSERT INTO storages (accountid, slots, meso) VALUES (?, ?, ?)", 1)) {
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("INSERT INTO storages (accountid, slots, meso) VALUES (?, ?, ?)", 1)) {
             ps.setInt(1, accountId);
             ps.setInt(2, 4);
             ps.setInt(3, 0);
@@ -63,16 +65,19 @@ public class MapleStorage
                 rs.close();
                 return storageid;
             }
-            ps.close();
+        } finally {
+            try{
+                con.close();
+            } catch (Exception e) {}
         }
-        rs.close();
         throw new DatabaseException("Inserting char failed.");
     }
 
     public static MapleStorage loadOrCreateFromDB(int accountId) {
         MapleStorage ret = null;
+        Connection con = DatabaseConnection.getConnection();
         try {
-            PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM storages WHERE accountid = ?");
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM storages WHERE accountid = ?");
             ps.setInt(1, accountId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -91,6 +96,10 @@ public class MapleStorage
             }
         } catch (SQLException ex) {
             System.err.println("Error loading storage" + ex);
+        } finally {
+            try{
+                con.close();
+            } catch (Exception e) {}
         }
         return ret;
     }
@@ -99,14 +108,13 @@ public class MapleStorage
         if (!this.changed) {
             return;
         }
-        try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE storages SET slots = ?, meso = ? WHERE storageid = ?")) {
-                ps.setInt(1, this.slots);
-                ps.setLong(2, this.meso);
-                ps.setInt(3, this.storageId);
-                ps.executeUpdate();
-                ps.close();
-            }
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("UPDATE storages SET slots = ?, meso = ? WHERE storageid = ?")) {
+            ps.setInt(1, this.slots);
+            ps.setLong(2, this.meso);
+            ps.setInt(3, this.storageId);
+            ps.executeUpdate();
+            ps.close();
 
             List itemsWithType = new ArrayList();
             for (Item item : this.items) {
@@ -116,6 +124,10 @@ public class MapleStorage
             this.changed = false;
         } catch (SQLException ex) {
             System.err.println("Error saving storage" + ex);
+        } finally {
+            try{
+                con.close();
+            } catch (Exception e) {}
         }
     }
 

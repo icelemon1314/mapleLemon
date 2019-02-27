@@ -1,6 +1,8 @@
 package client.inventory;
 
 import database.DatabaseConnection;
+
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,14 +31,17 @@ public class MapleEquipOnlyId {
 
     public int initOnlyId() {
         int ret = 0;
-
-        try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT MAX(equipOnlyId) FROM inventoryitems WHERE equipOnlyId > 0"); ResultSet rs = ps.executeQuery()) {
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("SELECT MAX(equipOnlyId) FROM inventoryitems WHERE equipOnlyId > 0"); ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 ret = rs.getInt(1) + 1;
             }
-            ps.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try{
+                con.close();
+            } catch (Exception e) {}
         }
         return ret;
     }

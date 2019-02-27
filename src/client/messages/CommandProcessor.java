@@ -16,6 +16,7 @@ import tools.MapleLogger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -156,8 +157,9 @@ public class CommandProcessor {
 
     private static void logCommandToDB(MapleCharacter player, String command, String table) {
         PreparedStatement ps = null;
+        Connection con = DatabaseConnection.getConnection();
         try {
-            ps = DatabaseConnection.getConnection().prepareStatement(new StringBuilder().append("INSERT INTO ").append(table).append(" (cid, name, command, mapid) VALUES (?, ?, ?, ?)").toString());
+            ps = con.prepareStatement(new StringBuilder().append("INSERT INTO ").append(table).append(" (cid, name, command, mapid) VALUES (?, ?, ?, ?)").toString());
             ps.setInt(1, player.getId());
             ps.setString(2, player.getName());
             ps.setString(3, command);
@@ -171,6 +173,7 @@ public class CommandProcessor {
                 if (ps != null) {
                     ps.close();
                 }
+                con.close();
             } catch (SQLException e) {
             }
         }

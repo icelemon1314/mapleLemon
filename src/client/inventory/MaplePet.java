@@ -3,6 +3,7 @@ package client.inventory;
 import database.DatabaseConnection;
 import java.awt.Point;
 import java.io.Serializable;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -68,7 +69,8 @@ public class MaplePet implements Serializable {
     public static MaplePet loadFromDb(int itemid, int petid, short inventorypos) {
         try {
             MaplePet ret = new MaplePet(itemid, petid, inventorypos);
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM pets WHERE petid = ?")) {
+            Connection con = DatabaseConnection.getConnection();
+            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM pets WHERE petid = ?")) {
                 ps.setInt(1, petid);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (!rs.next()) {
@@ -89,7 +91,10 @@ public class MaplePet implements Serializable {
                     }
                     ret.changed = false;
                 }
-                ps.close();
+            } finally {
+                try{
+                    con.close();
+                } catch (Exception e) {}
             }
             return ret;
         } catch (SQLException ex) {
@@ -102,29 +107,32 @@ public class MaplePet implements Serializable {
         if (!this.changed) {
             return;
         }
-        try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE pets SET name = ?, level = ?, closeness = ?, fullness = ?, seconds = ?, flags = ?, skillid = ?, excluded = ? WHERE petid = ?")) {
-                ps.setString(1, this.name);
-                ps.setByte(2, this.level);
-                ps.setShort(3, this.closeness);
-                ps.setByte(4, this.fullness);
-                ps.setInt(5, this.secondsLeft);
-                ps.setShort(6, this.flags);
-                ps.setInt(7, this.skillid);
-                StringBuilder list = new StringBuilder();
-                for (int i = 0; i < this.excluded.length; i++) {
-                    list.append(this.excluded[i]);
-                    list.append(",");
-                }
-                String newlist = list.toString();
-                ps.setString(8, newlist.substring(0, newlist.length() - 1));
-                ps.setInt(9, this.uniqueid);
-                ps.executeUpdate();
-                ps.close();
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("UPDATE pets SET name = ?, level = ?, closeness = ?, fullness = ?, seconds = ?, flags = ?, skillid = ?, excluded = ? WHERE petid = ?")) {
+            ps.setString(1, this.name);
+            ps.setByte(2, this.level);
+            ps.setShort(3, this.closeness);
+            ps.setByte(4, this.fullness);
+            ps.setInt(5, this.secondsLeft);
+            ps.setShort(6, this.flags);
+            ps.setInt(7, this.skillid);
+            StringBuilder list = new StringBuilder();
+            for (int i = 0; i < this.excluded.length; i++) {
+                list.append(this.excluded[i]);
+                list.append(",");
             }
+            String newlist = list.toString();
+            ps.setString(8, newlist.substring(0, newlist.length() - 1));
+            ps.setInt(9, this.uniqueid);
+            ps.executeUpdate();
+            ps.close();
             this.changed = false;
         } catch (SQLException ex) {
             MapleLogger.error("保存宠物信息出错", ex);
+        } finally {
+            try{
+                con.close();
+            } catch (Exception e) {}
         }
     }
 
@@ -137,22 +145,24 @@ public class MaplePet implements Serializable {
         if (uniqueid <= -1) {
             uniqueid = MapleInventoryIdentifier.getInstance();
         }
-        try {
-            try (PreparedStatement pse = DatabaseConnection.getConnection().prepareStatement("INSERT INTO pets (petid, name, level, closeness, fullness, seconds, flags, skillid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
-                pse.setInt(1, uniqueid);
-                pse.setString(2, name);
-                pse.setByte(3, (byte) level);
-                pse.setShort(4, (short) closeness);
-                pse.setByte(5, (byte) fullness);
-                pse.setInt(6, secondsLeft);
-                pse.setShort(7, flag);
-                pse.setInt(8, skillId);
-                pse.executeUpdate();
-                pse.close();
-            }
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement pse = con.prepareStatement("INSERT INTO pets (petid, name, level, closeness, fullness, seconds, flags, skillid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
+            pse.setInt(1, uniqueid);
+            pse.setString(2, name);
+            pse.setByte(3, (byte) level);
+            pse.setShort(4, (short) closeness);
+            pse.setByte(5, (byte) fullness);
+            pse.setInt(6, secondsLeft);
+            pse.setShort(7, flag);
+            pse.setInt(8, skillId);
+            pse.executeUpdate();
         } catch (SQLException ex) {
             MapleLogger.error("创建宠物信息出错", ex);
             return null;
+        } finally {
+            try{
+                con.close();
+            } catch (Exception e) {}
         }
         MaplePet pet = new MaplePet(itemid, uniqueid);
         pet.setName(name);

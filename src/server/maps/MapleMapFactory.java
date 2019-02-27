@@ -6,6 +6,7 @@ import database.DatabaseConnection;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -149,8 +150,9 @@ public class MapleMapFactory {
                     bossid = MapleDataTool.getInt(mapData.getChildByPath("info/timeMob/id"), 0);
                     msg = MapleDataTool.getString(mapData.getChildByPath("info/timeMob/message"), null);
                 }
+                Connection con = DatabaseConnection.getConnection();
                 try {
-                    PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM spawns WHERE mid = ?");
+                    PreparedStatement ps = con.prepareStatement("SELECT * FROM spawns WHERE mid = ?");
                     ps.setInt(1, omapid);
                     ResultSet rs = ps.executeQuery();
                     while (rs.next()) {
@@ -178,6 +180,10 @@ public class MapleMapFactory {
                     }
                 } catch (SQLException e) {
                     MapleLogger.info("读取SQL刷Npc和刷新怪物出错.");
+                } finally {
+                    try{
+                        con.close();
+                    } catch (Exception e) {}
                 }
 
                 for (MapleData life : mapData.getChildByPath("life")) {
@@ -363,8 +369,9 @@ public class MapleMapFactory {
             bossid = MapleDataTool.getInt(mapData.getChildByPath("info/timeMob/id"), 0);
             msg = MapleDataTool.getString(mapData.getChildByPath("info/timeMob/message"), null);
         }
+        Connection con = DatabaseConnection.getConnection();
         try {
-            PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM spawns WHERE mid = ?");
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM spawns WHERE mid = ?");
             ps.setInt(1, mapid);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -392,6 +399,10 @@ public class MapleMapFactory {
             }
         } catch (SQLException e) {
             MapleLogger.info("读取SQL刷Npc和刷新怪物出错.");
+        } finally {
+            try{
+                con.close();
+            } catch (Exception e) {}
         }
 
         for (MapleData life : mapData.getChildByPath("life")) {

@@ -146,18 +146,20 @@ public class CashShop implements Serializable {
     }
 
     public void gift(int recipient, String from, String message, int sn, int uniqueid) {
-        try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("INSERT INTO `gifts` VALUES (DEFAULT, ?, ?, ?, ?, ?)")) {
-                ps.setInt(1, recipient);
-                ps.setString(2, from);
-                ps.setString(3, message);
-                ps.setInt(4, sn);
-                ps.setInt(5, uniqueid);
-                ps.executeUpdate();
-                ps.close();
-            }
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("INSERT INTO `gifts` VALUES (DEFAULT, ?, ?, ?, ?, ?)")) {
+            ps.setInt(1, recipient);
+            ps.setString(2, from);
+            ps.setString(3, message);
+            ps.setInt(4, sn);
+            ps.setInt(5, uniqueid);
+            ps.executeUpdate();
         } catch (SQLException sqle) {
             sqle.printStackTrace();
+        } finally {
+            try{
+                con.close();
+            } catch (Exception e) {}
         }
     }
 

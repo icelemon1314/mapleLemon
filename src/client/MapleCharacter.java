@@ -66,6 +66,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.crypto.Data;
+
 import scripting.event.EventInstanceManager;
 import scripting.npc.NPCScriptManager;
 import server.AutobanManager;
@@ -471,9 +473,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.stats.baseMaxMp = 5;
         ret.stats.baseMp = 5;
         ret.gachexp = 0;
-        try (Connection con = DatabaseConnection.getConnection()){
-            PreparedStatement ps;
-            ps = con.prepareStatement("SELECT * FROM accounts WHERE id = ?");
+        Connection con = DatabaseConnection.getConnection();
+        try ( PreparedStatement ps= con.prepareStatement("SELECT * FROM accounts WHERE id = ?");) {
             ps.setInt(1, ret.accountid);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -484,9 +485,12 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     ret.vpoints = rs.getInt("vpoints");
                 }
             }
-            ps.close();
         } catch (SQLException e) {
             System.err.println(new StringBuilder().append("Error getting character default").append(e).toString());
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e){}
         }
         return ret;
     }
@@ -1043,7 +1047,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         PreparedStatement pse = null;
         ResultSet rs = null;
         try {
-            con.setTransactionIsolation(1);
             con.setAutoCommit(false);
 
             ps = con.prepareStatement("INSERT INTO characters (level, str, dex, luk, `int`, hp, mp, maxhp, maxmp, sp, ap, skincolor, gender, job, hair, face, map, meso, party, buddyCapacity, pets, decorate, subcategory, gm, accountid, name, world) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 1);
@@ -1170,7 +1173,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     rs.close();
                 }
                 con.setAutoCommit(true);
-                con.setTransactionIsolation(4);
                 con.close();
             } catch (SQLException e) {
                 MapleLogger.error("[charsave] Error going back to autocommit mode:", e);
@@ -1196,7 +1198,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ResultSet rs = null;
         try {
             this.isSaveing = true;
-            con.setTransactionIsolation(1);
             con.setAutoCommit(false);
 
             ps = con.prepareStatement("UPDATE characters SET level = ?, fame = ?, str = ?, dex = ?, luk = ?, `int` = ?, exp = ?, hp = ?, mp = ?, maxhp = ?, maxmp = ?, sp = ?, ap = ?, gm = ?, skincolor = ?, gender = ?, job = ?, hair = ?, face = ?, map = ?, meso = ?, hpApUsed = ?, spawnpoint = ?, party = ?, buddyCapacity = ?, pets = ?, subcategory = ?, marriageId = ?, currentrep = ?, totalrep = ?, gachexp = ?, fatigue = ?, charm = ?, charisma = ?, craft = ?, insight = ?, sense = ?, will = ?, totalwins = ?, totallosses = ?, pvpExp = ?, pvpPoints = ?, decorate = ?, beans = ?, warning = ?, dollars = ?, sharelots = ?, apstorage = ?, honor = ?, love = ?, playerPoints = ?, playerEnergy = ?, pvpDeaths = ?, pvpKills = ?, pvpVictory = ?, batterytime = ?, exittime = ?, runeresettime = ?, userunenowtime = ?, name = ? WHERE id = ?", 1);
@@ -1586,7 +1587,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     rs.close();
                 }
                 con.setAutoCommit(true);
-                con.setTransactionIsolation(4);
                 con.close();
             } catch (SQLException e) {
                 MapleLogger.error(new StringBuilder().append(MapleClient.getLogMessage(this, "[charsave] Error going back to autocommit mode")).append(e).toString());
@@ -4509,10 +4509,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 ps.setInt(1, getId());
                 ps.setInt(2, to.getId());
                 ps.execute();
-                ps.close();
             }
         } catch (SQLException e) {
             System.err.println(new StringBuilder().append("ERROR writing famelog for char ").append(getName()).append(" to ").append(to.getName()).append(e).toString());
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e){}
         }
     }
 
@@ -4879,8 +4882,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 this.coolDowns.put(cooldown.skillId, cooldown);
             }
         } else {
+            Connection con = DatabaseConnection.getConnection();
             try {
-                Connection con = DatabaseConnection.getConnection();
                 ResultSet rs;
                 try (PreparedStatement ps = con.prepareStatement("SELECT SkillID,StartTime,length FROM skills_cooldowns WHERE charid = ?")) {
                     ps.setInt(1, getId());
@@ -4897,6 +4900,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 deleteWhereCharacterId(con, "DELETE FROM skills_cooldowns WHERE charid = ?");
             } catch (SQLException e) {
                 System.err.println("Error while retriving cooldown from SQL storage");
+            } finally {
+                try {
+                    con.close();
+                } catch (SQLException e){}
             }
         }
     }
@@ -5011,20 +5018,21 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void showNote() {
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM notes WHERE `to`=?", 1005, 1008)) {
-                ps.setString(1, getName());
-                ResultSet rs = ps.executeQuery();
-                rs.last();
-                int count = rs.getRow();
-                rs.first();
-                this.client.sendPacket(MTSCSPacket.showNotes(rs, count));
-                rs.close();
-                ps.close();
-            }
+        Connection con = DatabaseConnection.getConnection();
+        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM notes WHERE `to`=?", 1005, 1008)) {
+            ps.setString(1, getName());
+            ResultSet rs = ps.executeQuery();
+            rs.last();
+            int count = rs.getRow();
+            rs.first();
+            this.client.sendPacket(MTSCSPacket.showNotes(rs, count));
+            rs.close();
         } catch (SQLException e) {
             System.err.println(new StringBuilder().append("Unable to show note").append(e).toString());
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e){}
         }
     }
 
@@ -6665,8 +6673,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public long getMerchantMeso() {
         long mesos = 0;
+        Connection con = DatabaseConnection.getConnection();
         try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * from hiredmerch where characterid = ?")) {
+            try (PreparedStatement ps = con.prepareStatement("SELECT * from hiredmerch where characterid = ?")) {
                 ps.setInt(1, this.id);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
@@ -6677,6 +6686,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
         } catch (SQLException se) {
             MapleLogger.error("获取雇佣商店金币发生错误", se);
+        } finally {
+            try {
+                con.close();
+            }catch (Exception e){}
         }
         return mesos;
     }
@@ -6708,8 +6721,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (this.createDate != null) {
             return this.createDate;
         }
+        Connection con = DatabaseConnection.getConnection();
         try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT createdate FROM characters WHERE id = ?")) {
+            try (PreparedStatement ps = con.prepareStatement("SELECT createdate FROM characters WHERE id = ?")) {
                 ps.setInt(1, getId());
                 ResultSet rs = ps.executeQuery();
                 if (!rs.next()) {
@@ -6719,12 +6733,14 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
                 this.createDate = rs.getTimestamp("createdate");
                 rs.close();
-                ps.close();
             }
             return this.createDate;
         } catch (SQLException e) {
-
             throw new DatabaseException("获取角色创建日期出错", e);
+        }  finally {
+            try {
+                con.close();
+            }catch (Exception e){}
         }
     }
 
@@ -7102,17 +7118,19 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void setEventCount(String eventId, int type, int count) {
         int eventCount = getEventCount(eventId, type);
-        try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE accounts_event SET count = ?, type = ?, updateTime = CURRENT_TIMESTAMP() WHERE accId = ? AND eventId = ?")) {
-                ps.setInt(1, eventCount + count);
-                ps.setInt(2, type);
-                ps.setInt(3, getClient().getAccID());
-                ps.setString(4, eventId);
-                ps.executeUpdate();
-                ps.close();
-            }
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("UPDATE accounts_event SET count = ?, type = ?, updateTime = CURRENT_TIMESTAMP() WHERE accId = ? AND eventId = ?")) {
+            ps.setInt(1, eventCount + count);
+            ps.setInt(2, type);
+            ps.setInt(3, getClient().getAccID());
+            ps.setString(4, eventId);
+            ps.executeUpdate();
         } catch (SQLException Ex) {
             MapleLogger.error("增加 EventCount 次数失败.", Ex);
+        } finally {
+            try {
+                con.close();
+            }catch (Exception e){}
         }
     }
 
@@ -7121,16 +7139,18 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void resetEventCount(String eventId, int type) {
-        try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE accounts_event SET count = 0, type = ?, updateTime = CURRENT_TIMESTAMP() WHERE accId = ? AND eventId = ?")) {
-                ps.setInt(1, type);
-                ps.setInt(2, getClient().getAccID());
-                ps.setString(3, eventId);
-                ps.executeUpdate();
-                ps.close();
-            }
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("UPDATE accounts_event SET count = 0, type = ?, updateTime = CURRENT_TIMESTAMP() WHERE accId = ? AND eventId = ?")) {
+            ps.setInt(1, type);
+            ps.setInt(2, getClient().getAccID());
+            ps.setString(3, eventId);
+            ps.executeUpdate();
         } catch (SQLException Ex) {
             MapleLogger.error("重置 EventCount 次数失败.", Ex);
+        } finally {
+            try {
+                con.close();
+            }catch (Exception e){}
         }
     }
 
@@ -7244,17 +7264,19 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void setPQLog(String pqName, int type, int count) {
         int pqCount = getPQLog(pqName, type);
-        try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE pqlog SET count = ?, type = ?, time = CURRENT_TIMESTAMP() WHERE characterid = ? AND pqname = ?")) {
-                ps.setInt(1, pqCount + count);
-                ps.setInt(2, type);
-                ps.setInt(3, this.id);
-                ps.setString(4, pqName);
-                ps.executeUpdate();
-                ps.close();
-            }
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("UPDATE pqlog SET count = ?, type = ?, time = CURRENT_TIMESTAMP() WHERE characterid = ? AND pqname = ?")) {
+            ps.setInt(1, pqCount + count);
+            ps.setInt(2, type);
+            ps.setInt(3, this.id);
+            ps.setString(4, pqName);
+            ps.executeUpdate();
         } catch (SQLException Ex) {
             System.err.println("Error while set pqlog: " + Ex);
+        } finally {
+            try {
+                con.close();
+            }catch (Exception e){}
         }
     }
 
@@ -7263,17 +7285,19 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void resetPQLog(String pqName, int type) {
-        try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE pqlog SET count = ?, type = ?, time = CURRENT_TIMESTAMP() WHERE characterid = ? AND pqname = ?")) {
-                ps.setInt(1, 0);
-                ps.setInt(2, type);
-                ps.setInt(3, this.id);
-                ps.setString(4, pqName);
-                ps.executeUpdate();
-                ps.close();
-            }
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("UPDATE pqlog SET count = ?, type = ?, time = CURRENT_TIMESTAMP() WHERE characterid = ? AND pqname = ?")) {
+            ps.setInt(1, 0);
+            ps.setInt(2, type);
+            ps.setInt(3, this.id);
+            ps.setString(4, pqName);
+            ps.executeUpdate();
         } catch (SQLException Ex) {
             System.err.println("Error while reset pqlog: " + Ex);
+        } finally {
+            try {
+                con.close();
+            }catch (Exception e){}
         }
     }
 

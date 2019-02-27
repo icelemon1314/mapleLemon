@@ -46,17 +46,17 @@ public class ManagerSin extends javax.swing.JFrame {
     public ManagerSin() {
 
         Connection con = DatabaseConnection.getConnection();
-        try {
-            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM accounts");
-                    ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    initInformation(rs);
-                }
-                rs.close();
-                ps.close();
+        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM accounts");
+                ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                initInformation(rs);
             }
         } catch (SQLException ex) {
             MapleLogger.info("Failed to load npc name data. " + ex);
+        } finally {
+            try {
+                con.close();
+            } catch (Exception e) {}
         }
 
         initComponents();

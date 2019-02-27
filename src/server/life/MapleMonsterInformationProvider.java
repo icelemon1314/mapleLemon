@@ -40,8 +40,8 @@ public class MapleMonsterInformationProvider {
     public void load() {
         PreparedStatement ps = null;
         ResultSet rs = null;
+        Connection con = DatabaseConnection.getConnection();
         try {
-            Connection con = DatabaseConnection.getConnection();
             ps = con.prepareStatement("SELECT * FROM drop_data_global WHERE chance > 0");
             rs = ps.executeQuery();
 
@@ -72,6 +72,7 @@ public class MapleMonsterInformationProvider {
                 if (rs != null) {
                     rs.close();
                 }
+                con.close();
             } catch (SQLException ignore) {
             }
         }
@@ -84,14 +85,14 @@ public class MapleMonsterInformationProvider {
     private void loadDrop(int monsterId) {
         ArrayList ret = new ArrayList();
 
-        PreparedStatement ps = null;
         ResultSet rs = null;
-        try (Connection con = DatabaseConnection.getConnection()) {
+        Connection con = DatabaseConnection.getConnection();
+        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM drop_data WHERE mobID = ?");) {
             MapleMonsterStats mons = MapleLifeFactory.getMonsterStats(monsterId);
             if (mons == null) {
                 return;
             }
-            ps = con.prepareStatement("SELECT * FROM drop_data WHERE mobID = ?");
+
             ps.setInt(1, monsterId);
             rs = ps.executeQuery();
 
@@ -104,12 +105,10 @@ public class MapleMonsterInformationProvider {
             System.err.println("Error retrieving drop" + ignore);
         } finally {
             try {
-                if (ps != null) {
-                    ps.close();
-                }
                 if (rs != null) {
                     rs.close();
                 }
+                con.close();
             } catch (SQLException ignore) {
                 return;
             }

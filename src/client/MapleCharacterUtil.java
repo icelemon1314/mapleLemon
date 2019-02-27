@@ -15,6 +15,8 @@ import tools.MapleLogger;
 import tools.Pair;
 import tools.Triple;
 
+import javax.xml.crypto.Data;
+
 public class MapleCharacterUtil {
 
     private static final Pattern namePattern = Pattern.compile("^(?!_)(?!.*?_$)[a-zA-Z0-9_一-龥]+$");
@@ -103,8 +105,9 @@ public class MapleCharacterUtil {
         PreparedStatement ps = null;
         ResultSet rs = null;
         boolean prompt = false;
+        Connection con = DatabaseConnection.getConnection();
         try {
-            ps = DatabaseConnection.getConnection().prepareStatement("SELECT * from game_poll_reply where AccountId = ?");
+            ps = con.prepareStatement("SELECT * from game_poll_reply where AccountId = ?");
             ps.setInt(1, accountid);
             rs = ps.executeQuery();
             prompt = !rs.next();
@@ -118,6 +121,7 @@ public class MapleCharacterUtil {
                 if (rs != null) {
                     rs.close();
                 }
+                con.close();
             } catch (SQLException e) {
             }
         }
@@ -129,8 +133,9 @@ public class MapleCharacterUtil {
             return false;
         }
         PreparedStatement ps = null;
+        Connection con = DatabaseConnection.getConnection();
         try {
-            ps = DatabaseConnection.getConnection().prepareStatement("INSERT INTO game_poll_reply (AccountId, SelectAns) VALUES (?, ?)");
+            ps = con.prepareStatement("INSERT INTO game_poll_reply (AccountId, SelectAns) VALUES (?, ?)");
             ps.setInt(1, accountid);
             ps.setInt(2, selection);
 
@@ -142,6 +147,7 @@ public class MapleCharacterUtil {
                 if (ps != null) {
                     ps.close();
                 }
+                con.close();
             } catch (SQLException e) {
             }
         }

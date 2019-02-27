@@ -188,8 +188,8 @@ public class MapleItemInformationProvider {
         if (!dataCache.isEmpty()) {
             return;
         }
+        Connection con = DatabaseConnection.getConnection();
         try {
-            Connection con = DatabaseConnection.getConnection();
             PreparedStatement ps = con.prepareStatement("SELECT * FROM wz_itemdata");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -229,6 +229,10 @@ public class MapleItemInformationProvider {
             }
         } catch (SQLException ex) {
             MapleLogger.info("[ItemLoader] 加载装备数据出错." + ex);
+        } finally {
+            try {
+                con.close();
+            } catch (Exception e){}
         }
     }
 

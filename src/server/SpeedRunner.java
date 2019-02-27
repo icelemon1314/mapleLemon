@@ -2,6 +2,8 @@ package server;
 
 import database.DatabaseConnection;
 import handling.world.party.ExpeditionType;
+
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -52,7 +54,8 @@ public class SpeedRunner {
             Map rett;
             boolean changed;
             long tmp;
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM speedruns WHERE type = ? ORDER BY time LIMIT 25")) {
+            Connection con = DatabaseConnection.getConnection();
+            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM speedruns WHERE type = ? ORDER BY time LIMIT 25")) {
                 ps.setString(1, type.name());
                 ret = new StringBuilder(getPreamble(type));
                 rett = new LinkedHashMap();
@@ -73,6 +76,10 @@ public class SpeedRunner {
                     }
                 }
                 ps.close();
+            } finally {
+                try{
+                    con.close();
+                } catch (Exception e) {}
             }
             if (changed) {
                 speedRunData.put(type, new Triple(ret.toString(), rett, tmp));

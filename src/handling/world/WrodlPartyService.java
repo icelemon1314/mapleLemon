@@ -11,6 +11,8 @@ import handling.world.party.MapleParty;
 import handling.world.party.MaplePartyCharacter;
 import handling.world.party.PartySearch;
 import handling.world.party.PartySearchType;
+
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -39,12 +41,16 @@ public class WrodlPartyService {
     }
 
     private WrodlPartyService() {
-        try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE characters SET party = -1, fatigue = 0")) {
-                ps.executeUpdate();
-            }
+        // @TODO 放到用户登录时候处理
+        Connection con = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = con.prepareStatement("UPDATE characters SET party = -1, fatigue = 0")) {
+            ps.executeUpdate();
         } catch (SQLException e) {
             MapleLogger.info("更新角色组队为-1失败");
+        } finally {
+            try {
+                con.close();
+            } catch (Exception e) {}
         }
         this.runningPartyId = new AtomicInteger(1);
         this.runningExpedId = new AtomicInteger(1);

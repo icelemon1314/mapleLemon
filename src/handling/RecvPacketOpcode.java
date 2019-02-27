@@ -17,7 +17,7 @@ public enum RecvPacketOpcode implements WritableIntValueHolder {
 //    LOGIN_PONG(0x0D,false),
     LOGIN_CLIENT_ERROR(0x0E,false),
 //
-//    LOGIN_STRANGE_DATA(0x12);
+    LOGIN_PACKET_ERROR(0x12),
 
     CHANNEL_CHANGE_MAP(0x15),
     CHANNEL_CHANGE_CHANNEL(0x16),
