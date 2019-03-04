@@ -287,9 +287,8 @@ public class Start {
     protected static void checkCopyItemFromSql() {
         ArrayList<Integer> equipOnlyIds = new ArrayList();
         Map checkItems = new HashMap();
+        Connection con = DatabaseConnection.getConnection();
         try {
-            Connection con = DatabaseConnection.getConnection();
-
             PreparedStatement ps = con.prepareStatement("SELECT * FROM inventoryitems WHERE equipOnlyId > 0");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -318,6 +317,10 @@ public class Start {
             }
         } catch (SQLException ex) {
             System.out.println("[EXCEPTION] 清理复制装备出现错误." + ex);
+        } finally {
+            try {
+                con.close();
+            } catch (Exception e) {}
         }
     }
 
@@ -325,7 +328,6 @@ public class Start {
 
         @Override
         public void run() {
-            System.out.println("call call shutdown!!!!!!!!!!");
             ShutdownServer.getInstance().run();
         }
     }

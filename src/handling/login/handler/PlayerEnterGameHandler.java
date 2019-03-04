@@ -109,7 +109,7 @@ public class PlayerEnterGameHandler extends MaplePacketHandler<PlayerEnterGameRe
             int[] buddyIds = player.getBuddylist().getBuddyIds();
             WorldBuddyService.getInstance().loggedOn(player.getName(), player.getId(), c.getChannel(), buddyIds);
             //c.sendPacket(MaplePacketCreator.pendantSlot((stat != null) && (stat.getCustomData() != null) && (Long.parseLong(stat.getCustomData()) > System.currentTimeMillis())));
-            //c.sendPacket(InventoryPacket.updateInventory());
+//            c.sendPacket(InventoryPacket.updateInventory());
             MapleParty party = player.getParty();
             if (party != null) {
                 WrodlPartyService.getInstance().updateParty(party.getId(), PartyOperation.LOG_ONOFF, new MaplePartyCharacter(player));
@@ -134,7 +134,7 @@ public class PlayerEnterGameHandler extends MaplePacketHandler<PlayerEnterGameRe
            // player.updatePartyMemberHP();
 //            player.startFairySchedule(false);
 //            player.baseSkills();
-//            player.expirationTask();
+            player.expirationTask();
 //            player.spawnSavedPets();
 //            if (player.getStat().equippedSummon > 0) { // 装备召唤？
 //                Skill skill = SkillFactory.getSkill(player.getStat().equippedSummon);

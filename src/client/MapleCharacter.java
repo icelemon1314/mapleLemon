@@ -1570,6 +1570,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             con.commit();
         } catch (SQLException | DatabaseException e) {
             MapleLogger.error(new StringBuilder().append(MapleClient.getLogMessage(this, "[charsave] 保存角色数据出现错误 .")).append(e).toString());
+            e.printStackTrace();
             try {
                 con.rollback();
             } catch (SQLException ex) {
@@ -3743,6 +3744,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return (this.lastExpirationTime > 0L) && (this.lastExpirationTime + 60000L < now);
     }
 
+    /**
+     * 登录时候检查是否有道具过期
+     */
     public void expirationTask() {
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         MapleQuestStatus stat = getQuestNoAdd(MapleQuest.getInstance(122700));
@@ -3750,14 +3754,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         List ret = new ArrayList();
         long currenttime = System.currentTimeMillis();
         List<Triple> tobeRemoveItem = new ArrayList();
-        List<Item> tobeUnlockItem = new ArrayList();
         for (MapleInventoryType inv : MapleInventoryType.values()) {
             for (Item item : getInventory(inv)) {
                 long expiration = item.getExpiration();
                 if (((expiration != -1L) && (!ItemConstants.isPet(item.getItemId())) && (currenttime > expiration)) || (ii.isLogoutExpire(item.getItemId()))) {
-                    if (ItemFlag.封印.check(item.getFlag())) {
-                        tobeUnlockItem.add(item);
-                    } else if (currenttime > expiration) {
+                    if (currenttime > expiration) {
                         tobeRemoveItem.add(new Triple(inv, item, true));
                     }
                 } else if ((item.getItemId() == 5000054) && (item.getPet() != null) && (item.getPet().getSecondsLeft() <= 0)) {
@@ -3786,12 +3787,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     MapleInventoryManipulator.unequip(this.client, item.getPosition(), slot);
                 }
             }
-        }
-        for (Item itemz : tobeUnlockItem) {
-            itemz.setExpiration(-1L);
-            itemz.setFlag((short) (byte) (itemz.getFlag() - ItemFlag.封印.getValue()));
-            forceUpdateItem(itemz);
-            dropMessage(6, new StringBuilder().append("封印道具[").append(ii.getName(itemz.getItemId())).append("]封印时间已过期。").toString());
         }
         this.pendingExpiration = ret;
 
@@ -5681,10 +5676,14 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return this.jobRankMove;
     }
 
+    /**
+     * 切换频道
+     * @param channel
+     */
     public void changeChannel(int channel) {
         ChannelServer toch = ChannelServer.getInstance(channel);
         if ((channel == this.client.getChannel()) || (toch == null) || (toch.isShutdown())) {
-//            this.client.sendPacket(MaplePacketCreator.serverBlocked(1));
+            this.client.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
         changeRemoval();
@@ -5701,9 +5700,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.client.updateLoginState(3, this.client.getSessionIPAddress());
         String s = this.client.getSessionIPAddress();
         LoginServer.addIPAuth(s.substring(s.indexOf(47) + 1, s.length()));
-        this.client.sendPacket(MaplePacketCreator.getChannelChange(this.client, Integer.parseInt(toch.getIP().split(":")[1])));
         saveToDB(false, false);
         getMap().removePlayer(this);
+        this.client.sendPacket(MaplePacketCreator.getChannelChange(this.client, Integer.parseInt(toch.getIP().split(":")[1])));
         this.client.setPlayer(null);
         this.client.setReceiving(false);
     }

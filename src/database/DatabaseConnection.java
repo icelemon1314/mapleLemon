@@ -100,7 +100,7 @@ public class DatabaseConnection {
         }catch (Exception e) {}
         dataSource.setPoolPreparedStatements(false);
         dataSource.setRemoveAbandoned(true);    // 程序从池中拿出连接后多久没归还，系统会强制收回该连接
-        dataSource.setRemoveAbandonedTimeout(3600);
+        dataSource.setRemoveAbandonedTimeout(180);
 
         return dataSource;
     }

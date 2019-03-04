@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+
+import tools.MapleLogger;
 import tools.Pair;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
@@ -58,30 +60,39 @@ public class MapleKeyLayout implements Serializable {
             return;
         }
         Connection con = DatabaseConnection.getConnection();
-        PreparedStatement ps = con.prepareStatement("DELETE FROM keymap WHERE characterid = ?");
-        ps.setInt(1, charid);
-        ps.execute();
-        ps.close();
-        if (this.keymap.isEmpty()) {
-            return;
-        }
-        boolean first = true;
-        StringBuilder query = new StringBuilder();
-        for (Map.Entry keybinding : this.keymap.entrySet()) {
-            if (first) {
-                first = false;
-                query.append("INSERT INTO keymap VALUES (");
-            } else {
-                query.append(",(");
+        try {
+            PreparedStatement ps = con.prepareStatement("DELETE FROM keymap WHERE characterid = ?");
+            ps.setInt(1, charid);
+            ps.execute();
+            ps.close();
+            if (this.keymap.isEmpty()) {
+                return;
             }
-            query.append("DEFAULT,");
-            query.append(charid).append(",");
-            query.append(((Integer) keybinding.getKey()).intValue()).append(",");
-            query.append(((Byte) ((Pair) keybinding.getValue()).getLeft()).byteValue()).append(",");
-            query.append(((Integer) ((Pair) keybinding.getValue()).getRight()).intValue()).append(")");
+            boolean first = true;
+            StringBuilder query = new StringBuilder();
+            for (Map.Entry keybinding : this.keymap.entrySet()) {
+                if (first) {
+                    first = false;
+                    query.append("INSERT INTO keymap(characterid,`key`,`type`,`action`) VALUES (");
+                } else {
+                    query.append(",(");
+                }
+                query.append(charid).append(",");
+                query.append(((Integer) keybinding.getKey()).intValue()).append(",");
+                query.append(((Byte) ((Pair) keybinding.getValue()).getLeft()).byteValue()).append(",");
+                query.append(((Integer) ((Pair) keybinding.getValue()).getRight()).intValue()).append(")");
+            }
+            ps = con.prepareStatement(query.toString());
+            ps.execute();
+            ps.close();
+        } catch (Exception e) {
+            MapleLogger.error(e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                con.close();
+            }catch (Exception e) {}
         }
-        ps = con.prepareStatement(query.toString());
-        ps.execute();
-        ps.close();
+
     }
 }
