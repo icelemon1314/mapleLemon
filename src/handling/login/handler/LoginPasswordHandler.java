@@ -29,7 +29,6 @@ public class LoginPasswordHandler extends MaplePacketHandler<LoginPasswordRecvVO
 
         int loginok = c.login(login, pwd);
         Calendar tempbannedTill = c.getTempBanCalendar();
-        //int 登录器判定 = LandersClient.Landerslogin(c.getSession().getRemoteAddress().toString());
         if (tempbannedTill != null && tempbannedTill.getTimeInMillis() > System.currentTimeMillis()) {
             //限时封号
             long tempban = DateUtil.getTempBanTimestamp(tempbannedTill.getTimeInMillis());

@@ -4,6 +4,8 @@ import client.messages.PlayerGMRank;
 import constants.ServerConstants;
 import database.DatabaseConnection;
 import database.DatabaseException;
+import database.dao.AccountsDao;
+import database.entity.AccountsPO;
 import handling.cashshop.CashShopServer;
 import handling.channel.ChannelServer;
 import handling.login.LoginServer;
@@ -34,6 +36,10 @@ import java.util.Map.Entry;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
 import javax.script.ScriptEngine;
 
 import io.netty.util.AttributeKey;
@@ -347,6 +353,24 @@ public class MapleClient implements Serializable {
     public int login(String login, String originPwd) {
         int loginok = LoginStatusSendVO.LOGIN_STATE_UNKNOW_ACCOUNT;
         String pwd = LoginCrypto.hexSha1(originPwd); // 用最简单的sha1
+
+//        EntityManagerFactory factory = Persistence.createEntityManagerFactory("MapleLemonJPA");
+//        EntityManager manager = factory.createEntityManager();
+//        EntityTransaction transaction = manager.getTransaction();
+//        transaction.begin();
+        AccountsDao acc = new AccountsDao();
+        AccountsPO account = acc.getAccountByName(login);
+
+//        AccountsPO account = manager.find(AccountsPO.class, 1);
+        System.out.println(account);
+
+        account.setPoints(100000);
+
+//        // 5.提交事务，关闭资源
+//        transaction.commit();
+//        manager.close();
+//        factory.close();
+
         try {
             Connection con = DatabaseConnection.getConnection();
             try (PreparedStatement ps = con.prepareStatement("SELECT * FROM accounts WHERE name = ?")) {
