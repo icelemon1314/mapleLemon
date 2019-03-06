@@ -26,12 +26,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.locks.Lock;
@@ -241,14 +236,14 @@ public class MapleClient implements Serializable {
         return loggedIn && accId > 0;
     }
 
-    private Calendar getTempBanCalendar(ResultSet rs) throws SQLException {
+    private Calendar getTempBanCalendar(Date tempBanedDate) {
         Calendar lTempban = Calendar.getInstance();
-        if (rs.getTimestamp("tempban") == null) {
+        if (tempBanedDate == null) {
             lTempban.setTimeInMillis(0L);
             return lTempban;
         }
         Calendar today = Calendar.getInstance();
-        lTempban.setTimeInMillis(rs.getTimestamp("tempban").getTime());
+        lTempban.setTimeInMillis(tempBanedDate.getTime());
         if (today.getTimeInMillis() < lTempban.getTimeInMillis()) {
             return lTempban;
         }
@@ -354,81 +349,55 @@ public class MapleClient implements Serializable {
         int loginok = LoginStatusSendVO.LOGIN_STATE_UNKNOW_ACCOUNT;
         String pwd = LoginCrypto.hexSha1(originPwd); // 用最简单的sha1
 
-//        EntityManagerFactory factory = Persistence.createEntityManagerFactory("MapleLemonJPA");
-//        EntityManager manager = factory.createEntityManager();
-//        EntityTransaction transaction = manager.getTransaction();
-//        transaction.begin();
         AccountsDao acc = new AccountsDao();
-        AccountsPO account = acc.getAccountByName(login);
+        AccountsPO account = acc.getAccountByName("admin");
 
-//        AccountsPO account = manager.find(AccountsPO.class, 1);
-        System.out.println(account);
+        final int banned = account.getBanned();
+        final String passhash = account.getPassword();
+        final String oldSession = account.getSessionIP();
+        accountName = login;
+        accId = account.getId();
+        gmLevel = account.getGm();
+        greason = account.getGreason();
+        tempban = getTempBanCalendar(account.getTempban());
+        gender = account.getGender();
 
-        account.setPoints(100000);
-
-//        // 5.提交事务，关闭资源
-//        transaction.commit();
-//        manager.close();
-//        factory.close();
-
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM accounts WHERE name = ?")) {
-                ps.setString(1, login);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        final int banned = rs.getInt("banned");
-                        final String passhash = rs.getString("password");
-                        final String oldSession = rs.getString("SessionIP");
-                        accountName = login;
-                        accId = rs.getInt("id");
-                        gmLevel = rs.getInt("gm");
-                        greason = rs.getByte("greason");
-                        tempban = getTempBanCalendar(rs);
-                        gender = rs.getByte("gender");
-
-                        if (banned > 0 && gmLevel < 6) {
-                            loginok = LoginStatusSendVO.LOGIN_STATE_BANNED;
-                        } else {
-                            if (banned == -1) {
-                                unban();
-                            }
-                            // Check if the passwords are correct here. :B
-                            if (passhash == null || passhash.isEmpty()) {
-                                //match by sessionIP
-                                if (oldSession != null && !oldSession.isEmpty()) {
-                                    loggedIn = getSessionIPAddress().equals(oldSession);
-                                    loginok = loggedIn ? LoginStatusSendVO.LOGIN_STATE_OK : LoginStatusSendVO.LOGIN_STATE_WRONG_PASSWORD;
-                                } else {
-                                    loginok = LoginStatusSendVO.LOGIN_STATE_WRONG_PASSWORD;
-                                    loggedIn = false;
-                                }
-                            } else if (pwd.equals(passhash)) {
-                                loginok = LoginStatusSendVO.LOGIN_STATE_OK;
-                            } else {
-                                pwd = LoginCrypto.hexSha256(originPwd);
-                                if (pwd.equals(passhash)) {
-                                    loginok = LoginStatusSendVO.LOGIN_STATE_OK;
-                                    // @TODO update password to sha-256
-                                } else {
-                                    loggedIn = false;
-                                    loginok = LoginStatusSendVO.LOGIN_STATE_WRONG_PASSWORD;
-                                }
-                            }
-                            if (getLoginState() > MapleClient.LOGIN_NOTLOGGEDIN) { // already loggedin
-                                if (loginok != LoginStatusSendVO.LOGIN_STATE_OK) {
-                                    loggedIn = false;
-                                    loginok = LoginStatusSendVO.LOGIN_STATE_LOGINNED;
-                                } else {//解卡处理
-                                    解卡账号();
-                                }
-                            }
-                        }
-                    }
+        if (banned > 0 && gmLevel < 6) {
+            loginok = LoginStatusSendVO.LOGIN_STATE_BANNED;
+        } else {
+            if (banned == -1) {
+                unban();
+            }
+            // Check if the passwords are correct here. :B
+            if (passhash == null || passhash.isEmpty()) {
+                //match by sessionIP
+                if (oldSession != null && !oldSession.isEmpty()) {
+                    loggedIn = getSessionIPAddress().equals(oldSession);
+                    loginok = loggedIn ? LoginStatusSendVO.LOGIN_STATE_OK : LoginStatusSendVO.LOGIN_STATE_WRONG_PASSWORD;
+                } else {
+                    loginok = LoginStatusSendVO.LOGIN_STATE_WRONG_PASSWORD;
+                    loggedIn = false;
+                }
+            } else if (pwd.equals(passhash)) {
+                loginok = LoginStatusSendVO.LOGIN_STATE_OK;
+            } else {
+                pwd = LoginCrypto.hexSha256(originPwd);
+                if (pwd.equals(passhash)) {
+                    loginok = LoginStatusSendVO.LOGIN_STATE_OK;
+                    // @TODO update password to sha-256
+                } else {
+                    loggedIn = false;
+                    loginok = LoginStatusSendVO.LOGIN_STATE_WRONG_PASSWORD;
                 }
             }
-        } catch (SQLException e) {
-            System.err.println("登录出错：" + e);
+            if (getLoginState() > MapleClient.LOGIN_NOTLOGGEDIN) { // already loggedin
+                if (loginok != LoginStatusSendVO.LOGIN_STATE_OK) {
+                    loggedIn = false;
+                    loginok = LoginStatusSendVO.LOGIN_STATE_LOGINNED;
+                } else {//解卡处理
+                    解卡账号();
+                }
+            }
         }
         return loginok;
     }

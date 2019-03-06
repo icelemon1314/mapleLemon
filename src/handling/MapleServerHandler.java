@@ -249,7 +249,7 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
                 MapleLogger.error("unknown recv VO :" + className);
             }
         } catch (Exception e) {
-            MapleLogger.error(e.getMessage());
+            MapleLogger.error("Channel read error:", e);
         }
     }
 /*

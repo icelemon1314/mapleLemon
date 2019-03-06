@@ -5,6 +5,7 @@ import constants.GameConstants;
 import constants.ServerConstants;
 import constants.WorldConstants;
 import database.DatabaseConnection;
+import database.dao.AccountsDao;
 import database.entity.AccountsPO;
 import handling.MaplePacketHandler;
 import handling.cashshop.CashShopServer;
@@ -53,37 +54,13 @@ public class Start {
     }
 
     public void test() {
+
+        AccountsDao acc = new AccountsDao();
+        AccountsPO result = acc.getAccountByName("admin");
+
         MapleLogger.error("eeeeeeeeeeeee");
         MapleLogger.info("ttttttttt");
         MapleLogger.debug("DDDDDDDDDDDDDDDD");
-
-        Connection con1 = DatabaseConnection.getConnection();
-        try {
-                con1.close();
-        } catch (Exception e){}
-        Connection con2 = DatabaseConnection.getConnection();
-        Connection con3 = DatabaseConnection.getConnection();
-
-//        try ( PreparedStatement ps= con.prepareStatement("SELECT * FROM accounts WHERE id = ?");) {
-//            ps.setInt(1, 1);
-//            try (ResultSet rs = ps.executeQuery()) {
-//
-//            }
-//        } catch (SQLException e) {
-//            System.err.println(new StringBuilder().append("Error getting character default").append(e).toString());
-//        }
-//        finally {
-//            try {
-//                con.close();
-//            } catch (SQLException e){}
-//        }
-
-        try {
-            Thread.sleep(10000L);
-        } catch (Exception e) {}
-
-
-        return;
 
 
 //        EntityManagerFactory factory = Persistence.createEntityManagerFactory("MapleLemonJPA");

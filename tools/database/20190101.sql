@@ -1,0 +1,1 @@
+update accounts set greason = 1 where greason is null;

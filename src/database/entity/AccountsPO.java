@@ -45,7 +45,227 @@ public class AccountsPO {
     private Integer ACash;
     private Integer mPoints;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    public String getSalt2() {
+        return salt2;
+    }
+
+    public void setSalt2(String salt2) {
+        this.salt2 = salt2;
+    }
+
+    public Byte getGm() {
+        return gm;
+    }
+
+    public void setGm(Byte gm) {
+        this.gm = gm;
+    }
+
+    public Byte getLoggedin() {
+        return loggedin;
+    }
+
+    public void setLoggedin(Byte loggedin) {
+        this.loggedin = loggedin;
+    }
+
+    public Date getLastlogin() {
+        return lastlogin;
+    }
+
+    public void setLastlogin(Date lastlogin) {
+        this.lastlogin = lastlogin;
+    }
+
+    public Date getCreatedat() {
+        return createdat;
+    }
+
+    public void setCreatedat(Date createdat) {
+        this.createdat = createdat;
+    }
+
+    public Calendar getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Calendar birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getQq() {
+        return qq;
+    }
+
+    public void setQq(String qq) {
+        this.qq = qq;
+    }
+
+    public Byte getBanned() {
+        return banned;
+    }
+
+    public void setBanned(Byte banned) {
+        this.banned = banned;
+    }
+
+    public String getBanreason() {
+        return banreason;
+    }
+
+    public void setBanreason(String banreason) {
+        this.banreason = banreason;
+    }
+
+    public String getMacs() {
+        return macs;
+    }
+
+    public void setMacs(String macs) {
+        this.macs = macs;
+    }
+
+    public String getMaclist() {
+        return maclist;
+    }
+
+    public void setMaclist(String maclist) {
+        this.maclist = maclist;
+    }
+
+    public Date getTempban() {
+        return tempban;
+    }
+
+    public void setTempban(Date tempban) {
+        this.tempban = tempban;
+    }
+
+    public Byte getGreason() {
+        return greason;
+    }
+
+    public void setGreason(Byte greason) {
+        this.greason = greason;
+    }
+
+    public Byte getGender() {
+        return gender;
+    }
+
+    public void setGender(Byte gender) {
+        this.gender = gender;
+    }
+
+    public String getSessionIP() {
+        return SessionIP;
+    }
+
+    public void setSessionIP(String sessionIP) {
+        SessionIP = sessionIP;
+    }
+
+    public Integer getPoints() {
+        return points;
+    }
+
     public void setPoints(Integer points) {
         this.points = points;
+    }
+
+    public Integer getVpoints() {
+        return vpoints;
+    }
+
+    public void setVpoints(Integer vpoints) {
+        this.vpoints = vpoints;
+    }
+
+    public Integer getTotalvoteip() {
+        return totalvoteip;
+    }
+
+    public void setTotalvoteip(Integer totalvoteip) {
+        this.totalvoteip = totalvoteip;
+    }
+
+    public Date getLastlogon() {
+        return lastlogon;
+    }
+
+    public void setLastlogon(Date lastlogon) {
+        this.lastlogon = lastlogon;
+    }
+
+    public String getLastvoteip() {
+        return lastvoteip;
+    }
+
+    public void setLastvoteip(String lastvoteip) {
+        this.lastvoteip = lastvoteip;
+    }
+
+    public String getLastknownip() {
+        return lastknownip;
+    }
+
+    public void setLastknownip(String lastknownip) {
+        this.lastknownip = lastknownip;
+    }
+
+    public Integer getACash() {
+        return ACash;
+    }
+
+    public void setACash(Integer ACash) {
+        this.ACash = ACash;
+    }
+
+    public Integer getmPoints() {
+        return mPoints;
+    }
+
+    public void setmPoints(Integer mPoints) {
+        this.mPoints = mPoints;
     }
 }
