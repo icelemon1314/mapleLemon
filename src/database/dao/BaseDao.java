@@ -11,4 +11,7 @@ public class BaseDao {
     @PersistenceContext
     protected EntityManager em = factory.createEntityManager();
 
+    public void flush() {
+        this.em.flush();
+    }
 }

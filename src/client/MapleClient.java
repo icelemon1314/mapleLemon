@@ -20,6 +20,7 @@ import handling.world.messenger.MapleMessengerCharacter;
 import handling.world.party.MapleParty;
 import handling.world.party.MaplePartyCharacter;
 import handling.world.sidekick.MapleSidekick;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -204,9 +205,10 @@ public class MapleClient implements Serializable {
         } catch (SQLException e) {
             MapleLogger.error("error loading characters internal", e);
         } finally {
-            try{
+            try {
                 con.close();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
         return chars;
     }
@@ -225,9 +227,10 @@ public class MapleClient implements Serializable {
         } catch (SQLException e) {
             MapleLogger.error("error loading characters internal", e);
         } finally {
-            try{
+            try {
                 con.close();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
         return chars;
     }
@@ -341,6 +344,7 @@ public class MapleClient implements Serializable {
 
     /**
      * 验证帐号密码
+     *
      * @param login
      * @param originPwd
      * @return
@@ -350,7 +354,10 @@ public class MapleClient implements Serializable {
         String pwd = LoginCrypto.hexSha1(originPwd); // 用最简单的sha1
 
         AccountsDao acc = new AccountsDao();
-        AccountsPO account = acc.getAccountByName("admin");
+        AccountsPO account = acc.getAccountByName(login);
+        if (account == null) {
+            return loginok;
+        }
 
         final int banned = account.getBanned();
         final String passhash = account.getPassword();
@@ -449,9 +456,10 @@ public class MapleClient implements Serializable {
         } catch (SQLException e) {
             MapleLogger.error("Error while unbanning", e);
         } finally {
-            try{
+            try {
                 con.close();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -504,9 +512,10 @@ public class MapleClient implements Serializable {
         } catch (SQLException e) {
             MapleLogger.error("Error updating login state", e);
         } finally {
-            try{
+            try {
                 con.close();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
         if (newstate == 0) {
             this.loggedIn = false;
@@ -530,9 +539,10 @@ public class MapleClient implements Serializable {
         } catch (SQLException e) {
             MapleLogger.error("Error updating login state", e);
         } finally {
-            try{
+            try {
                 con.close();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -808,9 +818,10 @@ public class MapleClient implements Serializable {
         } catch (SQLException e) {
             MapleLogger.error("Failed in checking IP address for client.", e);
         } finally {
-            try{
+            try {
                 con.close();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
         return true;
     }
@@ -833,9 +844,10 @@ public class MapleClient implements Serializable {
         } catch (SQLException e) {
             MapleLogger.error("Cant find ip address error:", e);
         } finally {
-            try{
+            try {
                 con.close();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
         return LastIP;
     }
@@ -940,7 +952,6 @@ public class MapleClient implements Serializable {
             MapleLogger.error("user gender change error:", e);
         }
     }
-
 
 
     public String getSecondPassword() {
@@ -1316,9 +1327,10 @@ public class MapleClient implements Serializable {
         } catch (SQLException e) {
             throw new DatabaseException("error getting create", e);
         } finally {
-            try{
+            try {
                 con.close();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -1357,9 +1369,10 @@ public class MapleClient implements Serializable {
         } catch (SQLException ex) {
             MapleLogger.error("获取玩家封号理由信息出错:", ex);
         } finally {
-            try{
+            try {
                 con.close();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
         return ret.toString();
     }
@@ -1448,7 +1461,7 @@ public class MapleClient implements Serializable {
         return this.maclist.contains(macData);
     }
 
-    public boolean isAccountNameUsed(String accountName){
+    public boolean isAccountNameUsed(String accountName) {
         try {
             Connection con = DatabaseConnection.getConnection();
             PreparedStatement ps = con.prepareStatement("SELECT id from accounts where name = ?");
@@ -1477,16 +1490,16 @@ public class MapleClient implements Serializable {
         }
     }
 
-    public void sendPacket(byte[] packet){
-        if(packet == null){
+    public void sendPacket(byte[] packet) {
+        if (packet == null) {
             throw new IllegalArgumentException("packet cannot be null");
         }
-        if(packet.length == 0){
+        if (packet.length == 0) {
             return;//We don't want to bother netty
         }
 //        connectionLock.lock();
 //        try{
-            this.session.writeAndFlush(packet);
+        this.session.writeAndFlush(packet);
 //        }finally{
 //            connectionLock.unlock();
 //        }

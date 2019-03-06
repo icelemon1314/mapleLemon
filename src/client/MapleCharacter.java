@@ -20,6 +20,8 @@ import client.status.MonsterStatusEffect;
 import constants.*;
 import database.DatabaseConnection;
 import database.DatabaseException;
+import database.dao.AccountsDao;
+import database.entity.AccountsPO;
 import handling.channel.ChannelServer;
 import handling.channel.handler.AttackInfo;
 import handling.login.LoginServer;
@@ -46,22 +48,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -473,25 +461,14 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.stats.baseMaxMp = 5;
         ret.stats.baseMp = 5;
         ret.gachexp = 0;
-        Connection con = DatabaseConnection.getConnection();
-        try ( PreparedStatement ps= con.prepareStatement("SELECT * FROM accounts WHERE id = ?");) {
-            ps.setInt(1, ret.accountid);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    ret.client.setAccountName(rs.getString("name"));
-                    ret.acash = rs.getInt("ACash");
-                    ret.maplepoints = rs.getInt("mPoints");
-                    ret.points = rs.getInt("points");
-                    ret.vpoints = rs.getInt("vpoints");
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println(new StringBuilder().append("Error getting character default").append(e).toString());
-        } finally {
-            try {
-                con.close();
-            } catch (SQLException e){}
-        }
+        AccountsDao acc = new AccountsDao();
+        AccountsPO account = acc.getAccountById(ret.accountid);
+        ret.client.setAccountName(account.getName());
+        ret.acash = account.getACash();
+        ret.maplepoints = account.getmPoints();
+        ret.points = account.getPoints();
+        ret.vpoints = account.getVpoints();
+
         return ret;
     }
 
@@ -837,31 +814,26 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 for (Pair mit : ItemLoader.装备道具.loadItems(false, charid).values()) {
                     ret.getInventory((MapleInventoryType) mit.getRight()).addFromDB((Item) mit.getLeft());
                 }
-                ps = con.prepareStatement("SELECT * FROM accounts WHERE id = ?");
-                ps.setInt(1, ret.accountid);
-                rs = ps.executeQuery();
-                if (rs.next()) {
-                    ret.getClient().setAccountName(rs.getString("name"));
-                    ret.getClient().setGender(rs.getByte("gender"));
-                    ret.acash = rs.getInt("ACash");
-                    ret.maplepoints = rs.getInt("mPoints");
-                    ret.points = rs.getInt("points");
-                    ret.vpoints = rs.getInt("vpoints");
-                    if (rs.getTimestamp("lastlogon") != null) {
-                        Calendar cal = Calendar.getInstance();
-                        cal.setTimeInMillis(rs.getTimestamp("lastlogon").getTime());
-                    }
-                    if (rs.getInt("banned") > 0) {
-                        rs.close();
-                        ps.close();
-                        ret.getClient().getSession().close();
-                        throw new RuntimeException("加载的角色为封号状态，服务端断开这个连接...");
-                    }
-                    psd = con.prepareStatement("UPDATE accounts SET lastlogon = CURRENT_TIMESTAMP() WHERE id = ?");
-                    psd.setInt(1, ret.accountid);
-                    psd.executeUpdate();
+                AccountsDao acc = new AccountsDao();
+                AccountsPO account = acc.getAccountById(ret.accountid);
+
+                ret.getClient().setAccountName(account.getName());
+                ret.getClient().setGender(account.getGender());
+                ret.acash = account.getACash();
+                ret.maplepoints = account.getmPoints();
+                ret.points = account.getPoints();
+                ret.vpoints = account.getVpoints();
+                if (account.getLastlogin() != null) {
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTimeInMillis(account.getLastlogin().getTime());
                 }
-                ps.close();
+                if (account.getBanned() > 0) {
+                    ret.getClient().getSession().close();
+                    throw new RuntimeException("加载的角色为封号状态，服务端断开这个连接...");
+                }
+                account.setLastlogin(new Date());
+                acc.flush();
+
                 ps = con.prepareStatement("SELECT skillid, skilllevel, masterlevel, expiration, teachId, position FROM skills WHERE characterid = ?");
                 ps.setInt(1, charid);
                 rs = ps.executeQuery();
@@ -4421,8 +4393,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     /**
      * 召唤宠物
      * @param slot
-     * @param lead
-     * @param broadcast
      */
     public void spawnPet(Short slot) {
         Item item = getInventory(MapleInventoryType.CASH).getItem(slot);
