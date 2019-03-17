@@ -1148,42 +1148,6 @@ public class InternCommand {
         }
     }
 
-    public static class 查看封号 extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            if (splitted.length < 2) {
-                c.getPlayer().dropMessage(6, splitted[0] + " <角色名字>");
-                return 0;
-            }
-            String msg = MapleClient.getAccInfoByName(splitted[1], c.getPlayer().isAdmin());
-            if (msg != null) {
-                c.getPlayer().dropMessage(6, msg);
-            } else {
-                c.getPlayer().dropMessage(6, "输入的角色名字错误，无法找到信息。");
-            }
-            return 1;
-        }
-    }
-
-    public static class 查看账号 extends CommandExecute {
-
-        @Override
-        public int execute(MapleClient c, String[] splitted) {
-            if (splitted.length < 2) {
-                c.getPlayer().dropMessage(6, splitted[0] + " <玩家账号>");
-                return 0;
-            }
-            String msg = MapleClient.getAccInfo(splitted[1], c.getPlayer().isAdmin());
-            if (msg != null) {
-                c.getPlayer().dropMessage(6, msg);
-            } else {
-                c.getPlayer().dropMessage(6, "输入的账号错误，无法找到信息。");
-            }
-            return 1;
-        }
-    }
-
     public static class 检测作弊 extends CommandExecute {
 
         @Override

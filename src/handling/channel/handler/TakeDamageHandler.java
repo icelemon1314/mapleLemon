@@ -4,27 +4,16 @@ import client.MapleBuffStat;
 import client.MapleCharacter;
 import client.MapleClient;
 import client.PlayerStats;
-import client.Skill;
-import client.SkillFactory;
-import client.inventory.MapleInventoryType;
-import client.status.MonsterStatus;
-import client.status.MonsterStatusEffect;
+
 import java.awt.Point;
 
 import handling.MaplePacketHandler;
-import handling.vo.recv.TakeDamageRecvVO;
-import server.MapleStatEffect;
-import server.Randomizer;
+import handling.vo.recv.PlayerTakeDamageRecvVO;
 import server.life.MapleMonster;
-import server.life.MobAttackInfo;
-import server.life.MobSkill;
-import server.life.MobSkillFactory;
 
 import tools.MaplePacketCreator;
-import tools.Pair;
-import tools.data.input.SeekableLittleEndianAccessor;
 
-public class TakeDamageHandler extends MaplePacketHandler<TakeDamageRecvVO> {
+public class TakeDamageHandler extends MaplePacketHandler<PlayerTakeDamageRecvVO> {
 
     /**
      * 玩家受到伤害
@@ -32,7 +21,7 @@ public class TakeDamageHandler extends MaplePacketHandler<TakeDamageRecvVO> {
      * @param c
      */
     @Override
-    public void handlePacket(TakeDamageRecvVO recvVO, MapleClient c) {
+    public void handlePacket(PlayerTakeDamageRecvVO recvVO, MapleClient c) {
         MapleCharacter chr = c.getPlayer();
         if ((chr == null) || (chr.getMap() == null) || (chr.isHidden())) {
             c.sendPacket(MaplePacketCreator.enableActions());

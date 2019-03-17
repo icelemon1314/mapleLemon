@@ -57,12 +57,10 @@ public class MaplePacketDecoder extends ByteToMessageDecoder {
                 String pHeaderStr = Integer.toHexString(pHeader).toUpperCase();
                 pHeaderStr = StringUtil.getLeftPaddedStr(pHeaderStr, '0', 4);
                 String op = lookupSend(pHeader);
-                String Send = "[客户端发送] " + op + "  [0x" + pHeaderStr + "]  (" + packetLen + "字节)  " + DateUtil.getNowTime() + "\r\n";
+                String Send = "[客户端发送] " + op + "  [0x" + pHeaderStr + "]  (" + packetLen + "字节)  " + "\r\n";
                 if (packetLen <= 6000) {
-//                    String SendTo = Send + HexTool.toString(decryptedPacket) + "\r\n" + HexTool.toStringFromAscii(decryptedPacket);
-                    if (!ServerProperties.RecvPacket(op, pHeaderStr)) {
-                        MapleLogger.info(Send);
-                    }
+                    String SendTo = Send + HexTool.toString(decryptedPacket) + "\r\n" + HexTool.toStringFromAscii(decryptedPacket);
+                    MapleLogger.info(SendTo);
                 } else {
                     MapleLogger.info(Send + HexTool.toString(new byte[]{decryptedPacket[0], decryptedPacket[1]}) + "...\r\n");
                 }

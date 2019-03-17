@@ -107,12 +107,12 @@ public enum RecvPacketOpcode implements WritableIntValueHolder {
     }
 
     public static boolean isSpamHeader(RecvPacketOpcode header) {
-//        switch (header) {
-////            case PONG:
-////            case MOVE_LIFE:
-////            case NPC_ACTION:
-//                return true;
-//        }
+        switch (header) {
+//            case PONG:
+            case CHANNEL_MOVE_LIFE:
+            case CHANNEL_NPC_ACTION:
+                return true;
+        }
         return false;
     }
 }

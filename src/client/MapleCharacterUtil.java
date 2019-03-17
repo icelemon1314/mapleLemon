@@ -267,27 +267,6 @@ public class MapleCharacterUtil {
             MapleLogger.error("add item to search:", e);
         }
     }
-
-    public static Pair<Integer, Integer> getCashByAccId(int AccId) {
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            Pair id;
-            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM accounts WHERE id = ? ")) {
-                ps.setInt(1, AccId);
-                ResultSet rs = ps.executeQuery();
-                if (!rs.next()) {
-                    rs.close();
-                    ps.close();
-                    return null;
-                }   id = new Pair(rs.getInt("ACash"), rs.getInt("mPoints"));
-            rs.close();
-            }
-            return id;
-        } catch (Exception e) {
-            MapleLogger.error("error 'getInfoByName' " + e);
-        }
-        return null;
-    }
 }
 
 

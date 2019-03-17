@@ -38,4 +38,8 @@ public class MapleLogger {
         s.append((msg));
         log.error(s.toString(), e);
     }
+
+    public static void toPacketFile() {
+
+    }
 }

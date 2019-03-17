@@ -2,6 +2,7 @@ package client;
 
 import client.messages.PlayerGMRank;
 import constants.ServerConstants;
+import database.DaoFactory;
 import database.DatabaseConnection;
 import database.DatabaseException;
 import database.dao.AccountsDao;
@@ -22,6 +23,7 @@ import handling.world.party.MaplePartyCharacter;
 import handling.world.sidekick.MapleSidekick;
 
 import java.io.Serializable;
+import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -72,7 +74,7 @@ public class MapleClient implements Serializable {
     private int channel = 1;
     private int accId = -1;
     private int world;
-    private int birthday;
+    private String birthday;
     private int charslots = DEFAULT_CHARSLOT;
     private int cardslots = 3;
     private boolean loggedIn = false;
@@ -296,48 +298,34 @@ public class MapleClient implements Serializable {
 
     public int changePassword(String oldpwd, String newpwd) {
         int ret = -1;
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            ResultSet rs;
-            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM accounts WHERE name = ?")) {
-                ps.setString(1, getAccountName());
-                rs = ps.executeQuery();
-                if (rs.next()) {
-                    boolean updatePassword = false;
-                    String passhash = rs.getString("password");
-                    String salt = rs.getString("salt");
-                    if ((passhash == null) || (passhash.isEmpty())) {
-                        ret = -1;
-                    } else if ((LoginCryptoLegacy.isLegacyPassword(passhash)) && (LoginCryptoLegacy.checkPassword(oldpwd, passhash))) {
-                        ret = 0;
-                        updatePassword = true;
-                    } else if (oldpwd.equals(passhash)) {
-                        ret = 0;
-                        updatePassword = true;
-                    } else if ((salt == null) && (LoginCrypto.checkSha1Hash(passhash, oldpwd))) {
-                        ret = 0;
-                        updatePassword = true;
-                    } else if (LoginCrypto.checkSaltedSha512Hash(passhash, oldpwd, salt)) {
-                        ret = 0;
-                        updatePassword = true;
-                    } else {
-                        ret = -1;
-                    }
-                    if (updatePassword) {
-                        try (PreparedStatement pss = con.prepareStatement("UPDATE `accounts` SET `password` = ?, `salt` = ? WHERE id = ?")) {
-                            String newSalt = LoginCrypto.makeSalt();
-                            pss.setString(1, LoginCrypto.makeSaltedSha512Hash(newpwd, newSalt));
-                            pss.setString(2, newSalt);
-                            pss.setInt(3, this.accId);
-                            pss.executeUpdate();
-                        }
-                    }
-                }
-                ps.close();
-            }
-            rs.close();
-        } catch (SQLException e) {
-            MapleLogger.error("change password error", e);
+        AccountsDao accDao = DaoFactory.getInstance().createDao(AccountsDao.class);
+        AccountsPO acc = accDao.getAccountByName(this.accountName);
+
+        boolean updatePassword = false;
+        String passhash = acc.getPassword();
+        String salt = acc.getSalt();
+        if ((passhash == null) || (passhash.isEmpty())) {
+            ret = -1;
+        } else if ((LoginCryptoLegacy.isLegacyPassword(passhash)) && (LoginCryptoLegacy.checkPassword(oldpwd, passhash))) {
+            ret = 0;
+            updatePassword = true;
+        } else if (oldpwd.equals(passhash)) {
+            ret = 0;
+            updatePassword = true;
+        } else if ((salt == null) && (LoginCrypto.checkSha1Hash(passhash, oldpwd))) {
+            ret = 0;
+            updatePassword = true;
+        } else if (LoginCrypto.checkSaltedSha512Hash(passhash, oldpwd, salt)) {
+            ret = 0;
+            updatePassword = true;
+        } else {
+            ret = -1;
+        }
+        if (updatePassword) {
+            String newSalt = LoginCrypto.makeSalt();
+            acc.setPassword(LoginCrypto.makeSaltedSha512Hash(newpwd, newSalt));
+            acc.setSalt(newSalt);
+            accDao.save(acc);
         }
         return ret;
     }
@@ -353,7 +341,7 @@ public class MapleClient implements Serializable {
         int loginok = LoginStatusSendVO.LOGIN_STATE_UNKNOW_ACCOUNT;
         String pwd = LoginCrypto.hexSha1(originPwd); // 用最简单的sha1
 
-        AccountsDao acc = new AccountsDao();
+        AccountsDao acc = DaoFactory.getInstance().createDao(AccountsDao.class);
         AccountsPO account = acc.getAccountByName(login);
         if (account == null) {
             return loginok;
@@ -373,7 +361,7 @@ public class MapleClient implements Serializable {
             loginok = LoginStatusSendVO.LOGIN_STATE_BANNED;
         } else {
             if (banned == -1) {
-                unban();
+                unban(acc, account);
             }
             // Check if the passwords are correct here. :B
             if (passhash == null || passhash.isEmpty()) {
@@ -402,15 +390,18 @@ public class MapleClient implements Serializable {
                     loggedIn = false;
                     loginok = LoginStatusSendVO.LOGIN_STATE_LOGINNED;
                 } else {//解卡处理
-                    解卡账号();
+                    if (isAccountNeedToUnlock()) {
+                        account.setLoggedin((byte) 0);
+                        acc.save(account);
+                    }
                 }
             }
         }
         return loginok;
     }
 
-    public void 解卡账号() {
-        boolean 解卡在线 = false;
+    public boolean isAccountNeedToUnlock() {
+        boolean isNeedUnlock = false;
         for (ChannelServer cserv : ChannelServer.getAllInstances()) {
             for (final MapleCharacter mch : cserv.getPlayerStorage().getAllCharacters()) {
                 if (mch.getAccountID() == accId) {
@@ -430,64 +421,19 @@ public class MapleClient implements Serializable {
                         closeSession.start();
                     } catch (Exception ex) {
                     }
-                    解卡在线 = true;
+                    isNeedUnlock = true;
                 }
             }
         }
-        if (!解卡在线) {
-            try {
-                Connection con = DatabaseConnection.getConnection();
-                try (PreparedStatement ps = con.prepareStatement("UPDATE accounts SET loggedin = 0 WHERE name = ?")) {
-                    ps.setString(1, accountName);
-                    ps.executeUpdate();
-                    ps.close();
-                }
-            } catch (SQLException se) {
-            }
-        }
+
+        return isNeedUnlock;
     }
 
 
-    private void unban() {
-        Connection con = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = con.prepareStatement("UPDATE accounts SET banned = 0, banreason = '' WHERE id = ?")) {
-            ps.setInt(1, this.accId);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            MapleLogger.error("Error while unbanning", e);
-        } finally {
-            try {
-                con.close();
-            } catch (Exception e) {
-            }
-        }
-    }
-
-    public static byte unban(String charname) {
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT accountid from characters where name = ?");
-            ps.setString(1, charname);
-
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
-                rs.close();
-                ps.close();
-                return -1;
-            }
-            int accid = rs.getInt(1);
-            rs.close();
-            ps.close();
-
-            ps = con.prepareStatement("UPDATE accounts SET banned = 0, banreason = '' WHERE id = ?");
-            ps.setInt(1, accid);
-            ps.executeUpdate();
-            ps.close();
-        } catch (SQLException e) {
-            MapleLogger.error("Error while unbanning", e);
-            return -2;
-        }
-        return 0;
+    private void unban(AccountsDao accDao, AccountsPO account) {
+        account.setBanned((byte) 0);
+        account.setBanreason("");
+        accDao.save(account);
     }
 
     public void setAccID(int id) {
@@ -503,20 +449,14 @@ public class MapleClient implements Serializable {
     }
 
     public void updateLoginState(int newstate, String SessionID) {
-        Connection con = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = con.prepareStatement("UPDATE accounts SET loggedin = ?, SessionIP = ?, lastlogin = CURRENT_TIMESTAMP() WHERE id = ?")) {
-            ps.setInt(1, newstate);
-            ps.setString(2, SessionID);
-            ps.setInt(3, getAccID());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            MapleLogger.error("Error updating login state", e);
-        } finally {
-            try {
-                con.close();
-            } catch (Exception e) {
-            }
-        }
+        AccountsDao accDao = DaoFactory.getInstance().createDao(AccountsDao.class);
+        AccountsPO account = accDao.getAccountById(this.accId);
+
+        account.setLoggedin((byte) newstate);
+        account.setSessionIP(SessionID);
+        account.setLastlogin(new Date());
+
+        accDao.save(account);
         if (newstate == 0) {
             this.loggedIn = false;
             this.serverTransition = false;
@@ -526,58 +466,23 @@ public class MapleClient implements Serializable {
         }
     }
 
-    public void updateSecondPassword() {
-        Connection con = DatabaseConnection.getConnection();
-        try {
-            try (PreparedStatement ps = con.prepareStatement("UPDATE `accounts` SET `2ndpassword` = ?, `salt2` = ? WHERE id = ?")) {
-                String newSalt = LoginCrypto.makeSalt();
-                ps.setString(1, LoginCrypto.rand_s(LoginCrypto.makeSaltedSha512Hash(this.secondPassword, newSalt)));
-                ps.setString(2, newSalt);
-                ps.setInt(3, this.accId);
-                ps.executeUpdate();
-            }
-        } catch (SQLException e) {
-            MapleLogger.error("Error updating login state", e);
-        } finally {
-            try {
-                con.close();
-            } catch (Exception e) {
-            }
-        }
-    }
-
     public byte getLoginState() {
-        Connection con = DatabaseConnection.getConnection();
-        try {
-            byte state;
-            try (PreparedStatement ps = con.prepareStatement("SELECT loggedin, lastlogin, banned, gm, `birthday` + 0 AS `bday` FROM accounts WHERE id = ?")) {
-                ps.setInt(1, getAccID());
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (!rs.next() || (rs.getInt("banned") > 0 && rs.getInt("gm") < 6)) {
-                        ps.close();
-                        rs.close();
-                        session.close();
-                        throw new DatabaseException("Account doesn't exist or is banned");
-                    }
-                    birthday = rs.getInt("bday");
-                    state = rs.getByte("loggedin");
-                    if ((state == MapleClient.LOGIN_SERVER_TRANSITION || state == MapleClient.CHANGE_CHANNEL) && (rs.getTimestamp("lastlogin").getTime() + 20000L < System.currentTimeMillis())) {
-                        state = MapleClient.LOGIN_NOTLOGGEDIN;
-                        updateLoginState(state, getSessionIPAddress());
-                    }
-                }
-                ps.close();
-            }
-            loggedIn = state == MapleClient.LOGIN_LOGGEDIN;
-            return state;
-        } catch (SQLException e) {
-            loggedIn = false;
-            throw new DatabaseException("error getting login state", e);
-        }
-    }
+        AccountsDao accDao = DaoFactory.getInstance().createDao(AccountsDao.class);
+        AccountsPO account = accDao.getAccountById(this.accId);
 
-    public boolean checkBirthDate(int date) {
-        return this.birthday == date;
+        byte state;
+        if (account.getBanned() > 0 && account.getGm() < 6) {
+           this.session.close();
+           throw new DatabaseException("Account doesn't exist or is banned");
+        }
+        birthday = account.getBirthday();
+        state = account.getLoggedin();
+        if ((state == MapleClient.LOGIN_SERVER_TRANSITION || state == MapleClient.CHANGE_CHANNEL) && (account.getLastlogin().getTime() + 20000L < System.currentTimeMillis())) {
+            state = MapleClient.LOGIN_NOTLOGGEDIN;
+            updateLoginState(state, getSessionIPAddress());
+        }
+        loggedIn = state == MapleClient.LOGIN_LOGGEDIN;
+        return state;
     }
 
     public void removalTask(boolean shutdown) {
@@ -784,12 +689,16 @@ public class MapleClient implements Serializable {
             }
         }
         if ((!this.serverTransition) && (isLoggedIn())) {
-            updateLoginState(MapleClient.LOGIN_NOTLOGGEDIN, getLastIPAddress());
+            updateLoginState(MapleClient.LOGIN_NOTLOGGEDIN, getSessionIPAddress());
         }
         this.engines.clear();
     }
 
     public String getSessionIPAddress() {
+        InetSocketAddress addr = (InetSocketAddress) this.session.remoteAddress();
+        // old IP :icelemon.vm/192.168.13.188| new ip :icelemon.vm
+        MapleLogger.info("old IP :" + this.session.remoteAddress().toString().split(":")[0] + "| new ip :" + addr.getAddress().getHostAddress());
+//        return addr.getHostName();
         return this.session.remoteAddress().toString().split(":")[0];
     }
 
@@ -797,59 +706,20 @@ public class MapleClient implements Serializable {
         if (this.accId < 0) {
             return false;
         }
-        boolean canlogin;
-        Connection con = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = con.prepareStatement("SELECT SessionIP, banned FROM accounts WHERE id = ?")) {
-            ps.setInt(1, this.accId);
-            try (ResultSet rs = ps.executeQuery()) {
-                canlogin = false;
-                if (rs.next()) {
-                    String sessionIP = rs.getString("SessionIP");
-                    if (sessionIP != null) {
-                        canlogin = getSessionIPAddress().equals(sessionIP.split(":")[0]);
-                    }
-                    if (rs.getInt("banned") > 0) {
-                        canlogin = false;
-                    }
-                }
-            }
-            ps.close();
-            return canlogin;
-        } catch (SQLException e) {
-            MapleLogger.error("Failed in checking IP address for client.", e);
-        } finally {
-            try {
-                con.close();
-            } catch (Exception e) {
-            }
-        }
-        return true;
-    }
+        boolean canlogin = true;
 
-    public String getLastIPAddress() {
-        String LastIP = "/0:0:0:0";
-        if (this.accId < 0) {
-            return LastIP;
+        AccountsDao accDao = DaoFactory.getInstance().createDao(AccountsDao.class);
+        AccountsPO account = accDao.getAccountById(this.accId);
+
+        String sessionIP = account.getSessionIP();
+        if (sessionIP != null) {
+            canlogin = getSessionIPAddress().equals(sessionIP.split(":")[0]);
         }
-        Connection con = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = con.prepareStatement("SELECT SessionIP, banned FROM accounts WHERE id = ?")) {
-            ps.setInt(1, this.accId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    LastIP = rs.getString("SessionIP");
-                }
-            }
-            ps.close();
-            return LastIP;
-        } catch (SQLException e) {
-            MapleLogger.error("Cant find ip address error:", e);
-        } finally {
-            try {
-                con.close();
-            } catch (Exception e) {
-            }
+        if (account.getBanned() > 0) {
+            canlogin = false;
         }
-        return LastIP;
+
+        return canlogin;
     }
 
     public void DebugMessage(StringBuilder sb) {
@@ -940,17 +810,16 @@ public class MapleClient implements Serializable {
         this.gender = gender;
     }
 
+    /**
+     *
+     * @param gender
+     */
     public void changeGender(byte gender) {
-        this.gender = gender;
-        Connection con = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = con.prepareStatement("UPDATE accounts SET gender = ? WHERE id = ?")) {
-            ps.setByte(1, gender);
-            ps.setInt(2, this.accId);
-            ps.executeUpdate();
-            ps.close();
-        } catch (SQLException e) {
-            MapleLogger.error("user gender change error:", e);
-        }
+        AccountsDao accDao = DaoFactory.getInstance().createDao(AccountsDao.class);
+        AccountsPO account = accDao.getAccountById(this.accId);
+
+        account.setGender(gender);
+        accDao.save(account);
     }
 
 
@@ -1219,80 +1088,6 @@ public class MapleClient implements Serializable {
         return true;
     }
 
-    public static byte unbanIPMacs(String charname) {
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT accountid from characters where name = ?");
-            ps.setString(1, charname);
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
-                rs.close();
-                ps.close();
-                return -1;
-            }
-            int accid = rs.getInt(1);
-            rs.close();
-            ps.close();
-            ps = con.prepareStatement("SELECT * FROM accounts WHERE id = ?");
-            ps.setInt(1, accid);
-            rs = ps.executeQuery();
-            if (!rs.next()) {
-                rs.close();
-                ps.close();
-                return -1;
-            }
-            String sessionIP = rs.getString("sessionIP");
-            String macs = rs.getString("macs");
-            rs.close();
-            ps.close();
-            byte ret = 0;
-            return ret;
-        } catch (SQLException e) {
-            MapleLogger.error("Error while unbanning", e);
-        }
-        return -2;
-    }
-
-    public static byte unHellban(String charname) {
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT accountid from characters where name = ?");
-            ps.setString(1, charname);
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
-                rs.close();
-                ps.close();
-                return -1;
-            }
-            int accid = rs.getInt(1);
-            rs.close();
-            ps.close();
-            ps = con.prepareStatement("SELECT * FROM accounts WHERE id = ?");
-            ps.setInt(1, accid);
-            rs = ps.executeQuery();
-            if (!rs.next()) {
-                rs.close();
-                ps.close();
-                return -1;
-            }
-            String sessionIP = rs.getString("sessionIP");
-            String email = rs.getString("email");
-            rs.close();
-            ps.close();
-            ps = con.prepareStatement(new StringBuilder().append("UPDATE accounts SET banned = 0, banreason = '' WHERE email = ?").append(sessionIP == null ? "" : " OR sessionIP = ?").toString());
-            ps.setString(1, email);
-            if (sessionIP != null) {
-                ps.setString(2, sessionIP);
-            }
-            ps.execute();
-            ps.close();
-            return 0;
-        } catch (SQLException e) {
-            MapleLogger.error("Error while unbanning", e);
-        }
-        return -2;
-    }
-
     public boolean isMonitored() {
         return this.monitored;
     }
@@ -1309,31 +1104,6 @@ public class MapleClient implements Serializable {
         this.receiving = m;
     }
 
-    public Timestamp getCreated() {
-        Timestamp ret;
-        Connection con = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = con.prepareStatement("SELECT createdat FROM accounts WHERE id = ?")) {
-            ps.setInt(1, getAccID());
-            try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) {
-                    rs.close();
-                    ps.close();
-                    return null;
-                }
-                ret = rs.getTimestamp("createdat");
-            }
-            ps.close();
-            return ret;
-        } catch (SQLException e) {
-            throw new DatabaseException("error getting create", e);
-        } finally {
-            try {
-                con.close();
-            } catch (Exception e) {
-            }
-        }
-    }
-
     public String getTempIP() {
         return this.tempIP;
     }
@@ -1344,78 +1114,6 @@ public class MapleClient implements Serializable {
 
     public boolean isLocalhost() {
         return (ServerConstants.USE_LOCALHOST) || (ServerConstants.isIPLocalhost(getSessionIPAddress()));
-    }
-
-    public static String getAccInfo(String accname, boolean admin) {
-        StringBuilder ret = new StringBuilder(new StringBuilder().append("账号ID：").append(accname).append(" 信息-").toString());
-        Connection con = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM accounts WHERE name = ?")) {
-            ps.setString(1, accname);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    int banned = rs.getInt("banned");
-                    ret.append("封号状态：");
-                    ret.append(banned > 0 ? "被封" : "没有被封");
-                    ret.append("封号理由：");
-                    ret.append(banned > 0 ? rs.getString("banreason") : "(没有封号)");
-                    if (admin) {
-                        ret.append("点券：");
-                        ret.append(rs.getInt("ACash"));
-                        ret.append("抵用券：");
-                        ret.append(rs.getInt("mPoints"));
-                    }
-                }
-            }
-        } catch (SQLException ex) {
-            MapleLogger.error("获取玩家封号理由信息出错:", ex);
-        } finally {
-            try {
-                con.close();
-            } catch (Exception e) {
-            }
-        }
-        return ret.toString();
-    }
-
-    public static String getAccInfoByName(String charname, boolean admin) {
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT accountid from characters where name = ?");
-            ps.setString(1, charname);
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
-                rs.close();
-                ps.close();
-                return null;
-            }
-            int accid = rs.getInt(1);
-            rs.close();
-            ps.close();
-            ps = con.prepareStatement("SELECT * FROM accounts WHERE id = ?");
-            ps.setInt(1, accid);
-            rs = ps.executeQuery();
-            if (!rs.next()) {
-                rs.close();
-                ps.close();
-                return null;
-            }
-            StringBuilder ret = new StringBuilder("玩家 " + charname + " 的帐号信息 -");
-            int banned = rs.getInt("banned");
-            if (admin) {
-                ret.append(" 账号: ");
-                ret.append(rs.getString("name"));
-            }
-            ret.append(" 状态: ");
-            ret.append(banned > 0 ? "已封" : "正常");
-            ret.append(" 封号理由: ");
-            ret.append(banned > 0 ? rs.getString("banreason") : "(无描述)");
-            rs.close();
-            ps.close();
-            return ret.toString();
-        } catch (SQLException ex) {
-            MapleLogger.error("获取玩家封号理由信息出错", ex);
-        }
-        return null;
     }
 
     public void setScriptEngine(String name, ScriptEngine e) {
@@ -1462,21 +1160,13 @@ public class MapleClient implements Serializable {
     }
 
     public boolean isAccountNameUsed(String accountName) {
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT id from accounts where name = ?");
-            ps.setString(1, accountName);
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
-                rs.close();
-                ps.close();
-                return false;
-            }
-        } catch (SQLException ex) {
-            MapleLogger.error("获取玩家封号理由信息出错", ex);
+        AccountsDao accDao = DaoFactory.getInstance().createDao(AccountsDao.class);
+        AccountsPO account = accDao.getAccountByName(accountName);
+        if (account == null) {
+            return false;
+        } else {
             return true;
         }
-        return true;
     }
 
     protected static class CharNameAndId {

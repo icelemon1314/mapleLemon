@@ -406,11 +406,21 @@ public class LoginPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] RegisterAccount(boolean result){
+    /**
+     * result true - 注册失败，请你再试。
+     * result false - 恭喜！您已经注册成功！
+     * 请牢记您的账号并妥善保管您的密码！
+     * 同时这也是您的POPTANG帐号。
+     * 您可以登陆www.poptang.com享受更多服务！
+     * 您可以登陆www.poptang.com进行密码修改和密码找回！
+     * @param isSuccess
+     * @return
+     */
+    public static byte[] RegisterAccount(boolean isSuccess){
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.REGISTER_ACCOUNT.getValue());
-        mplew.write(result ? 0 :1);
+        mplew.write(isSuccess ? 1 : 0);
 
         return mplew.getPacket();
     }

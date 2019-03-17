@@ -2,9 +2,13 @@ package handling.login.handler;
 
 import client.LoginCrypto;
 import client.MapleClient;
+import database.DaoFactory;
 import database.DatabaseConnection;
+import database.dao.AccountsDao;
+import database.entity.AccountsPO;
 import handling.MaplePacketHandler;
 import handling.vo.recv.RegisterAccountRecvVO;
+import tools.DateUtil;
 import tools.MapleLogger;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.LoginPacket;
@@ -13,6 +17,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 
 public class RegisterAccountHandler extends MaplePacketHandler<RegisterAccountRecvVO> {
 
@@ -57,25 +62,26 @@ public class RegisterAccountHandler extends MaplePacketHandler<RegisterAccountRe
         String telNo = recvMsg.getTelNo();
         byte sex = recvMsg.getSex();
 
-        boolean result = false;
         if (!c.isAccountNameUsed(accountName)) {
-            try {
-                Connection con = DatabaseConnection.getConnection();
-                try (PreparedStatement ps = con.prepareStatement("INSERT INTO accounts (`name`, password, birthday,email,gender) VALUES (?, ?, ?, ?, ?)")) {
-                    ps.setString(1, accountName);
-                    ps.setString(2, LoginCrypto.hexSha1(password));
-                    ps.setString(3, birthDay);
-                    ps.setString(4, email);
-                    ps.setByte(5, sex);
-                    ps.executeUpdate();
-                    ps.close();
-                    result = true;
-                }
-            } catch (SQLException ex) {
-                MapleLogger.error("注册帐号失败！", ex);
+
+            Calendar birth = DateUtil.formatFromString(birthDay);
+            if (birth == null) {
+                c.sendPacket(LoginPacket.RegisterAccount(false));
+                return ;
             }
+
+            AccountsDao accDao = DaoFactory.getInstance().createDao(AccountsDao.class);
+            AccountsPO acc = new AccountsPO();
+
+            acc.setName(accountName);
+            acc.setPassword(LoginCrypto.hexSha1(password));
+            acc.setBirthday(birth);
+            acc.setEmail(email);
+            acc.setGender(sex);
+
+            accDao.save(acc);
         }
-        c.sendPacket(LoginPacket.RegisterAccount(result));
+        c.sendPacket(LoginPacket.RegisterAccount(true));
     }
 
 }

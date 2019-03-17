@@ -54,6 +54,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.swing.table.DefaultTableModel;
+import javax.transaction.Transactional;
 import javax.xml.crypto.Data;
 
 import scripting.event.EventInstanceManager;
@@ -832,7 +833,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     throw new RuntimeException("加载的角色为封号状态，服务端断开这个连接...");
                 }
                 account.setLastlogin(new Date());
-                acc.flush();
+                acc.save(account);
 
                 ps = con.prepareStatement("SELECT skillid, skilllevel, masterlevel, expiration, teachId, position FROM skills WHERE characterid = ?");
                 ps.setInt(1, charid);
@@ -1157,6 +1158,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
      * @param dc
      * @param fromcs
      */
+    @Transactional
     public void saveToDB(boolean dc, boolean fromcs) {
         if (this.isSaveing) {
             MapleLogger.info(MapleClient.getLogMessage(this, "正在保存数据，本次操作返回."));

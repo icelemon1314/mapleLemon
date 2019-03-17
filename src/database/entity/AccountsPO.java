@@ -1,11 +1,14 @@
 package database.entity;
 
+import tools.DateUtil;
+
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 @Entity
-@Table(name = "accounts")
+@Table(name="accounts")
 public class AccountsPO {
     public AccountsPO(){}
 
@@ -117,11 +120,12 @@ public class AccountsPO {
         this.createdat = createdat;
     }
 
-    public Calendar getBirthday() {
-        return birthday;
+    public String getBirthday() {
+        return DateUtil.getFormatDate(birthday);
     }
 
     public void setBirthday(Calendar birthday) {
+
         this.birthday = birthday;
     }
 

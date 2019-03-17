@@ -4,6 +4,7 @@ import client.SkillFactory;
 import constants.GameConstants;
 import constants.ServerConstants;
 import constants.WorldConstants;
+import database.DaoFactory;
 import database.DatabaseConnection;
 import database.dao.AccountsDao;
 import database.entity.AccountsPO;
@@ -40,6 +41,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.transaction.Transactional;
 
 public class Start {
 
@@ -55,26 +57,39 @@ public class Start {
 
     public void test() {
 
-        AccountsDao acc = new AccountsDao();
-        AccountsPO result = acc.getAccountByName("admin");
+//        AccountsDao acc = new AccountsDao();
+//        AccountsPO result = acc.getAccountByName("admin");
+
+
+
+        AccountsDao acc = DaoFactory.getInstance().createDao(AccountsDao.class);
+        AccountsPO result = acc.getAccountByName("icelemon1314");
+        acc.transactionStart();
+
+        result.setSalt("bbbbb");
+
+
+        acc.transactionCommit();
+
 
         MapleLogger.error("eeeeeeeeeeeee");
-        MapleLogger.info("ttttttttt");
-        MapleLogger.debug("DDDDDDDDDDDDDDDD");
-
+//        MapleLogger.info("ttttttttt");
+//        MapleLogger.debug("DDDDDDDDDDDDDDDD");
 
 //        EntityManagerFactory factory = Persistence.createEntityManagerFactory("MapleLemonJPA");
 //        EntityManager manager = factory.createEntityManager();
-//        EntityTransaction transaction = manager.getTransaction();
-//        transaction.begin();
+////        EntityTransaction transaction = manager.getTransaction();
+////        transaction.begin();
 //
 //        AccountsPO account = manager.find(AccountsPO.class, 1);
 //        System.out.println(account);
 //
-//        account.setPoints(100000);
+//        account.setSalt("test1");
+//        manager.persist(account);
+//        manager.flush();
 //
 //        // 5.提交事务，关闭资源
-//        transaction.commit();
+////        transaction.commit();
 //        manager.close();
 //        factory.close();
 //        return ;

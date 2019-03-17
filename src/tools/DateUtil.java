@@ -89,6 +89,11 @@ public class DateUtil {
         return sdf.format(date);
     }
 
+    public static String getFormatDate(Calendar cal) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(cal.getTime());
+    }
+
     public static String getPreDate(String field, int amount) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
@@ -155,5 +160,24 @@ public class DateUtil {
             MapleLogger.info(ex.getMessage());
         }
         return -1L;
+    }
+
+    /**
+     *
+     * @param date
+     * @return
+     */
+    public static Calendar formatFromString(String date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        try {
+            Date dat = sdf.parse(date);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(dat);
+            return cal;
+        } catch (ParseException e) {
+            MapleLogger.error("calendar format from string error :" + date);
+        }
+        return null;
+
     }
 }

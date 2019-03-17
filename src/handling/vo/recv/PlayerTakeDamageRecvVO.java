@@ -5,7 +5,7 @@ import client.MapleClient;
 import handling.vo.MaplePacketRecvVO;
 import tools.data.input.SeekableLittleEndianAccessor;
 
-public class TakeDamageRecvVO extends MaplePacketRecvVO {
+public class PlayerTakeDamageRecvVO extends MaplePacketRecvVO {
 
     Byte damageType;
     Integer damage;

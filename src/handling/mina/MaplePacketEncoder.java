@@ -44,15 +44,11 @@ public class MaplePacketEncoder extends MessageToByteEncoder<Object> {
                     String pHeaderStr = Integer.toHexString(pHeader).toUpperCase();
                     pHeaderStr = StringUtil.getLeftPaddedStr(pHeaderStr, '0', 4);
                     String op = lookupRecv(pHeader);
-                    String Recv = "[服务端发送] " + op + "  [0x" + pHeaderStr + "]  (" + packetLen + "字节)  " + DateUtil.getNowTime() + "\r\n";
+                    String Recv = "[服务端发送] " + op + "  [0x" + pHeaderStr + "]  (" + packetLen + "字节)  " + "\r\n";
 
-                    if (packetLen <= 60000) {
+                    if (packetLen <= 6000) {
                         String RecvTo = Recv + HexTool.toString(input) + "\r\n" + HexTool.toStringFromAscii(input);
-                        System.out.print(Recv);
-
-                        if (!ServerProperties.SendPacket(op, pHeaderStr)) {
-                            String SendTos = "\r\n时间：" + System.currentTimeMillis() + "\r\n";
-                        }
+                        MapleLogger.info(RecvTo);
                     } else {
                         MapleLogger.info(Recv + HexTool.toString(new byte[]{input[0], input[1]}) + "...\r\n");
                     }
