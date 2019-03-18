@@ -1365,18 +1365,6 @@ public abstract class AbstractPlayerInteraction {
         }
     }
 
-    public int getGamePoints() {
-        return this.c.getPlayer().getGamePoints();
-    }
-
-    public void gainGamePoints(int amount) {
-        this.c.getPlayer().gainGamePoints(amount);
-    }
-
-    public void resetGamePoints() {
-        this.c.getPlayer().resetGamePoints();
-    }
-
     public void getClock(int time) {
         this.c.sendPacket(MaplePacketCreator.getClock(time));
     }
@@ -1511,81 +1499,6 @@ public abstract class AbstractPlayerInteraction {
 
     public void gainPlayerEnergy(int gain) {
         this.c.getPlayer().gainPlayerEnergy(gain);
-    }
-
-    public int getEventCount(String eventId) {
-        return this.c.getPlayer().getEventCount(eventId);
-    }
-
-    public int getEventCount(String eventId, int type) {
-        return this.c.getPlayer().getEventCount(eventId, type);
-    }
-
-    public void setEventCount(String eventId) {
-        this.c.getPlayer().setEventCount(eventId);
-    }
-
-    public void setEventCount(String eventId, int type) {
-        this.c.getPlayer().setEventCount(eventId, type);
-    }
-
-    public void setEventCount(String eventId, int type, int count) {
-        this.c.getPlayer().setEventCount(eventId, type, count);
-    }
-
-    public void resetEventCount(String eventId) {
-        this.c.getPlayer().resetEventCount(eventId);
-    }
-
-    public void resetEventCount(String eventId, int type) {
-        this.c.getPlayer().resetEventCount(eventId, type);
-    }
-
-    public void setPartyEventCount(String eventId) {
-        setPartyEventCount(eventId, 0);
-    }
-
-    public void setPartyEventCount(String eventId, int type) {
-        setPartyEventCount(eventId, type, 1);
-    }
-
-    public void setPartyEventCount(String eventId, int type, int count) {
-        if ((getPlayer().getParty() == null) || (getPlayer().getParty().getMembers().size() == 1)) {
-            this.c.getPlayer().setEventCount(eventId, type, count);
-            return;
-        }
-        int checkMap = getPlayer().getMapId();
-        for (MaplePartyCharacter partyPlayer : getPlayer().getParty().getMembers()) {
-            MapleCharacter chr = getPlayer().getMap().getCharacterById(partyPlayer.getId());
-            if ((chr != null) && (chr.getMapId() == checkMap)) {
-                chr.setEventCount(eventId, type, count);
-            }
-        }
-    }
-
-    public boolean checkPartyEventCount(String eventId) {
-        return checkPartyEventCount(eventId, 1);
-    }
-
-    public boolean checkPartyEventCount(String eventId, int checkcount) {
-        MapleParty party = this.c.getPlayer().getParty();
-
-        if ((party == null) || (party.getMembers().size() == 1)) {
-            int count = getEventCount(eventId);
-            return (count >= 0) && (count < checkcount);
-        }
-        int check = 0;
-        int partySize = party.getMembers().size();
-        for (MaplePartyCharacter partyPlayer : party.getMembers()) {
-            MapleCharacter chr = getPlayer().getMap().getCharacterById(partyPlayer.getId());
-            if (chr != null) {
-                int count = chr.getEventCount(eventId);
-                if ((count >= 0) && (count < checkcount)) {
-                    check++;
-                }
-            }
-        }
-        return partySize == check;
     }
 
     public MapleItemInformationProvider getItemInfo() {

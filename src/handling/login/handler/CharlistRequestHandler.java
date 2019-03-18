@@ -38,7 +38,7 @@ public class CharlistRequestHandler extends MaplePacketHandler<CharlistRequestRe
         if ((chars != null) && (ChannelServer.getInstance(channel) != null)) {
             c.setWorld(server);
             c.setChannel(channel);
-            c.sendPacket(LoginPacket.getCharList(c.getSecondPassword(), chars, c.getAccCharSlots()));
+            c.sendPacket(LoginPacket.getCharList(c.getSecondPassword(), chars));
         } else {
             c.getSession().close();
         }

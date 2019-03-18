@@ -250,7 +250,7 @@ public class LoginPacket {
      * @param charslots
      * @return
      */
-    public static byte[] getCharList(String secondpw, List<MapleCharacter> chars, int charslots) {
+    public static byte[] getCharList(String secondpw, List<MapleCharacter> chars) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.write(SendPacketOpcode.CHARLIST.getValue());

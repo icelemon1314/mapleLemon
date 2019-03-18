@@ -216,7 +216,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private MapleStorage storage;
     private transient MapleTrade trade;
     private MapleMount mount;
-    private List<Integer> finishedAchievements;
     private MapleMessenger messenger;
     private byte petStore;
     private transient IMaplePlayerShop playerShop;
@@ -238,7 +237,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private transient Map<Integer, Integer> linkMobs;
     private boolean changed_wishlist;
     private boolean changed_trocklocations;
-    private boolean changed_achievements;
     private boolean changed_savedlocations;
     private boolean changed_pokemon;
     private boolean changed_questinfo;
@@ -351,7 +349,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.spawnPets = null;
         if (ChannelServer) {
             isSaveing = false;
-            changed_achievements = false;
             changed_wishlist = false;
             changed_trocklocations = false;
             changed_savedlocations = false;
@@ -400,7 +397,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             followon = false;
             energyfull = false;
             linkMobs = new HashMap();
-            finishedAchievements = new ArrayList();
             teleportname = "";
             smega = true;
             petStore = -1;
@@ -603,9 +599,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         for (final Entry<Integer, SkillEntry> qs : ct.Skills.entrySet()) {
             ret.skills.put(SkillFactory.getSkill(qs.getKey()), qs.getValue());
         }
-        for (Integer zz : ct.finishedAchievements) {
-            ret.finishedAchievements.add(zz);
-        }
         for (Iterator i$ = ct.boxed.iterator(); i$.hasNext();) {
             Object zz = i$.next();
             Battler zzz = (Battler) zz;
@@ -746,14 +739,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
                 String pets = rs.getString("pets");
                 ret.petStore = Byte.parseByte(pets);
-                psd = con.prepareStatement("SELECT * FROM achievements WHERE accountid = ?");
-                psd.setInt(1, ret.accountid);
-                rsd = psd.executeQuery();
-                while (rsd.next()) {
-                    ret.finishedAchievements.add(rsd.getInt("achievementid"));
-                }
-                psd.close();
-
             }
             ps.close();
             ps = con.prepareStatement("SELECT * FROM character_keyvalue WHERE characterid = ?");
@@ -1431,21 +1416,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 ps.close();
             }
 
-            if (this.changed_achievements) {
-                ps = con.prepareStatement("DELETE FROM achievements WHERE accountid = ?");
-                ps.setInt(1, this.accountid);
-                ps.executeUpdate();
-                ps.close();
-                ps = con.prepareStatement("INSERT INTO achievements(charid, achievementid, accountid) VALUES(?, ?, ?)");
-                for (Integer achid : this.finishedAchievements) {
-                    ps.setInt(1, this.id);
-                    ps.setInt(2, achid);
-                    ps.setInt(3, this.accountid);
-                    ps.execute();
-                }
-                ps.close();
-            }
-
             if (this.buddylist.changed()) {
                 deleteWhereCharacterId(con, "DELETE FROM buddies WHERE characterid = ?");
                 ps = con.prepareStatement("INSERT INTO buddies (characterid, `buddyid`, `pending`) VALUES (?, ?, ?)");
@@ -1539,7 +1509,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             this.changed_savedlocations = false;
             this.changed_pokemon = false;
             this.changed_questinfo = false;
-            this.changed_achievements = false;
             this.changed_keyValue = false;
             con.commit();
         } catch (SQLException | DatabaseException e) {
@@ -5251,21 +5220,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.pendingCarnivalRequests = new LinkedList();
     }
 
-    public void setAchievementFinished(int id) {
-        if (!this.finishedAchievements.contains(id)) {
-            this.finishedAchievements.add(id);
-            this.changed_achievements = true;
-        }
-    }
-
-    public boolean achievementFinished(int achievementid) {
-        return this.finishedAchievements.contains(achievementid);
-    }
-
-    public List<Integer> getFinishedAchievements() {
-        return this.finishedAchievements;
-    }
-
     public boolean getCanTalk() {
         return this.canTalk;
     }
@@ -6781,73 +6735,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return medal;
     }
 
-    public int getGamePoints() {
-        try {
-            int gamePoints = 0;
-            Connection con = DatabaseConnection.getConnection();
-            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM accounts_info WHERE accId = ? AND worldId = ?")) {
-                ps.setInt(1, getClient().getAccID());
-                ps.setInt(2, getWorld());
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    gamePoints = rs.getInt("gamePoints");
-                    Timestamp updateTime = rs.getTimestamp("updateTime");
-                    Calendar sqlcal = Calendar.getInstance();
-                    if (updateTime != null) {
-                        sqlcal.setTimeInMillis(updateTime.getTime());
-                    }
-                    if ((sqlcal.get(5) + 1 <= Calendar.getInstance().get(5)) || (sqlcal.get(2) + 1 <= Calendar.getInstance().get(2)) || (sqlcal.get(1) + 1 <= Calendar.getInstance().get(1))) {
-                        gamePoints = 0;
-                        try (PreparedStatement psu = con.prepareStatement("UPDATE accounts_info SET gamePoints = 0, updateTime = CURRENT_TIMESTAMP() WHERE accId = ? AND worldId = ?")) {
-                            psu.setInt(1, getClient().getAccID());
-                            psu.setInt(2, getWorld());
-                            psu.executeUpdate();
-                            psu.close();
-                        }
-                    }
-                } else {
-                    try (PreparedStatement psu = con.prepareStatement("INSERT INTO accounts_info (accId, worldId, gamePoints) VALUES (?, ?, ?)")) {
-                        psu.setInt(1, getClient().getAccID());
-                        psu.setInt(2, getWorld());
-                        psu.setInt(3, 0);
-                        psu.executeUpdate();
-                        psu.close();
-                    }
-                }
-                rs.close();
-                ps.close();
-            }
-            return gamePoints;
-        } catch (SQLException Ex) {
-            MapleLogger.error("获取角色帐号的在线时间点出现错误 - 数据库查询失败", Ex);
-        }
-        return -1;
-    }
-
-    public void gainGamePoints(int amount) {
-        int gamePoints = getGamePoints() + amount;
-        updateGamePoints(gamePoints);
-    }
-
-    public void resetGamePoints() {
-        updateGamePoints(0);
-    }
-
-    public void updateGamePoints(int amount) {
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            try (PreparedStatement ps = con.prepareStatement("UPDATE accounts_info SET gamePoints = ?, updateTime = CURRENT_TIMESTAMP() WHERE accId = ? AND worldId = ?")) {
-                ps.setInt(1, amount);
-                ps.setInt(2, getClient().getAccID());
-                ps.setInt(3, getWorld());
-                ps.executeUpdate();
-                ps.close();
-            }
-        } catch (SQLException Ex) {
-            MapleLogger.error("更新角色帐号的在线时间出现错误 - 数据库更新失败.", Ex);
-        }
-    }
-
     public int getMaxLevelForSever() {
         return ServerProperties.getMaxLevel();
     }
@@ -7027,102 +6914,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void clearMidMsg() {
 //        this.client.sendPacket(UIPacket.clearMidMsg());
-    }
-
-    public int getEventCount(String eventId) {
-        return getEventCount(eventId, 0);
-    }
-
-    public int getEventCount(String eventId, int type) {
-        try {
-            int count = 0;
-            Connection con = DatabaseConnection.getConnection();
-            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM accounts_event WHERE accId = ? AND eventId = ?")) {
-                ps.setInt(1, getClient().getAccID());
-                ps.setString(2, eventId);
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    count = rs.getInt("count");
-                    Timestamp updateTime = rs.getTimestamp("updateTime");
-                    if (type == 0) {
-                        Calendar sqlcal = Calendar.getInstance();
-                        if (updateTime != null) {
-                            sqlcal.setTimeInMillis(updateTime.getTime());
-                        }
-                        if ((sqlcal.get(5) + 1 <= Calendar.getInstance().get(5)) || (sqlcal.get(2) + 1 <= Calendar.getInstance().get(2)) || (sqlcal.get(1) + 1 <= Calendar.getInstance().get(1))) {
-                            count = 0;
-                            try (PreparedStatement psu = con.prepareStatement("UPDATE accounts_event SET count = 0, updateTime = CURRENT_TIMESTAMP() WHERE accId = ? AND eventId = ?")) {
-                                psu.setInt(1, getClient().getAccID());
-                                psu.setString(2, eventId);
-                                psu.executeUpdate();
-                                psu.close();
-                            }
-                        }
-                    }
-                } else {
-                    try (PreparedStatement psu = con.prepareStatement("INSERT INTO accounts_event (accId, eventId, count, type) VALUES (?, ?, ?, ?)")) {
-                        psu.setInt(1, getClient().getAccID());
-                        psu.setString(2, eventId);
-                        psu.setInt(3, 0);
-                        psu.setInt(4, type);
-                        psu.executeUpdate();
-                        psu.close();
-                    }
-                }
-                rs.close();
-                ps.close();
-            }
-            return count;
-        } catch (SQLException Ex) {
-            MapleLogger.error("获取 EventCount 次数.", Ex);
-        }
-        return -1;
-    }
-
-    public void setEventCount(String eventId) {
-        setEventCount(eventId, 0);
-    }
-
-    public void setEventCount(String eventId, int type) {
-        setEventCount(eventId, type, 1);
-    }
-
-    public void setEventCount(String eventId, int type, int count) {
-        int eventCount = getEventCount(eventId, type);
-        Connection con = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = con.prepareStatement("UPDATE accounts_event SET count = ?, type = ?, updateTime = CURRENT_TIMESTAMP() WHERE accId = ? AND eventId = ?")) {
-            ps.setInt(1, eventCount + count);
-            ps.setInt(2, type);
-            ps.setInt(3, getClient().getAccID());
-            ps.setString(4, eventId);
-            ps.executeUpdate();
-        } catch (SQLException Ex) {
-            MapleLogger.error("增加 EventCount 次数失败.", Ex);
-        } finally {
-            try {
-                con.close();
-            }catch (Exception e){}
-        }
-    }
-
-    public void resetEventCount(String eventId) {
-        resetPQLog(eventId, 0);
-    }
-
-    public void resetEventCount(String eventId, int type) {
-        Connection con = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = con.prepareStatement("UPDATE accounts_event SET count = 0, type = ?, updateTime = CURRENT_TIMESTAMP() WHERE accId = ? AND eventId = ?")) {
-            ps.setInt(1, type);
-            ps.setInt(2, getClient().getAccID());
-            ps.setString(3, eventId);
-            ps.executeUpdate();
-        } catch (SQLException Ex) {
-            MapleLogger.error("重置 EventCount 次数失败.", Ex);
-        } finally {
-            try {
-                con.close();
-            }catch (Exception e){}
-        }
     }
 
     public void gainItem(int code, int amount, String gmLog) {

@@ -110,7 +110,6 @@ public class CharacterTransfer implements Externalizable {
     public Map<Integer, Pair<Byte, Integer>> keymap;
     public List<Pair<Integer, Integer>> quickslot;
     public Map<Integer, MonsterFamiliar> familiars;
-    public List<Integer> finishedAchievements = null;
     public List<Integer> famedcharacters = null;
     public List<Integer> battledaccs = null;
     public List<MapleShopItem> rebuy = null;
@@ -149,7 +148,6 @@ public class CharacterTransfer implements Externalizable {
 
     public CharacterTransfer() {
         this.boxed = new ArrayList();
-        this.finishedAchievements = new ArrayList();
         this.famedcharacters = new ArrayList();
         this.battledaccs = new ArrayList();
         this.rebuy = new ArrayList();
@@ -263,7 +261,6 @@ public class CharacterTransfer implements Externalizable {
         } else {
             this.messengerid = 0;
         }
-        this.finishedAchievements = chr.getFinishedAchievements();
         this.KeyValue = chr.getKeyValue_Map();
         this.InfoQuest = chr.getInfoQuest_Map();
         for (Map.Entry qs : chr.getQuest_Map().entrySet()) {
@@ -422,10 +419,6 @@ public class CharacterTransfer implements Externalizable {
         int rzsize = in.readByte();
         for (int i = 0; i < rzsize; i++) {
             this.reports.put(in.readByte(), in.readInt());
-        }
-        int achievesize = in.readByte();
-        for (int i = 0; i < achievesize; i++) {
-            this.finishedAchievements.add(in.readInt());
         }
         int famesize = in.readByte();
         for (int i = 0; i < famesize; i++) {
@@ -643,11 +636,6 @@ public class CharacterTransfer implements Externalizable {
         for (Map.Entry ss : this.reports.entrySet()) {
             out.writeByte(((Byte) ss.getKey()));
             out.writeInt(((Integer) ss.getValue()));
-        }
-
-        out.writeByte(this.finishedAchievements.size());
-        for (Integer zz : this.finishedAchievements) {
-            out.writeInt(zz);
         }
 
         out.writeByte(this.famedcharacters.size());

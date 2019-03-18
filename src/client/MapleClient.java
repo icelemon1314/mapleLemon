@@ -181,7 +181,8 @@ public class MapleClient implements Serializable {
     }
 
     public boolean canMakeCharacter(int serverId) {
-        return loadCharactersSize(serverId) < getAccCharSlots();
+        // @TODO max character
+        return loadCharactersSize(serverId) < 6;
     }
 
     public List<String> loadCharacterNames(int serverId) {
@@ -973,119 +974,6 @@ public class MapleClient implements Serializable {
 
     public void setIdleTask(ScheduledFuture<?> idleTask) {
         this.idleTask = idleTask;
-    }
-
-    public int getAccCharSlots() {
-        if (isGm()) {
-            return 30;
-        }
-
-        if (this.charslots != DEFAULT_CHARSLOT) {
-            return this.charslots;
-        }
-        int theworld = world;
-        if (player != null) {
-            theworld = this.player.getWorld();
-        }
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM character_slots WHERE accid = ? AND worldid = ?")) {
-                ps.setInt(1, this.accId);
-                ps.setInt(2, theworld);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        this.charslots = rs.getInt("charslots");
-                    } else {
-                        try (PreparedStatement psu = con.prepareStatement("INSERT INTO character_slots (accid, worldid, charslots) VALUES (?, ?, ?)")) {
-                            psu.setInt(1, this.accId);
-                            psu.setInt(2, this.world);
-                            psu.setInt(3, this.charslots);
-                            psu.executeUpdate();
-                            psu.close();
-                        }
-                    }
-                }
-                ps.close();
-            }
-        } catch (SQLException e) {
-            MapleLogger.error("getAccCharSlots出错", e);
-        }
-        return this.charslots;
-    }
-
-    public boolean gainAccCharSlot() {
-        if (getAccCharSlots() >= 30) {
-            return false;
-        }
-        this.charslots++;
-        int theworld = world;
-        if (player != null) {
-            theworld = this.player.getWorld();
-        }
-        Connection con = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = con.prepareStatement("UPDATE character_slots SET charslots = ? WHERE worldid = ? AND accid = ?")) {
-            ps.setInt(1, this.charslots);
-            ps.setInt(2, theworld);
-            ps.setInt(3, this.accId);
-            ps.executeUpdate();
-            ps.close();
-        } catch (SQLException e) {
-            MapleLogger.error("gainAccCharSlot出错", e);
-            return false;
-        }
-        return true;
-    }
-
-    public int getAccCardSlots() {
-        Connection con = DatabaseConnection.getConnection();
-        int theworld = world;
-        if (player != null) {
-            theworld = this.player.getWorld();
-        }
-        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM accounts_info WHERE accId = ? AND worldId = ?")) {
-            ps.setInt(1, this.accId);
-            ps.setInt(2, theworld);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    this.cardslots = rs.getInt("cardSlots");
-                } else {
-                    try (PreparedStatement psu = con.prepareStatement("INSERT INTO accounts_info (accId, worldId, cardSlots) VALUES (?, ?, ?)")) {
-                        psu.setInt(1, this.accId);
-                        psu.setInt(2, this.world);
-                        psu.setInt(3, this.cardslots);
-                        psu.executeUpdate();
-                        psu.close();
-                    }
-                }
-            }
-            ps.close();
-        } catch (SQLException e) {
-            MapleLogger.error("getAccCardSlots出错", e);
-        }
-        return this.cardslots;
-    }
-
-    public boolean gainAccCardSlot() {
-        if (getAccCardSlots() >= 9) {
-            return false;
-        }
-        this.cardslots++;
-        int theworld = world;
-        if (player != null) {
-            theworld = this.player.getWorld();
-        }
-        Connection con = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = con.prepareStatement("UPDATE accounts_info SET cardSlots = ? WHERE worldId = ? AND accId = ?")) {
-            ps.setInt(1, this.cardslots);
-            ps.setInt(2, theworld);
-            ps.setInt(3, this.accId);
-            ps.executeUpdate();
-            ps.close();
-        } catch (SQLException e) {
-            MapleLogger.error("gainAccCardSlot出错", e);
-            return false;
-        }
-        return true;
     }
 
     public boolean isMonitored() {

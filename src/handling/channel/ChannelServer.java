@@ -75,7 +75,7 @@ public class ChannelServer {
     private boolean finishedShutdown = false;
     private boolean MegaphoneMuteState = false;
     private boolean adminOnly = false;
-    private boolean canPvp = false;
+    private boolean canPvp = false; // @TODO delete
     private boolean shieldWardAll = false;
     private boolean autoPoints = false;
     private boolean checkSp = false;
