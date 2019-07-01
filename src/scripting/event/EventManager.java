@@ -222,8 +222,6 @@ public class EventManager {
             EventInstanceManager eim = (EventInstanceManager) this.iv.invokeFunction("setup", new Object[]{(Object) null});
             eim.registerPlayer(character);
             eim.setProperty("leader", leader);
-            eim.setProperty("guildid", String.valueOf(character.getGuildId()));
-            setProperty("guildid", String.valueOf(character.getGuildId()));
         } catch (ScriptException | NoSuchMethodException ex) {
             MapleLogger.error(new StringBuilder().append("Event name : ").append(this.name).append(", method Name : setup-Guild:\r\n").append(ex).toString());
         }

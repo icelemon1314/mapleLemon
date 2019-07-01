@@ -13,7 +13,7 @@ public class AccountsPO {
     public AccountsPO(){}
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private String password;

@@ -1,36 +1,25 @@
 package handling.cashshop.handler;
 
 import client.MapleCharacter;
-import client.MapleCharacterUtil;
 import client.MapleClient;
-import client.MapleQuestStatus;
 import client.inventory.Item;
 import client.inventory.MapleInventory;
 import client.inventory.MapleInventoryIdentifier;
 import client.inventory.MapleInventoryType;
-import client.inventory.MapleRing;
-import constants.ItemConstants;
-import database.DatabaseConnection;
+import database.dao.CharacterDao;
+import database.entity.CharacterPO;
 import handling.MaplePacketHandler;
-import handling.cashshop.CashShopServer;
 import handling.channel.ChannelServer;
 import handling.vo.recv.BuyCashItemRecvVO;
 import handling.world.WorldFindService;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
 import server.AutobanManager;
-import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
-import server.Randomizer;
 import server.cashshop.CashItemFactory;
 import server.cashshop.CashItemInfo;
 import server.cashshop.CashShop;
-import server.quest.MapleQuest;
 
 import tools.MapleLogger;
 import tools.StringUtil;
-import tools.Triple;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.MTSCSPacket;
 
@@ -596,12 +585,15 @@ public class BuyCashItemHandler extends MaplePacketHandler<BuyCashItemRecvVO> {
 
             return;
         }
-        Triple info = MapleCharacterUtil.getInfoByName(partnerName, chr.getWorld());
-        if ((info == null) || (((Integer) info.getLeft()) <= 0)) {
+        CharacterDao charDao = new CharacterDao();
+        CharacterPO charPo = charDao.getCharacterByName("partnerName");
+        int charId = charPo.getId();
+//        Triple info = MapleCharacterUtil.getInfoByName(partnerName, chr.getWorld());
+        if (charPo == null) {
             c.sendPacket(MTSCSPacket.商城错误提示(7));
-        } else if ((((Integer) info.getLeft()) == chr.getId()) || (((Integer) info.getMid()) == c.getAccID())) {
+        } else if ((charPo.getId() == chr.getId()) || (charPo.getAccount().getId() == c.getAccID())) {
             c.sendPacket(MTSCSPacket.商城错误提示(6));
-        } else if (!item.genderEquals(((Integer) info.getRight()))) {
+        } else if (!item.genderEquals(charPo.getGender())) {
             c.sendPacket(MTSCSPacket.商城错误提示(8));
         } else {
             if (!ii.isCash(item.getId())) {
@@ -616,7 +608,7 @@ public class BuyCashItemHandler extends MaplePacketHandler<BuyCashItemRecvVO> {
                 return;
             }
 
-            chr.getCashInventory().gift(((Integer) info.getLeft()), chr.getName(), msg, item.getSN(), MapleInventoryIdentifier.getInstance());
+            chr.getCashInventory().gift(charPo.getId(), chr.getName(), msg, item.getSN(), MapleInventoryIdentifier.getInstance());
             chr.modifyCSPoints(1, -item.getPrice(), false);
             c.sendPacket(MTSCSPacket.商城送礼(item.getId(), item.getCount(), partnerName));
             c.sendPacket(MTSCSPacket.刷新点券信息(chr));

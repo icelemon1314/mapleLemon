@@ -34,7 +34,6 @@ public class CharacterTransfer implements Externalizable {
     public int hair;
     public int face;
     public int mapid;
-    public int guildid;
     public int sidekick;
     public int partyid;
     public int messengerid;
@@ -56,14 +55,11 @@ public class CharacterTransfer implements Externalizable {
     public int currentrep;
     public int totalrep;
     public int gachexp;
-    public int guildContribution;
     public int totalWins;
     public int totalLosses;
     public byte channel;
     public byte gender;
     public byte gmLevel;
-    public byte guildrank;
-    public byte alliancerank;
     public byte fairyExp;
     public byte buddysize;
     public byte world;
@@ -199,10 +195,6 @@ public class CharacterTransfer implements Externalizable {
         this.initialSpawnPoint = chr.getInitialSpawnpoint();
         this.marriageId = chr.getMarriageId();
         this.world = chr.getWorld();
-        this.guildid = chr.getGuildId();
-        this.guildrank = chr.getGuildRank();
-        this.guildContribution = chr.getGuildContribution();
-        this.alliancerank = chr.getAllianceRank();
         this.gmLevel = (byte) chr.getGMLevel();
         this.points = chr.getPoints();
         this.fairyExp = chr.getFairyExp();
@@ -324,10 +316,6 @@ public class CharacterTransfer implements Externalizable {
         this.mapid = in.readInt();
         this.initialSpawnPoint = in.readByte();
         this.world = in.readByte();
-        this.guildid = in.readInt();
-        this.guildrank = in.readByte();
-        this.guildContribution = in.readInt();
-        this.alliancerank = in.readByte();
         this.sidekick = in.readInt();
         this.gmLevel = in.readByte();
         this.points = in.readInt();
@@ -529,10 +517,6 @@ public class CharacterTransfer implements Externalizable {
         out.writeInt(this.mapid);
         out.writeByte(this.initialSpawnPoint);
         out.writeByte(this.world);
-        out.writeInt(this.guildid);
-        out.writeByte(this.guildrank);
-        out.writeInt(this.guildContribution);
-        out.writeByte(this.alliancerank);
         out.writeInt(this.sidekick);
         out.writeByte(this.gmLevel);
         out.writeInt(this.points);

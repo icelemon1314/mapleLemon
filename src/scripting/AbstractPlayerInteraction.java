@@ -331,15 +331,6 @@ public abstract class AbstractPlayerInteraction {
         if (type.equals("RSP")) {
             return this.c.getPlayer().getRemainingSp();
         }
-        if (type.equals("GID")) {
-            return this.c.getPlayer().getGuildId();
-        }
-        if (type.equals("GRANK")) {
-            return this.c.getPlayer().getGuildRank();
-        }
-        if (type.equals("ARANK")) {
-            return this.c.getPlayer().getAllianceRank();
-        }
         if (type.equals("GM")) {
             return this.c.getPlayer().isGM() ? 1 : 0;
         }
@@ -687,21 +678,12 @@ public abstract class AbstractPlayerInteraction {
         mapMessage(5, message);
     }
 
-    public void guildMessage(String message) {
-        guildMessage(5, message);
-    }
-
     public void playerMessage(int type, String message) {
         this.c.getPlayer().dropMessage(type, message);
     }
 
     public void mapMessage(int type, String message) {
         this.c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.serverNotice(type, message));
-    }
-
-    public void guildMessage(int type, String message) {
-        if (getPlayer().getGuildId() > 0) {
-        }
     }
 
     public void topMessage(String message) {
@@ -1572,10 +1554,6 @@ public abstract class AbstractPlayerInteraction {
 
     public List<MapleCharacter> getchrlist() {
         return this.c.loadCharacters((int) c.getPlayer().getWorld());
-    }
-
-    public int deleteCharacter(int charId) {
-        return c.deleteCharacter(charId);
     }
 
     public String getCustomData(int questId) {

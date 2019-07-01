@@ -1,21 +1,18 @@
 package client;
 
 import database.DatabaseConnection;
+import database.dao.CharacterDao;
+import database.entity.CharacterPO;
 import handling.channel.ChannelServer;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
-import server.MapleItemInformationProvider;
 
 import tools.MapleLogger;
-import tools.Pair;
 import tools.Triple;
-
-import javax.xml.crypto.Data;
 
 public class MapleCharacterUtil {
 
@@ -56,49 +53,13 @@ public class MapleCharacterUtil {
     }
 
     public static int getIdByName(String name) {
-        Connection con = DatabaseConnection.getConnection();
-        try {
-            int id;
-            try (PreparedStatement ps = con.prepareStatement("SELECT id FROM characters WHERE name = ?")) {
-                ps.setString(1, name);
-                ResultSet rs = ps.executeQuery();
-                if (!rs.next()) {
-                    rs.close();
-                    ps.close();
-                    return -1;
-                }   id = rs.getInt("id");
-            rs.close();
-            ps.close();
-            }
-
-            return id;
-        } catch (SQLException e) {
-            MapleLogger.error("error 'getIdByName' " + e);
+        CharacterDao charDao = new CharacterDao();
+        CharacterPO chrPo = charDao.getCharacterByName(name);
+        if (chrPo.getId() != 0) {
+            return chrPo.getId();
+        } else {
+            return -1;
         }
-        return -1;
-    }
-
-    public static Pair<String, Integer> getNameById(int chrId, int world) {
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            Pair id;
-            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM characters WHERE id = ? AND world = ?")) {
-                ps.setInt(1, chrId);
-                ps.setInt(2, world);
-                ResultSet rs = ps.executeQuery();
-                if (!rs.next()) {
-                    rs.close();
-                    ps.close();
-                    return null;
-                }   id = new Pair(rs.getString("name"), rs.getInt("accountid"));
-            rs.close();
-            ps.close();
-            }
-            return id;
-        } catch (SQLException e) {
-            MapleLogger.error("error 'getInfoByName' " + e);
-        }
-        return null;
     }
 
     public static boolean PromptPoll(int accountid) {
@@ -154,39 +115,6 @@ public class MapleCharacterUtil {
         return true;
     }
 
-    private static boolean check_ifPasswordEquals(String passhash, String pwd, String salt) {
-        if ((LoginCryptoLegacy.isLegacyPassword(passhash)) && (LoginCryptoLegacy.checkPassword(pwd, passhash))) {
-            return true;
-        }
-        if ((salt == null) && (LoginCrypto.checkSha1Hash(passhash, pwd))) {
-            return true;
-        }
-        return LoginCrypto.checkSaltedSha512Hash(passhash, pwd, salt);
-    }
-
-    public static Triple<Integer, Integer, Integer> getInfoByName(String name, int world) {
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            Triple id;
-            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM characters WHERE name = ? AND world = ?")) {
-                ps.setString(1, name);
-                ps.setInt(2, world);
-                ResultSet rs = ps.executeQuery();
-                if (!rs.next()) {
-                    rs.close();
-                    ps.close();
-                    return null;
-                }   id = new Triple(rs.getInt("id"), rs.getInt("accountid"), rs.getInt("gender"));
-            rs.close();
-            ps.close();
-            }
-            return id;
-        } catch (Exception e) {
-            MapleLogger.error("error 'getInfoByName' " + e);
-        }
-        return null;
-    }
-
     public static void setNXCodeUsed(String name, String code) throws SQLException {
         Connection con = DatabaseConnection.getConnection();
         try (PreparedStatement ps = con.prepareStatement("UPDATE nxcode SET `user` = ?, `valid` = 0, time = CURRENT_TIMESTAMP() WHERE code = ?")) {
@@ -236,36 +164,6 @@ public class MapleCharacterUtil {
             ps.close();
         }
         return ret;
-    }
-
-    public static void addToItemSearch(int itemId) {
-        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM itemsearch WHERE itemid = ?")) {
-                ps.setInt(1, itemId);
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    int count = rs.getInt("count");
-                    try (PreparedStatement psu = con.prepareStatement("UPDATE itemsearch SET count = ? WHERE itemid = ?")) {
-                        psu.setInt(1, count + 1);
-                        psu.setInt(2, itemId);
-                        psu.executeUpdate();
-                    }
-                } else {
-                    try (PreparedStatement psi = con.prepareStatement("INSERT INTO itemsearch (itemid, count, itemName) VALUES (?, ?, ?)")) {
-                        psi.setInt(1, itemId);
-                        psi.setInt(2, 1);
-                        psi.setString(3, ii.getName(itemId));
-                        psi.executeUpdate();
-                    }
-                }
-                rs.close();
-                ps.close();
-            }
-        } catch (SQLException e) {
-            MapleLogger.error("add item to search:", e);
-        }
     }
 }
 

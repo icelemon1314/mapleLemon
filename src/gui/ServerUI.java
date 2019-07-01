@@ -459,9 +459,6 @@ public class ServerUI extends javax.swing.JFrame {
             chr.getMapId(),
             chr.getGMLevel(),
             chr.getBuddyCapacity(),
-            chr.getGuildId(),
-            chr.getGuildRank(),
-            chr.getAllianceRank()
         });
     }
 
@@ -505,9 +502,6 @@ public class ServerUI extends javax.swing.JFrame {
                 charTable.setValueAt(chr.getMapId(), i, j++);
                 charTable.setValueAt(chr.getGMLevel(), i, j++);
                 charTable.setValueAt(chr.getBuddyCapacity(), i, j++);
-                charTable.setValueAt(chr.getGuildId(), i, j++);
-                charTable.setValueAt(chr.getGuildRank(), i, j++);
-                charTable.setValueAt(chr.getAllianceRank(), i, j++);
                 break;
             }
         }

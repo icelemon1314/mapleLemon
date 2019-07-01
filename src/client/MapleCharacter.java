@@ -1,13 +1,10 @@
 package client;
 
 import client.inventory.Equip;
-import client.inventory.ImpFlag;
 import client.inventory.Item;
-import client.inventory.ItemFlag;
 import client.inventory.ItemLoader;
 import client.inventory.MapleImp;
 import client.inventory.MapleInventory;
-import client.inventory.MapleInventoryIdentifier;
 import client.inventory.MapleInventoryType;
 import client.inventory.MapleMount;
 import client.inventory.MaplePet;
@@ -21,7 +18,9 @@ import constants.*;
 import database.DatabaseConnection;
 import database.DatabaseException;
 import database.dao.AccountsDao;
+import database.dao.CharacterDao;
 import database.entity.AccountsPO;
+import database.entity.CharacterPO;
 import handling.channel.ChannelServer;
 import handling.channel.handler.AttackInfo;
 import handling.login.LoginServer;
@@ -55,7 +54,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.swing.table.DefaultTableModel;
 import javax.transaction.Transactional;
-import javax.xml.crypto.Data;
 
 import scripting.event.EventInstanceManager;
 import scripting.npc.NPCScriptManager;
@@ -69,12 +67,8 @@ import server.MaplePortal;
 import server.MapleStatEffect;
 import server.MapleStorage;
 import server.MapleTrade;
-import server.RandomRewards;
 import server.Randomizer;
 import server.ServerProperties;
-import server.StructSetItem;
-import server.StructSetItemStat;
-import server.Timer.BuffTimer;
 import server.Timer.MapTimer;
 import server.Timer.WorldTimer;
 import server.cashshop.CashShop;
@@ -82,7 +76,6 @@ import server.life.MapleLifeFactory;
 import server.life.MapleMonster;
 import server.life.MapleMonsterStats;
 import server.life.MobSkill;
-import server.life.MobSkillFactory;
 import server.life.PlayerNPC;
 import server.maps.AnimatedMapleMapObject;
 import server.maps.FieldLimitType;
@@ -113,7 +106,6 @@ import tools.packet.PartyPacket;
 import tools.packet.PetPacket;
 import tools.packet.SkillPacket;
 import tools.packet.SummonPacket;
-import tools.packet.UIPacket;
 
 public class MapleCharacter extends AnimatedMapleMapObject implements Serializable {
 
@@ -127,8 +119,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private byte gender;
     private byte initialSpawnPoint;
     private byte skinColor;
-    private byte guildrank = 5;
-    private byte allianceRank = 5;
     private byte world;
     private byte fairyExp;
     private byte subcategory;
@@ -150,7 +140,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private int fame;
     private int totalWins;
     private int totalLosses;
-    private int guildid = 0;
     private int fallcounter;
     private int maplepoints;
     private int acash;
@@ -171,7 +160,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private int followid;
     private int gachexp;
     private int challenge;
-    private int guildContribution = 0;
     private long exp;
     private Point old;
     private MonsterFamiliar summonedFamiliar;
@@ -501,7 +489,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
         ret.chalktext = ct.chalkboard;
         ret.gmLevel = ct.gmLevel;
-        ret.exp = ret.level >= ret.getMaxLevelForSever() ? 0 : ct.exp;
+        ret.exp = ret.level >= ServerProperties.getMaxLevel() ? 0 : ct.exp;
         ret.hpApUsed = ct.hpApUsed;
         ret.remainingSp = ct.remainingSp;
         ret.remainingAp = ct.remainingAp;
@@ -518,10 +506,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.mapid = ct.mapid;
         ret.initialSpawnPoint = ct.initialSpawnPoint;
         ret.world = ct.world;
-        ret.guildid = ct.guildid;
-        ret.guildrank = ct.guildrank;
-        ret.guildContribution = ct.guildContribution;
-        ret.allianceRank = ct.alliancerank;
         ret.points = ct.points;
         ret.vpoints = ct.vpoints;
         ret.fairyExp = ct.fairyExp;
@@ -654,69 +638,59 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.client = client;
         ret.id = charid;
         Connection con = DatabaseConnection.getConnection();
-        PreparedStatement ps, psd, pse;
-        ResultSet rs, rsd;
+        PreparedStatement ps, psd;
+        ResultSet rs;
         try {
-            ps = con.prepareStatement("SELECT * FROM characters WHERE id = ?");
-            ps.setInt(1, charid);
-            rs = ps.executeQuery();
+            CharacterDao charDao = new CharacterDao();
+            CharacterPO charPo = charDao.getCharacterById(charid);
+            if (null == charPo) {
+                throw new RuntimeException("加载角色失败原因(角色没有找到):" + charid);
+            }
 
-            if (!rs.next()) {
-                rs.close();
-                ps.close();
-                throw new RuntimeException("加载角色失败原因(角色没有找到).");
-            }
-            ret.name = rs.getString("name");
-            ret.level = rs.getShort("level");
-            ret.fame = rs.getInt("fame");
-            ret.stats.str = rs.getShort("str");
-            ret.stats.dex = rs.getShort("dex");
-            ret.stats.int_ = rs.getShort("int");
-            ret.stats.luk = rs.getShort("luk");
-            ret.stats.baseMaxHp = rs.getInt("maxhp");
-            ret.stats.baseMaxMp = rs.getInt("maxmp");
-            ret.stats.baseHp = rs.getInt("hp");
-            ret.stats.baseMp = rs.getInt("mp");
-            ret.job = rs.getShort("job");
-            ret.gmLevel = rs.getByte("gm");
-            ret.exp = ret.level >= ret.getMaxLevelForSever() ? 0L : rs.getLong("exp");
-            ret.hpApUsed = rs.getShort("hpApUsed");
-            ret.remainingSp =   rs.getShort("sp");
-            ret.remainingAp = rs.getShort("ap");
-            ret.meso = rs.getInt("meso");
-            if (ret.meso < 0) {
-                ret.meso = 0;
-            }
-            ret.skinColor = rs.getByte("skincolor");
-            ret.gender = rs.getByte("gender");
-            ret.hair = rs.getInt("hair");
-            ret.face = rs.getInt("face");
-            ret.accountid = rs.getInt("accountid");
+            ret.name = charPo.getName();
+            ret.level = charPo.getLevel();
+            ret.fame = charPo.getFame();
+            ret.stats.str = charPo.getStr();
+            ret.stats.dex = charPo.getDex();
+            ret.stats.int_ = charPo.getInt();
+            ret.stats.luk = charPo.getLuk();
+            ret.stats.baseMaxHp = charPo.getMaxhp();
+            ret.stats.baseMaxMp = charPo.getMaxmp();
+            ret.stats.baseHp = charPo.getHp();
+            ret.stats.baseMp = charPo.getMp();
+            ret.job = charPo.getJob();
+            ret.gmLevel = charPo.getGm();
+            ret.exp = charPo.getLevel() >= ServerProperties.getMaxLevel() ? 0L : charPo.getExp();
+            ret.hpApUsed = charPo.getHpApUsed();
+            ret.remainingSp =   charPo.getSp();
+            ret.remainingAp = charPo.getAp();
+            ret.meso = charPo.getMeso();
+            ret.skinColor = charPo.getSkincolor();
+            ret.gender = charPo.getGender();
+            ret.hair = charPo.getHair();
+            ret.face = charPo.getFace();
+            ret.accountid = charPo.getAccount().getId();
             if (client != null) {
                 client.setAccID(ret.accountid);
             }
-            ret.mapid = rs.getInt("map");
-            ret.initialSpawnPoint = rs.getByte("spawnpoint");
-            ret.world = rs.getByte("world");
-            ret.guildid = rs.getInt("guildid");
-            ret.guildrank = rs.getByte("guildrank");
-            ret.allianceRank = rs.getByte("allianceRank");
-            ret.guildContribution = rs.getInt("guildContribution");
-            ret.totalWins = rs.getInt("totalWins");
-            ret.totalLosses = rs.getInt("totalLosses");
-            ret.currentrep = rs.getInt("currentrep");
-            ret.totalrep = rs.getInt("totalrep");
-            ret.gachexp = rs.getInt("gachexp");
-            ret.buddylist = new BuddyList(rs.getByte("buddyCapacity"));
-            ret.subcategory = rs.getByte("subcategory");
+            ret.mapid = charPo.getMap();
+            ret.initialSpawnPoint = charPo.getSpawnpoint();
+            ret.world = charPo.getWorld();
+            ret.totalWins = charPo.getTotalWins();
+            ret.totalLosses = charPo.getTotalLosses();
+            ret.currentrep = charPo.getCurrentrep();
+            ret.totalrep = charPo.getTotalrep();
+            ret.gachexp = charPo.getGachexp();
+            ret.buddylist = new BuddyList(charPo.getBuddyCapacity());
+            ret.subcategory = charPo.getSubcategory();
             ret.mount = new MapleMount(ret, 0, PlayerStats.getSkillByJob(1004, ret.job), (byte) 0, (byte) 1, 0);
-            ret.rank = rs.getInt("rank");
-            ret.rankMove = rs.getInt("rankMove");
-            ret.jobRank = rs.getInt("jobRank");
-            ret.jobRankMove = rs.getInt("jobRankMove");
-            ret.marriageId = rs.getInt("marriageId");
-            ret.fatigue = rs.getShort("fatigue");
-            ret.apstorage = rs.getInt("apstorage");
+            ret.rank = charPo.getRank();
+            ret.rankMove = charPo.getRankMove();
+            ret.jobRank = charPo.getJobRank();
+            ret.jobRankMove = charPo.getJobRankMove();
+            ret.marriageId = charPo.getMarriageId();
+            ret.fatigue = charPo.getFatigue();
+            ret.apstorage = charPo.getApstorage();
             if ((channelserver) && (client != null)) {
                 MapleMapFactory mapFactory = ChannelServer.getInstance(client.getChannel()).getMapFactory();
                 ret.map = mapFactory.getMap(ret.mapid);
@@ -730,17 +704,16 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     ret.initialSpawnPoint = 0;
                 }
                 ret.setPosition(portal.getPosition());
-                int partyid = rs.getInt("party");
+                int partyid = charPo.getParty();
                 if (partyid >= 0) {
                     MapleParty party = WrodlPartyService.getInstance().getParty(partyid);
                     if ((party != null) && (party.getMemberById(ret.id) != null)) {
                         ret.party = party;
                     }
                 }
-                String pets = rs.getString("pets");
+                String pets = charPo.getPets();
                 ret.petStore = Byte.parseByte(pets);
             }
-            ps.close();
             ps = con.prepareStatement("SELECT * FROM character_keyvalue WHERE characterid = ?");
             ps.setInt(1, charid);
             rs = ps.executeQuery();
@@ -847,20 +820,18 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     ret.skills.put(skil, new SkillEntry(skl, msl, rs.getLong("expiration"), teachId));
                 }
                 ps.close();
-                ps = con.prepareStatement("SELECT * FROM characters WHERE accountid = ? ORDER BY level DESC");
-                ps.setInt(1, ret.accountid);
-                rs = ps.executeQuery();
+                // @TODO 这里还不知道是啥？
                 int maxlevel_ = 0;
-                int maxlevel_2 = 0;
-                while (rs.next()) {
-                    if (rs.getInt("id") != charid) {
-                        int maxlevel = rs.getShort("level") / 10;
+                List<CharacterPO> charList = charDao.getCharacterByAccountId(ret.accountid);
+                for (CharacterPO charT : charList) {
+                    if (charT.getId() != charid) {
+                        int maxlevel = charT.getLevel() / 10;
                         if (maxlevel > 20) {
                             maxlevel = 20;
                         }
                         if ((maxlevel > maxlevel_) || (maxlevel_ == 0)) {
                             maxlevel_ = maxlevel;
-                            ret.BlessOfFairy_Origin = rs.getString("name");
+                            ret.BlessOfFairy_Origin = charT.getName();
                         }
                     }
                 }
@@ -1166,7 +1137,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ps.setShort(4, this.stats.getDex());
             ps.setShort(5, this.stats.getLuk());
             ps.setShort(6, this.stats.getInt());
-            ps.setLong(7, this.level >= getMaxLevelForSever() ? 0L : Math.abs(this.exp));
+            ps.setLong(7, this.level >= ServerProperties.getMaxLevel() ? 0L : Math.abs(this.exp));
             ps.setInt(8, this.stats.getHp() < 1 ? 50 : this.stats.getHp());
             ps.setInt(9, this.stats.getMp());
             ps.setInt(10, this.stats.getMaxHp());
@@ -3457,7 +3428,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             if (total > 0) {
                 this.stats.checkEquipLevels(this, total);
             }
-            if (this.level >= getMaxLevelForSever()) {
+            if (this.level >= ServerProperties.getMaxLevel()) {
                 setExp(0L);
             } else {
                 boolean leveled = false;
@@ -3466,7 +3437,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     exp += total;
                     levelUp();
                     leveled = true;
-                    if (this.level >= getMaxLevelForSever()) {
+                    if (this.level >= ServerProperties.getMaxLevel()) {
                         setExp(0L);
                     } else {
                         needed = getExpNeededForLevel();
@@ -3565,7 +3536,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             this.stats.checkEquipLevels(this, (int) total);
         }
         long needed = getExpNeededForLevel();
-        if (this.level >= getMaxLevelForSever()) {
+        if (this.level >= ServerProperties.getMaxLevel()) {
             setExp(0L);
         } else {
             boolean leveled = false;
@@ -3576,7 +3547,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     needed = getExpNeededForLevel();
                 }
                 leveled = true;
-                if (this.level >= getMaxLevelForSever()) {
+                if (this.level >= ServerProperties.getMaxLevel()) {
                     setExp(0L);
                 } else {
                     needed = getExpNeededForLevel();
@@ -4128,7 +4099,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 setExp(0);
             }
             level += 1;
-            if (level >= getMaxLevelForSever()) {
+            if (level >= ServerProperties.getMaxLevel()) {
                 setExp(0);
             }
             maxhp = Math.min(getMaxHpForSever(), Math.abs(maxhp));
@@ -4593,24 +4564,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void increaseTotalLosses() {
         this.totalLosses += 1;
     }
-
-    public int getGuildId() {
-        return this.guildid;
-    }
-
-    public byte getGuildRank() {
-        return this.guildrank;
-    }
-
-    public int getGuildContribution() {
-        return this.guildContribution;
-    }
-
-
-    public byte getAllianceRank() {
-        return this.allianceRank;
-    }
-
 
     public void setJob(int jobId) {
         this.job = (short) jobId;
@@ -6643,30 +6596,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public Timestamp getChrCreated() {
-        if (this.createDate != null) {
-            return this.createDate;
-        }
-        Connection con = DatabaseConnection.getConnection();
-        try {
-            try (PreparedStatement ps = con.prepareStatement("SELECT createdate FROM characters WHERE id = ?")) {
-                ps.setInt(1, getId());
-                ResultSet rs = ps.executeQuery();
-                if (!rs.next()) {
-                    rs.close();
-                    ps.close();
-                    return null;
-                }
-                this.createDate = rs.getTimestamp("createdate");
-                rs.close();
-            }
-            return this.createDate;
-        } catch (SQLException e) {
-            throw new DatabaseException("获取角色创建日期出错", e);
-        }  finally {
-            try {
-                con.close();
-            }catch (Exception e){}
-        }
+        return this.createDate;
     }
 
     public int getDollars() {
@@ -6733,10 +6663,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             medal = new StringBuilder().append("<").append(MapleItemInformationProvider.getInstance().getName(medalItem.getItemId())).append("> ").toString();
         }
         return medal;
-    }
-
-    public int getMaxLevelForSever() {
-        return ServerProperties.getMaxLevel();
     }
 
     public int getMaxHpForSever() {

@@ -12,7 +12,7 @@ public class WorldConstants {
     public static String WORLD_TIP = "怀旧冒×岛";
     public static final int gmserver = -1; // -1 = 无GM服务器
     public static final byte recommended = (byte) getMainWorld().getWorld(); //-1 = no recommended
-    public static final String recommendedmsg = recommended < 0 ? "" : "        Join " + getById(recommended).name() + ",       the newest world! (If youhave friends who play, consider joining their worldinstead. Characters can`t move between worlds.)";
+    public static final String recommendedmsg = recommended < 0 ? "" : "        Join " + getById(recommended).name() + ",       the newest world! (If youhave friends who play, consider joining their worldinstead. CharacterPO can`t move between worlds.)";
 
     private static int channels = 0;
 

@@ -6,7 +6,9 @@ import database.DaoFactory;
 import database.DatabaseConnection;
 import database.DatabaseException;
 import database.dao.AccountsDao;
+import database.dao.CharacterDao;
 import database.entity.AccountsPO;
+import database.entity.CharacterPO;
 import handling.cashshop.CashShopServer;
 import handling.channel.ChannelServer;
 import handling.login.LoginServer;
@@ -195,46 +197,20 @@ public class MapleClient implements Serializable {
 
     private List<CharNameAndId> loadCharactersInternal(int serverId) {
         List chars = new LinkedList();
-        Connection con = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = con.prepareStatement("SELECT id, name, gm FROM characters WHERE accountid = ? AND world = ?")) {
-            ps.setInt(1, this.accId);
-            ps.setInt(2, serverId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    chars.add(new CharNameAndId(rs.getString("name"), rs.getInt("id")));
-                    LoginServer.getLoginAuth(rs.getInt("id"));
-                }
-            }
-        } catch (SQLException e) {
-            MapleLogger.error("error loading characters internal", e);
-        } finally {
-            try {
-                con.close();
-            } catch (Exception e) {
-            }
+        CharacterDao charDao = new CharacterDao();
+        List<CharacterPO> charPo = charDao.getCharacterByNameAndWorld(this.accId, serverId);
+        for(CharacterPO chPo : charPo) {
+            chars.add(new CharNameAndId(chPo.getName(), chPo.getId()));
+            LoginServer.getLoginAuth(chPo.getId());
         }
         return chars;
     }
 
     private int loadCharactersSize(int serverId) {
         int chars = 0;
-        Connection con = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = con.prepareStatement("SELECT count(*) FROM characters WHERE accountid = ? AND world = ?")) {
-            ps.setInt(1, this.accId);
-            ps.setInt(2, serverId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    chars = rs.getInt(1);
-                }
-            }
-        } catch (SQLException e) {
-            MapleLogger.error("error loading characters internal", e);
-        } finally {
-            try {
-                con.close();
-            } catch (Exception e) {
-            }
-        }
+        CharacterDao charDao = new CharacterDao();
+        List<CharacterPO> charPo = charDao.getCharacterByNameAndWorld(this.accId, serverId);
+        chars = charPo.size();
         return chars;
     }
 
@@ -602,7 +578,6 @@ public class MapleClient implements Serializable {
             String namez = player.getName();
             int idz = player.getId();
             int messengerid = player.getMessenger() == null ? 0 : player.getMessenger().getId();
-            int gid = player.getGuildId();
             BuddyList bl = player.getBuddylist();
             MaplePartyCharacter chrp = new MaplePartyCharacter(player);
             MapleMessengerCharacter chrm = new MapleMessengerCharacter(player);
@@ -747,62 +722,6 @@ public class MapleClient implements Serializable {
         return ChannelServer.getInstance(this.channel);
     }
 
-    public int deleteCharacter(int cid) {
-        if (this.getPlayer() != null && this.getPlayer().getId() == cid) {
-            return 2;
-        }
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            try (PreparedStatement ps = con.prepareStatement("SELECT guildid, guildrank, familyid, name FROM characters WHERE id = ? AND accountid = ?")) {
-                ps.setInt(1, cid);
-                ps.setInt(2, this.accId);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (!rs.next()) {
-                        rs.close();
-                        ps.close();
-                        return 1;
-                    }
-                    if (rs.getInt("guildid") > 0) {
-                        if (rs.getInt("guildrank") == 1) {
-                            rs.close();
-                            ps.close();
-                            return 1;
-                        }
-                    }
-                    MapleSidekick sidekick = WorldSidekickService.getInstance().getSidekickByChr(cid);
-                    if (sidekick != null) {
-                        sidekick.eraseToDB();
-                    }
-                }
-                ps.close();
-            }
-
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM characters WHERE id = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "UPDATE pokemon SET active = 0 WHERE characterid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM hiredmerch WHERE characterid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM mountdata WHERE characterid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM inventoryitems WHERE characterid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM famelog WHERE characterid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM famelog WHERE characterid_to = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM wishlist WHERE characterid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM buddies WHERE characterid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM buddies WHERE buddyid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM keymap WHERE characterid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM savedlocations WHERE characterid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM skills WHERE characterid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM skills WHERE teachId = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM familiars WHERE characterid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM mountdata WHERE characterid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM queststatus WHERE characterid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM inventoryslot WHERE characterid = ?", cid);
-            MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM pqlog WHERE characterid = ?", cid);
-            return 0;
-        } catch (SQLException e) {
-            MapleLogger.error("delete user error:", e);
-        }
-        return 1;
-    }
-
     public byte getGender() {
         return this.gender;
     }
@@ -921,27 +840,6 @@ public class MapleClient implements Serializable {
             builder.replace(start, start + 2, parm.toString());
         }
         return builder.toString();
-    }
-
-    public static int findAccIdForCharacterName(String charName) {
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            int ret;
-            try (PreparedStatement ps = con.prepareStatement("SELECT accountid FROM characters WHERE name = ?")) {
-                ps.setString(1, charName);
-                try (ResultSet rs = ps.executeQuery()) {
-                    ret = -1;
-                    if (rs.next()) {
-                        ret = rs.getInt("accountid");
-                    }
-                }
-                ps.close();
-            }
-            return ret;
-        } catch (SQLException e) {
-            MapleLogger.error("findAccIdForCharacterName SQL error", e);
-        }
-        return -1;
     }
 
     public boolean isSuperGM() {

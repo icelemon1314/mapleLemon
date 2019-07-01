@@ -80,10 +80,6 @@ public class ChatHandler {
                     WrodlPartyService.getInstance().partyChat(chr.getParty().getId(), chattext, chr.getName());
                 }
                 break;
-            case 2:
-                if (chr.getGuildId() > 0) {
-                }
-                break;
             case 4:
                 if ((chr.getParty() != null) && (chr.getParty().getExpeditionId() > 0)) {
                     WrodlPartyService.getInstance().expedChat(chr.getParty().getExpeditionId(), chattext, chr.getName());

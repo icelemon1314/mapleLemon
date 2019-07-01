@@ -62,37 +62,37 @@ public class Start {
 
 
 
-        AccountsDao acc = DaoFactory.getInstance().createDao(AccountsDao.class);
-        AccountsPO result = acc.getAccountByName("icelemon1314");
-        acc.transactionStart();
-
-        result.setSalt("bbbbb");
-
-
-        acc.transactionCommit();
+//        AccountsDao acc = DaoFactory.getInstance().createDao(AccountsDao.class);
+//        AccountsPO result = acc.getAccountByName("icelemon1314");
+//        acc.transactionStart();
+//
+//        result.setSalt("bbbbb");
+//
+//
+//        acc.transactionCommit();
 
 
         MapleLogger.error("eeeeeeeeeeeee");
 //        MapleLogger.info("ttttttttt");
 //        MapleLogger.debug("DDDDDDDDDDDDDDDD");
 
-//        EntityManagerFactory factory = Persistence.createEntityManagerFactory("MapleLemonJPA");
-//        EntityManager manager = factory.createEntityManager();
-////        EntityTransaction transaction = manager.getTransaction();
-////        transaction.begin();
-//
-//        AccountsPO account = manager.find(AccountsPO.class, 1);
-//        System.out.println(account);
-//
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("MapleLemonJPA");
+        EntityManager manager = factory.createEntityManager();
+//        EntityTransaction transaction = manager.getTransaction();
+//        transaction.begin();
+
+        AccountsPO account = manager.find(AccountsPO.class, 1);
+        System.out.println(account);
+
 //        account.setSalt("test1");
 //        manager.persist(account);
 //        manager.flush();
-//
-//        // 5.提交事务，关闭资源
-////        transaction.commit();
-//        manager.close();
-//        factory.close();
-//        return ;
+
+        // 5.提交事务，关闭资源
+//        transaction.commit();
+        manager.close();
+        factory.close();
+        return ;
     }
 
     public void run() {
@@ -108,16 +108,8 @@ public class Start {
             System.out.println("[!!! 已开启只能管理员登录模式 !!!]");
         }
         // @TODO 放在用户登录的时候处理
-        Connection con = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = con.prepareStatement("UPDATE `accounts` SET `loggedin` = 0")) {
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            throw new RuntimeException("运行时错误: 无法连接到MySQL数据库伺服器");
-        } finally {
-            try {
-                con.close();
-            } catch (Exception e) {}
-        }
+        AccountsDao accountD = new AccountsDao();
+        accountD.updateLoginStateToZero();
 
         System.out.println("正在加载服务端...");
         System.out.println("当前操作系统: " + System.getProperty("sun.desktop"));

@@ -268,26 +268,6 @@ INSERT INTO `character_keyvalue` VALUES ('3', '7', 'Zero_Look', '0');
 INSERT INTO `character_keyvalue` VALUES ('4', '8', 'Zero_Look', '0');
 
 -- ----------------------------
--- Table structure for character_slots
--- ----------------------------
-DROP TABLE IF EXISTS `character_slots`;
-CREATE TABLE `character_slots` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `accid` int(11) NOT NULL DEFAULT '0',
-  `worldid` int(11) NOT NULL DEFAULT '0',
-  `charslots` int(11) NOT NULL DEFAULT '3',
-  PRIMARY KEY (`id`),
-  KEY `accid` (`accid`),
-  KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=gbk;
-
--- ----------------------------
--- Records of character_slots
--- ----------------------------
-INSERT INTO `character_slots` VALUES ('1', '1', '0', '30');
-INSERT INTO `character_slots` VALUES ('2', '2', '0', '30');
-
--- ----------------------------
 -- Table structure for cheatlog
 -- ----------------------------
 DROP TABLE IF EXISTS `cheatlog`;

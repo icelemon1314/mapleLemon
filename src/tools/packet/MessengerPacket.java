@@ -104,19 +104,8 @@ public class MessengerPacket {
 //        mplew.writeInt(chr.getJob());
 //        mplew.writeInt(chr.getFame());
 //        mplew.writeInt(chr.getLove());
-//        if (chr.getGuildId() <= 0) {
-//            mplew.writeMapleAsciiString("-");
-//            mplew.writeMapleAsciiString("");
-//        } else {
-//            MapleGuild guild = WorldGuildService.getInstance().getGuild(chr.getGuildId());
-//            if (guild != null) {
-//                mplew.writeMapleAsciiString(guild.getName());
-//                mplew.writeMapleAsciiString("");
-//            } else {
-//                mplew.writeMapleAsciiString("-");
-//                mplew.writeMapleAsciiString("");
-//            }
-//        }
+//        mplew.writeMapleAsciiString("-");
+//        mplew.writeMapleAsciiString("");
 //        mplew.write(0);
 //
 //        return mplew.getPacket();

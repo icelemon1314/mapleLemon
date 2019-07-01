@@ -69,20 +69,6 @@ public class WorldBroadcastService {
         }
     }
 
-    public void sendGuildPacket(int targetIds, byte[] packet, int exception, int guildid) {
-        if (targetIds == exception) {
-            return;
-        }
-        int ch = WorldFindService.getInstance().findChannel(targetIds);
-        if (ch < 0) {
-            return;
-        }
-        MapleCharacter chr = ChannelServer.getInstance(ch).getPlayerStorage().getCharacterById(targetIds);
-        if ((chr != null) && (chr.getGuildId() == guildid)) {
-            chr.getClient().sendPacket(packet);
-        }
-    }
-
     private static class SingletonHolder {
 
         protected static final WorldBroadcastService instance = new WorldBroadcastService();

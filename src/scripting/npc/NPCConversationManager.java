@@ -1089,22 +1089,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return MapleItemInformationProvider.getInstance().getItemEffect(buff);
     }
 
-    public void buffGuild(int buff, int duration, String msg) {
-        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        MapleStatEffect mse;
-        if ((ii.getItemEffect(buff) != null) && (getPlayer().getGuildId() > 0)) {
-            mse = ii.getItemEffect(buff);
-            for (ChannelServer cserv : ChannelServer.getAllInstances()) {
-                for (MapleCharacter chr : cserv.getPlayerStorage().getAllCharacters()) {
-                    if (chr.getGuildId() == getPlayer().getGuildId()) {
-                        mse.applyTo(chr, chr, true, null, duration);
-                        chr.dropMessage(5, new StringBuilder().append("Your guild has gotten a ").append(msg).append(" buff.").toString());
-                    }
-                }
-            }
-        }
-    }
-
     public boolean hasSkill(int skillid) {
         Skill theSkill = SkillFactory.getSkill(skillid);
         if (theSkill != null) {

@@ -2,8 +2,10 @@ package database.dao;
 
 import database.entity.AccountsPO;
 
+import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-import java.util.Iterator;
+import javax.persistence.QueryTimeoutException;
 import java.util.List;
 
 public class AccountsDao extends BaseDao {
@@ -33,5 +35,19 @@ public class AccountsDao extends BaseDao {
         } else {
             return null;
         }
+    }
+
+    public void updateLoginStateToZero() {
+        EntityTransaction transaction = this.em.getTransaction();
+        Query query = this.em.createQuery("UPDATE AccountsPO SET loggedin = 0");
+        transaction.begin();
+        try {
+            query.executeUpdate();
+        } catch (QueryTimeoutException e) {
+            transaction.rollback();
+        } catch (PersistenceException e) {
+            transaction.rollback();
+        }
+        transaction.commit();
     }
 }
