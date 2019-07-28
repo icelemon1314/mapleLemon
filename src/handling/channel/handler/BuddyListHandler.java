@@ -6,6 +6,8 @@ import client.CharacterNameAndId;
 import client.MapleCharacter;
 import client.MapleClient;
 import database.DatabaseConnection;
+import database.dao.CharacterDao;
+import database.entity.CharacterPO;
 import handling.channel.ChannelServer;
 import handling.world.WorldBuddyService;
 import handling.world.WorldFindService;
@@ -21,19 +23,12 @@ public class BuddyListHandler {
     private static CharacterIdNameBuddyCapacity getCharacterIdAndNameFromDatabase(String name, String group)
             throws SQLException {
         CharacterIdNameBuddyCapacity ret;
-        Connection con = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM characters WHERE name LIKE ?")) {
-            ps.setString(1, name);
-            try (ResultSet rs = ps.executeQuery()) {
-                ret = null;
-                if ((rs.next()) && (rs.getInt("gm") < 3)) {
-                    ret = new CharacterIdNameBuddyCapacity(rs.getInt("id"), rs.getString("name"), group, rs.getInt("buddyCapacity"));
-                }
-            }
-        } finally {
-            try{
-                con.close();
-            } catch (Exception e) {}
+        CharacterDao charDao = new CharacterDao();
+        CharacterPO charPo = charDao.getCharacterByName(name);
+        if (charPo != null && charPo.getGm() < 3) {
+            ret = new CharacterIdNameBuddyCapacity(charPo.getId(), charPo.getName(),group, charPo.getBuddyCapacity());
+        } else {
+            ret = null;
         }
         return ret;
     }

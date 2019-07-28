@@ -1,5 +1,6 @@
 package handling.world;
 
+import client.MapleCharacter;
 import client.MapleClient;
 import constants.ServerConstants;
 import handling.cashshop.CashShopServer;
@@ -84,8 +85,8 @@ public class World {
         }
     }
 
-    public static void ChannelChange_Data(CharacterTransfer Data, int characterid, int toChannel) {
-        getStorage(toChannel).registerPendingPlayer(Data, characterid);
+    public static void ChannelChange_Data(MapleCharacter Data, int toChannel) {
+        getStorage(toChannel).registerPendingPlayer(Data);
     }
 
     public static boolean isCharacterListConnected(List<String> charName) {

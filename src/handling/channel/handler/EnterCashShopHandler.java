@@ -53,7 +53,7 @@ public class EnterCashShopHandler extends MaplePacketHandler<EnterCashShopRecvVO
         PlayerBuffStorage.addCooldownsToStorage(chr.getId(), chr.getCooldowns());
 //        PlayerBuffStorage.addDiseaseToStorage(chr.getId(), chr.getAllDiseases());
         //chr.cancelAllBuffs();
-        World.ChannelChange_Data(new CharacterTransfer(chr), chr.getId(), -10);
+        World.ChannelChange_Data(chr, -10);
         ch.removePlayer(chr);
         c.updateLoginState(MapleClient.CHANGE_CHANNEL, c.getSessionIPAddress());
         chr.saveToDB(false, false);

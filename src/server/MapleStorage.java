@@ -73,6 +73,11 @@ public class MapleStorage
         throw new DatabaseException("Inserting char failed.");
     }
 
+    /**
+     * 获取仓库信息
+     * @param accountId
+     * @return
+     */
     public static MapleStorage loadOrCreateFromDB(int accountId) {
         MapleStorage ret = null;
         Connection con = DatabaseConnection.getConnection();

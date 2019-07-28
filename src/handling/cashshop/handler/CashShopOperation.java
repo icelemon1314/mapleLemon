@@ -34,7 +34,7 @@ public class CashShopOperation {
             return;
         }
 
-        World.ChannelChange_Data(new CharacterTransfer(chr), chr.getId(), c.getChannel());
+        World.ChannelChange_Data(chr, c.getChannel());
         CashShopServer.getPlayerStorage().deregisterPlayer(chr);
         c.updateLoginState(MapleClient.LOGIN_SERVER_TRANSITION, c.getSessionIPAddress());
         String s = c.getSessionIPAddress();
@@ -47,16 +47,15 @@ public class CashShopOperation {
 
     /**
      * 玩家进入商城
-     * @param transfer
+     * @param chr
      * @param c
      */
-    public static void EnterCS(CharacterTransfer transfer, MapleClient c) {
-        if (transfer == null) {
+    public static void EnterCS(MapleCharacter chr, MapleClient c) {
+        if (chr == null) {
             MapleLogger.info("玩家为空："+c.getPlayer().getAccountID());
             c.getSession().close();
             return;
         }
-        MapleCharacter chr = MapleCharacter.ReconstructChr(transfer, c, false);
 
         c.setPlayer(chr);
         c.setAccID(chr.getAccountID());

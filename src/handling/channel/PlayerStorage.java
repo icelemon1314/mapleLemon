@@ -25,7 +25,7 @@ public class PlayerStorage {
     private final Lock pendingWriteLock = this.mutex2.writeLock();
     private final Map<String, MapleCharacter> nameToChar = new HashMap();
     private final Map<Integer, MapleCharacter> idToChar = new HashMap();
-    private final Map<Integer, CharacterTransfer> PendingCharacter = new HashMap();
+    private final Map<Integer, MapleCharacter> PendingCharacter = new HashMap();
 
     public PlayerStorage(int channel) {
         this.channel = channel;
@@ -54,10 +54,10 @@ public class PlayerStorage {
         WorldFindService.getInstance().register(chr.getId(), chr.getName(), this.channel, chr);
     }
 
-    public void registerPendingPlayer(CharacterTransfer chr, int playerId) {
+    public void registerPendingPlayer(MapleCharacter chr) {
         this.pendingWriteLock.lock();
         try {
-            this.PendingCharacter.put(playerId, chr);
+            this.PendingCharacter.put(chr.getCharPo().getId(), chr);
         } finally {
             this.pendingWriteLock.unlock();
         }
@@ -93,10 +93,10 @@ public class PlayerStorage {
         }
     }
 
-    public CharacterTransfer getPendingCharacter(int charId) {
+    public MapleCharacter getPendingCharacter(int charId) {
         this.pendingWriteLock.lock();
         try {
-            CharacterTransfer localCharacterTransfer = (CharacterTransfer) this.PendingCharacter.remove(Integer.valueOf(charId));
+            MapleCharacter localCharacterTransfer = this.PendingCharacter.remove(Integer.valueOf(charId));
             return localCharacterTransfer;
         } finally {
             this.pendingWriteLock.unlock();

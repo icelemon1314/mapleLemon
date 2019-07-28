@@ -94,7 +94,7 @@ public class CharacterPO {
     return account;
   }
 
-  public void setAccountid(AccountsPO accountInfo) {
+  public void setAccount(AccountsPO accountInfo) {
     this.account = accountInfo;
   }
 
@@ -121,8 +121,8 @@ public class CharacterPO {
     return level;
   }
 
-  public void setLevel(Short level) {
-    this.level = level;
+  public void setLevel(int level) {
+    this.level = (short)level;
   }
 
 
@@ -232,8 +232,8 @@ public class CharacterPO {
     return job;
   }
 
-  public void setJob(short job) {
-    this.job = job;
+  public void setJob(int job) {
+    this.job = (short)job;
   }
 
 

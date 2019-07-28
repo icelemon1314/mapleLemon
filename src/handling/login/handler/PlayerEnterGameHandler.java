@@ -35,7 +35,7 @@ public class PlayerEnterGameHandler extends MaplePacketHandler<PlayerEnterGameRe
     public void handlePacket(PlayerEnterGameRecvVO recvMsg, MapleClient c) {
         try {
             int playerid = recvMsg.getPayerId();
-            CharacterTransfer transfer = CashShopServer.getPlayerStorage().getPendingCharacter(playerid);
+            MapleCharacter transfer = CashShopServer.getPlayerStorage().getPendingCharacter(playerid);
             if (transfer != null) {
                 CashShopOperation.EnterCS(transfer, c);
                 return;
@@ -62,7 +62,7 @@ public class PlayerEnterGameHandler extends MaplePacketHandler<PlayerEnterGameRe
                 c.setChannel((Integer) ip.right);
                 player = MapleCharacter.loadCharFromDB(playerid, c, true);
             } else {
-                player = MapleCharacter.ReconstructChr(transfer, c, true);
+                player = transfer;
             }
             ChannelServer channelServer = c.getChannelServer();
             c.setPlayer(player);

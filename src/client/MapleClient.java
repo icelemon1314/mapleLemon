@@ -74,6 +74,7 @@ public class MapleClient implements Serializable {
     private long sessionId;
     private MapleCharacter player;
     private int channel = 1;
+    private AccountsPO accountPo;
     private int accId = -1;
     private int world;
     private String birthday;
@@ -419,6 +420,14 @@ public class MapleClient implements Serializable {
 
     public int getAccID() {
         return this.accId;
+    }
+
+    public void setAccountPo(AccountsPO acc){
+        this.accountPo = acc;
+    }
+
+    public AccountsPO getAccountPo() {
+        return this.accountPo;
     }
 
     public void updateLoginState(int newstate) {

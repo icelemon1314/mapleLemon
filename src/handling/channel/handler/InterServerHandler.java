@@ -53,7 +53,7 @@ public class InterServerHandler {
      */
     public static void Loggedin(final int playerid, final MapleClient c) {
         try {
-            CharacterTransfer transfer = CashShopServer.getPlayerStorage().getPendingCharacter(playerid);
+            MapleCharacter transfer = CashShopServer.getPlayerStorage().getPendingCharacter(playerid);
             if (transfer != null) {
                 CashShopOperation.EnterCS(transfer, c);
                 return;
@@ -80,7 +80,7 @@ public class InterServerHandler {
                 c.setChannel((Integer) ip.right);
                 player = MapleCharacter.loadCharFromDB(playerid, c, true);
             } else {
-                player = MapleCharacter.ReconstructChr(transfer, c, true);
+                player = transfer;
             }
             ChannelServer channelServer = c.getChannelServer();
             c.setPlayer(player);

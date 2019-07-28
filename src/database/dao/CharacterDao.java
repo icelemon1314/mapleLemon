@@ -2,7 +2,7 @@ package database.dao;
 
 import database.entity.CharacterPO;
 
-import javax.persistence.Query;
+import javax.persistence.*;
 import java.util.List;
 
 public class CharacterDao extends BaseDao {
@@ -58,5 +58,22 @@ public class CharacterDao extends BaseDao {
         } else {
             return null;
         }
+    }
+
+    public void save(CharacterPO charPo){
+        EntityTransaction transaction = this.em.getTransaction();
+        transaction.begin();
+        try {
+            this.em.merge(charPo);
+        } catch (IllegalArgumentException e) {
+            transaction.rollback();
+        } catch (TransactionRequiredException e) {
+            transaction.rollback();
+        }
+        transaction.commit();
+    }
+
+    public void saveWithoutTransaction(CharacterPO charPo){
+        this.em.merge(charPo);
     }
 }

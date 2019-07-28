@@ -6,10 +6,10 @@
 
     <session-factory>
         <!--数据源信息 for Druid-->
-        <property name="driverClassName">com.mysql.cj.jdbc.Driver</property>
-        <property name="url">jdbc:mysql:///hibernate?useSSL=false</property>
+        <property name="driverClassName">com.mysql.cj.jdbc.Driver211111</property>
+        <property name="url">jdbc:mysql:///maplestory027?useSSL=false</property>
         <property name="username">root</property>
-        <property name="password">root</property>
+        <property name="password">z%7TQJ%KPm1v3xo0</property>
         <property name="filter">stat,log4j</property>
         <property name="initialSize">5</property>
         <property name="maxActive">100</property>
@@ -25,7 +25,7 @@
         <!--end-->
 
         <property name="dialect">
-            org.hibernate.dialect.MySQL57Dialect
+            org.hibernate.dialect.MySQLDialect
         </property>
 
         <property name="hbm2ddl.auto">update</property>
