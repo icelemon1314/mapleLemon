@@ -1246,16 +1246,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 this.buddylist.setChanged(false);
             }
 
-
-            ps = con.prepareStatement("UPDATE accounts SET `ACash` = ?, `mPoints` = ?, `points` = ?, `vpoints` = ? WHERE id = ?");
-            ps.setInt(1, this.acash);
-            ps.setInt(2, this.maplepoints);
-            ps.setInt(3, this.points);
-            ps.setInt(4, this.vpoints);
-            ps.setInt(5, this.client.getAccID());
-            ps.executeUpdate();
-            ps.close();
-
             if (this.storage != null) {
                 this.storage.saveToDB();
             }
@@ -1265,15 +1255,15 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             PlayerNPC.updateByCharId(this);
 
-            this.keylayout.saveKeys(this.id);
+            this.keylayout.saveKeys(this.getId());
 
-            this.quickslot.saveQuickSlots(this.id);
+            this.quickslot.saveQuickSlots(this.getId());
 
-            this.mount.saveMount(this.id);
+            this.mount.saveMount(this.getId());
 
             deleteWhereCharacterId(con, "DELETE FROM familiars WHERE characterid = ?");
             ps = con.prepareStatement("INSERT INTO familiars (characterid, expiry, name, fatigue, vitality, familiar) VALUES (?, ?, ?, ?, ?, ?)");
-            ps.setInt(1, this.id);
+            ps.setInt(1, this.getId());
             for (MonsterFamiliar f : this.familiars.values()) {
                 ps.setLong(2, f.getExpiry());
                 ps.setString(3, f.getName());
@@ -1286,7 +1276,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
             deleteWhereCharacterId(con, "DELETE FROM imps WHERE characterid = ?");
             ps = con.prepareStatement("INSERT INTO imps (characterid, itemid, closeness, fullness, state, level) VALUES (?, ?, ?, ?, ?, ?)");
-            ps.setInt(1, this.id);
+            ps.setInt(1, this.getId());
             for (MapleImp imp : this.imps) {
                 if (imp != null) {
                     ps.setInt(2, imp.getItemId());
@@ -1357,7 +1347,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     private void deleteWhereCharacterId(Connection con, String sql) throws SQLException {
-        deleteWhereCharacterId(con, sql, this.id);
+        deleteWhereCharacterId(con, sql, this.getId());
     }
 
     public static void deleteWhereCharacterId(Connection con, String sql, int id) throws SQLException {
@@ -2322,14 +2312,14 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void setMap(int PmapId) {
-        this.mapid = PmapId;
+        this.getCharPo().setMap(PmapId);
     }
 
     public int getMapId() {
         if (this.map != null) {
             return this.map.getId();
         }
-        return this.mapid;
+        return this.getCharPo().getMap();
     }
 
     public byte getInitialSpawnpoint() {
@@ -2341,7 +2331,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public String getName() {
-        return this.name;
+        return this.getCharPo().getName();
     }
 
     public String getBlessOfFairyOrigin() {
@@ -2353,11 +2343,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public short getLevel() {
-        return this.level;
+        return this.getCharPo().getLevel();
     }
 
     public int getFame() {
-        return this.fame;
+        return this.getCharPo().getFame();
     }
 
     public int getFallCounter() {
@@ -2373,7 +2363,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public long getExp() {
-        return this.exp;
+        return this.getCharPo().getExp();
     }
 
     public short getRemainingAp() {
@@ -2389,7 +2379,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public short getHpApUsed() {
-        return this.hpApUsed;
+        return this.getCharPo().getHpApUsed();
     }
 
     public boolean isHidden() {
@@ -2397,23 +2387,23 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void setHpApUsed(short hpApUsed) {
-        this.hpApUsed = hpApUsed;
+        this.getCharPo().setHpApUsed(hpApUsed);
     }
 
     public byte getSkinColor() {
-        return this.skinColor;
+        return this.getCharPo().getSkincolor();
     }
 
     public void setSkinColor(byte skinColor) {
-        this.skinColor = skinColor;
+        this.getCharPo().setSkincolor(skinColor);
     }
 
     public short getJob() {
-        return this.job;
+        return this.getCharPo().getJob();
     }
 
     public byte getGender() {
-        return this.gender;
+        return this.getCharPo().getGender();
     }
 
     public String getJobName() {
@@ -2421,30 +2411,15 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public byte getSecondGender() {
-        return this.gender;
-    }
-
-    public byte getZeroLook() {
-        if (getKeyValue("Zero_Look") == null) {
-            setKeyValue("Zero_Look", "0");
-        }
-        return Byte.parseByte(getKeyValue("Zero_Look"));
-    }
-
-    public boolean isZeroSecondLook() {
-        return getZeroLook() == 1;
+        return this.getCharPo().getGender();
     }
 
     public int getHair() {
-        return this.hair;
+        return this.getCharPo().getHair();
     }
 
     public void setHair(int hair) {
-        this.hair = hair;
-    }
-
-    public int getSecondHair() {
-        return this.hair;
+        this.getCharPo().setHair(hair);
     }
 
     public void setSecondHair(int hair) {
@@ -2452,31 +2427,36 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public int getFace() {
-        return this.face;
+        return this.getCharPo().getFace();
     }
 
     public void setFace(int face) {
-        this.face = face;
+        this.getCharPo().setFace(face);
     }
 
-    public int getSecondFace() {
-        return this.face;
-    }
 
     public void setSecondFace(int face) {
         setKeyValue("Second_Face", String.valueOf(face));
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.getCharPo().setName(name);
     }
 
     public void setExp(long exp) {
-        this.exp = exp;
+        if (exp < 0) {
+            exp = 0;
+        }
+        this.getCharPo().setExp(exp);
+    }
+
+    public void addExp(long exp) {
+        long totalExp = this.getExp() + exp;
+        this.setExp(totalExp);
     }
 
     public void setFame(int fame) {
-        this.fame = fame;
+        this.getCharPo().setFame(fame);
     }
 
     public void setFallCounter(int fallcounter) {
@@ -2500,7 +2480,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void setGender(byte gender) {
-        this.gender = gender;
+        this.getCharPo().setGender(gender);
     }
 
     public void setInvincible(boolean invinc) {
@@ -2516,11 +2496,12 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void addFame(int famechange) {
-        this.fame += famechange;
+        int totalFame = this.getCharPo().getFame() + famechange;
+        this.getCharPo().setFame(totalFame);
     }
 
     public void updateFame() {
-        updateSingleStat(MapleStat.人气, this.fame);
+        updateSingleStat(MapleStat.人气, this.getCharPo().getFame());
     }
 
     public void updateHair(int hair) {
@@ -2653,7 +2634,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void changeJob(int newJob, boolean gainsp) {
         try {
             cancelEffectFromBuffStat(MapleBuffStat.影分身);
-            this.job = (short) newJob;
+            this.setJob(newJob);
             updateSingleStat(MapleStat.职业, newJob);
             if ((!GameConstants.is新手职业(newJob)) && gainsp) {
                 gainSP(1);
@@ -2676,7 +2657,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             int maxhp = this.stats.getMaxHp();
             int maxmp = this.stats.getMaxMp();
 
-            switch (this.job) {
+            switch (this.getJob()) {
                 case 100:
                     maxhp += Randomizer.rand(200, 250);
                     break;
@@ -2744,95 +2725,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
     }
 
-    public void checkZeroItem() {
-        if ((this.job != 10112) || (this.level < 100)) {
-            return;
-        }
-        if (getKeyValue("Zero_Item") == null) {
-            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-
-            int[] toRemovePos = {-9, -5, -7};
-            for (int pos : toRemovePos) {
-                Item toRemove = getInventory(MapleInventoryType.EQUIPPED).getItem((short) pos);
-                if (toRemove != null) {
-                    MapleInventoryManipulator.removeFromSlot(this.client, MapleInventoryType.EQUIPPED, toRemove.getPosition(), toRemove.getQuantity(), false);
-                }
-            }
-
-            int[][] equips = {{1003840, -1}, {1032202, -4}, {1052606, -5}, {1072814, -7}, {1082521, -8}, {1102552, -9}, {1113059, -12}, {1113060, -13}, {1113061, -15}, {1113062, -16}, {1122260, -17}, {1132231, -29}, {1152137, -30}};
-
-            for (int[] i : equips) {
-                if (ii.itemExists(i[0])) {
-                    Equip equip = (Equip) ii.getEquipById(i[0]);
-                    equip.setPosition( (byte) i[1]);
-                    equip.setQuantity((short) 1);
-                    equip.setGMLog("系统赠送");
-                    forceReAddItem_NoUpdate(equip, MapleInventoryType.EQUIPPED);
-                    this.client.sendPacket(InventoryPacket.modifyInventory(false, Collections.singletonList(new ModifyInventory(0, equip))));
-                }
-            }
-            equipChanged();
-            MapleInventoryManipulator.addById(this.client, 1142634, (short) 1, "系统赠送");
-            MapleInventoryManipulator.addById(this.client, 2001530, (short) 100, "系统赠送");
-
-            Map list = new HashMap();
-            int[] skillIds = {101000103, 101000203};
-            for (int i : skillIds) {
-                Skill skil = SkillFactory.getSkill(i);
-                if ((skil != null) && (getSkillLevel(skil) <= 0)) {
-                    list.put(skil, new SkillEntry(8, (byte) skil.getMaxLevel(), -1L));
-                }
-            }
-            if (!list.isEmpty()) {
-                changeSkillsLevel(list);
-            }
-            setKeyValue("Zero_Item", "True");
-        }
-    }
-
-    public void checkZeroWeapon() {
-        if ((this.job != 10112) || (this.level < 100)) {
-            return;
-        }
-        Item lazuliItem = getInventory(MapleInventoryType.EQUIPPED).getItem((short) -11);
-        Item lapisItem = getInventory(MapleInventoryType.EQUIPPED).getItem((short) -10);
-        int lazuli = lazuliItem != null ? lazuliItem.getItemId() : 0;
-        int lapis = lapisItem != null ? lapisItem.getItemId() : 0;
-        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-
-        equipChanged();
-    }
-
-    public int getZeroWeapon(boolean lapis) {
-        int weapon = lapis ? 1562000 : 1572000;
-        if (this.level < 110) {
-            return weapon;
-        }
-        if ((this.level >= 110) && (this.level < 120)) {
-            weapon = lapis ? 1562001 : 1572001;
-        } else if ((this.level >= 120) && (this.level < 130)) {
-            weapon = lapis ? 1562002 : 1572002;
-        } else if ((this.level >= 130) && (this.level < 140)) {
-            weapon = lapis ? 1562003 : 1572003;
-        } else if ((this.level >= 140) && (this.level < 160)) {
-            weapon = lapis ? 1562004 : 1572004;
-        } else if ((this.level >= 160) && (this.level < 180)) {
-            weapon = lapis ? 1562005 : 1572005;
-        } else if ((this.level >= 180) && (this.level < 200)) {
-            weapon = lapis ? 1562006 : 1572006;
-        } else if (this.level >= 200) {
-            weapon = lapis ? 1562007 : 1572007;
-        }
-        return weapon;
-    }
-
     public void baseSkills() { //TODO 添加基础技能
-        checkZeroItem();
-        checkZeroWeapon();
         Map list = new HashMap();
         Iterator i$;
-        if (GameConstants.getJobNumber(this.job) >= 3) {
-            List baseSkills = SkillFactory.getSkillsByJob(this.job);
+        if (GameConstants.getJobNumber(this.getJob()) >= 3) {
+            List baseSkills = SkillFactory.getSkillsByJob(this.getJob());
             if (baseSkills != null) {
                 for (i$ = baseSkills.iterator(); i$.hasNext();) {
                     int i = ((Integer) i$.next());
@@ -2849,14 +2746,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
         }
 
-        if ((this.job >= 3300) && (this.job <= 3312)) {
-            Skill skil = SkillFactory.getSkill(30001061);
-            if ((skil != null) && (getSkillLevel(skil) <= 0)) {
-                list.put(skil, new SkillEntry(skil.getMaxLevel(), (byte) skil.getMaxLevel(), -1L));
-            }
-        }
-
-        if ((this.job >= 432) && (this.job <= 434)) {
+        if ((this.getJob() >= 432) && (this.getJob() <= 434)) {
             int[] fixskills = {4311003, 4321006, 4330009, 4341009, 4341002};
             for (int i : fixskills) {
                 Skill skil = SkillFactory.getSkill(i);
@@ -2870,12 +2760,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
         }
 
-        /*for (int i : SkillConstants.特性技能) {
-         Skill skil = SkillFactory.getSkill(i);
-         if ((skil != null) && (skil.canBeLearnedBy(getJob())) && (getSkillLevel(skil) <= 0)) {
-         list.put(skil, new SkillEntry(1, (byte) 1, -1L));
-         }
-         }*/
         if (!list.isEmpty()) {
             changeSkillsLevel(list);
         }
@@ -2904,58 +2788,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void resetAPSP() {
         resetSP(0);
         gainAp((short) (-this.remainingAp));
-    }
-
-    public List<Integer> getProfessions() {
-        List prof = new ArrayList();
-        for (int i = 9200; i <= 9204; i++) {
-            if (getProfessionLevel(i * 10000) > 0) {
-                prof.add(i);
-            }
-        }
-        return prof;
-    }
-
-    public byte getProfessionLevel(int id) {
-        int ret = getSkillLevel(id);
-        if (ret <= 0) {
-            return 0;
-        }
-        return (byte) (ret >>> 24 & 0xFF);
-    }
-
-    public int getProfessionExp(int id) {
-        int ret = getSkillLevel(id);
-        if (ret <= 0) {
-            return 0;
-        }
-        return (ret & 0xFFFFFF);
-    }
-
-    public boolean addProfessionExp(int id, int expGain) {
-        int ret = getProfessionLevel(id);
-        if ((ret <= 0 || ret >= 12) && id >= 92020000 && id <= 92040000 || (ret <= 0 || ret >= 10) && id >= 92000000 && id <= 92010000) {
-            return false;
-        }
-
-        int newExp = getProfessionExp(id) + expGain;
-        if (newExp >= GameConstants.getProfessionEXP(ret)) {
-            changeProfessionLevelExp(id, ret + 1, newExp - GameConstants.getProfessionEXP(ret));
-            int traitGain = (int) Math.pow(2.0D, ret + 1);
-            switch (id) {
-                case 92000000://采药
-                    break;
-                case 92010000://采矿
-                    break;
-                case 92020000:
-                case 92030000:
-                case 92040000:
-            }
-
-            return true;
-        }
-        changeProfessionLevelExp(id, ret, newExp);
-        return false;
     }
 
     public void changeProfessionLevelExp(int id, int level, int exp) {
@@ -3143,7 +2975,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.dotHP = 0;
         this.lastDOTTime = 0L;
         this.morphCount = 0;
-        if ((!GameConstants.is新手职业(this.job))) {
+        if ((!GameConstants.is新手职业(this.getJob()))) {
             int charms = getItemQuantity(5130000, false);
             if (charms > 0) {
                 MapleInventoryManipulator.removeById(this.client, MapleInventoryType.CASH, 5130000, 1, true, false);
@@ -3155,13 +2987,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             } else {
                 long expforlevel = getExpNeededForLevel();
                 float diepercentage= 0.01F;;
-                long v10 = this.exp - (long) (expforlevel * diepercentage);
+                long v10 = this.getExp() - (long) (expforlevel * diepercentage);
                 if (v10 < 0L) {
                     v10 = 0L;
                 }
-                this.exp = v10;
+                this.setExp(v10);
             }
-            updateSingleStat(MapleStat.经验, this.exp);
+            updateSingleStat(MapleStat.经验, this.getExp());
         }
         this.cancelAllBuffs();
         cancelAllBuffs_();
@@ -3275,32 +3107,29 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             if (total > 0) {
                 this.stats.checkEquipLevels(this, total);
             }
-            if (this.level >= ServerProperties.getMaxLevel()) {
+            if (this.getLevel() >= ServerProperties.getMaxLevel()) {
                 setExp(0L);
             } else {
                 boolean leveled = false;
-                long tot = this.exp + total;
+                long tot = this.getExp() + total;
                 if (tot >= needed) {
-                    exp += total;
+                    this.addExp(total);
                     levelUp();
                     leveled = true;
-                    if (this.level >= ServerProperties.getMaxLevel()) {
+                    if (this.getLevel() >= ServerProperties.getMaxLevel()) {
                         setExp(0L);
                     } else {
                         needed = getExpNeededForLevel();
-                        if (this.exp >= needed) {
+                        if (this.getExp() >= needed) {
                             setExp(needed - 1L);
                         }
                     }
                 } else {
-                    exp += total;
-                }
-                if (total > 0) {
-                    familyRep((int) prevexp, (int) needed, leveled);
+                    this.addExp(total);
                 }
             }
             if (total != 0) {
-                if (this.exp < 0L) {
+                if (this.getExp() < 0L) {
                     if (total > 0) {
                         setExp(needed);
                     } else if (total < 0) {
@@ -3312,10 +3141,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         } catch (Exception e) {
             MapleLogger.error("gain exp error:", e);
         }
-    }
-
-    public void familyRep(int prevexp, int needed, boolean leveled) {
-
     }
 
     /**
@@ -3383,34 +3208,31 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             this.stats.checkEquipLevels(this, (int) total);
         }
         long needed = getExpNeededForLevel();
-        if (this.level >= ServerProperties.getMaxLevel()) {
+        if (this.getLevel() >= ServerProperties.getMaxLevel()) {
             setExp(0L);
         } else {
             boolean leveled = false;
-            if ((this.exp + total >= needed) || (this.exp >= needed)) {
-                exp += total;
-                while (this.exp > needed) {
+            if ((this.getExp() + total >= needed) || (this.getExp() >= needed)) {
+                this.addExp(total);
+                while (this.getExp() > needed) {
                     levelUp();
                     needed = getExpNeededForLevel();
                 }
                 leveled = true;
-                if (this.level >= ServerProperties.getMaxLevel()) {
+                if (this.getLevel() >= ServerProperties.getMaxLevel()) {
                     setExp(0L);
                 } else {
                     needed = getExpNeededForLevel();
-                    if (this.exp >= needed) {
+                    if (this.getExp() >= needed) {
                         setExp(needed);
                     }
                 }
             } else {
-                exp += total;
-            }
-            if (total > 0L) {
-                familyRep((int) prevexp, (int) needed, leveled);
+                this.addExp(total);
             }
         }
         if (total != 0L) {
-            if (this.exp < 0L) {
+            if (this.getExp() < 0L) {
                 if (total > 0L) {
                     setExp(getExpNeededForLevel());
                 } else if (total < 0L) {
@@ -3642,7 +3464,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public int getMeso() {
-        return this.meso;
+        return this.getCharPo().getMeso();
     }
 
     public void gainMeso(long gain, boolean show) {
@@ -3650,15 +3472,15 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void gainMeso(long gain, boolean show, boolean inChat) {
-        if (this.meso + gain < 0) {
+        if (this.getMeso() + gain < 0) {
             this.client.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
-        this.meso += gain;
-        if (this.meso > 2147480000) {
-            this.meso = 2147480000;
+        this.getCharPo().setMeso((int)(this.getMeso() + gain));
+        if (this.getMeso() > 2147480000) {
+            this.getCharPo().setMeso(2147480000);
         }
-        updateSingleStat(MapleStat.金币, this.meso, false);
+        updateSingleStat(MapleStat.金币, this.getMeso(), false);
         this.client.sendPacket(MaplePacketCreator.enableActions());
         if (show) {
             this.client.sendPacket(MaplePacketCreator.showMesoGain(gain, inChat));
@@ -3912,23 +3734,23 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         try {
             int maxhp = stats.getMaxHp();
             int maxmp = stats.getMaxMp();
-            if (GameConstants.is新手职业(job)) {
+            if (GameConstants.is新手职业(getJob())) {
                 maxhp += Randomizer.rand(12, 16);
                 maxmp += Randomizer.rand(10, 12);
-            } else if ((job >= 100) && (job <= 132)) {
+            } else if ((getJob() >= 100) && (getJob() <= 132)) {
                 maxhp += Randomizer.rand(48, 52);
                 maxmp += Randomizer.rand(4, 6);
-            } else if ((job >= 200) && (job <= 232))  {
+            } else if ((getJob() >= 200) && (getJob() <= 232))  {
                 maxhp += Randomizer.rand(10, 14);
                 maxmp += Randomizer.rand(48, 52);
-            }else if (((job >= 300) && (job <= 322)) || ((job >= 400) && (job <= 434)))  {
+            }else if (((getJob() >= 300) && (getJob() <= 322)) || ((getJob() >= 400) && (getJob() <= 434)))  {
                 maxhp += Randomizer.rand(20, 24);
                 maxmp += Randomizer.rand(14, 16);
             } else {
                 maxhp += Randomizer.rand(24, 38);
                 maxmp += Randomizer.rand(12, 24);
-                if ((job != 800) && (job != 900) && (job != 910)) {
-                    System.err.println(new StringBuilder().append("出现未处理的角色升级加血职业: ").append(job).toString());
+                if ((getJob() != 800) && (getJob() != 900) && (getJob() != 910)) {
+                    System.err.println(new StringBuilder().append("出现未处理的角色升级加血职业: ").append(getJob()).toString());
                 }
             }
             maxmp += stats.getTotalInt() / 10;
@@ -3938,20 +3760,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             maxhp = Math.min(500000, Math.abs(maxhp));
             maxmp = Math.min(500000, Math.abs(maxmp));
             if (takeexp) {
-                exp -= getExpNeededForLevel();
-                if (exp < 0) {
-                    exp = 0;
-                }
+                setExp(getExp() - getExpNeededForLevel());
             } else {
                 setExp(0);
             }
-            level += 1;
-            if (level >= ServerProperties.getMaxLevel()) {
+            setLevel((short)(getLevel() + 1));
+            if (getLevel() >= ServerProperties.getMaxLevel()) {
                 setExp(0);
             }
             maxhp = Math.min(getMaxHpForSever(), Math.abs(maxhp));
             maxmp = Math.min(getMaxMpForSever(), Math.abs(maxmp));
-            if ((level == 200) && (!isGM())) {
+            if ((getLevel() == 200) && (!isGM())) {
                 StringBuilder sb = new StringBuilder("[祝贺] ");
                 sb.append(getMedalText());
                 sb.append(getName());
@@ -3963,10 +3782,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             statup.put(MapleStat.MAXMP, Long.valueOf(maxmp));
             statup.put(MapleStat.HP, Long.valueOf(maxhp));
             statup.put(MapleStat.MP, Long.valueOf(maxmp));
-            statup.put(MapleStat.经验, exp);
-            statup.put(MapleStat.等级, Long.valueOf(level));
+            statup.put(MapleStat.经验, getExp());
+            statup.put(MapleStat.等级, Long.valueOf(getLevel()));
 
-            if ((isGM()) || (!GameConstants.is新手职业(job))) {
+            if ((isGM()) || (!GameConstants.is新手职业(getJob()))) {
                 remainingSp += 3;
             }
             remainingAp += 5;
@@ -4293,11 +4112,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public byte getWorld() {
-        return this.world;
+        return this.getCharPo().getWorld();
     }
 
     public void setWorld(byte world) {
-        this.world = world;
+        this.getCharPo().setWorld(world);
     }
 
     public void setParty(MapleParty party) {
@@ -4404,6 +4223,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return this.totalLosses;
     }
 
+    // @TODO delete
     public void increaseTotalWins() {
         this.totalWins += 1;
     }
@@ -4413,7 +4233,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void setJob(int jobId) {
-        this.job = (short) jobId;
+        this.getCharPo().setJob(jobId);
     }
 
     public void sidekickUpdate() {
@@ -4433,24 +4253,24 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public boolean modifyCSPoints(int type, int quantity, boolean show) {
         switch (type) {
             case 1:
-                if (this.acash + quantity < 0) {
+                if (this.getCharPo().getAccount().getACash() + quantity < 0) {
                     if (show) {
                         dropMessage(-1, "你没有足够的点卷.");
                     }
                     //ban(new StringBuilder().append(getName()).append(" 点券数量为负").toString(), false, true, false);
                     return false;
                 }
-                this.acash += quantity;
+                getCharPo().getAccount().setACash(getCharPo().getAccount().getACash() + quantity);
                 break;
             case 2:
-                if (this.maplepoints + quantity < 0) {
+                if (this.getCharPo().getAccount().getPoints() + quantity < 0) {
                     if (show) {
                         dropMessage(-1, "你没有足够的抵用卷.");
                     }
                     //ban(new StringBuilder().append(getName()).append(" 抵用卷数量为负").toString(), false, true, false);
                     return false;
                 }
-                this.maplepoints += quantity;
+                getCharPo().getAccount().setPoints(getCharPo().getAccount().getPoints() + quantity);
                 break;
         }
 
@@ -4465,11 +4285,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public int getCSPoints(int type) {
         switch (type) {
             case 1:
-                return this.acash;
+                return getCharPo().getAccount().getACash();
             case 2:
-                return this.maplepoints;
+                return getCharPo().getAccount().getPoints();
             case -1:
-                return this.acash + this.maplepoints;
+                return getCharPo().getAccount().getACash() + getCharPo().getAccount().getPoints();
             case 0:
         }
         return 0;
@@ -4699,7 +4519,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             this.diseases.put(disease, new MapleDiseaseValueHolder(disease, System.currentTimeMillis(), duration - this.stats.decreaseDebuff));
             this.client.sendPacket(BuffPacket.giveDebuff(disease, x, skillid, level, (int) duration));
-            this.map.broadcastMessage(this, BuffPacket.giveForeignDebuff(this.id, disease, skillid, level, x), false);
+            this.map.broadcastMessage(this, BuffPacket.giveForeignDebuff(this.getId(), disease, skillid, level, x), false);
             if ((x > 0) && (disease == MapleDisease.中毒)) {
                 addHP((int) (-(x * ((duration - this.stats.decreaseDebuff) / 1000L))));
             }
@@ -4717,7 +4537,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public boolean dispelDebuff(MapleDisease debuff) {
         if (hasDisease(debuff)) {
             this.client.sendPacket(BuffPacket.cancelDebuff(debuff));
-            this.map.broadcastMessage(this, BuffPacket.cancelForeignDebuff(this.id, debuff), false);
+            this.map.broadcastMessage(this, BuffPacket.cancelForeignDebuff(this.getId(), debuff), false);
             this.diseases.remove(debuff);
             return true;
         }
@@ -4742,7 +4562,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void setLevel(short level) {
-        this.level = level;
+        getCharPo().setLevel(level);
     }
 
     public void sendNote(String to, String msg) {
@@ -4801,7 +4621,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void checkBerserk() {
-        if ((this.job != 132) || (this.lastBerserkTime < 0L) || (this.lastBerserkTime + 10000L > System.currentTimeMillis())) {
+        if ((this.getJob() != 132) || (this.lastBerserkTime < 0L) || (this.lastBerserkTime + 10000L > System.currentTimeMillis())) {
             return;
         }
         int skillId = 1320016;
@@ -5075,19 +4895,19 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void setPoints(int p) {
-        this.points = p;
+        this.getCharPo().getAccount().setPoints(p);
     }
 
     public int getPoints() {
-        return this.points;
+        return this.getCharPo().getAccount().getPoints();
     }
 
     public void setVPoints(int p) {
-        this.vpoints = p;
+        this.getCharPo().getAccount().setVpoints(p);
     }
 
     public int getVPoints() {
-        return this.vpoints;
+        return this.getCharPo().getAccount().getVpoints();
     }
 
     public CashShop getCashInventory() {
@@ -5341,7 +5161,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void removeExtractor() {
         if (this.extractor != null) {
-//            this.map.broadcastMessage(MaplePacketCreator.removeExtractor(this.id));
+//            this.map.broadcastMessage(MaplePacketCreator.removeExtractor(this.getId()));
             this.map.removeMapObject(this.extractor);
             this.extractor = null;
         }
@@ -5725,7 +5545,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void resetStatsByJob(boolean beginnerJob) {
-        int baseJob = beginnerJob ? this.job % 1000 : this.job % 1000 / 100 * 100;
+        int baseJob = beginnerJob ? this.getJob() % 1000 : this.getJob() % 1000 / 100 * 100;
         boolean UA = getQuestNoAdd(MapleQuest.getInstance(111111)) != null;
         if (baseJob == 100) {
             resetStats(UA ? 4 : 35, 4, 4, 4);
@@ -5845,7 +5665,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void startPartySearch(List<Integer> jobs, int maxLevel, int minLevel, int membersNeeded) {
         for (MapleCharacter chr : this.map.getCharacters()) {
-            if ((chr.getId() != this.id) && (chr.getParty() == null) && (chr.getLevel() >= minLevel) && (chr.getLevel() <= maxLevel) && ((jobs.isEmpty()) || (jobs.contains((int) chr.getJob()))) && ((isGM()) || (!chr.isGM()))) {
+            if ((chr.getId() != this.getId()) && (chr.getParty() == null) && (chr.getLevel() >= minLevel) && (chr.getLevel() <= maxLevel) && ((jobs.isEmpty()) || (jobs.contains((int) chr.getJob()))) && ((isGM()) || (!chr.isGM()))) {
                 if ((this.party == null) || (this.party.getMembers().size() >= 6) || (this.party.getMembers().size() >= membersNeeded)) {
                     break;
                 }
@@ -5886,7 +5706,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void makeBattler(int index, int monsterId) {
         MapleMonsterStats mons = MapleLifeFactory.getMonsterStats(monsterId);
         this.battlers[index] = new Battler(mons);
-        this.battlers[index].setCharacterId(this.id);
+        this.battlers[index].setCharacterId(this.getId());
         this.changed_pokemon = true;
     }
 
@@ -6401,7 +6221,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         Connection con = DatabaseConnection.getConnection();
         try {
             try (PreparedStatement ps = con.prepareStatement("SELECT * from hiredmerch where characterid = ?")) {
-                ps.setInt(1, this.id);
+                ps.setInt(1, this.getId());
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
                     mesos = rs.getLong("Mesos");
@@ -6551,7 +6371,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public long getExpNeededForLevel() {
-        return GameConstants.getExpNeededForLevel(this.level);
+        return GameConstants.getExpNeededForLevel(this.getLevel());
     }
 
     public int getPlayerStats() {
@@ -6561,13 +6381,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public int getMaxStats(boolean hpap) {
         int total = 29;
 
-        if (!GameConstants.is新手职业(this.job)) {
+        if (!GameConstants.is新手职业(this.getJob())) {
             int jobSp = 0;
             jobSp += (hpap ? 15 : 0);
             total += jobSp;
         }
 
-        total += this.level * 5;
+        total += this.getLevel() * 5;
 
         if (hpap) {
             total += getHpApUsed();
@@ -6735,7 +6555,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
             Connection con = DatabaseConnection.getConnection();
             PreparedStatement ps = con.prepareStatement("SELECT * FROM pqlog WHERE characterid = ? AND pqname = ?");
-            ps.setInt(1, this.id);
+            ps.setInt(1, this.getId());
             ps.setString(2, pqName);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -6764,7 +6584,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     if (day >= 0) {
                         count = 0;
                         ps = con.prepareStatement("UPDATE pqlog SET count = 0, time = CURRENT_TIMESTAMP() WHERE characterid = ? AND pqname = ?");
-                        ps.setInt(1, this.id);
+                        ps.setInt(1, this.getId());
                         ps.setString(2, pqName);
                         ps.executeUpdate();
                         ps.close();
@@ -6772,7 +6592,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
             } else {
                 try (PreparedStatement psu = con.prepareStatement("INSERT INTO pqlog (characterid, pqname, count, type) VALUES (?, ?, ?, ?)")) {
-                    psu.setInt(1, this.id);
+                    psu.setInt(1, this.getId());
                     psu.setString(2, pqName);
                     psu.setInt(3, 0);
                     psu.setInt(4, type);
@@ -6803,7 +6623,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         try (PreparedStatement ps = con.prepareStatement("UPDATE pqlog SET count = ?, type = ?, time = CURRENT_TIMESTAMP() WHERE characterid = ? AND pqname = ?")) {
             ps.setInt(1, pqCount + count);
             ps.setInt(2, type);
-            ps.setInt(3, this.id);
+            ps.setInt(3, this.getId());
             ps.setString(4, pqName);
             ps.executeUpdate();
         } catch (SQLException Ex) {
@@ -6824,7 +6644,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         try (PreparedStatement ps = con.prepareStatement("UPDATE pqlog SET count = ?, type = ?, time = CURRENT_TIMESTAMP() WHERE characterid = ? AND pqname = ?")) {
             ps.setInt(1, 0);
             ps.setInt(2, type);
-            ps.setInt(3, this.id);
+            ps.setInt(3, this.getId());
             ps.setString(4, pqName);
             ps.executeUpdate();
         } catch (SQLException Ex) {

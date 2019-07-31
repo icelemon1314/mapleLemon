@@ -555,7 +555,7 @@ public class MaplePacketCreator {
 
         mplew.writeInt(buffmask);
 
-        PacketHelper.addCharLook(mplew, chr, true, chr.isZeroSecondLook());
+        PacketHelper.addCharLook(mplew, chr, true);
 
         mplew.writeInt(0);
         mplew.writeInt(chr.getItemEffect());
@@ -747,7 +747,7 @@ public class MaplePacketCreator {
         mplew.write(0);
         mplew.writeInt(chr.getId());
         mplew.write(1);
-        PacketHelper.addCharLook(mplew, chr, false, chr.isZeroSecondLook());
+        PacketHelper.addCharLook(mplew, chr, false);
         mplew.writeInt(0); // Unknown: 4bytes (int)
         mplew.write(0); // Unknown: 8bytes (int, int)
         mplew.write(0); // Unknown: 1bytes (byte)

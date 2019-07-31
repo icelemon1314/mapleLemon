@@ -219,7 +219,7 @@ public class PacketHelper {
         mplew.writeInt(0);
     }
 
-    public static void addCharLook(MaplePacketLittleEndianWriter mplew, MapleCharacter chr, boolean mega, boolean second) {
+    public static void addCharLook(MaplePacketLittleEndianWriter mplew, MapleCharacter chr, boolean mega) {
             if (mega) {
                 mplew.write(chr.getGender());
             }
