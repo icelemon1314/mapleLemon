@@ -182,7 +182,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private transient ReentrantReadWriteLock controlledLock;
     private final Map<MapleQuest, MapleQuestStatus> quests; // 任务数据
     private Map<Integer, String> questinfo;
-    private Map<String, String> keyValue;
+    private Map<String, String> keyValue;   // 这个是啥？
     private final Map<Skill, SkillEntry> skills;
     private transient ArrayList<Pair<MapleBuffStat, MapleBuffStatValueHolder>> effects;
     private transient Map<Integer, MapleCoolDownValueHolder> coolDowns;
@@ -228,7 +228,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private boolean changed_savedlocations;
     private boolean changed_pokemon;
     private boolean changed_questinfo;
-    private boolean changed_keyValue;
     private int aranCombo = 0;
     private int forceCounter = 0;
     private int decorate;
@@ -346,7 +345,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             changed_savedlocations = false;
             changed_pokemon = false;
             changed_questinfo = false;
-            changed_keyValue = false;
             scrolledPosition = 0;
             lastComboTime = 0L;
             lastMonsterCombo = 0;
@@ -700,16 +698,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 String pets = charPo.getPets();
                 ret.petStore = Byte.parseByte(pets);
             }
-            ps = con.prepareStatement("SELECT * FROM character_keyvalue WHERE characterid = ?");
-            ps.setInt(1, charid);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                if (rs.getString("key") == null) {
-                    continue;
-                }
-                ret.keyValue.put(rs.getString("key"), rs.getString("value"));
-            }
-            ps.close();
 
             // 角色任务信息
             ps = con.prepareStatement("SELECT * FROM questinfo WHERE characterid = ?");
@@ -968,15 +956,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             ps.close();
 
-            ps = con.prepareStatement("INSERT INTO character_keyvalue (`characterid`, `key`, `value`) VALUES (?, ?, ?)");
-            ps.setInt(1, charId);
-            for (Map.Entry key : chr.keyValue.entrySet()) {
-                ps.setString(2, (String) key.getKey());
-                ps.setString(3, (String) key.getValue());
-                ps.execute();
-            }
-            ps.close();
-
             ps = con.prepareStatement("INSERT INTO inventoryslot (characterid, `equip`, `use`, `setup`, `etc`, `cash`) VALUES (?, ?, ?, ?, ?, ?)");
             ps.setInt(1, charId);
             ps.setByte(2, (byte) 32);
@@ -1151,18 +1130,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             ItemLoader.装备道具.saveItems(itemsWithType, this.charPo.getId());
 
-            if (this.changed_keyValue) {
-                deleteWhereCharacterId(con, "DELETE FROM character_keyvalue WHERE characterid = ?");
-                ps = con.prepareStatement("INSERT INTO character_keyvalue (`characterid`, `key`, `value`) VALUES (?, ?, ?)");
-                ps.setInt(1, this.charPo.getId());
-                for (Map.Entry key : this.keyValue.entrySet()) {
-                    ps.setString(2, (String) key.getKey());
-                    ps.setString(3, (String) key.getValue());
-                    ps.execute();
-                }
-                ps.close();
-            }
-
             if (this.changed_questinfo) {
                 deleteWhereCharacterId(con, "DELETE FROM questinfo WHERE characterid = ?");
                 ps = con.prepareStatement("INSERT INTO questinfo (`characterid`, `quest`, `customData`) VALUES (?, ?, ?)");
@@ -1317,7 +1284,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             this.changed_savedlocations = false;
             this.changed_pokemon = false;
             this.changed_questinfo = false;
-            this.changed_keyValue = false;
             con.commit();
         } catch (SQLException | DatabaseException e) {
             MapleLogger.error(new StringBuilder().append(MapleClient.getLogMessage(this, "[charsave] 保存角色数据出现错误 .")).append(e).toString());
@@ -1398,17 +1364,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return this.keyValue;
     }
 
-    public String getKeyValue(String key) {
-        if (this.keyValue.containsKey(key)) {
-            return (String) this.keyValue.get(key);
-        }
-        return null;
-    }
-
-    public void setKeyValue(String key, String values) {
-        this.keyValue.put(key, values);
-        this.changed_keyValue = true;
-    }
     public String getInfoQuest(int questid) {
         if (this.questinfo.containsKey(questid)) {
             return (String) this.questinfo.get(questid);
@@ -2422,21 +2377,12 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.getCharPo().setHair(hair);
     }
 
-    public void setSecondHair(int hair) {
-        setKeyValue("Second_Hair", String.valueOf(hair));
-    }
-
     public int getFace() {
         return this.getCharPo().getFace();
     }
 
     public void setFace(int face) {
         this.getCharPo().setFace(face);
-    }
-
-
-    public void setSecondFace(int face) {
-        setKeyValue("Second_Face", String.valueOf(face));
     }
 
     public void setName(String name) {

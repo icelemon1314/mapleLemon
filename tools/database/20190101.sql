@@ -13,7 +13,6 @@ drop table if exists `bbs_threads`;
 drop table if exists `character_cards`;
 drop table if exists `character_coreauras`;
 drop table if exists `character_potionpots`;
-drop table if exists `character_work`;
 drop table if exists `compensationlog_confirmed`;
 drop table if exists `dueypackages`;
 drop table if exists `extendedslots`;

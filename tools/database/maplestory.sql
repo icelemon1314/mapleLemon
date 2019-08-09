@@ -244,29 +244,6 @@ CREATE TABLE `characters` (
 -- ----------------------------
 INSERT INTO `characters` VALUES ('4', '1', '0', 'icelemon1314', '30', '2558', '60', '55', '25', '15', '1', '1028', '1039', '1028', '114939', '2', '421', '0', '0', '0', '31002', '21000', '934', '1010000', '0', '6', '-1', '20', '2015-04-09 19:49:11', '0', '5', '5', '0', '-1', '412', '0', '1', '0', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0');
 
-
--- ----------------------------
--- Table structure for character_keyvalue
--- ----------------------------
-DROP TABLE IF EXISTS `character_keyvalue`;
-CREATE TABLE `character_keyvalue` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `characterid` int(11) NOT NULL DEFAULT '0',
-  `key` varchar(50) DEFAULT NULL,
-  `value` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `characterid` (`characterid`),
-  CONSTRAINT `character_keyvalue_ibfk_1` FOREIGN KEY (`characterid`) REFERENCES `characters` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=gbk ;
-
--- ----------------------------
--- Records of character_keyvalue
--- ----------------------------
-INSERT INTO `character_keyvalue` VALUES ('1', '4', 'Zero_Look', '0');
-INSERT INTO `character_keyvalue` VALUES ('2', '5', 'Zero_Look', '0');
-INSERT INTO `character_keyvalue` VALUES ('3', '7', 'Zero_Look', '0');
-INSERT INTO `character_keyvalue` VALUES ('4', '8', 'Zero_Look', '0');
-
 -- ----------------------------
 -- Table structure for cheatlog
 -- ----------------------------

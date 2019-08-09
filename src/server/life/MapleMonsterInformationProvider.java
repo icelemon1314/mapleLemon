@@ -13,6 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import database.dao.DropDataDao;
+import database.dao.DropDataGlobalDao;
+import database.entity.DropDataGlobalPo;
+import database.entity.DropDataPo;
 import provider.MapleData;
 import provider.MapleDataProvider;
 import provider.MapleDataProviderFactory;
@@ -38,82 +43,35 @@ public class MapleMonsterInformationProvider {
     }
 
     public void load() {
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        Connection con = DatabaseConnection.getConnection();
-        try {
-            ps = con.prepareStatement("SELECT * FROM drop_data_global WHERE chance > 0");
-            rs = ps.executeQuery();
+        DropDataDao dropDataDao = new DropDataDao();
+        List<DropDataPo> dropDataList = dropDataDao.getAllData();
 
-            while (rs.next()) {
-                this.globaldrops.add(new MonsterGlobalDropEntry(rs.getInt("itemid"), rs.getInt("chance"), rs.getInt("continent"), rs.getByte("dropType"), rs.getInt("minimum_quantity"), rs.getInt("maximum_quantity"), rs.getInt("questid")));
+        ArrayList ret;
+
+        for(DropDataPo dropData : dropDataList) {
+            int mobId = dropData.getMobId();
+            if (drops.containsKey(mobId)) {
+                ret = drops.get(mobId);
+            } else {
+                ret = new ArrayList();
             }
 
-            rs.close();
-            ps.close();
+            ret.add(new MonsterDropEntry(dropData.getItemid(), dropData.getChance(), dropData.getMinimumQuantity(),
+                    dropData.getMaximumQuantity(), dropData.getQuestid()));
+            this.drops.put(mobId, ret);
+        }
 
-            ps = con.prepareStatement("SELECT mobID FROM drop_data");
-            List mobIds = new ArrayList();
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int mobId = rs.getInt("mobID");
-                if (!mobIds.contains(mobId)) {
-                    loadDrop(mobId);
-                    mobIds.add(mobId);
-                }
-            }
-        } catch (SQLException ignore) {
-            System.err.println("Error retrieving drop" + ignore);
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-                if (rs != null) {
-                    rs.close();
-                }
-                con.close();
-            } catch (SQLException ignore) {
-            }
+        DropDataGlobalDao dropDataGlobalDao = new DropDataGlobalDao();
+        List<DropDataGlobalPo> dropDataGlobalPoList = dropDataGlobalDao.getAllData();
+        for(DropDataGlobalPo dropDataGlobal : dropDataGlobalPoList) {
+            this.globaldrops.add(new MonsterGlobalDropEntry(dropDataGlobal.getItemid(), dropDataGlobal.getChance(),
+                    dropDataGlobal.getContinent(), dropDataGlobal.getDropType(),dropDataGlobal.getMinimumQuantity(),
+                    dropDataGlobal.getMaximumQuantity(), dropDataGlobal.getQuestid()));
         }
     }
 
     public ArrayList<MonsterDropEntry> retrieveDrop(int monsterId) {
         return (ArrayList) this.drops.get(monsterId);
-    }
-
-    private void loadDrop(int monsterId) {
-        ArrayList ret = new ArrayList();
-
-        ResultSet rs = null;
-        Connection con = DatabaseConnection.getConnection();
-        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM drop_data WHERE mobID = ?");) {
-            MapleMonsterStats mons = MapleLifeFactory.getMonsterStats(monsterId);
-            if (mons == null) {
-                return;
-            }
-
-            ps.setInt(1, monsterId);
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                int itemid = rs.getInt("itemid");
-                int chance = rs.getInt("chance");
-                ret.add(new MonsterDropEntry(itemid, chance, rs.getInt("minimum_quantity"), rs.getInt("maximum_quantity"), rs.getInt("questid")));
-            }
-        } catch (SQLException ignore) {
-            System.err.println("Error retrieving drop" + ignore);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                con.close();
-            } catch (SQLException ignore) {
-                return;
-            }
-        }
-        this.drops.put(monsterId, ret);
     }
 
     public void addExtra() {
