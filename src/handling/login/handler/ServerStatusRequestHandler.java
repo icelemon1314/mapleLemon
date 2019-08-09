@@ -13,7 +13,7 @@ public class ServerStatusRequestHandler extends MaplePacketHandler<ServerStatusR
 
     public void handlePacket(ServerStatusRequestRecvVO recvMsg, MapleClient c) {
         int numPlayer = LoginServer.getUsersOn();
-        int userLimit = ServerConstants.单机服务端 ? 2 : LoginServer.getUserLimit();
+        int userLimit = LoginServer.getUserLimit();
         if (numPlayer >= userLimit) {
             c.sendPacket(LoginPacket.getServerStatus(2));
         } else if (numPlayer >= userLimit * 0.8D) {

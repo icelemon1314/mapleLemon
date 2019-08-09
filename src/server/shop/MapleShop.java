@@ -19,6 +19,11 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import database.dao.ShopDao;
+import database.dao.ShopItemDao;
+import database.entity.ShopItemPo;
+import database.entity.ShopPo;
 import server.AutobanManager;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
@@ -217,51 +222,51 @@ public class MapleShop {
         return null;
     }
 
-    public static MapleShop createFromDB(int id, boolean isShopId) {
+    public static MapleShop createFromDbByShopId(int shopId) {
+        ShopDao shopDao = new ShopDao();
+        ShopPo shopPo = shopDao.getDataByShopId(shopId);
+
+        return createFromDB(shopPo);
+    }
+
+    public static MapleShop createFromDbByNpcId(int npcId) {
+        ShopDao shopDao = new ShopDao();
+        ShopPo shopPo = shopDao.getDataByNpcId(npcId);
+
+        return createFromDB(shopPo);
+    }
+
+    public static MapleShop createFromDB(ShopPo shopPo) {
         MapleShop ret = null;
         int shopId;
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement(isShopId ? "SELECT * FROM shops WHERE shopid = ?" : "SELECT * FROM shops WHERE npcid = ?");
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                shopId = rs.getInt("shopid");
-                ret = new MapleShop(shopId, rs.getInt("npcid"));
-                rs.close();
-                ps.close();
-            } else {
-                rs.close();
-                ps.close();
-                return null;
-            }
-            ps = con.prepareStatement("SELECT * FROM shopitems WHERE shopid = ? ORDER BY position ASC");
-            ps.setInt(1, shopId);
-            rs = ps.executeQuery();
-            List<Integer> recharges = new ArrayList(rechargeableItems);
-            while (rs.next()) {
-                if ((ii.itemExists(rs.getInt("itemid"))) || !(blockedItems.contains(rs.getInt("itemid")))) {
-                    if ((ItemConstants.is飞镖道具(rs.getInt("itemid"))) || (ItemConstants.is子弹道具(rs.getInt("itemid")))) {
-                        MapleShopItem starItem = new MapleShopItem((short) 1, rs.getInt("itemid"), rs.getInt("price"), rs.getInt("reqitem"), rs.getInt("reqitemq"), rs.getInt("period"), rs.getInt("state"), rs.getInt("rank"));
-                        ret.addItem(starItem);
-                        if (rechargeableItems.contains(starItem.getItemId())) {
-                            recharges.remove(Integer.valueOf(starItem.getItemId()));
-                        }
-                    } else {
-                        ret.addItem(new MapleShopItem((short) 1000, rs.getInt("itemid"), rs.getInt("price"), rs.getInt("reqitem"), rs.getInt("reqitemq"), rs.getInt("period"), rs.getInt("state"), rs.getInt("rank")));
+        shopId = shopPo.getShopid();
+        ret = new MapleShop(shopId, shopPo.getNpcid());
+
+        ShopItemDao shopItemDao = new ShopItemDao();
+        List<ShopItemPo> shopItemPoList = shopItemDao.getDataByShopId(shopId);
+        List<Integer> recharges = new ArrayList(rechargeableItems);
+        short buyable = 1;
+        for(ShopItemPo shopItem : shopItemPoList) {
+            int itemId = shopItem.getItemid();
+            if ((ii.itemExists(itemId)) || !(blockedItems.contains(itemId))) {
+                if ((ItemConstants.is飞镖道具(itemId)) || (ItemConstants.is子弹道具(itemId))) {
+                    buyable = 1;
+                    if (rechargeableItems.contains(itemId)) {
+                        recharges.remove(Integer.valueOf(itemId));
                     }
+                } else {
+                    buyable = 1000;
                 }
-
+                MapleShopItem starItem = new MapleShopItem(buyable, itemId, shopItem.getPrice(),
+                        shopItem.getReqitem(), shopItem.getReqitemq(), shopItem.getPeriod(),
+                        shopItem.getState(),shopItem.getRank());
+                ret.addItem(starItem);
             }
+        }
 
-            for (Integer recharge : recharges) {
-                ret.addItem(new MapleShopItem((short) 1, recharge, 0, 0, 0, 0, 0, (byte) 0));
-            }
-            rs.close();
-            ps.close();
-        } catch (SQLException e) {
-            System.err.println("Could not load shop");
+        for (Integer recharge : recharges) {
+            ret.addItem(new MapleShopItem((short) 1, recharge, 0, 0, 0, 0, 0, (byte) 0));
         }
         return ret;
     }
@@ -279,7 +284,6 @@ public class MapleShop {
     }
 
     static {
-
         rechargeableItems.add(2070000);//海星镖
         rechargeableItems.add(2070001);//回旋镖
         rechargeableItems.add(2070002);//黑色利刃
@@ -294,24 +298,6 @@ public class MapleShop {
         rechargeableItems.add(2070011);//枫叶镖
         rechargeableItems.add(2070012);//纸飞机
         rechargeableItems.add(2070013);//橘子
-//        rechargeableItems.add(2070015);//初学者标
-//        rechargeableItems.add(2070016);//水晶飞镖
-//        rechargeableItems.add(2070020);//鞭炮
-//        rechargeableItems.add(2070021);//蛋糕镖
-//        rechargeableItems.add(2070019);//高科技电光镖
-//        rechargeableItems.add(2070023);//火焰飞镖
-//        rechargeableItems.add(2070024);//无限飞镖
-//        rechargeableItems.add(2070026);//白金飞镖
-
-
-//        blockedItems.add(4170023);
-//        blockedItems.add(4170024);
-//        blockedItems.add(4170025);
-//        blockedItems.add(4170028);
-//        blockedItems.add(4170029);
-//        blockedItems.add(4170031);
-//        blockedItems.add(4170032);
-//        blockedItems.add(4170033);
 
     }
 }

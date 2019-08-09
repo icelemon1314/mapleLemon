@@ -808,40 +808,6 @@ public final class MapleMap {
             }
             dropFromMonster(drop, monster, instanced);
         }
-
-        if ((ServerConstants.打怪获得点抵用卷 || this.isBossMap()) && Randomizer.nextInt(100) < 30) {
-            int NX = Math.max(monster.getMobLevel(), 1);
-            if (chr.getParty() != null && chr.getParty().getMembers().size() >= 2) {
-                for (MaplePartyCharacter pch : chr.getParty().getMembers()) {
-                    if (pch.getMapid() == this.getId()) {
-                        pch.getChr().modifyCSPoints(monster.getStats().isBoss() ? 1 : 2, NX / (7 - chr.getParty().getMembers().size()), true);
-                    }
-                }
-            } else {
-                chr.modifyCSPoints(monster.getStats().isBoss() ? 1 : 2, NX / 10, true);
-            }
-        } else if (cangetNXMap() && Randomizer.nextInt(100) < 30) {
-            int NX = Math.max(monster.getMobLevel(), 1);
-            if (chr.getParty() != null && chr.getParty().getMembers().size() >= 1) {
-                for (MaplePartyCharacter pch : chr.getParty().getMembers()) {
-                    if (pch.getMapid() == this.getId()) {
-                        pch.getChr().modifyCSPoints(monster.getStats().isBoss() ? 1 : 2, Math.max(NX / 150, 1) * chr.getParty().getMembers().size() * pch.getChr().getPQLog("MonsterPark"), true);
-                    }
-                }
-            }
-        }
-    }
-
-    public boolean cangetNXMap() {
-        switch (this.getId()) {
-            case 952000000:
-                return true;
-        }
-        if (this.getId() >= 952000000 && this.getId() <= 954061000 || this.getId() >= 925020100 && this.getId() <= 925033000) {
-            return true;
-        }
-
-        return false;
     }
 
     public List<MapleReactor> getAllReactor() {

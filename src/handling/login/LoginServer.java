@@ -62,7 +62,7 @@ public class LoginServer {
     }
 
     public static void run_startup_configurations() {
-        userLimit = ServerProperties.getProperty("userlimit", 140);
+        userLimit = ServerProperties.getProperty("userlimit", 10);
         serverName = ServerProperties.getProperty("serverName", "MapleStory");
         flag = ServerProperties.getProperty("flag", (byte) 3);
         adminOnly = Boolean.parseBoolean(ServerProperties.getProperty("admin", "false"));

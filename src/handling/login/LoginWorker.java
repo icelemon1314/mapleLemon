@@ -18,7 +18,7 @@ public class LoginWorker {
     private static long lastUpdate = 0L;
 
     public static void registerClient(final MapleClient c) {
-        if ((LoginServer.isAdminOnly()) && (!c.isGm()) && (!c.isLocalhost())) {
+        if ((LoginServer.isAdminOnly()) && !c.isGm()) {
             c.sendPacket(MaplePacketCreator.serverMessageNotice("当前服务器设置只能管理员进入游戏.\r\n我们目前在修复几个问题.\r\n请稍后再试."));
             c.sendPacket(LoginPacket.getLoginFailed(16));
             return;

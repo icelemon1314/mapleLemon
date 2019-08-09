@@ -89,13 +89,6 @@ public class CommandProcessor {
 
             CommandObject co = (CommandObject) commands.get(splitted[0]);
             if ((co == null) || (co.getType() != type)) {
-                if (ServerConstants.单机服务端) {
-                    if (splitted[0].equals(new StringBuilder().append(line.charAt(0)).append("设置管理员").toString())) {
-                        c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[1]).setGmLevel(Byte.parseByte(splitted[2]));
-                        return true;
-                    }
-                    c.getPlayer().dropMessage(5, "输入\"@设置管理员 <等级>\"可以设置管理员等级。");
-                }
                 sendDisplayMessage(c, "命令不存在，使用\"@帮助\"可以查看可用命令列表。", type);
                 return true;
             }

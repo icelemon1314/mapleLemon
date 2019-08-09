@@ -20,28 +20,31 @@ public class MapleShopFactory {
 
     public MapleShop getShop(int shopId) {
         if (this.shops.containsKey(shopId)) {
-            return (MapleShop) this.shops.get(shopId);
+            return this.shops.get(shopId);
         }
-        return loadShop(shopId, true);
+        return loadShopByShopId(shopId);
     }
 
     public MapleShop getShopForNPC(int npcId) {
         if (this.npcShops.containsKey(npcId)) {
-            return (MapleShop) this.npcShops.get(npcId);
+            return this.npcShops.get(npcId);
         }
-        return loadShop(npcId, false);
+        return loadShopByNpcId(npcId);
     }
 
-    private MapleShop loadShop(int id, boolean isShopId) {
-        MapleShop ret = MapleShop.createFromDB(id, isShopId);
-        if (ret != null) {
-            this.shops.put(ret.getId(), ret);
-            this.npcShops.put(ret.getNpcId(), ret);
-        } else if (isShopId) {
-            this.shops.put(id, null);
-        } else {
-            this.npcShops.put(id, null);
-        }
+    private MapleShop loadShopByShopId(int shopId) {
+        MapleShop ret = MapleShop.createFromDbByShopId(shopId);
+        return loadShop(ret);
+    }
+
+    private MapleShop loadShopByNpcId(int npcId) {
+        MapleShop ret = MapleShop.createFromDbByNpcId(npcId);
+        return loadShop(ret);
+    }
+
+    private MapleShop loadShop(MapleShop ret) {
+        this.shops.put(ret.getId(), ret);
+        this.npcShops.put(ret.getNpcId(), ret);
         return ret;
     }
 }

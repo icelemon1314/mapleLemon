@@ -907,10 +907,6 @@ public class MapleClient implements Serializable {
         this.tempIP = s;
     }
 
-    public boolean isLocalhost() {
-        return (ServerConstants.USE_LOCALHOST) || (ServerConstants.isIPLocalhost(getSessionIPAddress()));
-    }
-
     public void setScriptEngine(String name, ScriptEngine e) {
         this.engines.put(name, e);
     }

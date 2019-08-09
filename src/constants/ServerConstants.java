@@ -16,7 +16,6 @@ import tools.MapleLogger;
 
 public class ServerConstants {
 
-    public static boolean 打怪获得点抵用卷 = false;
     public static boolean loadop = true;
     public static boolean TESPIA = false;//测试服
     public static boolean GUI = true;
@@ -26,11 +25,7 @@ public class ServerConstants {
     public static byte[] NEXON_IP = {(byte) 127, (byte) 0, (byte) 0, (byte)1};
     public static String IP = "127.0.0.1";
 
-    public static boolean PollEnabled = false;
-    public static String Poll_Question = "Are you mudkiz?";
-    public static String[] Poll_Answers = {"test1", "test2", "test3"};
     public static int 攻击上限 = 50000000;
-    public static boolean 单机服务端 = false;
 
     public static short MAPLE_VERSION = 27;
     public static String MAPLE_PATCH = "1";
@@ -52,20 +47,13 @@ public class ServerConstants {
     public static int SQL_SAVETIME = 6;
     public static String SQL_DATABASE = "maplestory";
     public static long SQL_TIMEOUT = 30000;
-    public static final List<String> localhostIP = new LinkedList();
-    public static final List<String> vpnIp = new LinkedList();
     public static String master;
-//    public static ServerConstants instance;
 
     public static String getMaster() {
         if (master == null) {
             return "48239defb943bde63d65d02201262b8cc638b377G";
         }
         return master;
-    }
-
-    public static boolean isIPLocalhost(String sessionIP) {
-        return (!USE_FIXED_IV) && (localhostIP.contains(sessionIP.replace("/", "")));
     }
 
 //    public static void registerMBean() {
@@ -78,10 +66,6 @@ public class ServerConstants {
 //            MapleLogger.info("Error registering Shutdown MBean");
 //        }
 //    }
-
-    static {
-        localhostIP.add("127.0.0.1");
-    }
 
     public enum MapleType {
         中国(4, "GB18030");

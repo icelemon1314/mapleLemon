@@ -711,9 +711,6 @@ public class MapleServerHandler extends ChannelInboundHandlerAdapter {
             case COCONUT:
                 PlayersHandler.hitCoconut(slea, c);
                 break;
-            case GAME_POLL:
-                UserInterfaceHandler.InGame_Poll(slea, c);
-                break;
             case OWL:
                 InventoryHandler.Owl(slea, c);
                 break;

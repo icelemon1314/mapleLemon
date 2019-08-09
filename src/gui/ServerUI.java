@@ -176,6 +176,8 @@ public class ServerUI extends javax.swing.JFrame {
             PreparedStatement ps = null;
             PreparedStatement pse;
             ResultSet rs = null;
+
+
             ps = con.prepareStatement("SELECT * FROM characters");
             rs = ps.executeQuery();
             while (rs.next()) {
