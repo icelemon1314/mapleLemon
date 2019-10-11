@@ -245,25 +245,6 @@ CREATE TABLE `characters` (
 INSERT INTO `characters` VALUES ('4', '1', '0', 'icelemon1314', '30', '2558', '60', '55', '25', '15', '1', '1028', '1039', '1028', '114939', '2', '421', '0', '0', '0', '31002', '21000', '934', '1010000', '0', '6', '-1', '20', '2015-04-09 19:49:11', '0', '5', '5', '0', '-1', '412', '0', '1', '0', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0');
 
 -- ----------------------------
--- Table structure for cheatlog
--- ----------------------------
-DROP TABLE IF EXISTS `cheatlog`;
-CREATE TABLE `cheatlog` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `characterid` int(11) NOT NULL DEFAULT '0',
-  `offense` tinytext NOT NULL,
-  `count` int(11) NOT NULL DEFAULT '0',
-  `lastoffensetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `param` tinytext NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `cid` (`characterid`) USING BTREE
-) ENGINE=MyISAM DEFAULT CHARSET=gbk ;
-
--- ----------------------------
--- Records of cheatlog
--- ----------------------------
-
--- ----------------------------
 -- Table structure for drop_data
 -- ----------------------------
 DROP TABLE IF EXISTS `drop_data`;
