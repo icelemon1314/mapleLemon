@@ -17,7 +17,6 @@ repositories {
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     implementation 'io.netty:netty-all:4.1.32.Final'
-
     implementation 'mysql:mysql-connector-java:8.0.13'
     implementation 'ch.qos.logback:logback-core:1.2.3'
     implementation 'ch.qos.logback:logback-classic:1.2.3'
@@ -46,7 +45,10 @@ sourceSets {
         }
         resources {
             //class文件的dir
-            srcDirs = ['bin']
+            srcDirs = ['src']
         }
     }
+}
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
 }

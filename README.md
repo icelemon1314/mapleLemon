@@ -10,16 +10,8 @@ for chinese maplestory V027, for any question pls contact:icelemon1024@gmail.com
 5. 修复逛图，打怪，爆物，拾取等
 6. 修复任务系统
 
-欢迎感兴趣的大神加入，QQ群：479357604
-
-客户端下载【要翻墙】：
-链接：http://www.mediafire.com/download/hvohdjya8jzr81x/maplestory027.rar
-
 客户端下载【国内地址】：
 http://pan.baidu.com/s/1c1ro4EG
-
-一键端下载：
-http://shang.qq.com/wpa/qunwpa?idkey=f218ba73982086e31adcc410eeaa72543f476069b043748b489e8743ffdc1475
 
 感谢以下岛民的赞助：
 atom
@@ -38,8 +30,3 @@ TY老后生
 
 注意：
 1. 不要用bat登录，直接用解压好的exe登录
-
-如果我的努力带给你美好的回忆，可以打赏给我：
-
-支付宝：
-![image](https://github.com/icelemon1314/mapleLemon/raw/master/icelemon1314_alipay.png)
