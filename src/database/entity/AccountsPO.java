@@ -9,6 +9,12 @@ import java.util.Date;
 
 @Entity
 @Table(name="accounts")
+@NamedQueries({
+        @NamedQuery(name = "AccountsPO.findByName",
+                query = "SELECT b FROM AccountsPO b WHERE b.name = :name"),
+        @NamedQuery(name = "AccountsPO.findAll",
+                query = "SELECT b FROM AccountsPO b")
+})
 public class AccountsPO {
     public AccountsPO(){}
 

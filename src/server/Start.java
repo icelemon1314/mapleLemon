@@ -4,20 +4,27 @@ import client.SkillFactory;
 import constants.GameConstants;
 import constants.ServerConstants;
 import constants.WorldConstants;
-import database.DaoFactory;
 import database.DatabaseConnection;
 import database.dao.AccountsDao;
 import database.entity.AccountsPO;
-import handling.MaplePacketHandler;
 import handling.cashshop.CashShopServer;
 import handling.channel.ChannelServer;
 import handling.login.LoginServer;
-import handling.login.handler.LoginPasswordHandler;
-import handling.vo.recv.LoginPasswordRecvVO;
 import handling.world.World;
 import handling.world.WorldRespawnService;
+import server.cashshop.CashItemFactory;
+import server.life.MapleLifeFactory;
+import server.life.MapleMonsterInformationProvider;
+import server.life.MobSkillFactory;
+import server.life.PlayerNPC;
+import server.quest.MapleQuest;
+import tools.MapleLogger;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.ServerSocket;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,21 +34,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import server.cashshop.CashItemFactory;
-import server.life.MapleLifeFactory;
-import server.life.MapleMonsterInformationProvider;
-import server.life.MobSkillFactory;
-import server.life.PlayerNPC;
-import server.quest.MapleQuest;
-
-import tools.MapleLogger;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-import javax.transaction.Transactional;
 
 public class Start {
 
@@ -80,9 +72,9 @@ public class Start {
         EntityManager manager = factory.createEntityManager();
 //        EntityTransaction transaction = manager.getTransaction();
 //        transaction.begin();
-
+//        manager.persist(new AccountsPO());
         AccountsPO account = manager.find(AccountsPO.class, 1);
-        System.out.println(account);
+        System.out.println(account.getSalt());
 
 //        account.setSalt("test1");
 //        manager.persist(account);

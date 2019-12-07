@@ -1,6 +1,8 @@
 package client;
 
 import database.DatabaseConnection;
+import tools.packet.BuddyListPacket;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,7 +11,6 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import tools.packet.BuddyListPacket;
 
 public class BuddyList implements Serializable {
 

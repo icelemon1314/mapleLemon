@@ -22,7 +22,7 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.2.3'
     implementation 'com.alibaba:druid:1.1.12'
     implementation 'org.slf4j:slf4j-api:1.7.25'
-    implementation 'org.hibernate:hibernate-core:5.4.1.Final'
+    implementation 'org.hibernate:hibernate-core:5.4.10.Final'
 }
 
 mainClassName = 'server.Start'
@@ -45,7 +45,7 @@ sourceSets {
         }
         resources {
             //class文件的dir
-            srcDirs = ['src']
+            srcDirs = ['resources']
         }
     }
 }
