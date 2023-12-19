@@ -9,6 +9,13 @@
         <description> Hibernate JPA Configuration Example</description>
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>database.entity.AccountsPO</class>
+        <class>database.entity.DropDataPo</class>
+        <class>database.entity.DropDataGlobalPo</class>
+        <class>database.entity.FamelogPo</class>
+        <class>database.entity.CharacterPO</class>
+        <class>database.entity.BuddiesPO</class>
+        <class>database.entity.ShopItemPo</class>
+        <class>database.entity.ShopPo</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/maplestory027?zeroDateTimeBehavior=convertToNull&amp;serverTimezone=Asia/Shanghai" />
