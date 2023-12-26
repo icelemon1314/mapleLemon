@@ -16,7 +16,7 @@ public class CharacterDao extends BaseDao {
     public List<CharacterPO> getCharacterByNameAndWorld(int accountId, int worldId) {
         Query query = this.em.createQuery("select p from CharacterPO as p where account.id = :accountId and world = :worldId");
         query.setParameter("accountId", accountId);
-        query.setParameter("worldId", worldId);
+        query.setParameter("worldId", (byte)worldId);
         List result = query.getResultList();
         return result;
     }
