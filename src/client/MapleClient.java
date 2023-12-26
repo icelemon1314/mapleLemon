@@ -89,8 +89,8 @@ public class MapleClient implements Serializable {
     private boolean monitored = false;
     private boolean receiving = true;
     private int gmLevel;
-    private byte greason = 1;
-    private byte gender = -1;
+    private Byte greason = 1;
+    private Byte gender = -1;
     public transient short loginAttempt = 0;
     private final transient List<Integer> allowedChar = new LinkedList();
     private transient String mac = "00-00-00-00-00-00";
